@@ -1,5 +1,5 @@
 <?php
-//Simple-board (c)さとぴあ @satopian 2020-2021
+//Petit-board (c)さとぴあ @satopian 2020-2021
 //1スレッド1ログファイル形式のスレッド式掲示板
 $mode = filter_input(INPUT_POST,'mode');
 if($mode==='regist'){
@@ -152,7 +152,7 @@ $namec=(string)filter_input(INPUT_COOKIE,'namec');
 </head>
 <body>
 <div class="container">
-	<h1>Simple board</h1>
+	<h1>Petit-board</h1>
 <form action="index.php" method="POST" enctype="multipart/form-data" class="postform">
 題名:<input type="text" name="sub"><br>
 名前:<input type="text" name="name" value="<?=$namec?>"><br>
