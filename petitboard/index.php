@@ -243,12 +243,12 @@ $namec=(string)filter_input(INPUT_COOKIE,'namec');
 
 <?php for($i = 0; $i < $count_alllog ; $i+=10) :?>
 	<?php if($page==$i):?>
-		<?= '['.($i/10).']'?>
+		 [<?=($i/10)?>]
 	<?php else: ?>
 	<?php if($i==0):?>
-		<?='[<a href="?page=0">0</a>]'?>
+		[<a href="?page=0">0</a>]
 	<?php else:?>	
-	  <?='[<a href="?page='.($i).'">'.($i/10).'</a>]'?>
+	  [<a href="?page=<?=$i?>"><?=($i/10)?></a>]
 	<?php endif;?>
 	<?php endif;?>
 	<?php endfor ;?>
