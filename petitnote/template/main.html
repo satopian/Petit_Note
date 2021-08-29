@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="index.css">
+	<title>ぷちのーと</title>
+</head>
+<body>
+<div class="container">
+	<h1>Petit-Note</h1>
+<form action="./" method="POST" enctype="multipart/form-data" class="postform">
+題名:<input type="text" name="sub"><br>
+名前:<input type="text" name="name" value="<?=$namec?>"><br>
+<textarea name="com" class="post_com"></textarea>
+<input type="hidden" name="mode" value="regist">
+<br>
+<input type="file" name="imgfile" size="35" accept="image/*">
+<br>
+<input type="submit" value="スレッドを立てる">
+</form>
+<hr>
+	<!-- 親のループ -->
+<?php foreach($out as $ress) : ?>
+
+	<h2>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
+	<!-- スレッドのループ -->
+	<?php $resform=true; ?>
+	<?php foreach($ress as $i => $res) : ?>
+		<hr class="reshr">
+		[<?= h($ress[0]['no'])?>-<?= h($i)?>] 名前:<?= h($res['name'])?><br>
+		<?php if($res['img']):?>
+			<img src="src/<?=h($res['img'])?>" alt="" loading="lazy">
+			<br>
+			<?php endif;?>
+			<?= h($res['com'])?>
+			<?php if($i>=$max_res){
+				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
+			}?>
+<?php endforeach;?>
+<!-- 返信フォーム -->
+<?php if($resform):?>
+<form action="./" method="POST" enctype="multipart/form-data" class="resform">
+名前:<input type="text" name="name"  value="<?=$namec?>"><br>
+<textarea name="com" class="rescom"></textarea>
+<input type="hidden" name="resno" value="<?=h($res['no'])?>">
+<input type="hidden" name="mode" value="regist">
+<br>
+<input type="file" name="imgfile" size="35" accept="image/*">
+<br>
+<input type="submit" value="返信">
+</form>
+<?php endif;?>
+<hr>
+<?php endforeach;?>
+
+<?php for($i = 0; $i < $count_alllog ; $i+=10) :?>
+	<?php if($page==$i):?>
+		 [<?=h($i/10)?>]
+	<?php else: ?>
+	<?php if($i==0):?>
+		[<a href="?page=0">0</a>]
+	<?php else:?>	
+	  [<a href="?page=<?=h($i)?>"><?=h($i/10)?></a>]
+	<?php endif;?>
+	<?php endif;?>
+	<?php endfor ;?>
+</div>
+</body>
+</html>

@@ -33,6 +33,7 @@ a:hover{
 	text-decoration: none;
 }
 img {
+max-width: 100%;
 max-height: 500px;
 margin: 8px 0;
 }
@@ -73,10 +74,6 @@ color: #555;
 
 a:hover{
 	text-decoration: none;
-}
-img {
-max-height: 500px;
-margin: 8px 0;
 }
 hr {
 border: none;

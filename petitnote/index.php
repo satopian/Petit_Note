@@ -1,39 +1,77 @@
 <?php
-//Petit-Note (c)さとぴあ @satopian 2020-2021
+//Petit-board (c)さとぴあ @satopian 2020-2021
 //1スレッド1ログファイル形式のスレッド式掲示板
 
 //設定項目
 // 最大スレッド数
-$max=2;
+$max_log=30;
+$max_res=10;
+$max_kb=2048;
 
 $mode = filter_input(INPUT_POST,'mode');
 if($mode==='regist'){
 	post();
 }
 $page=filter_input(INPUT_GET,'page');
-
-function post(){
-	
-	global $max;
+//投稿処理
+function post(){	
+global $max_log,$max_res,$max_kb;
 //POSTされた内容を取得
 $sub = t((string)filter_input(INPUT_POST,'sub'));
 $name = t((string)filter_input(INPUT_POST,'name'));
 $com = t((string)filter_input(INPUT_POST,'com'));
 $resno = t((string)filter_input(INPUT_POST,'resno'));
-$tempfile = $_FILES['imgfile']['tmp_name'] ?? ''; // 一時ファイル名
-// $filename = $_FILES['imgfile']['name']; // 本来のファイル名
-$imgfile='';
-if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
-	$time = time();
-	$imgfile = $time.substr(microtime(),2,3);	//画像ファイル名
-	$img_type=mime_content_type($tempfile);//190603
-	$ext=getImgType ($img_type);
-	if($ext){
-		$imgfile=$imgfile.$ext;
-		move_uploaded_file($tempfile,'./src/'.$imgfile);
-	}	
+if($resno&&is_file('./log/'.$resno.'.txt')&&(count(file('./log/'.$resno.'.txt'))>$max_res)){//レスの時はスレッド別ログに追記
+	error('最大レス数を超過しています。');
 }
 
+if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
+if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
+if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
+if(strlen($sub) > 80) error('題名が長すぎます。');
+if(strlen($name) > 30) error('名前が長すぎます。');
+if(strlen($com) > 1000) error('本文が長すぎます。');
+
+
+$tempfile = $_FILES['imgfile']['tmp_name'] ?? ''; // 一時ファイル名
+$filesize = $_FILES['imgfile']['size'];
+if($filesize > $max_kb*1024){
+	error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
+}
+$imgfile='';
+$w='';
+$h='';
+
+if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
+	$img_type = $_FILES['imgfile']['type'] ?? '';
+
+	if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+		error('対応していないフォーマットです。');
+	}
+	
+
+	$time = time();
+	$time = $time.substr(microtime(),2,3);	//画像ファイル名
+	$upfile='src/'.$time.'.tmp';
+		move_uploaded_file($tempfile,$upfile);
+
+	if($filesize > 512 * 1024){//指定サイズを超えていたら
+		if ($im_jpg = png2jpg($upfile)) {
+
+			if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
+				rename($im_jpg,$upfile);//JPEGで保存
+				chmod($upfile,0606);
+			} else{//PNGよりファイルサイズが大きくなる時は
+				unlink($im_jpg);//作成したJPEG画像を削除
+			}
+		}
+	}
+	list($w,$h)=getimagesize($upfile);
+	$_img_type=mime_content_type($upfile);
+	$ext=getImgType ($_img_type);
+	$imgfile=$time.$ext;
+	rename($upfile,'./src/'.$imgfile);
+}
 
 if(!$sub){
 	$sub='無題';
@@ -41,9 +79,13 @@ if(!$sub){
 if(!$name){
 	$name='anonymous';
 }
+$sub=str_replace(["\r\n","\r","\n",],'',$sub);
+$name=str_replace(["\r\n","\r","\n",],'"\n"',$name);
 $com=str_replace(["\r\n","\r","\n",],'"\n"',$com);
+$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
 
 setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
+
 if(!$imgfile&&!$com){
 error('何か書いて下さい。');
 }
@@ -54,13 +96,13 @@ $alllog=end($alllog_arr);
 $line='';
 //書き込まれるログの書式
 if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$resno\n";
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$resno\n";
 	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND);
 	chmod('./log/'.$resno.'.txt',0600);	
 	foreach($alllog_arr as $i =>$val){
 		list($_no)=explode("\t",$alllog_arr[$i]);
 		if($resno==$_no){
-			$line = $val;//レスが付いたスレッドを$lineに保存。あとから配列を追加して上げる
+			$line = $val;//レスが付いたスレッドを$lineに保存。あとから配列に追加して上げる
 			unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
 			break;
 		}
@@ -70,30 +112,26 @@ if($resno){//レスの時はスレッド別ログに追記
 	list($no)=explode("\t",$alllog);
 	//最後の記事ナンバーに+1
 	$no=trim($no)+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$resno\n";
+	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$resno\n";
 	file_put_contents('./log/'.$no.'.txt',$line);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.txt',0600);
 }
-	array_push($alllog_arr,$line);//全体ログに新しい投稿を追加
+	$alllog_arr[]=$line;//全体ログの配列に追加
 //スレッド数オーバー
 $countlog=count($alllog_arr);
-for($i=0;$i<$countlog-$max;++$i){//30スレッド以上のログは削除
+for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
 	list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
 	if(is_file("./log/$_no.txt")){
 
 		$fp = fopen("./log/$_no.txt", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
-			// break;
 		list(,,,,$imgfile,)=$line;
 		safe_unlink('src/'.$imgfile);//画像削除
 	}
 	fclose($fp);
-}	
-
+	}	
 	safe_unlink('./log/'.$_no.'.txt');//スレッド個別ログファイル削除
-	// safe_unlink('src/'.$imgfile);//画像削除
 	unset($alllog_arr[$i]);//全体ログ記事削除
-
 }
 
 file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);//全体ログに書き込む
@@ -117,7 +155,7 @@ foreach($alllog_arr as $oya => $alllog){
 
 		$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
-		list($no,$sub,$name,$com,$imgfile,$resno)=$line;
+		list($no,$sub,$name,$com,$imgfile,$w,$h,$resno)=$line;
 		$res=[];
 		$res=[
 			'no' => $no,
@@ -125,6 +163,8 @@ foreach($alllog_arr as $oya => $alllog){
 			'name' => $name,
 			'com' => $com,
 			'img' => $imgfile,
+			'w' => $w,
+			'h' => $h,
 			'resno' => $resno,
 		];
 		$res['com']=str_replace('"\n"',"\n",$res['com']);
@@ -134,6 +174,13 @@ foreach($alllog_arr as $oya => $alllog){
 	}
 
 }
+
+//Cookie
+$namec=(string)filter_input(INPUT_COOKIE,'namec');
+$templete='main.html';
+// HTML出力
+include __DIR__.'/template/'.$templete;
+
 //タブ除去
 function t($str){
 	return str_replace("\t","",$str);
@@ -162,95 +209,23 @@ function safe_unlink ($path) {
 	}
 	return false;
 }
-
-//Cookie
-$namec=(string)filter_input(INPUT_COOKIE,'namec');
-
-?>
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="index.css">
-	<title>掲示板</title>
-</head>
-<body>
-<div class="container">
-	<h1>Petit-board</h1>
-<form action="./" method="POST" enctype="multipart/form-data" class="postform">
-題名:<input type="text" name="sub"><br>
-名前:<input type="text" name="name" value="<?=$namec?>"><br>
-<textarea name="com" class="post_com"></textarea>
-<input type="hidden" name="mode" value="regist">
-<br>
-<input type="file" name="imgfile" size="35" accept="image/*">
-<br>
-<input type="submit" value="スレッドを立てる">
-</form>
-<hr>
-	<!-- 親のループ -->
-<?php foreach($out as $ress) : ?>
-<h2><?= h($ress[0]['sub'])?></h2>
-	<!-- スレッドのループ -->
-	<?php foreach($ress as $res) : ?>
-		<hr class="reshr">
-		名前:<?= h($res['name'])?><br>
-		<?php if($res['img']):?>
-			<img src="src/<?=h($res['img'])?>" alt="">
-			<br>
-			<?php endif;?>
-			<?= h($res['com'])?>
-<?php endforeach;?>
-<!-- 返信フォーム -->
-<form action="./" method="POST" enctype="multipart/form-data" class="resform">
-名前:<input type="text" name="name"  value="<?=$namec?>"><br>
-<textarea name="com" class="rescom"></textarea>
-<input type="hidden" name="resno" value="<?=h($res['no'])?>">
-<input type="hidden" name="mode" value="regist">
-<br>
-<input type="file" name="imgfile" size="35" accept="image/*">
-<br>
-<input type="submit" value="返信">
-</form>
-<hr>
-
-<?php endforeach;?>
-
-<?php for($i = 0; $i < $count_alllog ; $i+=10) :?>
-	<?php if($page==$i):?>
-		 [<?=h($i/10)?>]
-	<?php else: ?>
-	<?php if($i==0):?>
-		[<a href="?page=0">0</a>]
-	<?php else:?>	
-	  [<a href="?page=<?=h($i)?>"><?=h($i/10)?></a>]
-	<?php endif;?>
-	<?php endif;?>
-	<?php endfor ;?>
-</div>
-</body>
-</html>
-	<?php
-function error($str){
-	?>
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="stylesheet" href="index.css">
-	<title>掲示板</title>
-</head>
-<body>
-<div class="container error">
-<?=h($str)?><br>
-<a href="./">もどる</a>
-<?php exit;?>
- 
-<?php
+//png2jpg
+function png2jpg ($src) {
+	global $path;
+	if(mime_content_type($src)==="image/png" && function_exists("ImageCreateFromPNG")){//pngならJPEGに変換
+		if($im_in=ImageCreateFromPNG($src)){
+			$dst = $path.pathinfo($src, PATHINFO_FILENAME ).'.jpg.tmp';
+			ImageJPEG($im_in,$dst,98);
+			ImageDestroy($im_in);// 作成したイメージを破棄
+			chmod($dst,0606);
+			return $dst;
+		}
+	}
+	return false;
 }
-?>
 
+function error($str){
+	$templete='error.html';
+	include __DIR__.'/template/'.$templete;
+
+}
