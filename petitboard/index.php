@@ -78,7 +78,7 @@ if($resno){//レスの時はスレッド別ログに追記
 $countlog=count($alllog_arr);
 for($i=0;$i<$countlog-$max;++$i){//30スレッド以上のログは削除
 	list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
-	unlink('./log/'.$_no.'.txt');//スレッド個別ログファイル削除
+	safe_unlink('./log/'.$_no.'.txt');//スレッド個別ログファイル削除
 	safe_unlink('src/'.$imgfile);//画像削除
 	unset($alllog_arr[$i]);//全体ログ記事削除
 
@@ -119,7 +119,7 @@ foreach($alllog_arr as $oya => $alllog){
 }
 //タブ除去
 function t($str){
-	return str_replace(["\t",],"",$str);
+	return str_replace("\t","",$str);
 }
 //エスケープと改行
 function h($str){
@@ -303,7 +303,4 @@ function error($str){
 <?php
 }
 ?>
-
-
-
 
