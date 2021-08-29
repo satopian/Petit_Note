@@ -1,5 +1,5 @@
 <?php
-//Petit-board (c)さとぴあ @satopian 2020-2021
+//Petit-Note (c)さとぴあ @satopian 2020-2021
 //1スレッド1ログファイル形式のスレッド式掲示板
 
 //設定項目
