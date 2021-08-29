@@ -17,6 +17,7 @@ $page=filter_input(INPUT_GET,'page');
 function post(){	
 global $max_log,$max_res,$max_kb;
 //POSTされた内容を取得
+check_csrf_token();
 $sub = t((string)filter_input(INPUT_POST,'sub'));
 $name = t((string)filter_input(INPUT_POST,'name'));
 $com = t((string)filter_input(INPUT_POST,'com'));
@@ -140,6 +141,7 @@ chmod('./log/alllog.txt',0600);
 header('Location: ./');
 
 }
+$token=get_csrf_token();
 
 $alllog_arr=file('./log/alllog.txt');//全体ログを読み込む
 $count_alllog=count($alllog_arr);
@@ -228,4 +230,26 @@ function error($str){
 	$templete='error.html';
 	include __DIR__.'/template/'.$templete;
 
+}
+//csrfトークンを作成
+function get_csrf_token(){
+	if(!isset($_SESSION)){
+		session_start();
+	}
+	header('Expires:');
+	header('Cache-Control:');
+	header('Pragma:');
+	$token=hash('sha256', session_id(), false);
+	$_SESSION['token']=$token;
+
+	return $token;
+}
+//csrfトークンをチェック	
+function check_csrf_token(){
+	session_start();
+	$token=filter_input(INPUT_POST,'token');
+	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
+	if(!$session_token||$token!==$session_token){
+		error('不正な投稿をしないでください。');
+	}
 }

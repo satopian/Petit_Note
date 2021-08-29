@@ -15,6 +15,7 @@
 名前:<input type="text" name="name" value="<?=$namec?>"><br>
 <textarea name="com" class="post_com"></textarea>
 <input type="hidden" name="mode" value="regist">
+<input type="hidden" name="token" value="<?=$token?>">
 <br>
 <input type="file" name="imgfile" size="35" accept="image/*">
 <br>
@@ -46,6 +47,7 @@
 <textarea name="com" class="rescom"></textarea>
 <input type="hidden" name="resno" value="<?=h($res['no'])?>">
 <input type="hidden" name="mode" value="regist">
+<input type="hidden" name="token" value="<?=$token?>">
 <br>
 <input type="file" name="imgfile" size="35" accept="image/*">
 <br>
