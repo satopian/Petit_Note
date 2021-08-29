@@ -4,7 +4,7 @@
 
 //設定項目
 // 最大スレッド数
-$max=50;
+$max=2;
 
 $mode = filter_input(INPUT_POST,'mode');
 if($mode==='regist'){
@@ -173,55 +173,13 @@ $namec=(string)filter_input(INPUT_COOKIE,'namec');
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<style>
-	body {
-		margin: 10px;
-		color: #555;
-	}
-	.container {
-		max-width: 800px;
-		margin: 35px auto;
-		color: #555;
-	}
-	h1 {
-    font-size: 26px;
-	}
-	h2 {font-size: 18px;background-color: #ffe6e6;}
-	form.postform {
-    text-align: center;
-	}
-	textarea.post_com {
-    width: 300px;
-    height: 120px;
-	margin: 10px;
-	}
-	textarea.rescom {
-	width: 300px;
-	height: 60px;
-	margin: 10px 0;
-	}
-
-	form.resform {
-		text-align: right;
-	}
-	a {
-    color: #555;
-	}
-
-	a:hover{
-		text-decoration: none;
-	}
-	img {
-    max-height: 500px;
-    margin: 8px 0;
-	}
-	</style>
+<link rel="stylesheet" href="index.css">
 	<title>掲示板</title>
 </head>
 <body>
 <div class="container">
 	<h1>Petit-board</h1>
-<form action="index.php" method="POST" enctype="multipart/form-data" class="postform">
+<form action="./" method="POST" enctype="multipart/form-data" class="postform">
 題名:<input type="text" name="sub"><br>
 名前:<input type="text" name="name" value="<?=$namec?>"><br>
 <textarea name="com" class="post_com"></textarea>
@@ -236,17 +194,17 @@ $namec=(string)filter_input(INPUT_COOKIE,'namec');
 <?php foreach($out as $ress) : ?>
 <h2><?= h($ress[0]['sub'])?></h2>
 	<!-- スレッドのループ -->
-<?php foreach($ress as $res) : ?>
-名前:<?= h($res['name'])?><br>
-<?php if($res['img']):?>
-	<img src="src/<?=h($res['img'])?>" alt="">
-	<br>
-	<?php endif;?>
-<?= h($res['com'])?>
-<hr class="reshr">
+	<?php foreach($ress as $res) : ?>
+		<hr class="reshr">
+		名前:<?= h($res['name'])?><br>
+		<?php if($res['img']):?>
+			<img src="src/<?=h($res['img'])?>" alt="">
+			<br>
+			<?php endif;?>
+			<?= h($res['com'])?>
 <?php endforeach;?>
 <!-- 返信フォーム -->
-<form action="index.php" method="POST" enctype="multipart/form-data" class="resform">
+<form action="./" method="POST" enctype="multipart/form-data" class="resform">
 名前:<input type="text" name="name"  value="<?=$namec?>"><br>
 <textarea name="com" class="rescom"></textarea>
 <input type="hidden" name="resno" value="<?=h($res['no'])?>">
@@ -262,12 +220,12 @@ $namec=(string)filter_input(INPUT_COOKIE,'namec');
 
 <?php for($i = 0; $i < $count_alllog ; $i+=10) :?>
 	<?php if($page==$i):?>
-		 [<?=($i/10)?>]
+		 [<?=h($i/10)?>]
 	<?php else: ?>
 	<?php if($i==0):?>
 		[<a href="?page=0">0</a>]
 	<?php else:?>	
-	  [<a href="?page=<?=$i?>"><?=($i/10)?></a>]
+	  [<a href="?page=<?=h($i)?>"><?=h($i/10)?></a>]
 	<?php endif;?>
 	<?php endif;?>
 	<?php endfor ;?>
@@ -283,39 +241,12 @@ function error($str){
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<style>
-	body {
-		margin: 10px;
-		color: #555;
-	}
-	.container {
-		max-width: 800px;
-		margin: 35px auto;
-		color: #555;
-	}
-	h1 {
-    font-size: 26px;
-	}
-	h2 {font-size: 18px;background-color: #ffe6e6;}
-	form.postform {
-    text-align: center;
-	}
-	a {
-    color: #555;
-	}
-
-	a:hover{
-		text-decoration: none;
-	}
-	.error{font-size: 18px;
-		line-height: 1.8;
-	}
-	</style>
+	<link rel="stylesheet" href="index.css">
 	<title>掲示板</title>
 </head>
 <body>
 <div class="container error">
-<?=$str?><br>
+<?=h($str)?><br>
 <a href="./">もどる</a>
 <?php exit;?>
  
