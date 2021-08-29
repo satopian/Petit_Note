@@ -4,7 +4,7 @@
 
 //設定項目
 // 最大スレッド数
-$max=100;
+$max=2;
 
 $mode = filter_input(INPUT_POST,'mode');
 if($mode==='regist'){
@@ -13,6 +13,7 @@ if($mode==='regist'){
 $page=filter_input(INPUT_GET,'page');
 
 function post(){
+	
 	global $max;
 //POSTされた内容を取得
 $sub = t((string)filter_input(INPUT_POST,'sub'));
@@ -78,14 +79,27 @@ if($resno){//レスの時はスレッド別ログに追記
 $countlog=count($alllog_arr);
 for($i=0;$i<$countlog-$max;++$i){//30スレッド以上のログは削除
 	list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
+	if(is_file("./log/$_no.txt")){
+
+		$fp = fopen("./log/$_no.txt", "r");//個別スレッドのログを開く
+		while ($line = fgetcsv($fp, 0, "\t")) {
+			// break;
+		list(,,,,$imgfile,)=$line;
+		safe_unlink('src/'.$imgfile);//画像削除
+	}
+	fclose($fp);
+}	
+
 	safe_unlink('./log/'.$_no.'.txt');//スレッド個別ログファイル削除
-	safe_unlink('src/'.$imgfile);//画像削除
+	// safe_unlink('src/'.$imgfile);//画像削除
 	unset($alllog_arr[$i]);//全体ログ記事削除
 
 }
 
 file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);//全体ログに書き込む
 chmod('./log/alllog.txt',0600);
+
+header('Location: ./');
 
 }
 
@@ -99,6 +113,8 @@ $alllog_arr=array_slice($alllog_arr,$page,10,false);
 foreach($alllog_arr as $oya => $alllog){
 	
 		list($no)=explode("\t",$alllog);
+		if(is_file("./log/$no.txt")){
+
 		$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
 		list($no,$sub,$name,$com,$imgfile,$resno)=$line;
@@ -113,8 +129,9 @@ foreach($alllog_arr as $oya => $alllog){
 		];
 		$res['com']=str_replace('"\n"',"\n",$res['com']);
 		$out[$oya][]=$res;
-	}	
+		}	
 	fclose($fp);
+	}
 
 }
 //タブ除去
@@ -222,7 +239,7 @@ $namec=(string)filter_input(INPUT_COOKIE,'namec');
 <?php foreach($ress as $res) : ?>
 名前:<?= h($res['name'])?><br>
 <?php if($res['img']):?>
-	<img src="src/<?=h($ress[0]['img'])?>" alt="">
+	<img src="src/<?=h($res['img'])?>" alt="">
 	<br>
 	<?php endif;?>
 <?= h($res['com'])?>
@@ -234,6 +251,8 @@ $namec=(string)filter_input(INPUT_COOKIE,'namec');
 <textarea name="com" class="rescom"></textarea>
 <input type="hidden" name="resno" value="<?=h($res['no'])?>">
 <input type="hidden" name="mode" value="regist">
+<br>
+<input type="file" name="imgfile" size="35" accept="image/*">
 <br>
 <input type="submit" value="返信">
 </form>
