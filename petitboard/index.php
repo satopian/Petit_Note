@@ -4,7 +4,7 @@
 
 //設定項目
 // 最大スレッド数
-$max=2;
+$max=50;
 
 $mode = filter_input(INPUT_POST,'mode');
 if($mode==='regist'){
