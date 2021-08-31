@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,follow">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+<link rel="stylesheet" href="index.css">
+<title>お絵かきモード - 練習用お絵かき掲示板</title>
+<style>
+div#chickenpaint-parent {
+letter-spacing: initial;
+word-break:initial;
+}
+li{margin:0 0 0 1em;}
+:not(input),div#chickenpaint-parent :not(input){
+-moz-user-select: none;
+-webkit-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+</style>
+<script>
+function load() {
+document.addEventListener("dblclick", function(e){ e.preventDefault()}, { passive: false });
+}
+window.onload = load;
+</script>
+<script src="/chickenpaint/js/chickenpaint.min.js?210817"></script>
+<link rel="stylesheet" type="text/css" href="/chickenpaint/css/chickenpaint.css?210817">
+</head>
+<body>
+<div id="chickenpaint-parent"></div>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+new ChickenPaint({
+uiElem: document.getElementById("chickenpaint-parent"),
+canvasWidth: <?=$picw?>,
+canvasHeight: <?=$pich?>,
+saveUrl: "save.php?tool=chi",
+postUrl: "index.php",
+exitUrl: "index.php",
+allowDownload: true,
+resourcesRoot: "./chickenpaint/",
+disableBootstrapAPI: true,
+fullScreenMode: "auto"
+});
+})
+</script>
+</body>
+</html>

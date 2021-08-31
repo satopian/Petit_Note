@@ -2,17 +2,15 @@
 //Petit-board (c)さとぴあ @satopian 2020-2021
 //1スレッド1ログファイル形式のスレッド式掲示板
 
-//設定項目
-// 最大スレッド数
-//管理者パスワード 必ず変更してください。
-$admin_pass='kanripass';
-$max_log=30;
-$max_res=10;
-$max_kb=2048;
+require_once(__DIR__.'/config.php');
+require_once(__DIR__.'/function.php');
 
 $mode = filter_input(INPUT_POST,'mode');
 if($mode==='regist'){
 	return post();
+}
+if($mode==='paint'){
+	return paint();
 }
 if($mode==='del'){
 	return del();
@@ -81,6 +79,7 @@ if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 	$ext=getImgType ($_img_type);
 	$imgfile=$time.$ext;
 	rename($upfile,'./src/'.$imgfile);
+	$tool='upload';
 }
 
 if(!$sub){
@@ -106,7 +105,7 @@ $alllog=end($alllog_arr);
 $line='';
 //書き込まれるログの書式
 if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$time\t'res'\n";
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$time\t$tool\tres\n";
 	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND);
 	chmod('./log/'.$resno.'.txt',0600);	
 	foreach($alllog_arr as $i =>$val){
@@ -122,27 +121,13 @@ if($resno){//レスの時はスレッド別ログに追記
 	list($no)=explode("\t",$alllog);
 	//最後の記事ナンバーに+1
 	$no=trim($no)+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$time\toya\n";
+	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$time\t$tool\toya\n";
 	file_put_contents('./log/'.$no.'.txt',$line);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.txt',0600);
 }
 	$alllog_arr[]=$line;//全体ログの配列に追加
-//スレッド数オーバー
-$countlog=count($alllog_arr);
-for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
-	list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
-	if(is_file("./log/$_no.txt")){
 
-		$fp = fopen("./log/$_no.txt", "r");//個別スレッドのログを開く
-		while ($line = fgetcsv($fp, 0, "\t")) {
-		list(,,,,$imgfile,)=$line;
-		safe_unlink('src/'.$imgfile);//画像削除
-	}
-	fclose($fp);
-	}	
-	safe_unlink('./log/'.$_no.'.txt');//スレッド個別ログファイル削除
-	unset($alllog_arr[$i]);//全体ログ記事削除
-}
+	Delete_old_thread($alllog_arr);
 
 file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);//全体ログに書き込む
 chmod('./log/alllog.txt',0600);
@@ -150,51 +135,29 @@ chmod('./log/alllog.txt',0600);
 header('Location: ./');
 
 }
-$token=get_csrf_token();
-if($mode==='logout'){
-	unset($_SESSION['admin']);
+function paint(){
+$app = filter_input(INPUT_POST,'app');
+$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
+$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
+
+switch($app){
+		case 'neo':
+				$templete='paint_neo.html';
+				$tool='neo';
+				break;
+		
+			case 'chi':
+				$templete='paint_chi.html';
+				$tool='chi';
+				break;
+			
+				default:
+					return;
 }
-
-$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
-$alllog_arr=file('./log/alllog.txt');//全体ログを読み込む
-$count_alllog=count($alllog_arr);
-krsort($alllog_arr);
-
-//ページ番号から10スレッド分とりだす
-$alllog_arr=array_slice($alllog_arr,$page,10,false);
-//oyaのループ
-foreach($alllog_arr as $oya => $alllog){
-	
-		list($no)=explode("\t",$alllog);
-		if(is_file("./log/$no.txt")){
-
-		$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
-		while ($line = fgetcsv($fp, 0, "\t")) {
-		list($no,$sub,$name,$com,$imgfile,$w,$h,$time)=$line;
-		$res=[];
-		$res=[
-			'no' => $no,
-			'sub' => $sub,
-			'name' => $name,
-			'com' => $com,
-			'img' => $imgfile,
-			'w' => $w,
-			'h' => $h,
-			'time' => $time,
-		];
-		$res['com']=str_replace('"\n"',"\n",$res['com']);
-		$out[$oya][]=$res;
-		}	
-	fclose($fp);
-	}
+			
+			include __DIR__.'/template/'.$templete;
 
 }
-
-//Cookie
-$namec=(string)filter_input(INPUT_COOKIE,'namec');
-$templete='main.html';
-// HTML出力
-include __DIR__.'/template/'.$templete;
 
 function del(){
 	$id=filter_input(INPUT_POST,'delid');
@@ -233,89 +196,63 @@ function del(){
 		}
 	}
 }
-//管理者モード
-function admin(){
-	global $admin_pass;
-	if($admin_pass==filter_input(INPUT_POST,'adminpass')){
-		if(!isset($_SESSION)){
-			session_start();
-		}
-		header('Expires:');
-		header('Cache-Control:');
-		header('Pragma:');
-		return $_SESSION['admin']='admin_mode';
-	}
-	return false;
+$token=get_csrf_token();
+if($mode==='logout'){
+	unset($_SESSION['admin']);
+}
+//表示
+$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+$alllog_arr=file('./log/alllog.txt');//全体ログを読み込む
+$count_alllog=count($alllog_arr);
+krsort($alllog_arr);
+
+//ページ番号から1ページ分のスレッド分とりだす
+$alllog_arr=array_slice($alllog_arr,$page,$pagedef,false);
+//oyaのループ
+foreach($alllog_arr as $oya => $alllog){
 	
-}
+		list($no)=explode("\t",$alllog);
+		if(is_file("./log/$no.txt")){
 
-//タブ除去
-function t($str){
-	return str_replace("\t","",$str);
-}
-//エスケープと改行
-function h($str){
-	$str=htmlspecialchars($str,ENT_QUOTES,"utf-8");
-	return nl2br($str);
-}
-//mimeから拡張子
-function getImgType ($img_type) {
-
-	switch ($img_type) {
-		case "image/gif" : return ".gif";
-		case "image/jpeg" : return ".jpg";
-		case "image/png" : return ".png";
-		case "image/webp" : return ".webp";
-		default : return '';
-	}
-	
-}
-//ファイルがあれば削除
-function safe_unlink ($path) {
-	if ($path && is_file($path)) {
-		return unlink($path);
-	}
-	return false;
-}
-//png2jpg
-function png2jpg ($src) {
-	global $path;
-	if(mime_content_type($src)==="image/png" && function_exists("ImageCreateFromPNG")){//pngならJPEGに変換
-		if($im_in=ImageCreateFromPNG($src)){
-			$dst = $path.pathinfo($src, PATHINFO_FILENAME ).'.jpg.tmp';
-			ImageJPEG($im_in,$dst,98);
-			ImageDestroy($im_in);// 作成したイメージを破棄
-			chmod($dst,0606);
-			return $dst;
+		$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
+		while ($line = fgetcsv($fp, 0, "\t")) {
+		list($no,$sub,$name,$com,$imgfile,$w,$h,$time,$tool)=$line;
+		$res=[];
+		switch($tool){
+			case 'neo':
+				$tool='PaintBBS NEO';
+				break;
+			case 'chi':
+				$tool='ChickenPaint';
+				break;
+			case 'upload':
+				$tool='アップロード';
+				break;
+			default:
+				'';
 		}
+		$res=[
+			'no' => $no,
+			'sub' => $sub,
+			'name' => $name,
+			'com' => $com,
+			'img' => $imgfile,
+			'w' => $w,
+			'h' => $h,
+			'time' => $time,
+			'tool' => $tool,
+		];
+
+		$res['com']=str_replace('"\n"',"\n",$res['com']);
+		$out[$oya][]=$res;
+		}	
+	fclose($fp);
 	}
-	return false;
+
 }
 
-function error($str){
-	$templete='error.html';
-	include __DIR__.'/template/'.$templete;
-
-}
-//csrfトークンを作成
-function get_csrf_token(){
-	if(!isset($_SESSION)){
-		session_start();
-	}
-	header('Expires:');
-	header('Cache-Control:');
-	header('Pragma:');
-	$token=hash('sha256', session_id(), false);
-	$_SESSION['token']=$token;
-
-	return $token;
-}
-//csrfトークンをチェック	
-function check_csrf_token(){
-	session_start();
-	$token=filter_input(INPUT_POST,'token');
-	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
-	if(!$session_token||$token!==$session_token){
-		error('不正な投稿をしないでください。');
-	}
-}
+//Cookie
+$namec=(string)filter_input(INPUT_COOKIE,'namec');
+$templete='main.html';
+// HTML出力
+include __DIR__.'/template/'.$templete;

@@ -32,11 +32,11 @@ color: #555;
 a:hover{
 	text-decoration: none;
 }
-img {
+/* img {
 max-width: 100%;
 max-height: 500px;
 margin: 8px 0;
-}
+} */
 hr {
 border: none;
 border-bottom: 1px dashed #888;

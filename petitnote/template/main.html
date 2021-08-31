@@ -10,6 +10,24 @@
 <body>
 <div class="container">
 	<h1>Petit-Note</h1>
+	<form action="./" method="post">
+<input type="submit" value="PAINT" class="paint_button">
+<span class="select_applet bold_gray">TOOL</span>
+<select name="app" class="select_applet">
+<option value="neo">PaintBBS NEO</option>
+<option value="chi">ChickenPaint</option>
+</select>
+<span class="canvas_size_wrap">
+<span class="canvas_size">Size</span>
+<select name="picw" title="幅" class="canvas_select">
+	<option value="300" selected>300</option><option value="350">350</option><option value="400">400</option><option value="450">450</option><option value="500">500</option><option value="550">550</option><option value="600">600</option><option value="650">650</option><option value="700">700</option></select> 
+	x
+<select name="pich" title="高さ" class="canvas_select">
+<option value="300" selected>300</option><option value="350">350</option><option value="400">400</option><option value="450">450</option><option value="500">500</option><option value="550">550</option><option value="600">600</option><option value="650">650</option><option value="700">700</option></select> 
+</span>
+<input type="hidden" name="mode" value="paint"></form>
+
+
 <form action="./" method="POST" enctype="multipart/form-data" class="postform">
 題名:<input type="text" name="sub"><br>
 名前:<input type="text" name="name" value="<?=h($namec)?>"><br>
@@ -30,7 +48,13 @@
 	<?php $resform=true; ?>
 	<?php foreach($ress as $i => $res) : ?>
 		<hr class="reshr">
-		[<?= h($ress[0]['no'])?>-<?= h($i)?>] 名前:<?= h($res['name'])?> 
+		[<?= h($ress[0]['no'])?>-<?= h($i)?>] 
+		<?php if($res['name']):?>
+			名前:<?= h($res['name'])?>
+		<?php endif;?>
+		<?php if($res['img']):?>
+		[<?=h($res['tool'])?>]
+		<?php endif;?>
 	<?php if($adminmode):?>
 		<form action="./" method="post">
 	<input type="hidden" name="delid" value="<?=h($res['time'])?>">    
