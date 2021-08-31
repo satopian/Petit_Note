@@ -10,8 +10,12 @@ $max_kb=2048;
 
 $mode = filter_input(INPUT_POST,'mode');
 if($mode==='regist'){
-	post();
+	return post();
 }
+if($mode==='del'){
+	return del();
+}
+
 $page=filter_input(INPUT_GET,'page');
 //投稿処理
 function post(){	
@@ -42,6 +46,8 @@ if($filesize > $max_kb*1024){
 $imgfile='';
 $w='';
 $h='';
+$time = time();
+$time = $time.substr(microtime(),2,3);	//投稿時刻
 
 if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 	$img_type = $_FILES['imgfile']['type'] ?? '';
@@ -51,8 +57,6 @@ if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 	}
 	
 
-	$time = time();
-	$time = $time.substr(microtime(),2,3);	//画像ファイル名
 	$upfile='src/'.$time.'.tmp';
 		move_uploaded_file($tempfile,$upfile);
 
@@ -97,7 +101,7 @@ $alllog=end($alllog_arr);
 $line='';
 //書き込まれるログの書式
 if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$resno\n";
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$time\t'res'\n";
 	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND);
 	chmod('./log/'.$resno.'.txt',0600);	
 	foreach($alllog_arr as $i =>$val){
@@ -113,7 +117,7 @@ if($resno){//レスの時はスレッド別ログに追記
 	list($no)=explode("\t",$alllog);
 	//最後の記事ナンバーに+1
 	$no=trim($no)+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$resno\n";
+	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$time\toya\n";
 	file_put_contents('./log/'.$no.'.txt',$line);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.txt',0600);
 }
@@ -157,7 +161,7 @@ foreach($alllog_arr as $oya => $alllog){
 
 		$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
-		list($no,$sub,$name,$com,$imgfile,$w,$h,$resno)=$line;
+		list($no,$sub,$name,$com,$imgfile,$w,$h,$time)=$line;
 		$res=[];
 		$res=[
 			'no' => $no,
@@ -167,7 +171,7 @@ foreach($alllog_arr as $oya => $alllog){
 			'img' => $imgfile,
 			'w' => $w,
 			'h' => $h,
-			'resno' => $resno,
+			'time' => $time,
 		];
 		$res['com']=str_replace('"\n"',"\n",$res['com']);
 		$out[$oya][]=$res;
@@ -183,6 +187,43 @@ $templete='main.html';
 // HTML出力
 include __DIR__.'/template/'.$templete;
 
+function del(){
+	$id=filter_input(INPUT_POST,'delid');
+	$no=filter_input(INPUT_POST,'delno');
+	$alllog_arr=file('./log/alllog.txt');
+	if(is_file("./log/$no.txt")){
+		$line=file("./log/$no.txt");
+		foreach($line as $i =>$val){
+			list(,,,,$imgfile,,,$time,$oya)=explode("\t",$val);
+			if($id==$time){
+				if(trim($oya)=='oya'){//スレッド削除
+
+				//スレッドの画像を削除	
+					$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
+					while ($line = fgetcsv($fp, 0, "\t")) {
+					list(,,,,$imgfile,)=$line;
+					safe_unlink('src/'.$imgfile);//画像削除
+					}
+			
+					safe_unlink('./log/'.$no.'.txt');
+					foreach($alllog_arr as $i =>$val){
+						list($_no)=explode("\t",$val);
+						if($no==$_no){
+							unset($alllog_arr[$i]);
+						}
+					}
+				}else{
+					unset($line[$i]);
+				}
+				safe_unlink('src/'.$imgfile);//画像削除
+			}
+		file_put_contents('./log/'.$no.'.txt',$line);
+		file_put_contents('./log/alllog.txt',$alllog_arr);
+		header('Location: ./');
+
+		}
+	}
+}
 //タブ除去
 function t($str){
 	return str_replace("\t","",$str);
