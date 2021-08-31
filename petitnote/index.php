@@ -110,7 +110,7 @@ if($resno){//レスの時はスレッド別ログに追記
 	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND);
 	chmod('./log/'.$resno.'.txt',0600);	
 	foreach($alllog_arr as $i =>$val){
-		list($_no)=explode("\t",$alllog_arr[$i]);
+		list($_no)=explode("\t",$val);
 		if($resno==$_no){
 			$line = $val;//レスが付いたスレッドを$lineに保存。あとから配列に追加して上げる
 			unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除

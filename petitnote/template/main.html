@@ -12,10 +12,10 @@
 	<h1>Petit-Note</h1>
 <form action="./" method="POST" enctype="multipart/form-data" class="postform">
 題名:<input type="text" name="sub"><br>
-名前:<input type="text" name="name" value="<?=$namec?>"><br>
+名前:<input type="text" name="name" value="<?=h($namec)?>"><br>
 <textarea name="com" class="post_com"></textarea>
 <input type="hidden" name="mode" value="regist">
-<input type="hidden" name="token" value="<?=$token?>">
+<input type="hidden" name="token" value="<?=h($token)?>">
 <br>
 <input type="file" name="imgfile" size="35" accept="image/*">
 <br>
@@ -33,8 +33,8 @@
 		[<?= h($ress[0]['no'])?>-<?= h($i)?>] 名前:<?= h($res['name'])?> 
 	<?php if($adminmode):?>
 		<form action="./" method="post">
-	<input type="hidden" name="delid" value="<?=$res['time']?>">    
-	<input type="hidden" name="delno" value="<?=$res['no']?>">   
+	<input type="hidden" name="delid" value="<?=h($res['time'])?>">    
+	<input type="hidden" name="delno" value="<?=h($res['no'])?>">   
 	<input type="hidden" name="mode" value="del">   
 	<input type="submit" value="削除する"> 
 	</form>
@@ -52,11 +52,11 @@
 <!-- 返信フォーム -->
 <?php if($resform):?>
 <form action="./" method="POST" enctype="multipart/form-data" class="resform">
-名前:<input type="text" name="name"  value="<?=$namec?>"><br>
+名前:<input type="text" name="name"  value="<?=h($namec)?>"><br>
 <textarea name="com" class="rescom"></textarea>
 <input type="hidden" name="resno" value="<?=h($res['no'])?>">
 <input type="hidden" name="mode" value="regist">
-<input type="hidden" name="token" value="<?=$token?>">
+<input type="hidden" name="token" value="<?=h($token)?>">
 <br>
 <input type="file" name="imgfile" size="35" accept="image/*">
 <br>
