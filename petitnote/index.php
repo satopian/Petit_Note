@@ -6,11 +6,15 @@ require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/function.php');
 
 $mode = filter_input(INPUT_POST,'mode');
+$mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 if($mode==='regist'){
 	return post();
 }
 if($mode==='paint'){
 	return paint();
+}
+if($mode==='paintcom'){
+	return paintcom();
 }
 if($mode==='del'){
 	return del();
@@ -20,11 +24,17 @@ if($mode==='admin'){
 }
 
 $page=filter_input(INPUT_GET,'page');
+
+deltemp();//テンポラリ自動削除
+
 //投稿処理
 function post(){	
 global $max_log,$max_res,$max_kb;
 //POSTされた内容を取得
 check_csrf_token();
+$usercode=get_csrf_token();
+$userip = get_uip();
+
 $sub = t((string)filter_input(INPUT_POST,'sub'));
 $name = t((string)filter_input(INPUT_POST,'name'));
 $com = t((string)filter_input(INPUT_POST,'com'));
@@ -42,27 +52,53 @@ if(strlen($com) > 1000) error('本文が長すぎます。');
 
 
 $tempfile = $_FILES['imgfile']['tmp_name'] ?? ''; // 一時ファイル名
-$filesize = $_FILES['imgfile']['size'];
+$filesize = $_FILES['imgfile']['size'] ?? '';
 if($filesize > $max_kb*1024){
 	error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 }
+
 $imgfile='';
 $w='';
 $h='';
 $time = time();
 $time = $time.substr(microtime(),2,3);	//投稿時刻
-
+$upfile='';
 if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 	$img_type = $_FILES['imgfile']['type'] ?? '';
 
 	if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
 		error('対応していないフォーマットです。');
 	}
+	$upfile='src/'.$time.'.tmp';
+	move_uploaded_file($tempfile,$upfile);
+	$tool = 'upload'; 
 	
+}
+$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
+$picfile = filter_input(INPUT_POST, 'picfile');
+if($pictmp==2){
+	if(!$picfile) error('お絵かき画像の投稿に失敗しました。');
+	$tempfile = TEMP_DIR.$picfile;
+	// $upfile_name = basename($tempfile);
+	$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
+	//選択された絵が投稿者の絵か再チェック
+	if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat")) {
+		error('投稿に失敗しました。');
+	}
+	$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
+	$userdata = fread($fp, 1024);
+	fclose($fp);
+	list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");
+	if(($ucode != $usercode) && ($uip != $userip)){'お絵かき画像の投稿に失敗しました。';}
+	$uresno=filter_var($uresto,FILTER_VALIDATE_INT);
+	$resno = $uresto ? $uresto : $resno;//変数上書き$userdataのレス先を優先する
+
 
 	$upfile='src/'.$time.'.tmp';
-		move_uploaded_file($tempfile,$upfile);
+	rename($tempfile, $upfile);
+}
 
+if($upfile){
 	if($filesize > 512 * 1024){//指定サイズを超えていたら
 		if ($im_jpg = png2jpg($upfile)) {
 
@@ -79,7 +115,7 @@ if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 	$ext=getImgType ($_img_type);
 	$imgfile=$time.$ext;
 	rename($upfile,'./src/'.$imgfile);
-	$tool='upload';
+
 }
 
 if(!$sub){
@@ -127,7 +163,24 @@ if($resno){//レスの時はスレッド別ログに追記
 }
 	$alllog_arr[]=$line;//全体ログの配列に追加
 
-	Delete_old_thread($alllog_arr);
+	if(!$max_log){
+		error('最大スレッド数が設定されていません。');
+	}
+	$countlog=count($alllog_arr);
+	for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
+		list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
+		if(is_file("./log/$_no.txt")){
+	
+			$fp = fopen("./log/$_no.txt", "r");//個別スレッドのログを開く
+			while ($line = fgetcsv($fp, 0, "\t")) {
+			list(,,,,$imgfile,)=$line;
+			safe_unlink('src/'.$imgfile);//画像削除
+		}
+		fclose($fp);
+		}	
+		safe_unlink('./log/'.$_no.'.txt');//スレッド個別ログファイル削除
+		unset($alllog_arr[$i]);//全体ログ記事削除
+	}
 
 file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);//全体ログに書き込む
 chmod('./log/alllog.txt',0600);
@@ -139,7 +192,7 @@ function paint(){
 $app = filter_input(INPUT_POST,'app');
 $picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 $pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
-
+$usercode = get_csrf_token();
 switch($app){
 		case 'neo':
 				$templete='paint_neo.html';
@@ -196,11 +249,62 @@ function del(){
 		}
 	}
 }
+// お絵かきコメント 
+function paintcom(){
+	$usercode=get_csrf_token();
+	$token=$usercode;
+	$userip = get_uip();
+	$namec = filter_input(INPUT_COOKIE,'namec');
+	//テンポラリ画像リスト作成
+	$tmplist = [];
+	$handle = opendir(TEMP_DIR);
+	while ($file = readdir($handle)) {
+		if(!is_dir($file) && preg_match("/\.(dat)\z/i",$file)) {
+			$fp = fopen(TEMP_DIR.$file, "r");
+			$userdata = fread($fp, 1024);
+			fclose($fp);
+			list($uip,$uhost,$uagent,$imgext,$ucode,) = explode("\t", rtrim($userdata));
+			$file_name = preg_replace("/\.(dat)\z/i","",$file);
+			if(is_file(TEMP_DIR.$file_name.$imgext)) //画像があればリストに追加
+				$tmplist[] = $ucode."\t".$uip."\t".$file_name.$imgext;
+		}
+	}
+	closedir($handle);
+	$tmp = [];
+	if(count($tmplist)!=0){
+		foreach($tmplist as $tmpimg){
+			list($ucode,$uip,$ufilename) = explode("\t", $tmpimg);
+			if($ucode == $usercode||$uip == $userip){
+				$tmp[] = $ufilename;
+			}
+		}
+	}
+
+	if(count($tmp)==0){
+		$dat['notmp'] = true;
+		$dat['pictmp'] = 1;
+	}else{
+		$dat['pictmp'] = 2;
+		sort($tmp);
+		reset($tmp);
+		foreach($tmp as $tmpfile){
+			$src = TEMP_DIR.$tmpfile;
+			$srcname = $tmpfile;
+			$date = date("Y/m/d H:i", filemtime($src));
+			$out['tmp'][] = compact('src','srcname','date');
+		}
+	}
+	$templete='paint_com.html';
+	// HTML出力
+	include __DIR__.'/template/'.$templete;
+	// $tmp=$temps;
+	}
+
+//表示
 $token=get_csrf_token();
 if($mode==='logout'){
 	unset($_SESSION['admin']);
 }
-//表示
 $adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 $alllog_arr=file('./log/alllog.txt');//全体ログを読み込む
 $count_alllog=count($alllog_arr);

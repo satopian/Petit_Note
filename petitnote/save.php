@@ -2,7 +2,6 @@
 
 //設定
 include(__DIR__.'/config.php');
-require_once(__DIR__.'/function.php');
 
 
 defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
@@ -56,39 +55,28 @@ $imgext='.png';
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
 // 拡張ヘッダーを取り出す
 
-$tool = (string)filter_input(INPUT_GET, 'tool');
+	$usercode = (string)filter_input(INPUT_GET, 'usercode');
+	$tool = (string)filter_input(INPUT_GET, 'tool');
+	// $repcode = (string)filter_input(INPUT_GET, 'repcode');
+	// $stime = (string)filter_input(INPUT_GET, 'stime');
+	// $resto = (string)filter_input(INPUT_GET, 'resto');
 
-$usercode = (string)filter_input(INPUT_GET, 'usercode');
-// 	$repcode = (string)filter_input(INPUT_GET, 'repcode');
-// 	$stime = (string)filter_input(INPUT_GET, 'stime');
-// 	$resto = (string)filter_input(INPUT_GET, 'resto');
-
-// 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
-// 	$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto";
-// $userdata .= "\n";
+	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
+	// $userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto";
+	$userdata .= "\t$usercode\t\t\t\t\t$tool";
+$userdata .= "\n";
 // 情報データをファイルに書き込む
-$alllog_arr=file('./log/alllog.txt');
-$alllog=end($alllog_arr);
-$line='';
-list($w,$h)=getimagesize(TEMP_DIR.$imgfile.'.png');
+$fp = fopen(TEMP_DIR.$imgfile.".dat","w");
+if(!$fp){
+    chibi_die("Your picture upload failed! Please try again!");
+}
 
-//書き込まれるログの書式
-	list($no)=explode("\t",$alllog);
-	//最後の記事ナンバーに+1
-
-	$no=trim($no)+1;
-	$line = "$no\t\t\t\t{$imgfile}{$imgext}\t$w\t$h\t$imgfile\t$tool\t'oya'\n";
-
-	file_put_contents('./log/'.$no.'.txt',$line);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
-	chmod('./log/'.$no.'.txt',0600);
-
-	$alllog_arr[]=$line;//全体ログの配列に追加
-	Delete_old_thread($alllog_arr);
-
-file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);//全体ログに書き込む
-chmod('./log/alllog.txt',0600);
-
-// header('Location: ./');
+	flock($fp, LOCK_EX);
+	fwrite($fp, $userdata);
+	fflush($fp);
+	flock($fp, LOCK_UN);
+	fclose($fp);
+	chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 
 
 die("CHIBIOK\n");

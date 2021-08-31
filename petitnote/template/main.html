@@ -41,6 +41,7 @@
 </form>
 <hr>
 	<!-- 親のループ -->
+<?php if(isset($out)):?>
 <?php foreach($out as $ress) : ?>
 
 	<h2>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
@@ -89,7 +90,7 @@
 <?php endif;?>
 <hr>
 <?php endforeach;?>
-
+<?php endif;?>
 <?php for($i = 0; $i < $count_alllog ; $i+=10) :?>
 	<?php if($page==$i):?>
 		 [<?=h($i/10)?>]

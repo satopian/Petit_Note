@@ -36,11 +36,7 @@
 // 2003/07/11 perl版初公開
 
 //設定
-require_once(__DIR__.'/config.php');
-require_once(__DIR__.'/function.php');
-
-
-define('TEMP_DIR','./src/');
+include(__DIR__.'/config.php');
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'])
   ? explode( ',', $http_langs )[0] : 'ja';
@@ -85,7 +81,7 @@ $imgfile = $time.substr(microtime(),2,3);	//画像ファイル名
 
 /* エラー発生時にSystemLOGにエラーを記録 */
 function _error($error){
-	global $imgfile,$syslog,$syslogmax;
+	// global $imgfile,$syslog,$syslogmax;
 	// $time = time();
 	// $youbi = array('日','月','火','水','木','金','土');
 	// $yd = $youbi[date("w", $time)] ;
@@ -172,29 +168,28 @@ if(!$fp){
 }
 // 不正画像チェック(検出したら削除)
 // if(is_file($full_imgfile)){
-	list($w,$h) = getimagesize($full_imgfile);
-	// $size = getimagesize($full_imgfile);
+	$size = getimagesize($full_imgfile);
 	// if($size[0] > PMAX_W || $size[1] > PMAX_H){
 	// 	unlink($full_imgfile);
 	// 	_error("規定サイズ違反を検出しました。画像は保存されません。");
 	// 	die("error\n{$errormsg_4}");
 	// }
-	// $chk = md5_file($full_imgfile);
-	// if(isset($badfile)&&is_array($badfile)){
-	// 	foreach($badfile as $value){
-	// 		if(preg_match("/^$value/",$chk)){
-	// 			unlink($full_imgfile);
-	// 			_error("不正な画像を検出しました。画像は保存されません。");
-	// 			die("error\n{$errormsg_5}");
-	// 		}
-	// 	}
-	// }
+	$chk = md5_file($full_imgfile);
+	if(isset($badfile)&&is_array($badfile)){
+		foreach($badfile as $value){
+			if(preg_match("/^$value/",$chk)){
+				unlink($full_imgfile);
+				_error("不正な画像を検出しました。画像は保存されません。");
+				die("error\n{$errormsg_5}");
+			}
+		}
+	}
 // }
 
 // PCHファイルの長さを取り出す
-// $pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);
+$pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);
 // ヘッダーを獲得
-// $h = substr($buffer, 0, 1);
+$h = substr($buffer, 0, 1);
 // 拡張子設定
 
 if($h=='S'){
@@ -213,26 +208,26 @@ if($h=='S'){
 	$ext = '.pch';
 }
 
-// if($pchLength){
-// 	// PCHイメージを取り出す
-// 	$PCHdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength + 8, $pchLength);
-// 	// 同名のファイルが存在しないかチェック
-// 	if(is_file(TEMP_DIR.$imgfile.$ext)){
-// 		_error("同名のPCHファイルが存在します。上書きします。");
-// 	}
-// 	// PCHデータをファイルに書き込む
-// 	$fp = fopen(TEMP_DIR.$imgfile.$ext,"wb");
-// 	if(!$fp){
-// 		_error("PCHファイルの作成に失敗しました。PCHは保存されません。");
-// 		die("error\n{$errormsg_6}");
-// 	}else{
-// 		flock($fp, LOCK_EX);
-// 		fwrite($fp, $PCHdata);
-// 		fflush($fp);
-// 		flock($fp, LOCK_UN);
-// 		fclose($fp);
-// 	}
-// }
+if($pchLength){
+	// PCHイメージを取り出す
+	$PCHdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength + 8, $pchLength);
+	// 同名のファイルが存在しないかチェック
+	if(is_file(TEMP_DIR.$imgfile.$ext)){
+		_error("同名のPCHファイルが存在します。上書きします。");
+	}
+	// PCHデータをファイルに書き込む
+	$fp = fopen(TEMP_DIR.$imgfile.$ext,"wb");
+	if(!$fp){
+		_error("PCHファイルの作成に失敗しました。PCHは保存されません。");
+		die("error\n{$errormsg_6}");
+	}else{
+		flock($fp, LOCK_EX);
+		fwrite($fp, $PCHdata);
+		fflush($fp);
+		flock($fp, LOCK_UN);
+		fclose($fp);
+	}
+}
 
 /* ---------- 投稿者情報記録 ---------- */
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
@@ -245,53 +240,32 @@ if($sendheader){
 		list($name,$value) = explode("=", $query_s);
 		$u[$name] = $value;
 	}
-
-	$tool = $u['tool'] ?? '';
-	// $usercode = isset($u['usercode']) ? $u['usercode'] : '';
+	$usercode = isset($u['usercode']) ? $u['usercode'] : '';
+	$tool = isset($u['tool']) ? $u['tool'] : '';
 	// $repcode = isset($u['repcode']) ? $u['repcode'] : '';
 	// $stime = isset($u['stime']) ? $u['stime'] : '';
 	// $resto = isset($u['resto']) ? $u['resto'] : '';
 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
-	// $userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto";
+	// $userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
+	$userdata .= "\t$usercode\t\t\t\t\t$tool";
 }
-// $userdata .= "\n";
-// if(is_file(TEMP_DIR.$imgfile.".dat")){
-// 	_error("同名の情報ファイルが存在します。上書きします。");
-// }
+$userdata .= "\n";
+if(is_file(TEMP_DIR.$imgfile.".dat")){
+	_error("同名の情報ファイルが存在します。上書きします。");
+}
 // 情報データをファイルに書き込む
-// $fp = fopen(TEMP_DIR.$imgfile.".dat","w");
-// if(!$fp){
-// 	_error("情報ファイルの作成に失敗しました。投稿者情報は記録されません。");
-// 	die("error\n{$errormsg_7}");
-// }else{
-// 	flock($fp, LOCK_EX);
-// 	fwrite($fp, $userdata);
-// 	fflush($fp);
-// 	flock($fp, LOCK_UN);
-// 	fclose($fp);
-// 	chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
-// }
-//全体ログを開く
-$alllog_arr=file('./log/alllog.txt');
-$alllog=end($alllog_arr);
-$line='';
-//書き込まれるログの書式
-	list($no)=explode("\t",$alllog);
-	//最後の記事ナンバーに+1
-
-	$no=trim($no)+1;
-	$line = "$no\t\t\t\t{$imgfile}{$imgext}\t$w\t$h\t$imgfile\t$tool\t'oya'\n";
-
-	file_put_contents('./log/'.$no.'.txt',$line);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
-	chmod('./log/'.$no.'.txt',0600);
-
-	$alllog_arr[]=$line;//全体ログの配列に追加
-	Delete_old_thread($alllog_arr);
-
-file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);//全体ログに書き込む
-chmod('./log/alllog.txt',0600);
-
-header('Location: ./');
+$fp = fopen(TEMP_DIR.$imgfile.".dat","w");
+if(!$fp){
+	_error("情報ファイルの作成に失敗しました。投稿者情報は記録されません。");
+	die("error\n{$errormsg_7}");
+}else{
+	flock($fp, LOCK_EX);
+	fwrite($fp, $userdata);
+	fflush($fp);
+	flock($fp, LOCK_UN);
+	fclose($fp);
+	chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
+}
 
 die("ok");
 

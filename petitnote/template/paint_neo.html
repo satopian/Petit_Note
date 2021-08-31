@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="index.css">
 <style>
 .appstage{margin:10px auto;display: table}.app{display: table-cell;vertical-align: top}.palette_wrap{display: table-cell;vertical-align: middle}.palette{margin-left:12px;width:148px;border:1px solid #666;padding:6px}.palette_gradation{margin:10px 0 0 12px;padding:6px}.palette input,.palette_gradation input{color:#555;background-color:#fffeff;border:1px solid #686868}.palette_hr{border:none}.palette_desc{font-family:Impact,Arial;font-size:14px}.palette_select{margin:2px 0;min-width: 130px;}.paintbbs_memo{margin:18px auto 18px;line-height:146%;color:#666;min-width:180px;max-width:768px}.paintbbs_memo li{list-style-type:circle}.paintbbs_memo div{margin-bottom:15px}.applet_painttime{margin-top:15px}.continue_painttime{margin: 0 auto 8px;max-width:928px}.palette_type_select{height: 21px}
-.applet_painttime {text-align: center;}
+.applet_painttime {text-align: center;}.bbs_title{max-width:928px;margin: 0 auto 5px};
 </style>
 <title>お絵かきモード</title>
 <style>body{overscroll-behavior-x: none !important; }</style>
@@ -29,9 +29,9 @@ return;
 </head>
 <body>
 <header>
-<h1 style= "min-width:calc(650px + 176px)" id="bbs_title">お絵かきモード</h1>
+<h1 style= "min-width:calc(650px + 176px)" class="bbs_title">お絵かきモード</h1>
 <nav>
-<div style= "min-width:calc(650px + 176px)" id="self2"> [<a href="index.php">掲示板にもどる</a>] 
+<div style= "min-width:calc(650px + 176px)" class="bbs_title"> [<a href="index.php">掲示板にもどる</a>] 
 <span class="nts_radiowrap">ツールを
 <input type="radio" name="1" id="1" onclick="Neo.setToolSide(true)" class="nts_radio"><label class="ntslabel" for="1">左へ</label>
 <input type="radio" name="1" id="2" onclick="Neo.setToolSide(false)" checked="checked" class="nts_radio"><label class="ntslabel" for="2">右へ</label>
@@ -81,9 +81,9 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <param name="thumbnail_width" value="100%">
 <param name="thumbnail_height" value="100%">
 <param name="url_save" value="picpost.php">
-<param name="url_exit" value="index.php">
+<param name="url_exit" value="index.php?mode=paintcom">
 <param name="thumbnail_type" value="animation">
-<param name="send_header" value="tool=<?=$tool?>">
+<param name="send_header" value="usercode=<?=$usercode?>&tool=<?=$tool?>">
 </applet-dummy>
 </div>
 <div class="palette_wrap">

@@ -1,4 +1,13 @@
 <?php
+//ユーザーip
+function get_uip(){
+	if ($ip = getenv("HTTP_CLIENT_IP")) {
+		return $ip;
+	} elseif ($ip = getenv("HTTP_X_FORWARDED_FOR")) {
+		return $ip;
+	}
+	return getenv("REMOTE_ADDR");
+}
 //管理者モード
 function admin(){
 	global $admin_pass;
@@ -13,28 +22,6 @@ function admin(){
 	}
 	return false;
 	
-}
-//スレッド数オーバー
-function Delete_old_thread($alllog_arr){
-	global $max_log;
-	if(!$max_log){
-		error('最大スレッド数が設定されていません。');
-	}
-	$countlog=count($alllog_arr);
-	for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
-		list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
-		if(is_file("./log/$_no.txt")){
-	
-			$fp = fopen("./log/$_no.txt", "r");//個別スレッドのログを開く
-			while ($line = fgetcsv($fp, 0, "\t")) {
-			list(,,,,$imgfile,)=$line;
-			safe_unlink('src/'.$imgfile);//画像削除
-		}
-		fclose($fp);
-		}	
-		safe_unlink('./log/'.$_no.'.txt');//スレッド個別ログファイル削除
-		unset($alllog_arr[$i]);//全体ログ記事削除
-	}
 }
 
 //タブ除去
@@ -106,4 +93,25 @@ function check_csrf_token(){
 	if(!$session_token||$token!==$session_token){
 		error('不正な投稿をしないでください。');
 	}
+}
+// テンポラリ内のゴミ除去 
+function deltemp(){
+	$handle = opendir(TEMP_DIR);
+	while ($file = readdir($handle)) {
+		if(!is_dir($file)) {
+			$lapse = time() - filemtime(TEMP_DIR.$file);
+			if($lapse > (3*24*3600)){//3日
+				unlink(TEMP_DIR.$file);
+			}
+			//pchアップロードペイントファイル削除
+			if(preg_match("/\A(pchup-.*-tmp\.s?pch)\z/i",$file)) {
+				$lapse = time() - filemtime(TEMP_DIR.$file);
+				if($lapse > (300)){//5分
+					unlink(TEMP_DIR.$file);
+				}
+			}
+		}
+	}
+	
+	closedir($handle);
 }

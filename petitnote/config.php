@@ -13,4 +13,4 @@ $max_res=10;
 //投稿できる画像のサイズ単位kb
 $max_kb=1024;
 //テンポラリ
-define('TEMP_DIR','./src/');
+define('TEMP_DIR','./temp/');

@@ -26,8 +26,8 @@ document.addEventListener("dblclick", function(e){ e.preventDefault()}, { passiv
 }
 window.onload = load;
 </script>
-<script src="/chickenpaint/js/chickenpaint.min.js?210817"></script>
-<link rel="stylesheet" type="text/css" href="/chickenpaint/css/chickenpaint.css?210817">
+<script src="./chickenpaint/js/chickenpaint.min.js?210817"></script>
+<link rel="stylesheet" type="text/css" href="./chickenpaint/css/chickenpaint.css?210817">
 </head>
 <body>
 <div id="chickenpaint-parent"></div>
@@ -37,8 +37,8 @@ new ChickenPaint({
 uiElem: document.getElementById("chickenpaint-parent"),
 canvasWidth: <?=$picw?>,
 canvasHeight: <?=$pich?>,
-saveUrl: "save.php?tool=chi",
-postUrl: "index.php",
+saveUrl: "save.php?usercode=<?=$usercode?>&tool=chi",
+postUrl: "index.php?mode=paintcom",
 exitUrl: "index.php",
 allowDownload: true,
 resourcesRoot: "./chickenpaint/",
