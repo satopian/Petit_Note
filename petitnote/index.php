@@ -4,6 +4,8 @@
 
 //設定項目
 // 最大スレッド数
+//管理者パスワード 必ず変更してください。
+$admin_pass='kanripass';
 $max_log=30;
 $max_res=10;
 $max_kb=2048;
@@ -14,6 +16,9 @@ if($mode==='regist'){
 }
 if($mode==='del'){
 	return del();
+}
+if($mode==='admin'){
+	admin();
 }
 
 $page=filter_input(INPUT_GET,'page');
@@ -146,7 +151,11 @@ header('Location: ./');
 
 }
 $token=get_csrf_token();
+if($mode==='logout'){
+	unset($_SESSION['admin']);
+}
 
+$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 $alllog_arr=file('./log/alllog.txt');//全体ログを読み込む
 $count_alllog=count($alllog_arr);
 krsort($alllog_arr);
@@ -224,6 +233,22 @@ function del(){
 		}
 	}
 }
+//管理者モード
+function admin(){
+	global $admin_pass;
+	if($admin_pass==filter_input(INPUT_POST,'adminpass')){
+		if(!isset($_SESSION)){
+			session_start();
+		}
+		header('Expires:');
+		header('Cache-Control:');
+		header('Pragma:');
+		return $_SESSION['admin']='admin_mode';
+	}
+	return false;
+	
+}
+
 //タブ除去
 function t($str){
 	return str_replace("\t","",$str);

@@ -30,7 +30,16 @@
 	<?php $resform=true; ?>
 	<?php foreach($ress as $i => $res) : ?>
 		<hr class="reshr">
-		[<?= h($ress[0]['no'])?>-<?= h($i)?>] 名前:<?= h($res['name'])?><br>
+		[<?= h($ress[0]['no'])?>-<?= h($i)?>] 名前:<?= h($res['name'])?> 
+	<?php if($adminmode):?>
+		<form action="./" method="post">
+	<input type="hidden" name="delid" value="<?=$res['time']?>">    
+	<input type="hidden" name="delno" value="<?=$res['no']?>">   
+	<input type="hidden" name="mode" value="del">   
+	<input type="submit" value="削除する"> 
+	</form>
+	<?php endif;?> 
+		<br>
 		<?php if($res['img']):?>
 			<img src="src/<?=h($res['img'])?>" alt="" loading="lazy">
 			<br>
@@ -68,6 +77,18 @@
 	<?php endif;?>
 	<?php endif;?>
 	<?php endfor ;?>
+<?php if($adminmode):?>
+	<form action="./" method="post" class="admin">
+<input type="hidden" name="mode" value="logout">
+<input type="submit" value="ログアウト">
+	</form>
+<?php else: ?>
+	<form action="./" method="post" class="admin">
+<input type="password" name="adminpass">
+<input type="hidden" name="mode" value="admin">
+<input type="submit" value="管理者モード">
+</form>
+<?php endif; ?>
 </div>
 </body>
 </html>
