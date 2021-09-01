@@ -24,6 +24,15 @@ if($mode==='admin'){
 }
 
 $page=filter_input(INPUT_GET,'page');
+$usercode = filter_input(INPUT_COOKIE, 'usercode');//nullならuser-codeを発行
+//user-codeの発行
+if(!$usercode){//falseなら発行
+	$userip = get_uip();
+	$usercode = substr(crypt(md5($userip.date("Ymd", time())),'id'),-12);
+	//念の為にエスケープ文字があればアルファベットに変換
+	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
+}
+setcookie("usercode", $usercode, time()+(86400*365));//1年間
 
 deltemp();//テンポラリ自動削除
 
@@ -32,7 +41,8 @@ function post(){
 global $max_log,$max_res,$max_kb;
 //POSTされた内容を取得
 check_csrf_token();
-$usercode=get_csrf_token();
+
+$usercode = filter_input(INPUT_COOKIE, 'usercode');
 $userip = get_uip();
 
 $sub = t((string)filter_input(INPUT_POST,'sub'));
@@ -77,7 +87,7 @@ if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 $pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
 $picfile = filter_input(INPUT_POST, 'picfile');
 if($pictmp==2){
-	if(!$picfile) error('お絵かき画像の投稿に失敗しました。');
+	if(!$picfile) error('投稿に失敗しました。');
 	$tempfile = TEMP_DIR.$picfile;
 	// $upfile_name = basename($tempfile);
 	$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
@@ -89,10 +99,9 @@ if($pictmp==2){
 	$userdata = fread($fp, 1024);
 	fclose($fp);
 	list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");
-	if(($ucode != $usercode) && ($uip != $userip)){'お絵かき画像の投稿に失敗しました。';}
+	if(($ucode != $usercode) && ($uip != $userip)){error('投稿に失敗しました。');}
 	$uresno=filter_var($uresto,FILTER_VALIDATE_INT);
 	$resno = $uresto ? $uresto : $resno;//変数上書き$userdataのレス先を優先する
-
 
 	$upfile='src/'.$time.'.tmp';
 	rename($tempfile, $upfile);
@@ -115,7 +124,6 @@ if($upfile){
 	$ext=getImgType ($_img_type);
 	$imgfile=$time.$ext;
 	rename($upfile,'./src/'.$imgfile);
-
 }
 
 if(!$sub){
@@ -158,7 +166,7 @@ if($resno){//レスの時はスレッド別ログに追記
 	//最後の記事ナンバーに+1
 	$no=trim($no)+1;
 	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$time\t$tool\toya\n";
-	file_put_contents('./log/'.$no.'.txt',$line);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
+	file_put_contents('./log/'.$no.'.txt',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.txt',0600);
 }
 	$alllog_arr[]=$line;//全体ログの配列に追加
@@ -184,15 +192,20 @@ if($resno){//レスの時はスレッド別ログに追記
 
 file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);//全体ログに書き込む
 chmod('./log/alllog.txt',0600);
-
+//多重送信防止
 header('Location: ./');
 
 }
+//お絵かき画面
 function paint(){
 $app = filter_input(INPUT_POST,'app');
 $picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 $pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
-$usercode = get_csrf_token();
+$usercode = filter_input(INPUT_COOKIE, 'usercode');
+setcookie("appc", $app , time()+(60*60*24*30));//アプレット選択
+setcookie("picwc", $picw , time()+(60*60*24*30));//幅
+setcookie("pichc", $pich , time()+(60*60*24*30));//高さ
+
 switch($app){
 		case 'neo':
 				$templete='paint_neo.html';
@@ -204,14 +217,62 @@ switch($app){
 				$tool='chi';
 				break;
 			
-				default:
+			default:
 					return;
 }
 			
 			include __DIR__.'/template/'.$templete;
 
 }
+// お絵かきコメント 
+function paintcom(){
+	$token=get_csrf_token();
+	$userip = get_uip();
+	$namec = filter_input(INPUT_COOKIE,'namec');
+	$usercode = filter_input(INPUT_COOKIE,'usercode');
+	//テンポラリ画像リスト作成
+	$tmplist = [];
+	$handle = opendir(TEMP_DIR);
+	while ($file = readdir($handle)) {
+		if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
+			$fp = fopen(TEMP_DIR.$file, "r");
+			$userdata = fread($fp, 1024);
+			fclose($fp);
+			list($uip,$uhost,$uagent,$imgext,$ucode,) = explode("\t", rtrim($userdata));
+			$file_name = pathinfo($file, PATHINFO_FILENAME);
+			if(is_file(TEMP_DIR.$file_name.$imgext)){ //画像があればリストに追加
+				$tmplist[] = $ucode."\t".$uip."\t".$file_name.$imgext;
+			}
+		}
+	}
+	closedir($handle);
+	$tmp = [];
+	if(count($tmplist)!==0){
+		foreach($tmplist as $tmpimg){
+			list($ucode,$uip,$ufilename) = explode("\t", $tmpimg);
+			if($ucode == $usercode||$uip == $userip){
+				$tmp[] = $ufilename;
+			}
+		}
+	}
 
+	if(count($tmp)!==0){
+		$pictmp = 2;
+		sort($tmp);
+		reset($tmp);
+		foreach($tmp as $tmpfile){
+			$tmp_img['src'] = TEMP_DIR.$tmpfile;
+			$tmp_img['srcname'] = $tmpfile;
+			$tmp_img['date'] = date("Y/m/d H:i", filemtime($tmp_img['src']));
+			$out['tmp'][] = $tmp_img;
+		}
+	}
+	$templete='paint_com.html';
+	// HTML出力
+	include __DIR__.'/template/'.$templete;
+}
+
+//記事削除
 function del(){
 	$id=filter_input(INPUT_POST,'delid');
 	$no=filter_input(INPUT_POST,'delno');
@@ -249,63 +310,8 @@ function del(){
 		}
 	}
 }
-// お絵かきコメント 
-function paintcom(){
-	$usercode=get_csrf_token();
-	$token=$usercode;
-	$userip = get_uip();
-	$namec = filter_input(INPUT_COOKIE,'namec');
-	//テンポラリ画像リスト作成
-	$tmplist = [];
-	$handle = opendir(TEMP_DIR);
-	while ($file = readdir($handle)) {
-		if(!is_dir($file) && preg_match("/\.(dat)\z/i",$file)) {
-			$fp = fopen(TEMP_DIR.$file, "r");
-			$userdata = fread($fp, 1024);
-			fclose($fp);
-			list($uip,$uhost,$uagent,$imgext,$ucode,) = explode("\t", rtrim($userdata));
-			$file_name = preg_replace("/\.(dat)\z/i","",$file);
-			if(is_file(TEMP_DIR.$file_name.$imgext)) //画像があればリストに追加
-				$tmplist[] = $ucode."\t".$uip."\t".$file_name.$imgext;
-		}
-	}
-	closedir($handle);
-	$tmp = [];
-	if(count($tmplist)!=0){
-		foreach($tmplist as $tmpimg){
-			list($ucode,$uip,$ufilename) = explode("\t", $tmpimg);
-			if($ucode == $usercode||$uip == $userip){
-				$tmp[] = $ufilename;
-			}
-		}
-	}
-
-	if(count($tmp)==0){
-		$dat['notmp'] = true;
-		$dat['pictmp'] = 1;
-	}else{
-		$dat['pictmp'] = 2;
-		sort($tmp);
-		reset($tmp);
-		foreach($tmp as $tmpfile){
-			$src = TEMP_DIR.$tmpfile;
-			$srcname = $tmpfile;
-			$date = date("Y/m/d H:i", filemtime($src));
-			$out['tmp'][] = compact('src','srcname','date');
-		}
-	}
-	$templete='paint_com.html';
-	// HTML出力
-	include __DIR__.'/template/'.$templete;
-	// $tmp=$temps;
-	}
 
 //表示
-$token=get_csrf_token();
-if($mode==='logout'){
-	unset($_SESSION['admin']);
-}
-$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 $alllog_arr=file('./log/alllog.txt');//全体ログを読み込む
 $count_alllog=count($alllog_arr);
 krsort($alllog_arr);
@@ -354,9 +360,23 @@ foreach($alllog_arr as $oya => $alllog){
 	}
 
 }
+//管理者ログアウト
+if($mode==='logout'){
+	unset($_SESSION['admin']);
+}
+
+//管理者判定処理
+$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 
 //Cookie
 $namec=(string)filter_input(INPUT_COOKIE,'namec');
-$templete='main.html';
+$appc=(string)filter_input(INPUT_COOKIE,'appc');
+$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
+$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
+
+//token
+$token=get_csrf_token();
+
 // HTML出力
+$templete='main.html';
 include __DIR__.'/template/'.$templete;

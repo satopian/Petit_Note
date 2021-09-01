@@ -12,5 +12,8 @@ $max_log=30;
 $max_res=10;
 //投稿できる画像のサイズ単位kb
 $max_kb=1024;
+//お絵かき最大サイズ
+$pmax_w=800;//幅
+$pmax_h=800;//高さ
 //テンポラリ
 define('TEMP_DIR','./temp/');

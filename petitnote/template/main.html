@@ -10,22 +10,54 @@
 <body>
 <div class="container">
 	<h1>Petit-Note</h1>
+
 	<form action="./" method="post">
+<input type="hidden" name="mode" value="paint">
 <input type="submit" value="PAINT" class="paint_button">
 <span class="select_applet bold_gray">TOOL</span>
 <select name="app" class="select_applet">
-<option value="neo">PaintBBS NEO</option>
-<option value="chi">ChickenPaint</option>
+<option value="neo" 
+<?php if($appc==='neo'):?>
+selected
+<?php endif;?>
+>PaintBBS NEO</option>
+<option value="chi"
+<?php if($appc==='chi'):?>
+selected
+<?php endif;?>
+>ChickenPaint</option>
 </select>
-<span class="canvas_size_wrap">
-<span class="canvas_size">Size</span>
+
+<span class="canvas_size">Size</span>：
 <select name="picw" title="幅" class="canvas_select">
-	<option value="300" selected>300</option><option value="350">350</option><option value="400">400</option><option value="450">450</option><option value="500">500</option><option value="550">550</option><option value="600">600</option><option value="650">650</option><option value="700">700</option></select> 
+	<?php
+	//幅 300から、$pmax_w で設定した最大値まで。
+		for($i = 300; $i <=$pmax_w ; $i+=50){//50ずつ増える
+		if($picwc==$i){//デフォルトサイズ
+		echo'<option value="'.$i.'" selected>'.$i.'</option>';
+		}
+		else{
+		echo'<option value="'.$i.'">'.$i.'</option>';
+		}
+		}
+	?>
+	</select>
 	x
-<select name="pich" title="高さ" class="canvas_select">
-<option value="300" selected>300</option><option value="350">350</option><option value="400">400</option><option value="450">450</option><option value="500">500</option><option value="550">550</option><option value="600">600</option><option value="650">650</option><option value="700">700</option></select> 
-</span>
-<input type="hidden" name="mode" value="paint"></form>
+	<select name="pich" title="高さ" class="canvas_select">
+	<?php
+	//高さ 300から、PMAX_H で設定した最大値まで。
+		for($i = 300; $i <=$pmax_h ; $i+=50){//50ずつ増える
+		if($picwc==$i){//デフォルトサイズ
+		echo'<option value="'.$i.'" selected>'.$i.'</option>';
+		}
+		else{
+		echo'<option value="'.$i.'">'.$i.'</option>';
+		}
+		}
+	?>
+	</select>
+
+</form>
 
 
 <form action="./" method="POST" enctype="multipart/form-data" class="postform">
@@ -57,7 +89,7 @@
 		[<?=h($res['tool'])?>]
 		<?php endif;?>
 	<?php if($adminmode):?>
-		<form action="./" method="post">
+	<form action="./" method="post">
 	<input type="hidden" name="delid" value="<?=h($res['time'])?>">    
 	<input type="hidden" name="delno" value="<?=h($res['no'])?>">   
 	<input type="hidden" name="mode" value="del">   
@@ -66,10 +98,10 @@
 	<?php endif;?> 
 		<br>
 		<?php if($res['img']):?>
-			<img src="src/<?=h($res['img'])?>" alt="" loading="lazy">
-			<br>
+			<div class="posted_image"><img src="src/<?=h($res['img'])?>" alt="" loading="lazy"></div>
+			
 			<?php endif;?>
-			<?= h($res['com'])?>
+			<div class="comment"><?= h($res['com'])?></div>
 			<?php if($i>=$max_res){
 				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
 			}?>
