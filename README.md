@@ -4,5 +4,4 @@
 - こんなコードですが、著作権は放棄しません。  
 - ウェブに設置して使用しないでください。ログが消失したり、サーバに負荷がかかってもなにもできません。  
 - 動作確認はローカルサーバで。  
-  
-![image](https://user-images.githubusercontent.com/44894014/131222282-65924f65-7e6e-4536-a3bd-a2cb96d4f637.png)
+ ![image](https://user-images.githubusercontent.com/44894014/131668907-33ca4b06-e0a2-4078-9860-3e877f6491cc.png)
