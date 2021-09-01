@@ -1,4 +1,4 @@
-# PetitNote
+# Petit Note
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 - こんなコードですが、著作権は放棄しません。  
