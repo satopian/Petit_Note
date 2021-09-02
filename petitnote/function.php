@@ -177,6 +177,17 @@ function is_ngword ($ngwords, $strs) {
 	return false;
 }
 
+//初期化
+function init(){
+	check_dir("src");
+	check_dir("temp");
+	check_dir("log");
+	if(!is_file('./log/alllog.txt')){
+	file_put_contents('./log/alllog.txt','',FILE_APPEND|LOCK_EX);
+	chmod('./log/alllog.txt',0600);	
+	}
+}
+
 //ディレクトリ作成
 function check_dir ($path) {
 
