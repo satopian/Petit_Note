@@ -12,13 +12,12 @@ function get_uip(){
 function admin(){
 	global $admin_pass;
 	if($admin_pass==filter_input(INPUT_POST,'adminpass')){
-		if(!isset($_SESSION)){
-			session_start();
-		}
-		header('Expires:');
-		header('Cache-Control:');
-		header('Pragma:');
+		session_sta();
+		$page=filter_input(INPUT_GET,'page');
+
+		view($page);
 		return $_SESSION['admin']='admin_mode';
+
 	}
 	return false;
 	
@@ -74,12 +73,7 @@ function error($str){
 }
 //csrfトークンを作成
 function get_csrf_token(){
-	if(!isset($_SESSION)){
-		session_start();
-	}
-	header('Expires:');
-	header('Cache-Control:');
-	header('Pragma:');
+	session_sta();
 	$token=hash('sha256', session_id(), false);
 	$_SESSION['token']=$token;
 
@@ -87,13 +81,23 @@ function get_csrf_token(){
 }
 //csrfトークンをチェック	
 function check_csrf_token(){
-	session_start();
+	session_sta();
 	$token=filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
 	if(!$session_token||$token!==$session_token){
 		error('不正な投稿をしないでください。');
 	}
 }
+//session開始
+function session_sta(){
+	if(!isset($_SESSION)){
+		session_start();
+		header('Expires:');
+		header('Cache-Control:');
+		header('Pragma:');
+	}
+}
+
 
 // テンポラリ内のゴミ除去 
 function deltemp(){
