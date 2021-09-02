@@ -359,8 +359,8 @@ $alllog_arr=array_slice($alllog_arr,$page,$pagedef,false);
 foreach($alllog_arr as $oya => $alllog){
 	
 	list($no)=explode("\t",$alllog);
+	//個別スレッドのループ
 	if(is_file("./log/$no.txt")){
-
 		$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
 		list($no,$sub,$name,$com,$imgfile,$w,$h,$tool,$time,$host)=$line;
