@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-require_once(__DIR__.'/config.php');
+require_once(__DIR__.'/config.php');	
 require_once(__DIR__.'/function.php');
 
 $mode = filter_input(INPUT_POST,'mode');
@@ -33,6 +33,17 @@ if(!$usercode){//falseなら発行
 	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
 }
 setcookie("usercode", $usercode, time()+(86400*365));//1年間
+
+
+//初期化
+
+check_dir("src");
+check_dir("temp");
+check_dir("log");
+if(!is_file('./log/alllog.txt')){
+file_put_contents('./log/alllog.txt','',FILE_APPEND|LOCK_EX);
+chmod('./log/alllog.txt',0600);	
+}
 
 deltemp();//テンポラリ自動削除
 
@@ -160,7 +171,7 @@ $line='';
 //書き込まれるログの書式
 if($resno){//レスの時はスレッド別ログに追記
 	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\tres\n";
-	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND);
+	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND | LOCK_EX);
 	chmod('./log/'.$resno.'.txt',0600);	
 	foreach($alllog_arr as $i =>$val){
 		list($_no)=explode("\t",$val);
@@ -173,6 +184,9 @@ if($resno){//レスの時はスレッド別ログに追記
 	
 } else{
 	list($no)=explode("\t",$alllog);
+	if(!$no&&$alllog!==''){
+		$no=0;
+	}
 	//最後の記事ナンバーに+1
 	$no=trim($no)+1;
 	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\toya\n";
@@ -325,13 +339,14 @@ function del(){
 				}
 				safe_unlink('src/'.$imgfile);//画像削除
 			}
-		file_put_contents('./log/'.$no.'.txt',$line);
-		file_put_contents('./log/alllog.txt',$alllog_arr);
+		file_put_contents('./log/'.$no.'.txt',$line,LOCK_EX);
+		file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);
 		header('Location: ./');
 
 		}
 	}
 }
+
 
 //表示
 $alllog_arr=file('./log/alllog.txt');//全体ログを読み込む

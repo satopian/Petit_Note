@@ -94,6 +94,7 @@ function check_csrf_token(){
 		error('不正な投稿をしないでください。');
 	}
 }
+
 // テンポラリ内のゴミ除去 
 function deltemp(){
 	$handle = opendir(TEMP_DIR);
@@ -115,6 +116,7 @@ function deltemp(){
 	
 	closedir($handle);
 }
+
 // NGワードがあれば拒絶
 function Reject_if_NGword_exists_in_the_post(){
 	global $use_japanesefilter,$badstring,$badname,$badstr_A,$badstr_B;
@@ -131,7 +133,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
 		mb_regex_encoding("UTF-8");
-		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) error(MSG035);
+		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) error('半角英数のみの投稿はできません。');
 	}
 
 	//本文へのURLの書き込みを禁止
@@ -176,6 +178,18 @@ function is_ngword ($ngwords, $strs) {
 		}
 	}
 	return false;
+}
+
+//ディレクトリ作成
+function check_dir ($path) {
+
+	if (!is_dir($path)) {
+			mkdir($path, 0707);
+			chmod($path, 0707);
+	}
+	if (!is_dir($path)) return "{$path}がありません。<br>";
+	if (!is_readable($path)) return "{$path}を読めません。<br>";
+	if (!is_writable($path)) return "{$path}を書けません。<br>";
 }
 
 
