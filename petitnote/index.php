@@ -89,6 +89,7 @@ if($filesize > $max_kb*1024){
 $imgfile='';
 $w='';
 $h='';
+$tool='';
 $time = time();
 $time = $time.substr(microtime(),2,3);	//投稿時刻
 $upfile='';
@@ -150,15 +151,16 @@ if($upfile){//PNG→JPEG自動変換
 if(!$sub){
 	$sub='無題';
 }
-if(!$name){
-	$name='anonymous';
-}
 $sub=str_replace(["\r\n","\r","\n",],'',$sub);
 $name=str_replace(["\r\n","\r","\n",],'"\n"',$name);
 $com=str_replace(["\r\n","\r","\n",],'"\n"',$com);
 $com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
 
 setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
+
+if(!$name){
+	$name='anonymous';
+}
 
 if(!$imgfile&&!$com){
 error('何か書いて下さい。');
