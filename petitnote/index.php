@@ -57,7 +57,7 @@ $sub = t((string)filter_input(INPUT_POST,'sub'));
 $name = t((string)filter_input(INPUT_POST,'name'));
 $com = t((string)filter_input(INPUT_POST,'com'));
 $resno = t((string)filter_input(INPUT_POST,'resno'));
-if($resno&&is_file('./log/'.$resno.'.txt')&&(count(file('./log/'.$resno.'.txt'))>$max_res)){//レスの時はスレッド別ログに追記
+if($resno&&is_file('./log/'.$resno.'.log')&&(count(file('./log/'.$resno.'.log'))>$max_res)){//レスの時はスレッド別ログに追記
 	error('最大レス数を超過しています。');
 }
 
@@ -162,7 +162,7 @@ error('何か書いて下さい。');
 }
 
 //全体ログを開く
-$fp=fopen("./log/alllog.txt","r+");
+$fp=fopen("./log/alllog.log","r+");
 flock($fp, LOCK_EX);
 $alllog_arr=[];
 while ($_line = fgets($fp)) {
@@ -177,16 +177,18 @@ foreach($alllog_arr as $_alllog){
 //最大スレッドNO
 if($no_arr){
 	$max_no=max($no_arr);
+}else{
+	$max_no=0;
 }
 //書き込むログの書式
 $line='';
 if($resno){//レスの時はスレッド別ログに追記
 	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\tres\n";
-	if(!is_file('./log/'.$resno.'.txt')){
+	if(!is_file('./log/'.$resno.'.log')){
 		error('投稿に失敗しました。');
 	}
-	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND | LOCK_EX);
-	chmod('./log/'.$resno.'.txt',0600);	
+	file_put_contents('./log/'.$resno.'.log',$r_line,FILE_APPEND | LOCK_EX);
+	chmod('./log/'.$resno.'.log',0600);	
 	foreach($alllog_arr as $i =>$val){
 		list($_no)=explode("\t",$val);
 		if($resno==$_no){
@@ -200,8 +202,8 @@ if($resno){//レスの時はスレッド別ログに追記
 	//最後の記事ナンバーに+1
 	$no=$max_no+1;
 	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\toya\n";
-	file_put_contents('./log/'.$no.'.txt',$line,FILE_APPEND | LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
-	chmod('./log/'.$no.'.txt',0600);
+	file_put_contents('./log/'.$no.'.log',$line,FILE_APPEND | LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
+	chmod('./log/'.$no.'.log',0600);
 }
 	$alllog_arr[]=$line;//全体ログの配列に追加
 
@@ -211,9 +213,9 @@ if($resno){//レスの時はスレッド別ログに追記
 	$countlog=count($alllog_arr);
 	for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
 		list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
-		if(is_file("./log/$_no.txt")){
+		if(is_file("./log/$_no.log")){
 	
-			$dp = fopen("./log/$_no.txt", "r");//個別スレッドのログを開く
+			$dp = fopen("./log/$_no.log", "r");//個別スレッドのログを開く
 			flock($dp, LOCK_EX);
 
 			while ($line = fgetcsv($fp, 0, "\t")) {
@@ -222,14 +224,14 @@ if($resno){//レスの時はスレッド別ログに追記
 		}
 		closeFile($dp);
 		}	
-		safe_unlink('./log/'.$_no.'.txt');//スレッド個別ログファイル削除
+		safe_unlink('./log/'.$_no.'.log');//スレッド個別ログファイル削除
 		unset($alllog_arr[$i]);//全体ログ記事削除
 	}
 	$alllog=implode("",$alllog_arr);
 	writeFile ($fp, $alllog);
 	closeFile($fp);
 	
-	chmod('./log/alllog.txt',0600);
+	chmod('./log/alllog.log',0600);
 	//多重送信防止
 	header('Location: ./');
 
@@ -321,22 +323,21 @@ function del(){
 	$no=filter_input(INPUT_POST,'delno');
 	$page=filter_input(INPUT_POST,'postpage');
 
-	// $alllog_arr=file('./log/alllog.txt');
-	$fp=fopen("./log/alllog.txt","r+");
+	// $alllog_arr=file('./log/alllog.log');
+	$fp=fopen("./log/alllog.log","r+");
 	flock($fp, LOCK_EX);
 	while ($_line = fgets($fp)) {
 		$alllog_arr[]=$_line;	
 	}
 
-	if(is_file("./log/$no.txt")){
+	if(is_file("./log/$no.log")){
 
-		$rp=fopen("./log/$no.txt","r+");
+		$rp=fopen("./log/$no.log","r+");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
 			$line[]=$r_line;	
 		}
 	
-		// $line=file("./log/$no.txt");
 		foreach($line as $i =>$val){
 
 			list($no,$sub,$name,$com,$imgfile,$w,$h,$tool,$time,$host,$oya)=explode("\t",$val);
@@ -344,13 +345,13 @@ function del(){
 				if(trim($oya)=='oya'){//スレッド削除
 
 				//スレッドの画像を削除	
-					$rp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
+					$rp = fopen("./log/$no.log", "r");//個別スレッドのログを開く
 					while ($line = fgetcsv($rp, 0, "\t")) {
 					list(,,,,$imgfile,)=$line;
 					safe_unlink('src/'.$imgfile);//画像削除
 					}
 			
-					safe_unlink('./log/'.$no.'.txt');
+					safe_unlink('./log/'.$no.'.log');
 					foreach($alllog_arr as $i =>$val){
 						list($_no)=explode("\t",$val);
 						if($no==$_no){
@@ -381,11 +382,11 @@ function view($page=0){
 if(!isset($page)){
 	$page=0;
 }
-global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h; 
+global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$max_w,$max_h; 
  ;
 
 
-$alllog_arr=file('./log/alllog.txt');//全体ログを読み込む
+$alllog_arr=file('./log/alllog.log');//全体ログを読み込む
 $count_alllog=count($alllog_arr);
 krsort($alllog_arr);
 
@@ -396,8 +397,8 @@ foreach($alllog_arr as $oya => $alllog){
 	
 	list($no)=explode("\t",$alllog);
 	//個別スレッドのループ
-	if(is_file("./log/$no.txt")){
-		$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
+	if(is_file("./log/$no.log")){
+		$fp = fopen("./log/$no.log", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
 		list($no,$sub,$name,$com,$imgfile,$w,$h,$tool,$time,$host)=$line;
 		$res=[];
@@ -414,6 +415,8 @@ foreach($alllog_arr as $oya => $alllog){
 			default:
 				'';
 		}
+		list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
+		
 		$res=[
 			'no' => $no,
 			'sub' => $sub,

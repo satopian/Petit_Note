@@ -182,9 +182,9 @@ function init(){
 	check_dir("src");
 	check_dir("temp");
 	check_dir("log");
-	if(!is_file('./log/alllog.txt')){
-	file_put_contents('./log/alllog.txt','',FILE_APPEND|LOCK_EX);
-	chmod('./log/alllog.txt',0600);	
+	if(!is_file('./log/alllog.log')){
+	file_put_contents('./log/alllog.log','',FILE_APPEND|LOCK_EX);
+	chmod('./log/alllog.log',0600);	
 	}
 }
 
@@ -207,11 +207,25 @@ function writeFile ($fp, $data) {
 	rewind($fp);
 	fwrite($fp, $data);
 }
-
+//fpクローズ
 function closeFile ($fp) {
 	fflush($fp);
 	flock($fp, LOCK_UN);
 	fclose($fp);
+}
+
+//縮小表示
+function image_reduction_display($w,$h,$max_w,$max_h){
+	$reduced_size=[];
+	if($w > $max_w || $h > $max_h){
+		$key_w = $max_w / $w;
+		$key_h = $max_h / $h;
+		($key_w < $key_h) ? ($keys = $key_w) : ($keys = $key_h);
+		$w=ceil($w * $keys);
+		$h=ceil($h * $keys);
+	}
+	$reduced_size = [$w,$h];
+	return $reduced_size;
 }
 
 
