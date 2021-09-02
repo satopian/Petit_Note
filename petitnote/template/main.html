@@ -108,7 +108,7 @@ selected
 	<?php endif;?> 
 		<br>
 		<?php if($res['img']):?>
-			<div class="posted_image"><img src="src/<?=h($res['img'])?>" alt="" loading="lazy"></div>
+			<div class="posted_image"><img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy"></div>
 			
 			<?php endif;?>
 			<div class="comment"><?= h($res['com'])?></div>
@@ -163,6 +163,9 @@ selected
 <input type="submit" value="管理者モード">
 </form>
 <?php endif; ?>
+<div class="copy">
+<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a>
+</div>
 </div>
 </body>
 </html>
