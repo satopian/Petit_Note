@@ -77,8 +77,8 @@ selected
 <?php foreach($out as $ress) : ?>
 
 	<h2>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
-	<!-- スレッドのループ -->
 	<?php $resform=true; ?>
+	<!-- スレッドのループ -->
 	<?php foreach($ress as $i => $res) : ?>
 	<hr class="reshr">
 	<?php if($i!==0):?>
@@ -102,6 +102,7 @@ selected
 	<input type="hidden" name="delid" value="<?=h($res['time'])?>">    
 	<input type="hidden" name="delno" value="<?=h($res['no'])?>">   
 	<input type="hidden" name="mode" value="del">   
+	<input type="hidden" name="postpage" value="<?=$page?>">   
 	<input type="submit" value="削除する"> 
 	</form>
 	<?php endif;?> 

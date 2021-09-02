@@ -20,14 +20,13 @@ switch($mode){
 		return del();
 	case 'admin':
 		return admin();
+	case 'logout':
+		session_sta();
+		unset($_SESSION['admin']);
+		return header('Location: ./?page='.$page);
 	default:
 		return view($page);
 }
-//管理者ログアウト
-if($mode==='logout'){
-	unset($_SESSION['admin']);
-}
-
 
 
 $usercode = filter_input(INPUT_COOKIE, 'usercode');//nullならuser-codeを発行
@@ -64,7 +63,6 @@ $userip = get_uip();
 //ホスト取得
 $host = gethostbyaddr($userip);
 
-
 $sub = t((string)filter_input(INPUT_POST,'sub'));
 $name = t((string)filter_input(INPUT_POST,'name'));
 $com = t((string)filter_input(INPUT_POST,'com'));
@@ -98,6 +96,7 @@ $h='';
 $tool='';
 $time = time();
 $time = $time.substr(microtime(),2,3);	//投稿時刻
+//ファイルアップロード処理
 $upfile='';
 if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 	$img_type = $_FILES['imgfile']['type'] ?? '';
@@ -176,9 +175,12 @@ error('何か書いて下さい。');
 $alllog_arr=file('./log/alllog.txt');
 $alllog=end($alllog_arr);
 $line='';
-//書き込まれるログの書式
+//書き込むログの書式
 if($resno){//レスの時はスレッド別ログに追記
 	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\tres\n";
+	if(is_file('./log/'.$resno.'.txt')){
+		error('投稿に失敗しました。');
+	}
 	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND | LOCK_EX);
 	chmod('./log/'.$resno.'.txt',0600);	
 	foreach($alllog_arr as $i =>$val){
@@ -198,6 +200,9 @@ if($resno){//レスの時はスレッド別ログに追記
 	//最後の記事ナンバーに+1
 	$no=trim($no)+1;
 	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\toya\n";
+	if(is_file('./log/'.$no.'.txt')){
+		error('投稿に失敗しました。');
+	}
 	file_put_contents('./log/'.$no.'.txt',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.txt',0600);
 }
@@ -306,19 +311,14 @@ function paintcom(){
 
 //記事削除
 function del(){
-	if(!isset($_SESSION)){
-		session_start();
-	}
-	header('Expires:');
-	header('Cache-Control:');
-	header('Pragma:');
-
+	session_sta();
 	$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 	if(!$adminmode){
 		return error('失敗しました。');
 	}
 	$id=filter_input(INPUT_POST,'delid');
 	$no=filter_input(INPUT_POST,'delno');
+	$page=filter_input(INPUT_POST,'postpage');
 
 	$alllog_arr=file('./log/alllog.txt');
 	if(is_file("./log/$no.txt")){
@@ -345,12 +345,14 @@ function del(){
 					}
 				}else{
 					unset($line[$i]);
+					safe_unlink('src/'.$imgfile);//画像削除
+					file_put_contents('./log/'.$no.'.txt',$line,LOCK_EX);
 				}
-				safe_unlink('src/'.$imgfile);//画像削除
 			}
-		file_put_contents('./log/'.$no.'.txt',$line,LOCK_EX);
 		file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);
-		header('Location: ./');
+		//多重送信防止
+		header('Location: ./?page='.$page);
+
 
 		}
 	}
@@ -358,8 +360,12 @@ function del(){
 
 
 //表示
-function view($page){
-	global $pagedef;
+function view($page=0){
+if(!isset($page)){
+	$page=0;
+}
+global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h; 
+ ;
 
 
 $alllog_arr=file('./log/alllog.txt');//全体ログを読み込む
@@ -413,7 +419,9 @@ foreach($alllog_arr as $oya => $alllog){
 }
 
 //管理者判定処理
+session_sta();
 $adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+
 
 //Cookie
 $namec=(string)filter_input(INPUT_COOKIE,'namec');
