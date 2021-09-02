@@ -9,6 +9,20 @@ $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page');
 
+$usercode = filter_input(INPUT_COOKIE, 'usercode');//nullならuser-codeを発行
+$userip = get_uip();
+//user-codeの発行
+if(!$usercode){//falseなら発行
+	$usercode = substr(crypt(md5($userip.date("Ymd", time())),'id'),-12);
+	//念の為にエスケープ文字があればアルファベットに変換
+	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
+}
+setcookie("usercode", $usercode, time()+(86400*365));//1年間
+
+//初期化
+init();
+deltemp();//テンポラリ自動削除
+
 switch($mode){
 	case 'regist':
 		return post();
@@ -27,30 +41,6 @@ switch($mode){
 	default:
 		return view($page);
 }
-
-
-$usercode = filter_input(INPUT_COOKIE, 'usercode');//nullならuser-codeを発行
-$userip = get_uip();
-//user-codeの発行
-if(!$usercode){//falseなら発行
-	$usercode = substr(crypt(md5($userip.date("Ymd", time())),'id'),-12);
-	//念の為にエスケープ文字があればアルファベットに変換
-	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
-}
-setcookie("usercode", $usercode, time()+(86400*365));//1年間
-
-
-//初期化
-
-check_dir("src");
-check_dir("temp");
-check_dir("log");
-if(!is_file('./log/alllog.txt')){
-file_put_contents('./log/alllog.txt','',FILE_APPEND|LOCK_EX);
-chmod('./log/alllog.txt',0600);	
-}
-
-deltemp();//テンポラリ自動削除
 
 //投稿処理
 function post(){	
@@ -174,12 +164,22 @@ error('何か書いて下さい。');
 //全体ログを開く
 $fp=fopen("./log/alllog.txt","r+");
 flock($fp, LOCK_EX);
+$alllog_arr=[];
 while ($_line = fgets($fp)) {
 	$alllog_arr[]=$_line;	
 }
-$end_alllog=end($alllog_arr);
-$line='';
+$no_arr = [];
+$max_no=0;
+foreach($alllog_arr as $_alllog){
+	list($log_no,)=explode("\t",$_alllog);
+	$no_arr[]=$log_no;
+}
+//最大スレッドNO
+if($no_arr){
+	$max_no=max($no_arr);
+}
 //書き込むログの書式
+$line='';
 if($resno){//レスの時はスレッド別ログに追記
 	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\tres\n";
 	if(!is_file('./log/'.$resno.'.txt')){
@@ -197,12 +197,8 @@ if($resno){//レスの時はスレッド別ログに追記
 	}
 	
 } else{
-	list($no)=explode("\t",$end_alllog);
-	if(!$no&&$end_alllog!==''){
-		$no=0;
-	}
 	//最後の記事ナンバーに+1
-	$no=trim($no)+1;
+	$no=$max_no+1;
 	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\toya\n";
 	file_put_contents('./log/'.$no.'.txt',$line,FILE_APPEND | LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.txt',0600);
