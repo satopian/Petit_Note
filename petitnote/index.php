@@ -7,23 +7,29 @@ require_once(__DIR__.'/function.php');
 
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
-if($mode==='regist'){
-	return post();
+$page=filter_input(INPUT_GET,'page');
+
+switch($mode){
+	case 'regist':
+		return post();
+	case 'paint':
+		return paint();
+	case 'paintcom':
+		return paintcom();
+	case 'del':
+		return del();
+	case 'admin':
+		return admin();
+	default:
+		return view($page);
 }
-if($mode==='paint'){
-	return paint();
-}
-if($mode==='paintcom'){
-	return paintcom();
-}
-if($mode==='del'){
-	return del();
-}
-if($mode==='admin'){
-	admin();
+//管理者ログアウト
+if($mode==='logout'){
+	unset($_SESSION['admin']);
 }
 
-$page=filter_input(INPUT_GET,'page');
+
+
 $usercode = filter_input(INPUT_COOKIE, 'usercode');//nullならuser-codeを発行
 $userip = get_uip();
 //user-codeの発行
@@ -313,6 +319,7 @@ function del(){
 	}
 	$id=filter_input(INPUT_POST,'delid');
 	$no=filter_input(INPUT_POST,'delno');
+
 	$alllog_arr=file('./log/alllog.txt');
 	if(is_file("./log/$no.txt")){
 		$line=file("./log/$no.txt");
@@ -351,6 +358,10 @@ function del(){
 
 
 //表示
+function view($page){
+	global $pagedef;
+
+
 $alllog_arr=file('./log/alllog.txt');//全体ログを読み込む
 $count_alllog=count($alllog_arr);
 krsort($alllog_arr);
@@ -400,10 +411,6 @@ foreach($alllog_arr as $oya => $alllog){
 	}
 
 }
-//管理者ログアウト
-if($mode==='logout'){
-	unset($_SESSION['admin']);
-}
 
 //管理者判定処理
 $adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
@@ -420,3 +427,6 @@ $token=get_csrf_token();
 // HTML出力
 $templete='main.html';
 include __DIR__.'/template/'.$templete;
+
+}
+
