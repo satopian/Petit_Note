@@ -5,11 +5,11 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="index.css">
-	<title>ぷちのーと</title>
+	<title><?=$boardname?></title>
 </head>
 <body>
 <div class="container">
-	<h1>Petit-Note</h1>
+	<h1><?=$boardname?></h1>
 
 	<form action="./" method="post">
 <input type="hidden" name="mode" value="paint">
@@ -80,15 +80,24 @@ selected
 	<!-- スレッドのループ -->
 	<?php $resform=true; ?>
 	<?php foreach($ress as $i => $res) : ?>
-		<hr class="reshr">
-		[<?= h($ress[0]['no'])?>-<?= h($i)?>] 
+	<hr class="reshr">
+	<?php if($i!==0):?>
+	<div class="res_wrap">	
+	<?php endif;?>
+
+			[<?= h($ress[0]['no'])?>-<?= h($i)?>] 
 		<?php if($res['name']):?>
 			名前:<?= h($res['name'])?>
 		<?php endif;?>
 		<?php if($res['img']):?>
 		[<?=h($res['tool'])?>]
 		<?php endif;?>
-	<?php if($adminmode):?>
+		<?php if($adminmode):?>
+		<br>
+		HOST:<?=h($res['host'])?>
+		<br>
+		<?php endif;?> 
+<?php if($adminmode):?>
 	<form action="./" method="post">
 	<input type="hidden" name="delid" value="<?=h($res['time'])?>">    
 	<input type="hidden" name="delno" value="<?=h($res['no'])?>">   
@@ -102,9 +111,16 @@ selected
 			
 			<?php endif;?>
 			<div class="comment"><?= h($res['com'])?></div>
+	
+
 			<?php if($i>=$max_res){
 				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
 			}?>
+			<?php if($i!==0):?>
+			</div>	
+			<?php endif;?>
+		
+		
 <?php endforeach;?>
 <!-- 返信フォーム -->
 <?php if($resform):?>

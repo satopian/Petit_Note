@@ -1,6 +1,6 @@
 <?php
-//Petit-board (c)さとぴあ @satopian 2020-2021
-//1スレッド1ログファイル形式のスレッド式掲示板
+//Petit Note (c)さとぴあ @satopian 2021
+//1スレッド1ログファイル形式のスレッド式画像掲示板
 
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/function.php');
@@ -25,9 +25,9 @@ if($mode==='admin'){
 
 $page=filter_input(INPUT_GET,'page');
 $usercode = filter_input(INPUT_COOKIE, 'usercode');//nullならuser-codeを発行
+$userip = get_uip();
 //user-codeの発行
 if(!$usercode){//falseなら発行
-	$userip = get_uip();
 	$usercode = substr(crypt(md5($userip.date("Ymd", time())),'id'),-12);
 	//念の為にエスケープ文字があればアルファベットに変換
 	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
@@ -44,6 +44,9 @@ check_csrf_token();
 
 $usercode = filter_input(INPUT_COOKIE, 'usercode');
 $userip = get_uip();
+//ホスト取得
+$host = gethostbyaddr($userip);
+
 
 $sub = t((string)filter_input(INPUT_POST,'sub'));
 $name = t((string)filter_input(INPUT_POST,'name'));
@@ -53,6 +56,11 @@ if($resno&&is_file('./log/'.$resno.'.txt')&&(count(file('./log/'.$resno.'.txt'))
 	error('最大レス数を超過しています。');
 }
 
+//NGワードがあれば拒絶
+Reject_if_NGword_exists_in_the_post();
+
+
+//制限
 if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
 if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
 if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
@@ -60,7 +68,7 @@ if(strlen($sub) > 80) error('題名が長すぎます。');
 if(strlen($name) > 30) error('名前が長すぎます。');
 if(strlen($com) > 1000) error('本文が長すぎます。');
 
-
+//ファイルアップロード
 $tempfile = $_FILES['imgfile']['tmp_name'] ?? ''; // 一時ファイル名
 $filesize = $_FILES['imgfile']['size'] ?? '';
 if($filesize > $max_kb*1024){
@@ -84,6 +92,7 @@ if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 	$tool = 'upload'; 
 	
 }
+//お絵かきアップロード
 $pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
 $picfile = filter_input(INPUT_POST, 'picfile');
 if($pictmp==2){
@@ -95,6 +104,7 @@ if($pictmp==2){
 	if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat")) {
 		error('投稿に失敗しました。');
 	}
+	//ユーザーデータから情報を取り出す
 	$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
 	$userdata = fread($fp, 1024);
 	fclose($fp);
@@ -107,7 +117,7 @@ if($pictmp==2){
 	rename($tempfile, $upfile);
 }
 
-if($upfile){
+if($upfile){//PNG→JPEG自動変換
 	if($filesize > 512 * 1024){//指定サイズを超えていたら
 		if ($im_jpg = png2jpg($upfile)) {
 
@@ -149,7 +159,7 @@ $alllog=end($alllog_arr);
 $line='';
 //書き込まれるログの書式
 if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$time\t$tool\tres\n";
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\tres\n";
 	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND);
 	chmod('./log/'.$resno.'.txt',0600);	
 	foreach($alllog_arr as $i =>$val){
@@ -165,7 +175,7 @@ if($resno){//レスの時はスレッド別ログに追記
 	list($no)=explode("\t",$alllog);
 	//最後の記事ナンバーに+1
 	$no=trim($no)+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$time\t$tool\toya\n";
+	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\toya\n";
 	file_put_contents('./log/'.$no.'.txt',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.txt',0600);
 }
@@ -221,7 +231,7 @@ switch($app){
 					return;
 }
 			
-			include __DIR__.'/template/'.$templete;
+	include __DIR__.'/template/'.$templete;
 
 }
 // お絵かきコメント 
@@ -267,20 +277,32 @@ function paintcom(){
 			$out['tmp'][] = $tmp_img;
 		}
 	}
-	$templete='paint_com.html';
 	// HTML出力
+	$templete='paint_com.html';
 	include __DIR__.'/template/'.$templete;
 }
 
 //記事削除
 function del(){
+	if(!isset($_SESSION)){
+		session_start();
+	}
+	header('Expires:');
+	header('Cache-Control:');
+	header('Pragma:');
+
+	$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+	if(!$adminmode){
+		return error('失敗しました。');
+	}
 	$id=filter_input(INPUT_POST,'delid');
 	$no=filter_input(INPUT_POST,'delno');
 	$alllog_arr=file('./log/alllog.txt');
 	if(is_file("./log/$no.txt")){
 		$line=file("./log/$no.txt");
 		foreach($line as $i =>$val){
-			list(,,,,$imgfile,,,$time,$oya)=explode("\t",$val);
+
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$tool,$time,$host,$oya)=explode("\t",$val);
 			if($id==$time){
 				if(trim($oya)=='oya'){//スレッド削除
 
@@ -321,12 +343,12 @@ $alllog_arr=array_slice($alllog_arr,$page,$pagedef,false);
 //oyaのループ
 foreach($alllog_arr as $oya => $alllog){
 	
-		list($no)=explode("\t",$alllog);
-		if(is_file("./log/$no.txt")){
+	list($no)=explode("\t",$alllog);
+	if(is_file("./log/$no.txt")){
 
 		$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
-		list($no,$sub,$name,$com,$imgfile,$w,$h,$time,$tool)=$line;
+		list($no,$sub,$name,$com,$imgfile,$w,$h,$tool,$time,$host)=$line;
 		$res=[];
 		switch($tool){
 			case 'neo':
@@ -349,8 +371,9 @@ foreach($alllog_arr as $oya => $alllog){
 			'img' => $imgfile,
 			'w' => $w,
 			'h' => $h,
-			'time' => $time,
 			'tool' => $tool,
+			'time' => $time,
+			'host' => $host,
 		];
 
 		$res['com']=str_replace('"\n"',"\n",$res['com']);

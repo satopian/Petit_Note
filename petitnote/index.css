@@ -106,6 +106,9 @@ select.post_select_image {
 .post_table_title {
     margin: 0px 0 12px;
 }
+.res_wrap {
+    display: table;
+}
 /* メディアクエリ */
 @media screen and (max-width:767px){.posted_image{float:none;margin-right:0};}
 @media screen and (max-width:767px){textarea.post_com {max-width: 276px;}

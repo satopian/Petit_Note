@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="index.css">
+	<title>お絵かきコメント</title>
+</head>
+<body>
+	<div class="container">
+		<div>
+			<div class="error">
+				<?php if(!$tmp):?>
+				画像が見当たりません。<br>
+				<a href="./">もどる</a>
+			</div>
+			<?php endif;?>
+<?php if($tmp): ?>
+<?php if($tmp):?>
+			<?php foreach($out as $i=>$val):?>
+			<?php foreach($val as $tempimg):?>
+<div class="posted_img_form">
+	<img src="<?=$tempimg['src']?>""
+	alt="<?=$tempimg['srcname']?>"></div>
+<?=$tempimg['srcname']?><br>
+<?=$tempimg['date']?>
+
+				<?php endforeach;?>
+				<?php endforeach;?>
+	</div>
+
+<form action="./" method="POST" enctype="multipart/form-data" class="postform">
+題名:<input type="text" name="sub"><br>
+名前:<input type="text" name="name" value="<?=h($namec)?>"><br>
+<textarea name="com" class="post_com"></textarea>
+<input type="hidden" name="mode" value="regist">
+<input type="hidden" name="token" value="<?=h($token)?>">
+<input type="hidden" name="pictmp" value="<?=$pictmp?>">
+<div class="post_table_title">画像<select name="picfile" class="post_select_image">
+			<?php foreach($out as $i=>$val):?>
+			<?php foreach($val as $tempimg):?>
+				<option value="<?=$tempimg['srcname']?>"><?=$tempimg['srcname']?></option>
+				<?php endforeach;?>
+				<?php endforeach;?>
+			</select>
+			<br>
+		</div>
+	<input type="submit" value="スレッドを立てる">
+</form>
+	
+			<?php endif; ?>
+		<?php endif; ?>
+
+
+
+<script src="/jquery-3.5.1.min.js"></script>
+<script>
+//送信ボタンを押した際に送信ボタンを無効化する（連打による多数送信回避）
+$(function(){
+$('[type="submit"]').click(function(){
+$(this).prop('disabled',true);//ボタンを無効化する
+$(this).closest('form').submit();//フォームを送信する
+});
+});
+</script>
+
+</div>
+</body>
+</html>

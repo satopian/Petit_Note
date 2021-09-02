@@ -115,3 +115,68 @@ function deltemp(){
 	
 	closedir($handle);
 }
+// NGワードがあれば拒絶
+function Reject_if_NGword_exists_in_the_post(){
+	global $use_japanesefilter,$badstring,$badname,$badstr_A,$badstr_B;
+
+	$sub = t((string)filter_input(INPUT_POST,'sub'));
+	$name = t((string)filter_input(INPUT_POST,'name'));
+	$com = t((string)filter_input(INPUT_POST,'com'));
+
+	//チェックする項目から改行・スペース・タブを消す
+	$chk_com  = preg_replace("/\s/u", "", $com );
+	$chk_name = preg_replace("/\s/u", "", $name );
+	$chk_sub = preg_replace("/\s/u", "", $sub );
+
+	//本文に日本語がなければ拒絶
+	if ($use_japanesefilter) {
+		mb_regex_encoding("UTF-8");
+		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) error(MSG035);
+	}
+
+	//本文へのURLの書き込みを禁止
+		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) error(MSG036);
+
+	// 使えない文字チェック
+	if (is_ngword($badstring, [$chk_com, $chk_sub, $chk_name])) {
+		error('不適切な表現があります。');
+	}
+
+	// 使えない名前チェック
+	if (is_ngword($badname, $chk_name)) {
+		error('その名前は使えません。');
+	}
+
+	//指定文字列が2つあると拒絶
+	$bstr_A_find = is_ngword($badstr_A, [$chk_com, $chk_sub, $chk_name]);
+	$bstr_B_find = is_ngword($badstr_B, [$chk_com, $chk_sub, $chk_name]);
+	if($bstr_A_find && $bstr_B_find){
+		error('不適切な表現があります。');
+	}
+
+}
+/**
+ * NGワードチェック
+ * @param $ngwords
+ * @param string|array $strs
+ * @return bool
+ */
+function is_ngword ($ngwords, $strs) {
+	if (empty($ngwords)) {
+		return false;
+	}
+	if (!is_array($strs)) {
+		$strs = [$strs];
+	}
+	foreach ($strs as $str) {
+		foreach($ngwords as $ngword){//拒絶する文字列
+			if ($ngword !== '' && preg_match("/{$ngword}/ui", $str)){
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+
+
