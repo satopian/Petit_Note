@@ -189,5 +189,18 @@ function check_dir ($path) {
 	if (!is_writable($path)) return "{$path}を書けません。<br>";
 }
 
+// 一括書き込み（上書き）
+function writeFile ($fp, $data) {
+	ftruncate($fp,0);
+	set_file_buffer($fp, 0);
+	rewind($fp);
+	fwrite($fp, $data);
+}
+
+function closeFile ($fp) {
+	fflush($fp);
+	flock($fp, LOCK_UN);
+	fclose($fp);
+}
 
 

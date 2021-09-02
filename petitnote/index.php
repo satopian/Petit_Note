@@ -172,13 +172,17 @@ error('何か書いて下さい。');
 }
 
 //全体ログを開く
-$alllog_arr=file('./log/alllog.txt');
-$alllog=end($alllog_arr);
+$fp=fopen("./log/alllog.txt","r+");
+flock($fp, LOCK_EX);
+while ($_line = fgets($fp)) {
+	$alllog_arr[]=$_line;	
+}
+$end_alllog=end($alllog_arr);
 $line='';
 //書き込むログの書式
 if($resno){//レスの時はスレッド別ログに追記
 	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\tres\n";
-	if(is_file('./log/'.$resno.'.txt')){
+	if(!is_file('./log/'.$resno.'.txt')){
 		error('投稿に失敗しました。');
 	}
 	file_put_contents('./log/'.$resno.'.txt',$r_line,FILE_APPEND | LOCK_EX);
@@ -193,17 +197,14 @@ if($resno){//レスの時はスレッド別ログに追記
 	}
 	
 } else{
-	list($no)=explode("\t",$alllog);
-	if(!$no&&$alllog!==''){
+	list($no)=explode("\t",$end_alllog);
+	if(!$no&&$end_alllog!==''){
 		$no=0;
 	}
 	//最後の記事ナンバーに+1
 	$no=trim($no)+1;
 	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\toya\n";
-	if(is_file('./log/'.$no.'.txt')){
-		error('投稿に失敗しました。');
-	}
-	file_put_contents('./log/'.$no.'.txt',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
+	file_put_contents('./log/'.$no.'.txt',$line,FILE_APPEND | LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.txt',0600);
 }
 	$alllog_arr[]=$line;//全体ログの配列に追加
@@ -216,21 +217,25 @@ if($resno){//レスの時はスレッド別ログに追記
 		list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
 		if(is_file("./log/$_no.txt")){
 	
-			$fp = fopen("./log/$_no.txt", "r");//個別スレッドのログを開く
+			$dp = fopen("./log/$_no.txt", "r");//個別スレッドのログを開く
+			flock($dp, LOCK_EX);
+
 			while ($line = fgetcsv($fp, 0, "\t")) {
 			list(,,,,$imgfile,)=$line;
 			safe_unlink('src/'.$imgfile);//画像削除
 		}
-		fclose($fp);
+		closeFile($dp);
 		}	
 		safe_unlink('./log/'.$_no.'.txt');//スレッド個別ログファイル削除
 		unset($alllog_arr[$i]);//全体ログ記事削除
 	}
-
-file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);//全体ログに書き込む
-chmod('./log/alllog.txt',0600);
-//多重送信防止
-header('Location: ./');
+	$alllog=implode("",$alllog_arr);
+	writeFile ($fp, $alllog);
+	closeFile($fp);
+	
+	chmod('./log/alllog.txt',0600);
+	//多重送信防止
+	header('Location: ./');
 
 }
 //お絵かき画面
@@ -320,9 +325,22 @@ function del(){
 	$no=filter_input(INPUT_POST,'delno');
 	$page=filter_input(INPUT_POST,'postpage');
 
-	$alllog_arr=file('./log/alllog.txt');
+	// $alllog_arr=file('./log/alllog.txt');
+	$fp=fopen("./log/alllog.txt","r+");
+	flock($fp, LOCK_EX);
+	while ($_line = fgets($fp)) {
+		$alllog_arr[]=$_line;	
+	}
+
 	if(is_file("./log/$no.txt")){
-		$line=file("./log/$no.txt");
+
+		$rp=fopen("./log/$no.txt","r+");
+		flock($rp, LOCK_EX);
+		while ($r_line = fgets($rp)) {
+			$line[]=$r_line;	
+		}
+	
+		// $line=file("./log/$no.txt");
 		foreach($line as $i =>$val){
 
 			list($no,$sub,$name,$com,$imgfile,$w,$h,$tool,$time,$host,$oya)=explode("\t",$val);
@@ -330,8 +348,8 @@ function del(){
 				if(trim($oya)=='oya'){//スレッド削除
 
 				//スレッドの画像を削除	
-					$fp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
-					while ($line = fgetcsv($fp, 0, "\t")) {
+					$rp = fopen("./log/$no.txt", "r");//個別スレッドのログを開く
+					while ($line = fgetcsv($rp, 0, "\t")) {
 					list(,,,,$imgfile,)=$line;
 					safe_unlink('src/'.$imgfile);//画像削除
 					}
@@ -346,13 +364,16 @@ function del(){
 				}else{
 					unset($line[$i]);
 					safe_unlink('src/'.$imgfile);//画像削除
-					file_put_contents('./log/'.$no.'.txt',$line,LOCK_EX);
+					writeFile ($rp, $line);
+					closeFile ($rp);
 				}
 			}
-		file_put_contents('./log/alllog.txt',$alllog_arr,LOCK_EX);
+			$alllog=implode("",$alllog_arr);
+			writeFile($fp,$alllog);
+			closeFile ($fp);
+
 		//多重送信防止
 		header('Location: ./?page='.$page);
-
 
 		}
 	}
