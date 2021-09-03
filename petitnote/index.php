@@ -126,9 +126,28 @@ if($pictmp==2){
 	safe_unlink(TEMP_DIR.$picfile.".dat");
 }
 
-if($upfile){//PNG→JPEG自動変換
+
+if(!$sub){
+	$sub='無題';
+}
+$sub=str_replace(["\r\n","\r","\n",],'',$sub);
+$name=str_replace(["\r\n","\r","\n",],'"\n"',$name);
+$com=str_replace(["\r\n","\r","\n",],'"\n"',$com);
+$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
+
+setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
+
+if(!$name){
+	$name='anonymous';
+}
+
+if(!$upfile&&!$com){
+error('何か書いて下さい。');
+}
+
+if($upfile){
 	if($filesize > 512 * 1024){//指定サイズを超えていたら
-		if ($im_jpg = png2jpg($upfile)) {
+		if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 
 			if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
 				rename($im_jpg,$upfile);//JPEGで保存
@@ -145,38 +164,41 @@ if($upfile){//PNG→JPEG自動変換
 	rename($upfile,'./src/'.$imgfile);
 }
 
-if(!$sub){
-	$sub='無題';
-}
-$sub=str_replace(["\r\n","\r","\n",],'',$sub);
-$name=str_replace(["\r\n","\r","\n",],'"\n"',$name);
-$com=str_replace(["\r\n","\r","\n",],'"\n"',$com);
-$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
+	//全体ログを開く
+	$fp=fopen("./log/alllog.log","r+");
+	flock($fp, LOCK_EX);
+	$alllog_arr=[];
+	while ($_line = fgets($fp)) {
+		$alllog_arr[]=$_line;	
+	}
+	$img_md5=md5_file('src/'.$imgfile);
 
-setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
-
-if(!$name){
-	$name='anonymous';
-}
-
-if(!$imgfile&&!$com){
-error('何か書いて下さい。');
-}
-
-//全体ログを開く
-$fp=fopen("./log/alllog.log","r+");
-flock($fp, LOCK_EX);
-$alllog_arr=[];
-while ($_line = fgets($fp)) {
-	$alllog_arr[]=$_line;	
-}
+	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
+	if($pictmp!==2){
+		$chk_log_arr=array_reverse($alllog_arr,false);
+		foreach($chk_log_arr as $i => $_alllog){
+			list($chk_resno)=explode("\t",$_alllog);
+			if($i<20){
+				$cp=fopen("./log/{$chk_resno}.log","r+");
+				while($line=fgetcsv($cp,0,"\t")){
+					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$time_,$host_,$oya_)=$line;
+					if($log_md5 === $img_md5){
+						unlink('src/'.$imgfile);
+						error('同じ画像がありました。');
+					};
+					
+				}
+			}
+		}
+	}
 $no_arr = [];
 $max_no=0;
-foreach($alllog_arr as $_alllog){
+$md5=[];
+foreach($alllog_arr as $i => $_alllog){
 	list($log_no,)=explode("\t",$_alllog);
 	$no_arr[]=$log_no;
 }
-//最大スレッドNO
+
 if($no_arr){
 	$max_no=max($no_arr);
 }else{
@@ -185,7 +207,7 @@ if($no_arr){
 //書き込むログの書式
 $line='';
 if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\tres\n";
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$time\t$host\tres\n";
 	if(!is_file('./log/'.$resno.'.log')){
 		error('投稿に失敗しました。');
 	}
@@ -203,7 +225,7 @@ if($resno){//レスの時はスレッド別ログに追記
 } else{
 	//最後の記事ナンバーに+1
 	$no=$max_no+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$tool\t$time\t$host\toya\n";
+	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$time\t$host\toya\n";
 	file_put_contents('./log/'.$no.'.log',$line,FILE_APPEND | LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.log',0600);
 }
@@ -212,6 +234,7 @@ if($resno){//レスの時はスレッド別ログに追記
 	if(!$max_log){
 		error('最大スレッド数が設定されていません。');
 	}
+
 	$countlog=count($alllog_arr);
 	for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
 		list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
@@ -249,50 +272,49 @@ setcookie("picwc", $picw , time()+(60*60*24*30));//幅
 setcookie("pichc", $pich , time()+(60*60*24*30));//高さ
 
 switch($app){
-				case 'chi':
+	case 'chi'://ChickenPaint
 
-					$templete='paint_chi.html';
-					$tool='chi';
-					break;
+		$tool='chi';
+		// HTML出力
+		$templete='paint_chi.html';
+		return include __DIR__.'/template/'.$templete;
 
-				case 'neo':
+	case 'neo'://PaintBBS NEO
 
-				$templete='paint_neo.html';
-				$tool='neo';
-				$appw = $picw + 150;//PaintBBSの時の幅
-				$apph = $pich + 172;//PaintBBSの時の高さ
-				if($apph < 560){$apph = 560;}//共通の最低高
-				//動的パレット
-				$lines = file('palette.txt');//初期パレット
-				$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
-				$pal=[];
-				$DynP=[];
-				foreach ( $lines as $i => $line ) {
-					$line=str_replace(["\r","\n","\t"],"",$line);
-					$line=h($line);
-					list($pid,$pname,$pal[0],$pal[2],$pal[4],$pal[6],$pal[8],$pal[10],$pal[1],$pal[3],$pal[5],$pal[7],$pal[9],$pal[11],$pal[12],$pal[13]) = explode(",", $line);
-					$DynP[]=$pname;
-					$p_cnt=$i+1;
-					$palettes = 'Palettes['.$p_cnt.'] = "#';
-					ksort($pal);
-					$palettes.=implode('\n#',$pal);
-					$palettes.='";';//190622
-					$arr_pal[$i] = $palettes;
-				}
-				$palettes=$initial_palette.implode('',$arr_pal);
-				$palsize = count($DynP) + 1;
-				foreach ($DynP as $p){
-					$arr_dynp[] = $p;
-				}
+		$tool='neo';
+		$appw = $picw + 150;//PaintBBSの時の幅
+		$apph = $pich + 172;//PaintBBSの時の高さ
+		if($apph < 560){$apph = 560;}//共通の最低高
+		//動的パレット
+		$lines = file('palette.txt');//初期パレット
+		$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
+		$pal=[];
+		$DynP=[];
+		foreach ( $lines as $i => $line ) {
+			$line=str_replace(["\r","\n","\t"],"",$line);
+			$line=h($line);
+			list($pid,$pname,$pal[0],$pal[2],$pal[4],$pal[6],$pal[8],$pal[10],$pal[1],$pal[3],$pal[5],$pal[7],$pal[9],$pal[11],$pal[12],$pal[13]) = explode(",", $line);
+			$DynP[]=$pname;
+			$p_cnt=$i+1;
+			$palettes = 'Palettes['.$p_cnt.'] = "#';
+			ksort($pal);
+			$palettes.=implode('\n#',$pal);
+			$palettes.='";';
+			$arr_pal[$i] = $palettes;
+		}
+		$palettes=$initial_palette.implode('',$arr_pal);
+		$palsize = count($DynP) + 1;
+		foreach ($DynP as $p){
+			$arr_dynp[] = $p;
+		}
+		// HTML出力
+		$templete='paint_neo.html';
+		return include __DIR__.'/template/'.$templete;
 
-				break;
-		
-			
-			default:
-					return;
+	default:
+		return;
 }
 			
-	include __DIR__.'/template/'.$templete;
 
 }
 // お絵かきコメント 
@@ -354,7 +376,6 @@ function del(){
 	$no=filter_input(INPUT_POST,'delno');
 	$page=filter_input(INPUT_POST,'postpage');
 
-	// $alllog_arr=file('./log/alllog.log');
 	$fp=fopen("./log/alllog.log","r+");
 	flock($fp, LOCK_EX);
 	while ($_line = fgets($fp)) {
@@ -371,7 +392,7 @@ function del(){
 	
 		foreach($line as $i =>$val){
 
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$tool,$time,$host,$oya)=explode("\t",$val);
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host,$oya)=explode("\t",$val);
 			if($id==$time){
 				if(trim($oya)=='oya'){//スレッド削除
 
@@ -410,7 +431,7 @@ function del(){
 
 //表示
 function view($page=0){
-if(!isset($page)){
+if(!isset($page)||!$page){
 	$page=0;
 }
 global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$max_w,$max_h; 
@@ -422,7 +443,7 @@ $count_alllog=count($alllog_arr);
 krsort($alllog_arr);
 
 //ページ番号から1ページ分のスレッド分とりだす
-$alllog_arr=array_slice($alllog_arr,$page,$pagedef,false);
+$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
 //oyaのループ
 foreach($alllog_arr as $oya => $alllog){
 	
@@ -431,7 +452,7 @@ foreach($alllog_arr as $oya => $alllog){
 	if(is_file("./log/$no.log")){
 		$fp = fopen("./log/$no.log", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
-		list($no,$sub,$name,$com,$imgfile,$w,$h,$tool,$time,$host)=$line;
+		list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host)=$line;
 		$res=[];
 		switch($tool){
 			case 'neo':

@@ -11,17 +11,33 @@ function get_uip(){
 //管理者モード
 function admin(){
 	global $admin_pass;
-	if($admin_pass==filter_input(INPUT_POST,'adminpass')){
-		session_sta();
-		$page=filter_input(INPUT_GET,'page');
-
-		view($page);
-		return $_SESSION['admin']='admin_mode';
-
+	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
+		return 	error('パスワードが違います。');
 	}
-	return false;
-	
+		session_sta();
+		$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+		$page = $page ?? 0;
+		$_SESSION['admin']='admin_mode';
+
+		return header('Location: ./?page='.$page);
 }
+	
+	
+
+// //管理者モード
+// function admin(){
+// 	global $admin_pass;
+// 	if($admin_pass==filter_input(INPUT_POST,'adminpass')){
+// 		session_sta();
+// 		$page=filter_input(INPUT_GET,'page');
+
+// 		view($page);
+// 		return $_SESSION['admin']='admin_mode';
+
+// 	}
+// 	return false;
+	
+// }
 
 //タブ除去
 function t($str){
