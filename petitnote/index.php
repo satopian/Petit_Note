@@ -249,18 +249,44 @@ setcookie("picwc", $picw , time()+(60*60*24*30));//幅
 setcookie("pichc", $pich , time()+(60*60*24*30));//高さ
 
 switch($app){
-		case 'neo':
+				case 'chi':
+
+					$templete='paint_chi.html';
+					$tool='chi';
+					break;
+
+				case 'neo':
+
 				$templete='paint_neo.html';
 				$tool='neo';
 				$appw = $picw + 150;//PaintBBSの時の幅
 				$apph = $pich + 172;//PaintBBSの時の高さ
 				if($apph < 560){$apph = 560;}//共通の最低高
+				//動的パレット
+				$lines = file('palette.txt');//初期パレット
+				$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
+				$pal=[];
+				$DynP=[];
+				foreach ( $lines as $i => $line ) {
+					$line=str_replace(["\r","\n","\t"],"",$line);
+					$line=h($line);
+					list($pid,$pname,$pal[0],$pal[2],$pal[4],$pal[6],$pal[8],$pal[10],$pal[1],$pal[3],$pal[5],$pal[7],$pal[9],$pal[11],$pal[12],$pal[13]) = explode(",", $line);
+					$DynP[]=$pname;
+					$p_cnt=$i+1;
+					$palettes = 'Palettes['.$p_cnt.'] = "#';
+					ksort($pal);
+					$palettes.=implode('\n#',$pal);
+					$palettes.='";';//190622
+					$arr_pal[$i] = $palettes;
+				}
+				$palettes=$initial_palette.implode('',$arr_pal);
+				$palsize = count($DynP) + 1;
+				foreach ($DynP as $p){
+					$arr_dynp[] = $p;
+				}
+
 				break;
 		
-			case 'chi':
-				$templete='paint_chi.html';
-				$tool='chi';
-				break;
 			
 			default:
 					return;
