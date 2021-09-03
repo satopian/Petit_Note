@@ -64,12 +64,12 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <NOSCRIPT><H3>JavaScriptが有効でないため正常に動作致しません</H3></NOSCRIPT>
 <div class="appstage"><div class="app">
 <!-- NEOを使う時はアプレットを読み込まないように -->
-<applet-dummy CODE="pbbs.PaintBBS.class" ARCHIVE="./PaintBBS.jar" NAME="paintbbs" WIDTH="<?=$picw+150?>"
-	 HEIGHT="<?php if($pich<560):?><?='560'?><?php else:?><?=($pich+172)?><?php endif;?>" MAYSCRIPT>
+<applet-dummy CODE="pbbs.PaintBBS.class" ARCHIVE="./PaintBBS.jar" NAME="paintbbs" WIDTH="<?=h($appw)?>"
+	 HEIGHT="<?=h($apph)?>" MAYSCRIPT>
 <!-- ページ移動の警告 -->
 <param name="neo_confirm_unload" value="true">
-<param name="image_width" value="<?=$picw?>">
-<param name="image_height" value="<?=$pich?>">
+<param name="image_width" value="<?=h($picw)?>">
+<param name="image_height" value="<?=h($pich)?>">
 <param name="image_jpeg" value="false">
 <param name="image_size" value="600">
 <param name="compress_level" value="15">

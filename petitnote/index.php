@@ -122,6 +122,8 @@ if($pictmp==2){
 
 	$upfile='src/'.$time.'.tmp';
 	rename($tempfile, $upfile);
+	// ワークファイル削除
+	safe_unlink(TEMP_DIR.$picfile.".dat");
 }
 
 if($upfile){//PNG→JPEG自動変換
@@ -250,6 +252,9 @@ switch($app){
 		case 'neo':
 				$templete='paint_neo.html';
 				$tool='neo';
+				$appw = $picw + 150;//PaintBBSの時の幅
+				$apph = $pich + 172;//PaintBBSの時の高さ
+				if($apph < 560){$apph = 560;}//共通の最低高
 				break;
 		
 			case 'chi':
