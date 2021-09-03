@@ -12,6 +12,10 @@ function get_uip(){
 function admin(){
 	global $admin_pass;
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
+		session_sta();
+		if(isset($_SESSION['admin'])){
+			unset($_SESSION['admin']);
+		} 
 		return 	error('パスワードが違います。');
 	}
 		session_sta();
@@ -24,20 +28,38 @@ function admin(){
 	
 	
 
-// //管理者モード
-// function admin(){
-// 	global $admin_pass;
-// 	if($admin_pass==filter_input(INPUT_POST,'adminpass')){
-// 		session_sta();
-// 		$page=filter_input(INPUT_GET,'page');
-
-// 		view($page);
-// 		return $_SESSION['admin']='admin_mode';
-
-// 	}
-// 	return false;
+//合言葉認証
+function aikotoba(){
+	filter_input(INPUT_GET,'mode');
+	;
+	global $aikotoba;
+	if($aikotoba!==filter_input(INPUT_POST,'aikotoba')){
+		session_sta();
+		if(isset($_SESSION['aikotoba'])){
+			unset($_SESSION['aikotoba']);
+		} 
+		return 	error('合言葉が違います。');
+	}
+		session_sta();
+		$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+		$page = $page ?? 0;
+		$_SESSION['aikotoba']='aikotoba';
+		if(filter_input(INPUT_POST,'paintcom')){
+			return header('Location: ./?mode=paintcom');
+		}
+		return header('Location: ./?page='.$page);
 	
-// }
+}
+//合言葉を再確認	
+function check_aikotoba(){
+	session_sta();
+	$session_aikotoba = $_SESSION['aikotoba'] ?? '';
+	if(!$session_aikotoba||$session_aikotoba!=='aikotoba'){
+		return error('合言葉が違います');
+	}
+	return true;
+}
+
 
 //タブ除去
 function t($str){
@@ -150,7 +172,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	}
 
 	//本文へのURLの書き込みを禁止
-		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) error(MSG036);
+		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) error('URLの記入はできません。');
 
 	// 使えない文字チェック
 	if (is_ngword($badstring, [$chk_com, $chk_sub, $chk_name])) {

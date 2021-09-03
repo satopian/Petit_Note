@@ -1,7 +1,6 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-
 require_once(__DIR__.'/config.php');	
 require_once(__DIR__.'/function.php');
 
@@ -34,6 +33,8 @@ switch($mode){
 		return del();
 	case 'admin':
 		return admin();
+	case 'aikotoba':
+		return aikotoba();
 	case 'logout':
 		session_sta();
 		unset($_SESSION['admin']);
@@ -44,10 +45,13 @@ switch($mode){
 
 //投稿処理
 function post(){	
-global $max_log,$max_res,$max_kb;
-//POSTされた内容を取得
+global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload;
+if($use_aikotoba){
+	check_aikotoba();
+}
 check_csrf_token();
 
+//POSTされた内容を取得
 $usercode = filter_input(INPUT_COOKIE, 'usercode');
 $userip = get_uip();
 //ホスト取得
@@ -88,7 +92,8 @@ $time = time();
 $time = $time.substr(microtime(),2,3);	//投稿時刻
 //ファイルアップロード処理
 $upfile='';
-if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
+if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK &&
+$use_upload){
 	$img_type = $_FILES['imgfile']['type'] ?? '';
 
 	if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
@@ -319,6 +324,7 @@ switch($app){
 }
 // お絵かきコメント 
 function paintcom(){
+	global $use_aikotoba;
 	$token=get_csrf_token();
 	$userip = get_uip();
 	$namec = filter_input(INPUT_COOKIE,'namec');
@@ -360,6 +366,11 @@ function paintcom(){
 			$out['tmp'][] = $tmp_img;
 		}
 	}
+	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	if(!$use_aikotoba){
+		$aikotoba=true;
+	}
+
 	// HTML出力
 	$templete='paint_com.html';
 	include __DIR__.'/template/'.$templete;
@@ -428,15 +439,15 @@ function del(){
 	}
 }
 
-
 //表示
 function view($page=0){
+global $use_aikotoba,$use_upload,$home;
+
 if(!isset($page)||!$page){
 	$page=0;
 }
 global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$max_w,$max_h; 
  ;
-
 
 $alllog_arr=file('./log/alllog.log');//全体ログを読み込む
 $count_alllog=count($alllog_arr);
@@ -493,6 +504,10 @@ foreach($alllog_arr as $oya => $alllog){
 //管理者判定処理
 session_sta();
 $adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+if(!$use_aikotoba){
+	$aikotoba=true;
+}
 
 
 //Cookie

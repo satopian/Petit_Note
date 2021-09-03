@@ -16,7 +16,6 @@
 				<a href="./">もどる</a>
 			</div>
 			<?php endif;?>
-<?php if($tmp): ?>
 <?php if($tmp):?>
 			<?php foreach($out as $i=>$val):?>
 			<?php foreach($val as $tempimg):?>
@@ -29,7 +28,7 @@
 				<?php endforeach;?>
 				<?php endforeach;?>
 	</div>
-
+<?php if($aikotoba):?>
 <form action="./" method="POST" enctype="multipart/form-data" class="postform">
 題名:<input type="text" name="sub"><br>
 名前:<input type="text" name="name" value="<?=h($namec)?>"><br>
@@ -48,9 +47,17 @@
 		</div>
 	<input type="submit" value="スレッドを立てる">
 </form>
-	
+<?php else:?>
+この掲示板の合言葉はなんですか?: 
+<form action="./" method="post" class="aikotoba">
+	<input type="txt" name="aikotoba">
+	<input type="hidden" name="mode" value="aikotoba">
+	<input type="hidden" name="paintcom" value="true">
+	<input type="submit" value="秘密の答え">
+	</form>
+<?php endif;?>
+
 			<?php endif; ?>
-		<?php endif; ?>
 
 
 
@@ -64,7 +71,9 @@ $(this).closest('form').submit();//フォームを送信する
 });
 });
 </script>
+<br>
 
+[<a href="./">掲示板に戻る</a>]
 </div>
 </body>
 </html>

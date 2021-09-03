@@ -24,7 +24,6 @@ margin: 10px 0;
 
 form.resform {
 	text-align: right;
-	clear: both;
 }
 a {
 color: #555;
@@ -50,7 +49,9 @@ height: auto;
     display: table;
     min-width: 200px;
 }
-
+.clear {
+	clear: both;
+}
 hr {
 border: none;
 border-bottom: 1px dashed #888;
@@ -66,8 +67,12 @@ body {
 }
 h1 {
 font-size: 26px;
+margin:0 0 5px 0;
 }
 h2 {font-size: 18px;background-color: #ffe6e6;border-left: 8px solid #ffcfcf;border-bottom: 1px dashed #888;padding: 2px 6px 2px;margin: 8px 0;}
+nav.memu_wrap {
+    margin: 0px 0 12px;
+}
 textarea.post_com {
 width: 300px;
 height: 120px;
@@ -99,6 +104,11 @@ border-bottom: 1px dashed #888;
 form.admin {
 	text-align: right;
 	margin: 5px 0 0 0;
+}
+form.aikotoba {
+	text-align: right;
+	margin: 5px 0 0 0;
+	display: inline-block;
 }
 select.post_select_image {
     margin: 0px 6px 0;
