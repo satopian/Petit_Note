@@ -7,6 +7,7 @@ require_once(__DIR__.'/function.php');
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page');
+$postpage=filter_input(INPUT_POST,'postpage');
 
 $usercode = filter_input(INPUT_COOKIE, 'usercode');//nullならuser-codeを発行
 $userip = get_uip();
@@ -33,8 +34,8 @@ switch($mode){
 		return del();
 	case 'userdel':
 		return userdel_mode();
-	case 'userdel_form':
-		return userdel_form();
+	// case 'userdel_form':
+	// 	return userdel_form();
 	case 'admin':
 		return admin();
 	case 'aikotoba':
@@ -43,6 +44,7 @@ switch($mode){
 		session_sta();
 		unset($_SESSION['admin']);
 		unset($_SESSION['userdel']);
+		$page = $postpage ?? $page; 
 		return header('Location: ./?page='.$page);
 	default:
 		return view($page);
@@ -189,14 +191,15 @@ if($upfile){
 		foreach($chk_log_arr as $i => $_alllog){
 			list($chk_resno)=explode("\t",$_alllog);
 			if($i<20){
+				if(is_file("./log/{$chk_resno}.log")){
 				$cp=fopen("./log/{$chk_resno}.log","r+");
-				while($line=fgetcsv($cp,0,"\t")){
-					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$time_,$host_,$oya_)=$line;
-					if($log_md5 === $img_md5){
+					while($line=fgetcsv($cp,0,"\t")){
+						list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$time_,$host_,$oya_)=$line;
+						if($log_md5 === $img_md5){
 						unlink('src/'.$imgfile);
 						error('同じ画像がありました。');
-					};
-					
+						};
+					}
 				}
 			}
 		}
@@ -247,6 +250,9 @@ if($resno){//レスの時はスレッド別ログに追記
 
 	$countlog=count($alllog_arr);
 	for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
+		if($alllog_arr[$i]===''){
+			continue;
+		}
 		list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
 		if(is_file("./log/$_no.log")){
 	
@@ -387,10 +393,15 @@ function del(){
 	$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 	$userdel_mode=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	if(!($adminmode||($userdel_mode&&$pwd))){
-		return error('失敗しました。ne');
+		return error('失敗しました。');
 	}
-	$id=filter_input(INPUT_POST,'delid');
-	$no=filter_input(INPUT_POST,'delno');
+	$id_and_no=filter_input(INPUT_POST,'id_and_no');
+	$id=$no='';
+	if($id_and_no){
+		list($id,$no)=explode(",",filter_input(INPUT_POST,'id_and_no'));
+		$no=trim($no);
+	}
+	
 	$page=filter_input(INPUT_POST,'postpage');
 	
 	$fp=fopen("./log/alllog.log","r+");
@@ -400,7 +411,7 @@ function del(){
 	}
 
 	if(is_file("./log/$no.log")){
-
+		
 		$rp=fopen("./log/$no.log","r+");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
@@ -415,10 +426,9 @@ function del(){
 				if(!$adminmode){
 					// if(!password_verify($pwd,$hash)){
 					if(!($pwd=='hoge')){
-						var_dump($pwd);
 						return error('失敗しました。');}
 				}
-				if(trim($oya)=='oya'){//スレッド削除
+			if(trim($oya)=='oya'){//スレッド削除
 
 				//スレッドの画像を削除	
 					$rp = fopen("./log/$no.log", "r");//個別スレッドのログを開く
@@ -434,10 +444,12 @@ function del(){
 							unset($alllog_arr[$i]);
 						}
 					}
+
 				}else{
 					unset($line[$i]);
 					safe_unlink('src/'.$imgfile);//画像削除
 					$line=implode("",$line);
+			
 					writeFile ($rp, $line);
 					closeFile ($rp);
 				}
@@ -455,7 +467,7 @@ function del(){
 
 //表示
 function view($page=0){
-global $use_aikotoba,$use_upload,$home;
+global $use_aikotoba,$use_upload,$home,$pagedef;
 
 if(!isset($page)||!$page){
 	$page=0;

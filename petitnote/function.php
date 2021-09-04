@@ -41,7 +41,7 @@ function admin(){
 		} 
 		return 	error('パスワードが違います。');
 	}
-	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$page = $page ?? 0;
 	$_SESSION['admin']='admin_mode';
 	$_SESSION['aikotoba']='aikotoba';
@@ -56,20 +56,6 @@ function userdel_mode(){
 	$_SESSION['userdel']='userdel_mode';
 
 	return header('Location: ./?page='.$page);
-}
-//ユーザー削除フォーム
-function userdel_form(){
-	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$delid=filter_input(INPUT_POST,'delid',FILTER_VALIDATE_INT);
-	$delno=filter_input(INPUT_POST,'delno',FILTER_VALIDATE_INT);
-	$page=filter_input(INPUT_POST,'pwd',FILTER_VALIDATE_INT);
-	$page = $page ?? 0;
-	session_sta();
-	$_SESSION['userdel']='userdel_mode';
-
-	// HTML出力
-	$templete='user_del.html';
-	return include __DIR__.'/template/'.$templete;
 }
 
 //ユーザーip

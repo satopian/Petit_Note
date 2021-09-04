@@ -13,7 +13,7 @@
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
 [<a href="<?=h($home)?>">HOME</a>] [<a href="./?mode=paintcom">アップロード途中の画像</a>]
-<?php if($userdel):?>
+<?php if($userdel || $adminmode):?>
 [<a href="./?mode=logout&page=<?=$page?>">削除モード終了</a>]
 <?php else:?>
  [<a href="./?mode=userdel&page=<?=$page?>">削除</a>]
@@ -21,7 +21,7 @@
  <br>
 </nav>
 <?php endif;?>
-<?php if($aikotoba):?>
+<?php if($aikotoba && !$userdel):?>
 	<form action="./" method="post">
 <input type="hidden" name="mode" value="paint">
 <input type="submit" value="PAINT" class="paint_button">
@@ -84,15 +84,24 @@ selected
 <?php endif;?>
 <input type="submit" value="スレッドを立てる">
 </form>
-<?php else:?>
+<?php endif;?>
+<?php if(!$aikotoba):?>
 この掲示板の合言葉はなんですか?: 
 <form action="./" method="post" class="aikotoba">
 	<input type="txt" name="aikotoba">
 	<input type="hidden" name="mode" value="aikotoba">
 	<input type="submit" value="秘密の答え">
-	</form>
+</form>
 <?php endif;?>
 
+<?php if(!$adminmode && $aikotoba && $userdel):?>
+削除したい記事をチェックしてパスワードを入力してください。:<form action="./" method="POST" id="delete" class="aikotoba">
+<input type="password" name="pwd">
+<input type="hidden" name="mode" value="del">
+<input type="hidden" name="postpage" value="<?=$page?>">
+<input type="submit" value="削除">
+</form>
+<?php endif;?>
 
 <hr>
 	<!-- 親のループ -->
@@ -108,6 +117,9 @@ selected
 	<div class="res_wrap">	
 	<?php endif;?>
 
+	<?php if(!$adminmode && $userdel):?>
+	<input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+	<?php endif;?>
 			[<?= h($ress[0]['no'])?>-<?= h($i)?>] 
 		<?php if($res['name']):?>
 			名前:<?= h($res['name'])?>
@@ -120,23 +132,15 @@ selected
 		HOST:<?=h($res['host'])?>
 		<br>
 		<?php endif;?> 
-<?php if($adminmode||$userdel):?>
-
-	<form action="./" method="post">
-	<input type="hidden" name="delid" value="<?=h($res['time'])?>">    
-	<input type="hidden" name="delno" value="<?=h($res['no'])?>">   
-
 	<?php if($adminmode):?>
+	<form action="./" method="post">
+	<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">    
 	<input type="hidden" name="mode" value="del">
-	<?php else:?>   
-	<?php if($userdel):?>
-	<input type="hidden" name="mode" value="userdel_form">
-	<?php endif;?>   
-	<?php endif;?>   
 	<input type="hidden" name="postpage" value="<?=$page?>">
 	<input type="submit" value="削除する"> 
 	</form>
-	<?php endif;?> 
+	<?php endif;?>
+
 		<br>
 		<?php if($res['img']):?>
 			<div class="posted_image"><img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy"></div>
@@ -156,7 +160,7 @@ selected
 <?php endforeach;?>
 <!-- 返信フォーム -->
 <div class="clear"></div>
-<?php if($aikotoba):?>
+<?php if($aikotoba && !$userdel):?>
 <?php if($resform):?>
 <form action="./" method="POST" enctype="multipart/form-data" class="resform">
 名前:<input type="text" name="name"  value="<?=h($namec)?>"><br>
@@ -177,26 +181,28 @@ selected
 <hr>
 <?php endforeach;?>
 <?php endif;?>
-<?php for($i = 0; $i < $count_alllog ; $i+=10) :?>
+<?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
 	<?php if($page==$i):?>
-		 [<?=h($i/10)?>]
+		 [<?=h($i/$pagedef)?>]
 	<?php else: ?>
 	<?php if($i==0):?>
 		[<a href="?page=0">0</a>]
 	<?php else:?>	
-	  [<a href="?page=<?=h($i)?>"><?=h($i/10)?></a>]
+	  [<a href="?page=<?=h($i)?>"><?=h($i/$pagedef)?></a>]
 	<?php endif;?>
 	<?php endif;?>
 	<?php endfor ;?>
 <?php if($adminmode):?>
 	<form action="./" method="post" class="admin">
 <input type="hidden" name="mode" value="logout">
+<input type="hidden" name="postpage" value="<?=$page?>">
 <input type="submit" value="ログアウト">
 	</form>
 <?php else: ?>
 	<form action="./" method="post" class="admin">
 <input type="password" name="adminpass">
 <input type="hidden" name="mode" value="admin">
+<input type="hidden" name="postpage" value="<?=$page?>">
 <input type="submit" value="管理者モード">
 </form>
 <?php endif; ?>
