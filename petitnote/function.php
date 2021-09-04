@@ -1,53 +1,24 @@
 <?php
-//ユーザーip
-function get_uip(){
-	if ($ip = getenv("HTTP_CLIENT_IP")) {
-		return $ip;
-	} elseif ($ip = getenv("HTTP_X_FORWARDED_FOR")) {
-		return $ip;
-	}
-	return getenv("REMOTE_ADDR");
-}
-//管理者モード
-function admin(){
-	global $admin_pass;
-	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
-		session_sta();
-		if(isset($_SESSION['admin'])){
-			unset($_SESSION['admin']);
-		} 
-		return 	error('パスワードが違います。');
-	}
-		session_sta();
-		$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-		$page = $page ?? 0;
-		$_SESSION['admin']='admin_mode';
-
-		return header('Location: ./?page='.$page);
-}
-	
-	
-
 //合言葉認証
 function aikotoba(){
 	filter_input(INPUT_GET,'mode');
 	;
 	global $aikotoba;
+
+	session_sta();
 	if($aikotoba!==filter_input(INPUT_POST,'aikotoba')){
-		session_sta();
 		if(isset($_SESSION['aikotoba'])){
 			unset($_SESSION['aikotoba']);
 		} 
 		return 	error('合言葉が違います。');
 	}
-		session_sta();
-		$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-		$page = $page ?? 0;
-		$_SESSION['aikotoba']='aikotoba';
-		if(filter_input(INPUT_POST,'paintcom')){
-			return header('Location: ./?mode=paintcom');
-		}
-		return header('Location: ./?page='.$page);
+	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$page = $page ?? 0;
+	$_SESSION['aikotoba']='aikotoba';
+	if(filter_input(INPUT_POST,'paintcom')){
+		return header('Location: ./?mode=paintcom');
+	}
+	return header('Location: ./?page='.$page);
 	
 }
 //合言葉を再確認	
@@ -60,6 +31,56 @@ function check_aikotoba(){
 	return true;
 }
 
+//管理者モード
+function admin(){
+	global $admin_pass;
+	session_sta();
+	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
+		if(isset($_SESSION['admin'])){
+			unset($_SESSION['admin']);
+		} 
+		return 	error('パスワードが違います。');
+	}
+	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$page = $page ?? 0;
+	$_SESSION['admin']='admin_mode';
+	$_SESSION['aikotoba']='aikotoba';
+
+	return header('Location: ./?page='.$page);
+}
+//ユーザー削除モード
+function userdel_mode(){
+	session_sta();
+	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$page = $page ?? 0;
+	$_SESSION['userdel']='userdel_mode';
+
+	return header('Location: ./?page='.$page);
+}
+//ユーザー削除フォーム
+function userdel_form(){
+	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$delid=filter_input(INPUT_POST,'delid',FILTER_VALIDATE_INT);
+	$delno=filter_input(INPUT_POST,'delno',FILTER_VALIDATE_INT);
+	$page=filter_input(INPUT_POST,'pwd',FILTER_VALIDATE_INT);
+	$page = $page ?? 0;
+	session_sta();
+	$_SESSION['userdel']='userdel_mode';
+
+	// HTML出力
+	$templete='user_del.html';
+	return include __DIR__.'/template/'.$templete;
+}
+
+//ユーザーip
+function get_uip(){
+	if ($ip = getenv("HTTP_CLIENT_IP")) {
+		return $ip;
+	} elseif ($ip = getenv("HTTP_X_FORWARDED_FOR")) {
+		return $ip;
+	}
+	return getenv("REMOTE_ADDR");
+}
 
 //タブ除去
 function t($str){
@@ -106,8 +127,7 @@ function png2jpg ($src) {
 
 function error($str){
 	$templete='error.html';
-	include __DIR__.'/template/'.$templete;
-
+	return include __DIR__.'/template/'.$templete;
 }
 //csrfトークンを作成
 function get_csrf_token(){
@@ -129,13 +149,15 @@ function check_csrf_token(){
 //session開始
 function session_sta(){
 	if(!isset($_SESSION)){
+		session_set_cookie_params(
+			0,null,null,null,true
+		);
 		session_start();
 		header('Expires:');
 		header('Cache-Control:');
 		header('Pragma:');
 	}
 }
-
 
 // テンポラリ内のゴミ除去 
 function deltemp(){
@@ -265,5 +287,4 @@ function image_reduction_display($w,$h,$max_w,$max_h){
 	$reduced_size = [$w,$h];
 	return $reduced_size;
 }
-
 

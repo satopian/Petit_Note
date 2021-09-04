@@ -10,9 +10,17 @@
 <body>
 <div class="container">
 	<h1><?=$boardname?></h1>
+	<?php if($aikotoba):?>
 <nav class="memu_wrap">
 [<a href="<?=h($home)?>">HOME</a>] [<a href="./?mode=paintcom">アップロード途中の画像</a>]
+<?php if($userdel):?>
+[<a href="./?mode=logout&page=<?=$page?>">削除モード終了</a>]
+<?php else:?>
+ [<a href="./?mode=userdel&page=<?=$page?>">削除</a>]
+ <?php endif;?>
+ <br>
 </nav>
+<?php endif;?>
 <?php if($aikotoba):?>
 	<form action="./" method="post">
 <input type="hidden" name="mode" value="paint">
@@ -84,6 +92,8 @@ selected
 	<input type="submit" value="秘密の答え">
 	</form>
 <?php endif;?>
+
+
 <hr>
 	<!-- 親のループ -->
 <?php if(isset($out)):?>
@@ -110,12 +120,20 @@ selected
 		HOST:<?=h($res['host'])?>
 		<br>
 		<?php endif;?> 
-<?php if($adminmode):?>
+<?php if($adminmode||$userdel):?>
+
 	<form action="./" method="post">
 	<input type="hidden" name="delid" value="<?=h($res['time'])?>">    
 	<input type="hidden" name="delno" value="<?=h($res['no'])?>">   
-	<input type="hidden" name="mode" value="del">   
-	<input type="hidden" name="postpage" value="<?=$page?>">   
+
+	<?php if($adminmode):?>
+	<input type="hidden" name="mode" value="del">
+	<?php else:?>   
+	<?php if($userdel):?>
+	<input type="hidden" name="mode" value="userdel_form">
+	<?php endif;?>   
+	<?php endif;?>   
+	<input type="hidden" name="postpage" value="<?=$page?>">
 	<input type="submit" value="削除する"> 
 	</form>
 	<?php endif;?> 

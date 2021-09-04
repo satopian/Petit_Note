@@ -31,6 +31,10 @@ switch($mode){
 		return paintcom();
 	case 'del':
 		return del();
+	case 'userdel':
+		return userdel_mode();
+	case 'userdel_form':
+		return userdel_form();
 	case 'admin':
 		return admin();
 	case 'aikotoba':
@@ -38,6 +42,7 @@ switch($mode){
 	case 'logout':
 		session_sta();
 		unset($_SESSION['admin']);
+		unset($_SESSION['userdel']);
 		return header('Location: ./?page='.$page);
 	default:
 		return view($page);
@@ -375,18 +380,19 @@ function paintcom(){
 	$templete='paint_com.html';
 	include __DIR__.'/template/'.$templete;
 }
-
 //記事削除
 function del(){
+	$pwd=filter_input(INPUT_POST,'pwd');
 	session_sta();
 	$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
-	if(!$adminmode){
-		return error('失敗しました。');
+	$userdel_mode=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	if(!($adminmode||($userdel_mode&&$pwd))){
+		return error('失敗しました。ne');
 	}
 	$id=filter_input(INPUT_POST,'delid');
 	$no=filter_input(INPUT_POST,'delno');
 	$page=filter_input(INPUT_POST,'postpage');
-
+	
 	$fp=fopen("./log/alllog.log","r+");
 	flock($fp, LOCK_EX);
 	while ($_line = fgets($fp)) {
@@ -400,11 +406,18 @@ function del(){
 		while ($r_line = fgets($rp)) {
 			$line[]=$r_line;	
 		}
-	
+		
 		foreach($line as $i =>$val){
 
 			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host,$oya)=explode("\t",$val);
 			if($id==$time){
+			
+				if(!$adminmode){
+					// if(!password_verify($pwd,$hash)){
+					if(!($pwd=='hoge')){
+						var_dump($pwd);
+						return error('失敗しました。');}
+				}
 				if(trim($oya)=='oya'){//スレッド削除
 
 				//スレッドの画像を削除	
@@ -424,6 +437,7 @@ function del(){
 				}else{
 					unset($line[$i]);
 					safe_unlink('src/'.$imgfile);//画像削除
+					$line=implode("",$line);
 					writeFile ($rp, $line);
 					closeFile ($rp);
 				}
@@ -505,6 +519,9 @@ foreach($alllog_arr as $oya => $alllog){
 session_sta();
 $adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 $aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+
+
 if(!$use_aikotoba){
 	$aikotoba=true;
 }

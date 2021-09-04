@@ -80,7 +80,7 @@ $time = time();
 $imgfile = $time.substr(microtime(),2,3);	//画像ファイル名
 
 /* エラー発生時にSystemLOGにエラーを記録 */
-function _error($error){
+function error($error){
 	// global $imgfile,$syslog,$syslogmax;
 	// $time = time();
 	// $youbi = array('日','月','火','水','木','金','土');
@@ -126,7 +126,7 @@ header('Content-type: text/plain');
 //raw POST データ取得
 $buffer = file_get_contents('php://input');
 if(!$buffer){
-	_error("データの取得に失敗しました。お絵かき画像は保存されません。");
+	error("データの取得に失敗しました。お絵かき画像は保存されません。");
 	die("error\n{$errormsg_1}");
 }
 
@@ -136,7 +136,7 @@ $headerLength = substr($buffer, 1, 8);
 $imgLength = substr($buffer, 1 + 8 + $headerLength, 8);
 // 投稿容量制限を超えていたら保存しない
 if(SIZE_CHECK && ($imgLength > PICPOST_MAX_KB * 1024)){
-	_error("規定容量オーバー。お絵かき画像は保存されません。");
+	error("規定容量オーバー。お絵かき画像は保存されません。");
 	die("error\n{$errormsg_2}");
 }
 // 画像イメージを取り出す
@@ -152,12 +152,12 @@ if($imgh=="PNG\r\n"){
 $full_imgfile = TEMP_DIR.$imgfile.$imgext;
 // 同名のファイルが存在しないかチェック
 if(is_file($full_imgfile)){
-	_error("同名の画像ファイルが存在します。上書きします。");
+	error("同名の画像ファイルが存在します。上書きします。");
 }
 // 画像データをファイルに書き込む
 $fp = fopen($full_imgfile,"wb");
 if(!$fp){
-	_error("画像ファイルの作成に失敗しました。お絵かき画像は保存されません。");
+	error("画像ファイルの作成に失敗しました。お絵かき画像は保存されません。");
 	die("error\n{$errormsg_3}");
 }else{
 	flock($fp, LOCK_EX);
@@ -171,63 +171,63 @@ if(!$fp){
 	$size = getimagesize($full_imgfile);
 	// if($size[0] > PMAX_W || $size[1] > PMAX_H){
 	// 	unlink($full_imgfile);
-	// 	_error("規定サイズ違反を検出しました。画像は保存されません。");
+	// 	error("規定サイズ違反を検出しました。画像は保存されません。");
 	// 	die("error\n{$errormsg_4}");
 	// }
-	$chk = md5_file($full_imgfile);
-	if(isset($badfile)&&is_array($badfile)){
-		foreach($badfile as $value){
-			if(preg_match("/^$value/",$chk)){
-				unlink($full_imgfile);
-				_error("不正な画像を検出しました。画像は保存されません。");
-				die("error\n{$errormsg_5}");
-			}
-		}
-	}
+	// $chk = md5_file($full_imgfile);
+	// if(isset($badfile)&&is_array($badfile)){
+	// 	foreach($badfile as $value){
+	// 		if(preg_match("/^$value/",$chk)){
+	// 			unlink($full_imgfile);
+	// 			error("不正な画像を検出しました。画像は保存されません。");
+	// 			die("error\n{$errormsg_5}");
+	// 		}
+	// 	}
+	// }
 // }
 
 // PCHファイルの長さを取り出す
-$pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);
+// $pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);
 // ヘッダーを獲得
-$h = substr($buffer, 0, 1);
+// $h = substr($buffer, 0, 1);
 // 拡張子設定
 
-if($h=='S'){
+// if($h=='S'){
 //	if(!strstr($u_agent,'Shi-Painter/')){
 //		unlink($full_imgfile);
-//		_error("UA error。画像は保存されません。");
+//		error("UA error。画像は保存されません。");
 //		exit;
 //	}
-	$ext = '.spch';
-}else{
+	// $ext = '.spch';
+// }else{
 //	if(!strstr($u_agent,'PaintBBS/')){
 //		unlink($full_imgfile);
-//		_error("UA error。画像は保存されません。");
+//		error("UA error。画像は保存されません。");
 //		exit;
 //	}
-	$ext = '.pch';
-}
+	// $ext = '.pch';
+// }
 
-if($pchLength){
-	// PCHイメージを取り出す
-	$PCHdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength + 8, $pchLength);
-	// 同名のファイルが存在しないかチェック
-	if(is_file(TEMP_DIR.$imgfile.$ext)){
-		_error("同名のPCHファイルが存在します。上書きします。");
-	}
-	// PCHデータをファイルに書き込む
-	$fp = fopen(TEMP_DIR.$imgfile.$ext,"wb");
-	if(!$fp){
-		_error("PCHファイルの作成に失敗しました。PCHは保存されません。");
-		die("error\n{$errormsg_6}");
-	}else{
-		flock($fp, LOCK_EX);
-		fwrite($fp, $PCHdata);
-		fflush($fp);
-		flock($fp, LOCK_UN);
-		fclose($fp);
-	}
-}
+// if($pchLength){
+// 	// PCHイメージを取り出す
+// 	$PCHdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength + 8, $pchLength);
+// 	// 同名のファイルが存在しないかチェック
+// 	if(is_file(TEMP_DIR.$imgfile.$ext)){
+// 		error("同名のPCHファイルが存在します。上書きします。");
+// 	}
+// 	// PCHデータをファイルに書き込む
+// 	$fp = fopen(TEMP_DIR.$imgfile.$ext,"wb");
+// 	if(!$fp){
+// 		error("PCHファイルの作成に失敗しました。PCHは保存されません。");
+// 		die("error\n{$errormsg_6}");
+// 	}else{
+// 		flock($fp, LOCK_EX);
+// 		fwrite($fp, $PCHdata);
+// 		fflush($fp);
+// 		flock($fp, LOCK_UN);
+// 		fclose($fp);
+// 	}
+// }
 
 /* ---------- 投稿者情報記録 ---------- */
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
@@ -251,12 +251,12 @@ if($sendheader){
 }
 $userdata .= "\n";
 if(is_file(TEMP_DIR.$imgfile.".dat")){
-	_error("同名の情報ファイルが存在します。上書きします。");
+	error("同名の情報ファイルが存在します。上書きします。");
 }
 // 情報データをファイルに書き込む
 $fp = fopen(TEMP_DIR.$imgfile.".dat","w");
 if(!$fp){
-	_error("情報ファイルの作成に失敗しました。投稿者情報は記録されません。");
+	error("情報ファイルの作成に失敗しました。投稿者情報は記録されません。");
 	die("error\n{$errormsg_7}");
 }else{
 	flock($fp, LOCK_EX);
