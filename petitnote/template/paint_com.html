@@ -32,7 +32,8 @@
 <form action="./" method="POST" enctype="multipart/form-data" class="postform">
 題名:<input type="text" name="sub"><br>
 名前:<input type="text" name="name" value="<?=h($namec)?>"><br>
-<textarea name="com" class="post_com"></textarea>
+<textarea name="com" class="post_com"></textarea><br>
+<input type="password" name="pwd">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <input type="hidden" name="pictmp" value="<?=$pictmp?>">
@@ -45,7 +46,7 @@
 			</select>
 			<br>
 		</div>
-	<input type="submit" value="スレッドを立てる">
+	<input type="submit" value="投稿する">
 </form>
 <?php else:?>
 この掲示板の合言葉はなんですか?: 

@@ -9,82 +9,18 @@
 </head>
 <body>
 <div class="container">
-	<h1><?=$boardname?></h1>
+	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
-	
-[<a href="<?=h($home)?>">HOME</a>] [<a href="./">更新</a>] [<a href="./?mode=paintcom">アップロード途中の画像</a>]
+	<span>[<a href="<?=h($home)?>">HOME</a>]</span>
+ <span>[<a href="./?mode=paintcom">アップロード途中の画像</a>]</span>
 <?php if($userdel || $adminmode):?>
-[<a href="./?mode=logout&resno=<?=h($resno)?>">削除モード終了</a>]
+<span>[<a href="./?mode=logout&resno=<?=h($resno)?>">削除モード終了</a>]</span>
 <?php else:?>
- [<a href="./?mode=userdel&resno=<?=h($resno)?>">削除</a>]
+<span> [<a href="./?mode=userdel&resno=<?=h($resno)?>">削除</a>]</span>
  <?php endif;?>
  <br>
 </nav>
-<?php endif;?>
-<?php if($aikotoba&&(!$userdel && !$adminmode)):?>
-	<form action="./" method="post">
-<input type="hidden" name="mode" value="paint">
-<input type="submit" value="PAINT" class="paint_button">
-<span class="select_applet bold_gray">TOOL</span>
-<select name="app" class="select_applet">
-<option value="neo" 
-<?php if($appc==='neo'):?>
-selected
-<?php endif;?>
->PaintBBS NEO</option>
-<option value="chi"
-<?php if($appc==='chi'):?>
-selected
-<?php endif;?>
->ChickenPaint</option>
-</select>
-
-<span class="canvas_size">Size</span>：
-<select name="picw" title="幅" class="canvas_select">
-	<?php
-	//幅 300から、$pmax_w で設定した最大値まで。
-		for($i = 300; $i <=$pmax_w ; $i+=50){//50ずつ増える
-		if($picwc==$i){//デフォルトサイズ
-		echo'<option value="'.$i.'" selected>'.$i.'</option>';
-		}
-		else{
-		echo'<option value="'.$i.'">'.$i.'</option>';
-		}
-		}
-	?>
-	</select>
-	x
-	<select name="pich" title="高さ" class="canvas_select">
-	<?php
-	//高さ 300から、PMAX_H で設定した最大値まで。
-		for($i = 300; $i <=$pmax_h ; $i+=50){//50ずつ増える
-		if($picwc==$i){//デフォルトサイズ
-		echo'<option value="'.$i.'" selected>'.$i.'</option>';
-		}
-		else{
-		echo'<option value="'.$i.'">'.$i.'</option>';
-		}
-		}
-	?>
-	</select>
-
-</form>
-
-
-<form action="./" method="POST" enctype="multipart/form-data" class="postform">
-題名:<input type="text" name="sub"><br>
-名前:<input type="text" name="name" value="<?=h($namec)?>"><br>
-<textarea name="com" class="post_com"></textarea>
-<input type="hidden" name="mode" value="regist">
-<input type="hidden" name="token" value="<?=h($token)?>">
-<br>
-<?php if($use_upload):?>
-<input type="file" name="imgfile" size="35" accept="image/*">
-<br>
-<?php endif;?>
-<input type="submit" value="スレッドを立てる">
-</form>
 <?php endif;?>
 <?php if(!$aikotoba):?>
 この掲示板の合言葉はなんですか?: 
@@ -164,17 +100,72 @@ selected
 <?php endforeach;?>
 <!-- 返信フォーム -->
 <div class="clear"></div>
-<?php if($aikotoba && (!$userdel && !$adminmode)):?>
+
+
+<?php if($aikotoba&&(!$userdel && !$adminmode)):?>
 <?php if($resform):?>
+
+<form action="./" method="post" class="resform">
+<input type="hidden" name="mode" value="paint">
+<input type="hidden" name="resto" value="<?=h($res['no'])?>">
+<input type="submit" value="PAINT" class="paint_button">
+<span class="select_applet bold_gray">TOOL</span>
+<select name="app" class="select_applet">
+<option value="neo" 
+<?php if($appc==='neo'):?>
+selected
+<?php endif;?>
+>PaintBBS NEO</option>
+<option value="chi"
+<?php if($appc==='chi'):?>
+selected
+<?php endif;?>
+>ChickenPaint</option>
+</select>
+<span class="canvas_size_wrap"> 
+<span class="canvas_size">Size</span>：
+<select name="picw" title="幅" class="canvas_select">
+	<?php
+	//幅 300から、$pmax_w で設定した最大値まで。
+		for($i = 300; $i <=$pmax_w ; $i+=50){//50ずつ増える
+		if($picwc==$i){//デフォルトサイズ
+		echo'<option value="'.$i.'" selected>'.$i.'</option>';
+		}
+		else{
+		echo'<option value="'.$i.'">'.$i.'</option>';
+		}
+		}
+	?>
+	</select>
+	x
+	<select name="pich" title="高さ" class="canvas_select">
+	<?php
+	//高さ 300から、PMAX_H で設定した最大値まで。
+		for($i = 300; $i <=$pmax_h ; $i+=50){//50ずつ増える
+		if($picwc==$i){//デフォルトサイズ
+		echo'<option value="'.$i.'" selected>'.$i.'</option>';
+		}
+		else{
+		echo'<option value="'.$i.'">'.$i.'</option>';
+		}
+		}
+	?>
+	</select>
+</span>
+</form>
+
+
 <form action="./" method="POST" enctype="multipart/form-data" class="resform">
-名前:<input type="text" name="name"  value="<?=h($namec)?>"><br>
-<textarea name="com" class="rescom"></textarea>
-<input type="hidden" name="resno" value="<?=h($res['no'])?>">
+題名:<input type="text" name="sub"><br>
+名前:<input type="text" name="name" value="<?=h($namec)?>"><br>
+<textarea name="com" class="post_com"></textarea><br>
+削除キー:<input type="password" name="pwd">
 <input type="hidden" name="mode" value="regist">
+<input type="hidden" name="resno" value="<?=h($res['no'])?>">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <br>
 <?php if($use_upload):?>
-<input type="file" name="imgfile" size="35" accept="image/*">
+<input type="file" name="imgfile" size="35" accept="image/*" class="upfile">
 <br>
 <?php endif;?>
 <input type="submit" value="返信">

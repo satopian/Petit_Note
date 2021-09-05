@@ -86,7 +86,9 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <param name="url_save" value="picpost.php">
 <param name="url_exit" value="index.php?mode=paintcom">
 <param name="thumbnail_type" value="animation">
-<param name="send_header" value="usercode=<?=$usercode?>&tool=<?=$tool?>">
+<param name="send_header" value="usercode=<?=$usercode?>&tool=<?=$tool?>
+<?php if($resto):?>&resto=<?=h($resto)?><?php endif;?>
+">
 </applet-dummy>
 </div>
 <div class="palette_wrap">

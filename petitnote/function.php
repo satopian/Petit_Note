@@ -10,16 +10,13 @@ function aikotoba(){
 		} 
 		return 	error('合言葉が違います。');
 	}
-	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$page = $page ?? 0;
-	// var_dump(filter_input(INPUT_POST,'resmode'),filter_input(INPUT_POST,'resno'));
-	// exit;
 	$_SESSION['aikotoba']='aikotoba';
 	if(filter_input(INPUT_POST,'paintcom')){
 		return header('Location: ./?mode=paintcom');
 	}
-	if(filter_input(INPUT_POST,'resmode')){
-		return header('Location: ./?mode=res&resno='.filter_input(INPUT_POST,'resno'));
+	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	if($resno){
+		return header('Location: ./?resno='.$resno);
 	}
 	return header('Location: ./?page='.$page);
 	
@@ -32,6 +29,26 @@ function check_aikotoba(){
 		return error('合言葉が違います');
 	}
 	return true;
+}
+
+function diary(){
+	global $admin_pass;
+	session_sta();
+	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
+		if(isset($_SESSION['diary'])){
+			unset($_SESSION['diary']);
+		} 
+		return 	error('パスワードが違います。');
+	}
+	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$page = $page ?? 0;
+	$_SESSION['diary']='admin_post';
+	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	if($resno){
+		return header('Location: ./?resno='.$resno);
+	}
+
+	return header('Location: ./?page='.$page);
 }
 
 //管理者モード
@@ -48,6 +65,10 @@ function admin(){
 	$page = $page ?? 0;
 	$_SESSION['admin']='admin_mode';
 	$_SESSION['aikotoba']='aikotoba';
+	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	if($resno){
+		return header('Location: ./?resno='.$resno);
+	}
 
 	return header('Location: ./?page='.$page);
 }

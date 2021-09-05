@@ -12,9 +12,9 @@ $home = './'; //相対パス、絶対パス、URLどれでもOK
 //1ページに表示するスレッド数
 $pagedef = 5;
 //最大スレッド数
-$max_log = 30;
+$max_log = 500;
 //1スレッドに返信できるレスの数
-$max_res = 10;
+$max_res = 15;
 //投稿できる画像のサイズ単位kb
 $max_kb = 2048;
 //お絵かき最大サイズ
@@ -29,14 +29,28 @@ $max_h = 500;
 $use_aikotoba = true;
 // $use_aikotoba=false;
 
+//日記モードを使う
+// する: true しない: false
+$use_diary = true;
+// $use_diary = false;
+
 //画像アップロード機能を使う
 // 使う:true 使わない:false
 $use_upload=true;
 // $use_upload = false;
+
+//各スレッドに返信フォームを表示する
+// する: true しない: false
+$use_minform=true;
+// $use_miniform=false;
+
+
 /*スパム対策*/
 //本文に日本語がなければ拒絶 する:true しない:false
 $use_japanesefilter = true;
 // $use_japanesefilter=false;
+
+
 
 //拒絶する文字列 正規表現
 $badstring = ["example.example.com","未承諾広告"];

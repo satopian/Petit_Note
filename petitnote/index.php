@@ -10,7 +10,7 @@ $page=filter_input(INPUT_GET,'page');
 $resno=filter_input(INPUT_GET,'resno');
 $postpage=filter_input(INPUT_POST,'postpage');
 
-$usercode = filter_input(INPUT_COOKIE, 'usercode');//nullならuser-codeを発行
+$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//nullならuser-codeを発行
 $userip = get_uip();
 //user-codeの発行
 if(!$usercode){//falseなら発行
@@ -66,10 +66,10 @@ if($use_aikotoba){
 check_csrf_token();
 
 //POSTされた内容を取得
-$usercode = filter_input(INPUT_COOKIE, 'usercode');
-$userip = get_uip();
+$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
+$userip =t(get_uip());
 //ホスト取得
-$host = gethostbyaddr($userip);
+$host = t(gethostbyaddr($userip));
 
 $sub = t((string)filter_input(INPUT_POST,'sub'));
 $name = t((string)filter_input(INPUT_POST,'name'));
@@ -120,7 +120,7 @@ $use_upload){
 }
 //お絵かきアップロード
 $pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
-$picfile = filter_input(INPUT_POST, 'picfile');
+$picfile = t(filter_input(INPUT_POST, 'picfile'));
 if($pictmp==2){
 	if(!$picfile) error('投稿に失敗しました。');
 	$tempfile = TEMP_DIR.$picfile;
@@ -154,7 +154,6 @@ $name=str_replace(["\r\n","\r","\n",],'"\n"',$name);
 $com=str_replace(["\r\n","\r","\n",],'"\n"',$com);
 $com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
 
-setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
 
 if(!$name){
 	$name='anonymous';
@@ -163,6 +162,18 @@ if(!$name){
 if(!$upfile&&!$com){
 error('何か書いて下さい。');
 }
+
+$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
+$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwc'));//未入力ならCookieのパスワード
+if(!$pwd){//それでも$pwdが空なら
+	srand((double)microtime()*1000000);
+	$pwd = substr(rand(), 0, 8);
+}
+$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
+
+setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
+setcookie("pwdc",$pwd,time()+(60*60*24*30),0,"",false,true);
+
 
 if($upfile){
 	if($filesize > 512 * 1024){//指定サイズを超えていたら
@@ -201,7 +212,7 @@ if($upfile){
 			if(is_file("./log/{$chk_resno}.log")){
 			$cp=fopen("./log/{$chk_resno}.log","r+");
 				while($line=fgetcsv($cp,0,"\t")){
-					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$time_,$host_,$oya_)=$line;
+					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$time_,$host_,$hash_,$oya_)=$line;
 					if($log_md5 === $img_md5){
 					unlink('src/'.$imgfile);
 					error('同じ画像がありました。');
@@ -226,7 +237,7 @@ if($no_arr){
 //書き込むログの書式
 $line='';
 if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$time\t$host\tres\n";
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$time\t$host\t$hash\tres\n";
 	if(!is_file('./log/'.$resno.'.log')){
 		error('投稿に失敗しました。');
 	}
@@ -244,7 +255,7 @@ if($resno){//レスの時はスレッド別ログに追記
 } else{
 	//最後の記事ナンバーに+1
 	$no=$max_no+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$time\t$host\toya\n";
+	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$time\t$host\t$hash\toya\n";
 	file_put_contents('./log/'.$no.'.log',$line,FILE_APPEND | LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.log',0600);
 }
@@ -288,7 +299,9 @@ function paint(){
 $app = filter_input(INPUT_POST,'app');
 $picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 $pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
-$usercode = filter_input(INPUT_COOKIE, 'usercode');
+$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
+$resto = t(filter_input(INPUT_POST, 'resto'));
+
 setcookie("appc", $app , time()+(60*60*24*30));//アプレット選択
 setcookie("picwc", $picw , time()+(60*60*24*30));//幅
 setcookie("pichc", $pich , time()+(60*60*24*30));//高さ
@@ -394,6 +407,8 @@ function paintcom(){
 //記事削除
 function del(){
 	$pwd=filter_input(INPUT_POST,'pwd');
+	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
+	$pwd = $pwd ? $pwd : $pwdc;
 	session_sta();
 	$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 	$userdel_mode=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
@@ -420,17 +435,17 @@ function del(){
 		$rp=fopen("./log/$no.log","r+");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
-			$line[]=$r_line;	
+			$line[]=$r_line;
 		}
 		
 		foreach($line as $i =>$val){
 
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host,$oya)=explode("\t",$val);
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host,$hash,$oya)=explode("\t",$val);
 			if($id==$time){
 			
 				if(!$adminmode){
-					// if(!password_verify($pwd,$hash)){
-					if(!($pwd=='hoge')){
+					if(!password_verify($pwd,$hash)){
+					// if(!($pwd=='hoge')){
 						return error('失敗しました。');}
 				}
 				if(trim($oya)=='oya'){//スレッド削除
@@ -474,7 +489,7 @@ function del(){
 //通常表示
 function view($page=0){
 global $use_aikotoba,$use_upload,$home,$pagedef;
-global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h; 
+global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_miniform; 
 
 if(!isset($page)||!$page){
 	$page=0;

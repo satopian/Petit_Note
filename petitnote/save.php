@@ -59,11 +59,11 @@ $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
 	$tool = (string)filter_input(INPUT_GET, 'tool');
 	// $repcode = (string)filter_input(INPUT_GET, 'repcode');
 	// $stime = (string)filter_input(INPUT_GET, 'stime');
-	// $resto = (string)filter_input(INPUT_GET, 'resto');
+	$resto = (string)filter_input(INPUT_GET, 'resto');
 
 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
 	// $userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto";
-	$userdata .= "\t$usercode\t\t\t\t\t$tool";
+	$userdata .= "\t$usercode\t\t\t\t$resto\t$tool";
 $userdata .= "\n";
 // 情報データをファイルに書き込む
 $fp = fopen(TEMP_DIR.$imgfile.".dat","w");
