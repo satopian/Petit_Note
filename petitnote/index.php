@@ -7,6 +7,7 @@ require_once(__DIR__.'/function.php');
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page');
+$resno=filter_input(INPUT_GET,'resno');
 $postpage=filter_input(INPUT_POST,'postpage');
 
 $usercode = filter_input(INPUT_COOKIE, 'usercode');//nullならuser-codeを発行
@@ -34,19 +35,25 @@ switch($mode){
 		return del();
 	case 'userdel':
 		return userdel_mode();
-	// case 'userdel_form':
-	// 	return userdel_form();
 	case 'admin':
 		return admin();
+	case 'res':
+		return res($resno);
 	case 'aikotoba':
 		return aikotoba();
 	case 'logout':
 		session_sta();
 		unset($_SESSION['admin']);
 		unset($_SESSION['userdel']);
+		if($resno){
+			return header('Location: ./?resno='.$resno);	
+		}
 		$page = $postpage ?? $page; 
 		return header('Location: ./?page='.$page);
 	default:
+		if($resno){
+			return res($resno);
+		}
 		return view($page);
 }
 
@@ -273,7 +280,7 @@ if($resno){//レスの時はスレッド別ログに追記
 	
 	chmod('./log/alllog.log',0600);
 	//多重送信防止
-	header('Location: ./');
+	return header('Location: ./');
 
 }
 //お絵かき画面
@@ -330,7 +337,6 @@ switch($app){
 		return;
 }
 			
-
 }
 // お絵かきコメント 
 function paintcom(){
@@ -383,7 +389,7 @@ function paintcom(){
 
 	// HTML出力
 	$templete='paint_com.html';
-	include __DIR__.'/template/'.$templete;
+	return include __DIR__.'/template/'.$templete;
 }
 //記事削除
 function del(){
@@ -427,52 +433,52 @@ function del(){
 					if(!($pwd=='hoge')){
 						return error('失敗しました。');}
 				}
-			if(trim($oya)=='oya'){//スレッド削除
-
-				//スレッドの画像を削除	
-					$rp = fopen("./log/$no.log", "r");//個別スレッドのログを開く
+				if(trim($oya)=='oya'){//スレッド削除
 					while ($line = fgetcsv($rp, 0, "\t")) {
-					list(,,,,$imgfile,)=$line;
-					safe_unlink('src/'.$imgfile);//画像削除
+						list(,,,,$imgfile,)=$line;
+						safe_unlink('src/'.$imgfile);//画像削除
 					}
-			
-					safe_unlink('./log/'.$no.'.log');
-					foreach($alllog_arr as $i =>$val){
-						list($_no)=explode("\t",$val);
-						if($no==$_no){
-							unset($alllog_arr[$i]);
+				
+						foreach($alllog_arr as $i =>$val){
+							list($_no)=explode("\t",$val);
+							if($no==$_no){
+								unset($alllog_arr[$i]);
+							}
 						}
-					}
-
-				}else{
-					unset($line[$i]);
-					safe_unlink('src/'.$imgfile);//画像削除
-					$line=implode("",$line);
+						$alllog=implode("",$alllog_arr);
+						writeFile($fp,$alllog);
+						closeFile ($rp);
+						safe_unlink('./log/'.$no.'.log');
 			
-					writeFile ($rp, $line);
-					closeFile ($rp);
+				}else{
+						unset($line[$i]);
+						safe_unlink('src/'.$imgfile);//画像削除
+						$line=implode("",$line);
+						writeFile ($rp, $line);
+						closeFile ($rp);
+
 				}
 			}
-			$alllog=implode("",$alllog_arr);
-			writeFile($fp,$alllog);
-			closeFile ($fp);
-
-		//多重送信防止
-		header('Location: ./?page='.$page);
-
+			
 		}
+		closeFile ($fp);
+
 	}
+	//多重送信防止
+	if(filter_input(INPUT_POST,'resmode')){
+		return header('Location: ./?mode=res&resno='.filter_input(INPUT_POST,'resno'));
+	}
+	return header('Location: ./?page='.$page);
 }
 
-//表示
+//通常表示
 function view($page=0){
 global $use_aikotoba,$use_upload,$home,$pagedef;
+global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h; 
 
 if(!isset($page)||!$page){
 	$page=0;
 }
-global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$max_w,$max_h; 
- ;
 
 $alllog_arr=file('./log/alllog.log');//全体ログを読み込む
 $count_alllog=count($alllog_arr);
@@ -481,7 +487,6 @@ krsort($alllog_arr);
 //ページ番号から1ページ分のスレッド分とりだす
 $alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
 //oyaのループ
-$oya=0;
 foreach($alllog_arr as $oya => $alllog){
 	
 	list($no)=explode("\t",$alllog);
@@ -489,43 +494,13 @@ foreach($alllog_arr as $oya => $alllog){
 	if(!is_file("./log/$no.log")){
 	continue;	
 	}
+	$res=[];
 		$fp = fopen("./log/$no.log", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
-		list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host)=$line;
-		$res=[];
-		switch($tool){
-			case 'neo':
-				$tool='PaintBBS NEO';
-				break;
-			case 'chi':
-				$tool='ChickenPaint';
-				break;
-			case 'upload':
-				$tool='アップロード';
-				break;
-			default:
-				'';
-		}
-		list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
-		
-		$res=[
-			'no' => $no,
-			'sub' => $sub,
-			'name' => $name,
-			'com' => $com,
-			'img' => $imgfile,
-			'w' => $w,
-			'h' => $h,
-			'tool' => $tool,
-			'time' => $time,
-			'host' => $host,
-		];
-
-		$res['com']=str_replace('"\n"',"\n",$res['com']);
+			$res = create_res($line);//$lineから、情報を取り出す
 		$out[$oya][]=$res;
 		}	
 	fclose($fp);
-	// }
 
 }
 
@@ -535,11 +510,9 @@ $adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 $aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 $userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 
-
 if(!$use_aikotoba){
 	$aikotoba=true;
 }
-
 
 //Cookie
 $namec=(string)filter_input(INPUT_COOKIE,'namec');
@@ -552,7 +525,47 @@ $token=get_csrf_token();
 
 // HTML出力
 $templete='main.html';
-include __DIR__.'/template/'.$templete;
+return include __DIR__.'/template/'.$templete;
 
 }
+//レス画面
+function res ($resno){
+	global $use_aikotoba,$use_upload,$home,$pagedef;
+	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h; 
+	$page=0;
+	$resno=filter_input(INPUT_GET,'resno');
+	if(!is_file("./log/$resno.log")){
+		error('スレッドがありません');	
+		}
+		$res=[];
+			$fp = fopen("./log/$resno.log", "r");//個別スレッドのログを開く
+			while ($line = fgetcsv($fp, 0, "\t")) {
+				$res = create_res($line);//$lineから、情報を取り出す
+			$out[0][]=$res;
+			}	
+		fclose($fp);
+		// }
+//管理者判定処理
+session_sta();
+$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 
+if(!$use_aikotoba){
+	$aikotoba=true;
+}
+
+//Cookie
+$namec=(string)filter_input(INPUT_COOKIE,'namec');
+$appc=(string)filter_input(INPUT_COOKIE,'appc');
+$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
+$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
+
+//token
+$token=get_csrf_token();
+$templete='res.html';
+return include __DIR__.'/template/'.$templete;
+	
+}
+	
+	

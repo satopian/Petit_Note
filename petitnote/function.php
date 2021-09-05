@@ -1,8 +1,6 @@
 <?php
 //合言葉認証
 function aikotoba(){
-	filter_input(INPUT_GET,'mode');
-	;
 	global $aikotoba;
 
 	session_sta();
@@ -14,9 +12,14 @@ function aikotoba(){
 	}
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$page = $page ?? 0;
+	// var_dump(filter_input(INPUT_POST,'resmode'),filter_input(INPUT_POST,'resno'));
+	// exit;
 	$_SESSION['aikotoba']='aikotoba';
 	if(filter_input(INPUT_POST,'paintcom')){
 		return header('Location: ./?mode=paintcom');
+	}
+	if(filter_input(INPUT_POST,'resmode')){
+		return header('Location: ./?mode=res&resno='.filter_input(INPUT_POST,'resno'));
 	}
 	return header('Location: ./?page='.$page);
 	
@@ -54,8 +57,48 @@ function userdel_mode(){
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$page = $page ?? 0;
 	$_SESSION['userdel']='userdel_mode';
-
+	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
+	if($resno){
+		return header('Location: ./?resno='.$resno);
+	}
 	return header('Location: ./?page='.$page);
+}
+
+//ログ出力の前処理 行から情報を取り出す
+function create_res($line){
+	global $max_w,$max_h;
+	list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host)=$line;
+	$res=[];
+	switch($tool){
+		case 'neo':
+			$tool='PaintBBS NEO';
+			break;
+		case 'chi':
+			$tool='ChickenPaint';
+			break;
+		case 'upload':
+			$tool='アップロード';
+			break;
+		default:
+			'';
+	}
+	list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
+	
+	$res=[
+		'no' => $no,
+		'sub' => $sub,
+		'name' => $name,
+		'com' => $com,
+		'img' => $imgfile,
+		'w' => $w,
+		'h' => $h,
+		'tool' => $tool,
+		'time' => $time,
+		'host' => $host,
+	];
+
+	$res['com']=str_replace('"\n"',"\n",$res['com']);
+	return $res;
 }
 
 //ユーザーip
