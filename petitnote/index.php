@@ -188,18 +188,17 @@ if($upfile){
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 	if($pictmp!==2){
 		$chk_log_arr=array_reverse($alllog_arr,false);
-		foreach($chk_log_arr as $i => $_alllog){
-			list($chk_resno)=explode("\t",$_alllog);
-			if($i<20){
-				if(is_file("./log/{$chk_resno}.log")){
-				$cp=fopen("./log/{$chk_resno}.log","r+");
-					while($line=fgetcsv($cp,0,"\t")){
-						list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$time_,$host_,$oya_)=$line;
-						if($log_md5 === $img_md5){
-						unlink('src/'.$imgfile);
-						error('同じ画像がありました。');
-						};
-					}
+		$chk_log_arr=array_slice($alllog_arr,0,20,false);
+		foreach($chk_log_arr as $chk_log){
+			list($chk_resno)=explode("\t",$chk_log);
+			if(is_file("./log/{$chk_resno}.log")){
+			$cp=fopen("./log/{$chk_resno}.log","r+");
+				while($line=fgetcsv($cp,0,"\t")){
+					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$time_,$host_,$oya_)=$line;
+					if($log_md5 === $img_md5){
+					unlink('src/'.$imgfile);
+					error('同じ画像がありました。');
+					};
 				}
 			}
 		}
@@ -482,11 +481,14 @@ krsort($alllog_arr);
 //ページ番号から1ページ分のスレッド分とりだす
 $alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
 //oyaのループ
+$oya=0;
 foreach($alllog_arr as $oya => $alllog){
 	
 	list($no)=explode("\t",$alllog);
 	//個別スレッドのループ
-	if(is_file("./log/$no.log")){
+	if(!is_file("./log/$no.log")){
+	continue;	
+	}
 		$fp = fopen("./log/$no.log", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
 		list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host)=$line;
@@ -523,7 +525,7 @@ foreach($alllog_arr as $oya => $alllog){
 		$out[$oya][]=$res;
 		}	
 	fclose($fp);
-	}
+	// }
 
 }
 

@@ -12,7 +12,8 @@
 	<h1><?=$boardname?></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
-[<a href="<?=h($home)?>">HOME</a>] [<a href="./?mode=paintcom">アップロード途中の画像</a>]
+	
+[<a href="<?=h($home)?>">HOME</a>] [<a href="./">更新</a>] [<a href="./?mode=paintcom">アップロード途中の画像</a>]
 <?php if($userdel || $adminmode):?>
 [<a href="./?mode=logout&page=<?=$page?>">削除モード終了</a>]
 <?php else:?>
@@ -21,7 +22,7 @@
  <br>
 </nav>
 <?php endif;?>
-<?php if($aikotoba && !$userdel):?>
+<?php if($aikotoba&&(!$userdel && !$adminmode)):?>
 	<form action="./" method="post">
 <input type="hidden" name="mode" value="paint">
 <input type="submit" value="PAINT" class="paint_button">
@@ -93,10 +94,17 @@ selected
 	<input type="submit" value="秘密の答え">
 </form>
 <?php endif;?>
-
-<?php if(!$adminmode && $aikotoba && $userdel):?>
-削除したい記事をチェックしてパスワードを入力してください。:<form action="./" method="POST" id="delete" class="aikotoba">
-<input type="password" name="pwd">
+<?php if($adminmode):?>
+削除したい記事をチェックして削除ボタンを押してください。:
+<?php endif;?>
+<?php if($userdel&&!$adminmode):?>
+削除したい記事をチェックしてパスワードを入力してください。:
+<?php endif;?>
+<?php if( $adminmode || $aikotoba && $userdel):?>
+<form action="./" method="POST" id="delete" class="aikotoba">
+<?php if(!$adminmode):?>
+	<input type="password" name="pwd">
+<?php endif;?>
 <input type="hidden" name="mode" value="del">
 <input type="hidden" name="postpage" value="<?=$page?>">
 <input type="submit" value="削除">
@@ -117,7 +125,7 @@ selected
 	<div class="res_wrap">	
 	<?php endif;?>
 
-	<?php if(!$adminmode && $userdel):?>
+	<?php if($userdel || $adminmode):?>
 	<input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
 	<?php endif;?>
 			[<?= h($ress[0]['no'])?>-<?= h($i)?>] 
@@ -132,14 +140,6 @@ selected
 		HOST:<?=h($res['host'])?>
 		<br>
 		<?php endif;?> 
-	<?php if($adminmode):?>
-	<form action="./" method="post">
-	<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">    
-	<input type="hidden" name="mode" value="del">
-	<input type="hidden" name="postpage" value="<?=$page?>">
-	<input type="submit" value="削除する"> 
-	</form>
-	<?php endif;?>
 
 		<br>
 		<?php if($res['img']):?>
@@ -160,7 +160,7 @@ selected
 <?php endforeach;?>
 <!-- 返信フォーム -->
 <div class="clear"></div>
-<?php if($aikotoba && !$userdel):?>
+<?php if($aikotoba && (!$userdel && !$adminmode)):?>
 <?php if($resform):?>
 <form action="./" method="POST" enctype="multipart/form-data" class="resform">
 名前:<input type="text" name="name"  value="<?=h($namec)?>"><br>
