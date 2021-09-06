@@ -43,6 +43,8 @@ function diary(){
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$page = $page ?? 0;
 	$_SESSION['diary']='admin_post';
+	$_SESSION['aikotoba']='aikotoba';
+
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);

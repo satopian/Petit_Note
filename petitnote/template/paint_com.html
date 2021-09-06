@@ -20,10 +20,10 @@
 			<?php foreach($out as $i=>$val):?>
 			<?php foreach($val as $tempimg):?>
 <div class="posted_img_form">
-	<img src="<?=$tempimg['src']?>""
-	alt="<?=$tempimg['srcname']?>"></div>
-<?=$tempimg['srcname']?><br>
-<?=$tempimg['date']?>
+	<img src="<?=h($tempimg['src'])?>"
+	alt="<?=h($tempimg['srcname'])?>"></div>
+<?=h($tempimg['srcname'])?><br>
+<?=h($tempimg['date'])?>
 
 				<?php endforeach;?>
 				<?php endforeach;?>
@@ -36,11 +36,11 @@
 <input type="password" name="pwd">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="token" value="<?=h($token)?>">
-<input type="hidden" name="pictmp" value="<?=$pictmp?>">
+<input type="hidden" name="pictmp" value="<?=h($pictmp)?>">
 <div class="post_table_title">画像<select name="picfile" class="post_select_image">
 			<?php foreach($out as $i=>$val):?>
 			<?php foreach($val as $tempimg):?>
-				<option value="<?=$tempimg['srcname']?>"><?=$tempimg['srcname']?></option>
+				<option value="<?=h($tempimg['srcname'])?>"><?=h($tempimg['srcname'])?></option>
 				<?php endforeach;?>
 				<?php endforeach;?>
 			</select>

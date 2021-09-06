@@ -39,6 +39,8 @@ switch($mode){
 		return admin();
 	case 'res':
 		return res($resno);
+	case 'diary':
+		return diary();
 	case 'aikotoba':
 		return aikotoba();
 	case 'logout':
@@ -59,7 +61,7 @@ switch($mode){
 
 //投稿処理
 function post(){	
-global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload;
+global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary;
 if($use_aikotoba){
 	check_aikotoba();
 }
@@ -78,6 +80,14 @@ $resno = t((string)filter_input(INPUT_POST,'resno'));
 if($resno&&is_file('./log/'.$resno.'.log')&&(count(file('./log/'.$resno.'.log'))>$max_res)){//レスの時はスレッド別ログに追記
 	error('最大レス数を超過しています。');
 }
+$adminpost='';
+if(!$resno && $use_diary){
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	if(!$adminpost){
+		error('日記にログインしていません。');
+	}
+}
+
 
 //NGワードがあれば拒絶
 Reject_if_NGword_exists_in_the_post();
@@ -489,7 +499,7 @@ function del(){
 //通常表示
 function view($page=0){
 global $use_aikotoba,$use_upload,$home,$pagedef;
-global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_miniform; 
+global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary; 
 
 if(!isset($page)||!$page){
 	$page=0;
@@ -524,6 +534,7 @@ session_sta();
 $adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 $aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 $userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
 
 if(!$use_aikotoba){
 	$aikotoba=true;
@@ -546,7 +557,7 @@ return include __DIR__.'/template/'.$templete;
 //レス画面
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$pagedef;
-	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h; 
+	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary; 
 	$page=0;
 	$resno=filter_input(INPUT_GET,'resno');
 	if(!is_file("./log/$resno.log")){
@@ -565,7 +576,7 @@ session_sta();
 $adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
 $aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 $userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-
+$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
 if(!$use_aikotoba){
 	$aikotoba=true;
 }
