@@ -21,6 +21,8 @@
 <span>[<a href="./?mode=logout&page=<?=h($page)?>">削除モード終了</a>]</span>
 <?php else:?>
 <span>[<a href="./?mode=userdel&page=<?=h($page)?>">削除</a>]</span>
+<span>[<a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]</span>
+
  <?php endif;?>
 
  <br>
@@ -100,14 +102,6 @@ selected
 	<input type="txt" name="aikotoba">
 	<input type="hidden" name="mode" value="aikotoba">
 	<input type="submit" value="秘密の答え">
-</form><br>
-<?php endif;?>
-<?php if($use_diary && !$adminpost):?>
-日記モード: 
-<form action="./" method="post" class="aikotoba">
-	<input type="password" name="adminpass">
-	<input type="hidden" name="mode" value="diary">
-	<input type="submit" value="ログイン">
 </form><br>
 <?php endif;?>
 
@@ -244,14 +238,14 @@ if($page<$pagedef*16){
 	<form action="./" method="post" class="admin">
 <input type="hidden" name="mode" value="logout">
 <input type="hidden" name="postpage" value="<?=h($page)?>">
-<input type="submit" value="ログアウト">
+<input type="submit" value="削除モード終了">
 	</form>
 <?php else: ?>
 	<form action="./" method="post" class="admin">
 <input type="password" name="adminpass">
 <input type="hidden" name="mode" value="admin">
 <input type="hidden" name="postpage" value="<?=h($page)?>">
-<input type="submit" value="管理者モード">
+<input type="submit" value="管理者削除">
 </form>
 <?php endif; ?>
 <div class="copy">

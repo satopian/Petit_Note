@@ -1,4 +1,35 @@
 <?php
+
+function logout(){
+	$postpage=filter_input(INPUT_POST,'postpage');
+	$resno=filter_input(INPUT_GET,'resno');
+	session_sta();
+	unset($_SESSION['admin']);
+	unset($_SESSION['userdel']);
+	if($resno){
+		return header('Location: ./?resno='.$resno);	
+	}
+	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$page= $page ? $page : filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$page = $page ? $page : 0;
+
+	return header('Location: ./?page='.$page);
+}
+function logout_admin(){
+	$postpage=filter_input(INPUT_POST,'postpage');
+	$resno=filter_input(INPUT_GET,'resno');
+	session_sta();
+	unset($_SESSION['admin']);
+	unset($_SESSION['diary']);
+	if($resno){
+		return header('Location: ./?resno='.$resno);	
+	}
+	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$page = $page ? $page : 0;
+
+	return header('Location: ./?page='.$page);
+}
+
 //合言葉認証
 function aikotoba(){
 	global $aikotoba;
@@ -21,6 +52,25 @@ function aikotoba(){
 	return header('Location: ./?page='.$page);
 	
 }
+function admin_in(){
+
+	global $boardname,$use_diary,$use_aikotoba;
+	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+
+	session_sta();
+	$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	if(!$use_aikotoba){
+		$aikotoba=true;
+	}
+
+	// HTML出力
+	$templete='admin_in.html';
+	return include __DIR__.'/template/'.$templete;
+	
+}
 //合言葉を再確認	
 function check_aikotoba(){
 	session_sta();
@@ -41,7 +91,9 @@ function diary(){
 		return 	error('パスワードが違います。');
 	}
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+
 	$page = $page ?? 0;
+	
 	$_SESSION['diary']='admin_post';
 	$_SESSION['aikotoba']='aikotoba';
 
@@ -49,7 +101,7 @@ function diary(){
 	if($resno){
 		return header('Location: ./?resno='.$resno);
 	}
-
+	
 	return header('Location: ./?page='.$page);
 }
 

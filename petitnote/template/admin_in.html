@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="index.css">
+	<title><?=h($boardname)?></title>
+</head>
+<body>
+
+<div class="container">
+	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+	<?php if($aikotoba):?>
+<nav class="memu_wrap">
+		
+<span>[<a href="./">掲示板に戻る</a>]</span>
+
+
+ <br>
+</nav>
+<?php endif;?>
+<?php if(!$aikotoba):?>
+この掲示板の合言葉はなんですか?: 
+<form action="./" method="post" class="aikotoba">
+	<input type="txt" name="aikotoba">
+	<input type="hidden" name="mode" value="aikotoba">
+	<input type="submit" value="秘密の答え">
+</form><br>
+<?php endif;?>
+
+
+
+<?php if($adminpost||$adminmode):?>
+<ul>
+<?php if($adminpost):?>
+<li>
+	日記モードでログイン中です。
+</li>
+<?php endif;?>
+<?php if($adminmode):?>
+<li>
+	削除モードでログイン中です。
+</li>
+<?php endif;?>
+</ul>
+
+
+<form action="./" method="post" class="admin">
+<input type="hidden" name="mode" value="logout_admin">
+<input type="hidden" name="postpage" value="<?=h($page)?>">
+<input type="submit" value="管理者ログアウト">
+	</form>
+	<?php endif;?>
+
+
+	<?php if(!$adminpost || !$adminmode):?>
+
+	<form action="./" method="post" class="admin">
+		<?php if(!$adminmode):?>
+		
+		<label><input type="radio" name="mode" value="admin" checked>[管理者削除モード]</label><br>
+		<?php endif;?>
+		<?php if($use_diary):?>
+		<?php if(!$adminpost):?>
+		<label><input type="radio" name="mode" value="diary" 
+			<?php if(!$adminmode):?>checked<?php endif;?>
+			
+			>[日記モード]</label><br>
+		<?php endif;?>
+		<?php endif;?>
+		
+		<input type="password" name="adminpass">
+		<input type="hidden" name="postpage" value="<?=h($page)?>">
+		<input type="submit" value="管理者ログイン">
+	</form>
+	<?php endif;?>
+
+
+
+<div class="copy">
+<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a>
+</div>
+</div>
+</body>
+</html>

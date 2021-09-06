@@ -8,7 +8,6 @@ $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page');
 $resno=filter_input(INPUT_GET,'resno');
-$postpage=filter_input(INPUT_POST,'postpage');
 
 $usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//nullならuser-codeを発行
 $userip = get_uip();
@@ -35,6 +34,8 @@ switch($mode){
 		return del();
 	case 'userdel':
 		return userdel_mode();
+	case 'adminin':
+		return admin_in();
 	case 'admin':
 		return admin();
 	case 'res':
@@ -43,15 +44,10 @@ switch($mode){
 		return diary();
 	case 'aikotoba':
 		return aikotoba();
+	case 'logout_admin':
+		return logout_admin();
 	case 'logout':
-		session_sta();
-		unset($_SESSION['admin']);
-		unset($_SESSION['userdel']);
-		if($resno){
-			return header('Location: ./?resno='.$resno);	
-		}
-		$page = $postpage ?? $page; 
-		return header('Location: ./?page='.$page);
+		return logout();
 	default:
 		if($resno){
 			return res($resno);
