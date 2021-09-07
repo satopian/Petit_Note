@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="index.css">
+	<title>動画表示モード</title>
+
+<!-- NEOを使う -->
+<script>
+	document.paintBBSCallback = function (str) {
+	console.log('paintBBSCallback', str)
+	if (str == 'check') {
+	return true;
+	} else {
+	return;
+	}
+	}
+	</script>
+	<link rel="stylesheet" href="./app/neo/neo.css" type="text/css" />
+	<script src="./app/neo/neo.js" charset="UTF-8"></script>
+
+</head>
+<body>
+	<div class="container">
+<div class="appstage" style="width:<?=h($appw) ?>px; height:<?=h($apph) ?>px">
+<applet-dummy
+name="pch" code="pch.PCHViewer.class" archive="PCHViewer.jar,PaintBBS.jar" width="<?=h($appw)?>" height="<?=h($apph)?>" MAYSCRIPT>
+<% /def %>
+<param name="image_width" value="<?=h($picw)?>">
+<param name="image_height" value="<?=h($pich)?>">
+<param name="pch_file" value="<?=h($pchfile)?>">
+<param name="speed" value="0">
+<param name="buffer_progress" value="false">
+<param name="buffer_canvas" value="false">
+</applet-dummy>
+	</div>
+<div class="pch_download">
+<A href="<?=h($pchfile)?>" target="_blank" rel="noopener noreferrer">Download</A><br>
+	<a href="./"><?=h($boardname)?></a> / <a href="javascript:close()">閉じる</a>
+</div>
+</div>
+</body>
+</html>

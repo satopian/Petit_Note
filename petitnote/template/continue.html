@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<!--  画像と描画時間  -->
+<div class="continue_img">
+<img src="<?=h($picfile)?>" width="<?=h($picw)?>" height="<?=h($pich)?>" alt="<?=h($picw)?>x<?=h($pich)?> <?=($title)?>" title="<?=h($picw)?>x<?=h($pich)?> <?=h($title)?>">
+</div>
+<!-- コンティニューフォーム欄 -->
+<form action="./" method="post">
+ <input type="hidden" name="mode" value="contpaint">
+ <input type="hidden" name="anime" value="true">
+ <input type="hidden" name="picw" value="<?=h($picw)?>">
+ <input type="hidden" name="pich" value="<?=h($pich)?>">
+ <input type="hidden" name="no" value="<?=h($no)?>">
+ <input type="hidden" name="pch" value="<?=h($pch)?>">
+ <input type="hidden" name="ext" value="<?=h($ext)?>">
+ <span class="nk">
+ <select name="ctype" class="paint_select">
+   <?php if(ctype_pch):?><option value="pch">動画より続きを描く</option><?php endif;?>
+   <?php if(ctype_img):?><option value="img">画像より続きを描く</option><?php endif;?>
+ </select>
+ 画像は <select name="type" class="paint_select">
+<option value="rep">差し換え</option>
+<option value="new">新規投稿</option>
+  </select>
+  </span>
+ <br>
+
+<?php if($select_app):?>
+<select name="shi" class="paint_select">
+<option value="neo">PaintBBS NEO</option>
+<option value="chicken">ChickenPaint</option>
+</select>
+<?php endif;?>
+<?php if(app_to_use):?>
+<input type="hidden" name="shi" value="<?=(app_to_use)?>">
+<?php endif;?>
+
+<span class="nk">削除キー<input type="password" name="pwd" size="8" value="" class="paint_password" autocomplete="current-password"></span>
+<input type="submit" value="続きを描く">
+
+</form>
+
+<!--  コンティニュー説明  -->
+<div class="howtocontinue">
+   <ul id="up_desc">
+<li>新規投稿なら削除キーがなくても続きを描く事ができます。</li>
+</ul>
+</div>
+</div>
+<% /def?>
+</body>
+</html>
