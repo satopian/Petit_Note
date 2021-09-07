@@ -36,10 +36,8 @@ switch($mode){
 		return userdel_mode();
 	case 'adminin':
 		return admin_in();
-	case 'admin':
-		return admin();
-	case 'res':
-		return res($resno);
+	case 'admin_del':
+		return admin_del();
 	case 'diary':
 		return diary();
 	case 'aikotoba':
@@ -416,9 +414,9 @@ function del(){
 	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
 	session_sta();
-	$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+	$admindel=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_del');
 	$userdel_mode=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	if(!($adminmode||($userdel_mode&&$pwd))){
+	if(!($admindel||($userdel_mode&&$pwd))){
 		return error('失敗しました。');
 	}
 	$id_and_no=filter_input(INPUT_POST,'id_and_no');
@@ -449,7 +447,7 @@ function del(){
 			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host,$hash,$oya)=explode("\t",$val);
 			if($id==$time){
 			
-				if(!$adminmode){
+				if(!$admindel){
 					if(!password_verify($pwd,$hash)){
 					// if(!($pwd=='hoge')){
 						return error('失敗しました。');}
@@ -527,7 +525,7 @@ foreach($alllog_arr as $oya => $alllog){
 
 //管理者判定処理
 session_sta();
-$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+$admindel=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_del');
 $aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 $userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 $adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
@@ -569,7 +567,7 @@ function res ($resno){
 		// }
 //管理者判定処理
 session_sta();
-$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+$admindel=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_del');
 $aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 $userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 $adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');

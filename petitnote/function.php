@@ -58,7 +58,7 @@ function admin_in(){
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 
 	session_sta();
-	$adminmode=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_mode');
+	$admindel=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_del');
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
@@ -106,7 +106,7 @@ function diary(){
 }
 
 //管理者モード
-function admin(){
+function admin_del(){
 	global $admin_pass;
 	session_sta();
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
@@ -117,7 +117,7 @@ function admin(){
 	}
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$page = $page ?? 0;
-	$_SESSION['admin']='admin_mode';
+	$_SESSION['admin']='admin_del';
 	$_SESSION['aikotoba']='aikotoba';
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){

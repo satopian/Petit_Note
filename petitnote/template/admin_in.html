@@ -31,14 +31,14 @@
 
 
 
-<?php if($adminpost||$adminmode):?>
+<?php if($adminpost||$admindel):?>
 <ul>
 <?php if($adminpost):?>
 <li>
 	日記モードでログイン中です。
 </li>
 <?php endif;?>
-<?php if($adminmode):?>
+<?php if($admindel):?>
 <li>
 	削除モードでログイン中です。
 </li>
@@ -54,17 +54,17 @@
 	<?php endif;?>
 
 
-	<?php if(!$adminpost || !$adminmode):?>
+	<?php if(!$adminpost || !$admindel):?>
 
 	<form action="./" method="post" class="admin">
-		<?php if(!$adminmode):?>
+		<?php if(!$admindel):?>
 		
-		<label><input type="radio" name="mode" value="admin" checked>[管理者削除モード]</label><br>
+		<label><input type="radio" name="mode" value="admin_del" checked>[管理者削除モード]</label><br>
 		<?php endif;?>
 		<?php if($use_diary):?>
 		<?php if(!$adminpost):?>
 		<label><input type="radio" name="mode" value="diary" 
-			<?php if(!$adminmode):?>checked<?php endif;?>
+			<?php if(!$admindel):?>checked<?php endif;?>
 			
 			>[日記モード]</label><br>
 		<?php endif;?>
