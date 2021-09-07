@@ -101,6 +101,7 @@ selected
 <form action="./" method="post" class="aikotoba">
 	<input type="txt" name="aikotoba">
 	<input type="hidden" name="mode" value="aikotoba">
+	<input type="hidden" name="postpage" value="<?=h($page)?>">
 	<input type="submit" value="秘密の答え">
 </form><br>
 <?php endif;?>
@@ -156,7 +157,13 @@ selected
 
 		<br>
 		<?php if($res['img']):?>
-			<div class="posted_image"><img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy"></div>
+			<?php if($res['anime']):?>
+				☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank">動画</a><br>
+			<?php endif;?>
+
+			<div class="posted_image">
+				
+			<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy"></div>
 			
 			<?php endif;?>
 			<div class="comment"><?= h($res['com'])?></div>
@@ -204,13 +211,13 @@ selected
 <?php endforeach;?>
 <?php endif;?>
 <?php
-$start_page=$page-10;
-if($start_page<($pagedef*6)){
+$start_page=$page-$pagedef*8;
+if($page<$pagedef*17){
 	$start_page=0;
 }
-$end_page=$page+($pagedef*6);
-if($page<$pagedef*16){
-	$end_page=$pagedef*16;
+$end_page=$page+($pagedef*8)	;
+if($page<$pagedef*17){
+	$end_page=$pagedef*17;
 }
 ?>
 <?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
