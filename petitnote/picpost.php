@@ -187,47 +187,47 @@ if(!$fp){
 // }
 
 // PCHファイルの長さを取り出す
-// $pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);
+$pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);
 // ヘッダーを獲得
-// $h = substr($buffer, 0, 1);
+$h = substr($buffer, 0, 1);
 // 拡張子設定
 
-// if($h=='S'){
-//	if(!strstr($u_agent,'Shi-Painter/')){
-//		unlink($full_imgfile);
-//		error("UA error。画像は保存されません。");
-//		exit;
-//	}
-	// $ext = '.spch';
-// }else{
-//	if(!strstr($u_agent,'PaintBBS/')){
-//		unlink($full_imgfile);
-//		error("UA error。画像は保存されません。");
-//		exit;
-//	}
-	// $ext = '.pch';
-// }
+if($h=='S'){
+	// if(!strstr($u_agent,'Shi-Painter/')){
+	// 	unlink($full_imgfile);
+	// 	error("UA error。画像は保存されません。");
+	// 	exit;
+	// }
+	$ext = '.spch';
+}else{
+	// if(!strstr($u_agent,'PaintBBS/')){
+	// 	unlink($full_imgfile);
+	// 	error("UA error。画像は保存されません。");
+	// 	exit;
+	// }
+	$ext = '.pch';
+}
 
-// if($pchLength){
-// 	// PCHイメージを取り出す
-// 	$PCHdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength + 8, $pchLength);
-// 	// 同名のファイルが存在しないかチェック
-// 	if(is_file(TEMP_DIR.$imgfile.$ext)){
-// 		error("同名のPCHファイルが存在します。上書きします。");
-// 	}
-// 	// PCHデータをファイルに書き込む
-// 	$fp = fopen(TEMP_DIR.$imgfile.$ext,"wb");
-// 	if(!$fp){
-// 		error("PCHファイルの作成に失敗しました。PCHは保存されません。");
-// 		die("error\n{$errormsg_6}");
-// 	}else{
-// 		flock($fp, LOCK_EX);
-// 		fwrite($fp, $PCHdata);
-// 		fflush($fp);
-// 		flock($fp, LOCK_UN);
-// 		fclose($fp);
-// 	}
-// }
+if($pchLength){
+	// PCHイメージを取り出す
+	$PCHdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength + 8, $pchLength);
+	// 同名のファイルが存在しないかチェック
+	if(is_file(TEMP_DIR.$imgfile.$ext)){
+		error("同名のPCHファイルが存在します。上書きします。");
+	}
+	// PCHデータをファイルに書き込む
+	$fp = fopen(TEMP_DIR.$imgfile.$ext,"wb");
+	if(!$fp){
+		error("PCHファイルの作成に失敗しました。PCHは保存されません。");
+		die("error\n{$errormsg_6}");
+	}else{
+		flock($fp, LOCK_EX);
+		fwrite($fp, $PCHdata);
+		fflush($fp);
+		flock($fp, LOCK_UN);
+		fclose($fp);
+	}
+}
 
 /* ---------- 投稿者情報記録 ---------- */
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
@@ -243,11 +243,12 @@ if($sendheader){
 	$usercode = isset($u['usercode']) ? $u['usercode'] : '';
 	$tool = isset($u['tool']) ? $u['tool'] : '';
 	$resto = isset($u['resto']) ? $u['resto'] : '';
-	// $repcode = isset($u['repcode']) ? $u['repcode'] : '';
+	$repcode = isset($u['repcode']) ? $u['repcode'] : '';
 	// $stime = isset($u['stime']) ? $u['stime'] : '';
 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
 	// $userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
-	$userdata .= "\t$usercode\t\t\t\t$resto\t$tool";
+	$userdata .= "\t$usercode\t$repcode\t\t\t$resto\t$tool";
+	// $userdata .= "\t$usercode\t\t\t\t$resto\t$tool";
 }
 $userdata .= "\n";
 if(is_file(TEMP_DIR.$imgfile.".dat")){

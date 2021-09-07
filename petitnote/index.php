@@ -30,6 +30,8 @@ switch($mode){
 		return paint();
 	case 'paintcom':
 		return paintcom();
+	case 'pchview':
+		return pchview();
 	case 'del':
 		return del();
 	case 'userdel':
@@ -178,7 +180,6 @@ $hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
 setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
 setcookie("pwdc",$pwd,time()+(60*60*24*30),0,"",false,true);
 
-
 if($upfile){
 	if($filesize > 512 * 1024){//指定サイズを超えていたら
 		if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
@@ -195,6 +196,7 @@ if($upfile){
 	$_img_type=mime_content_type($upfile);
 	$ext=getImgType ($_img_type);
 	$imgfile=$time.$ext;
+
 	rename($upfile,'./src/'.$imgfile);
 }
 
@@ -205,26 +207,46 @@ if($upfile){
 	while ($_line = fgets($fp)) {
 		$alllog_arr[]=$_line;	
 	}
-	$img_md5=md5_file('src/'.$imgfile);
-
+	$img_md5=md5_file('./src/'.$imgfile);
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 	if($pictmp!==2){
-		$chk_log_arr=array_reverse($alllog_arr,false);
+		$chk_log_arr=krsort($alllog_arr);
 		$chk_log_arr=array_slice($alllog_arr,0,20,false);
 		foreach($chk_log_arr as $chk_log){
 			list($chk_resno)=explode("\t",$chk_log);
 			if(is_file("./log/{$chk_resno}.log")){
 			$cp=fopen("./log/{$chk_resno}.log","r+");
 				while($line=fgetcsv($cp,0,"\t")){
-					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$time_,$host_,$hash_,$oya_)=$line;
+					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$pchext_,$time_,$host_,$hash_)=$line;
 					if($log_md5 === $img_md5){
-					unlink('src/'.$imgfile);
+					unlink('./src/'.$imgfile);
 					error('同じ画像がありました。');
 					};
 				}
 			}
 		}
 	}
+			//chiファイルアップロード
+			if(is_file(TEMP_DIR.$picfile.'.chi')){
+				$pchext = '.chi';
+				$src = TEMP_DIR.$picfile.'.chi';
+				$dst = './src/'.$time.'.chi';
+				if(rename($src, $dst)){
+					chmod($dst,0606);
+					unlink($src);
+				}
+			}
+	
+			//PCHファイルアップロード
+			if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
+				$src = TEMP_DIR.$picfile.$pchext;
+				$dst = './src/'.$time.$pchext;
+				if(copy($src, $dst)){
+					chmod($dst,0606);
+					unlink($src);
+				}
+			}
+	
 $no_arr = [];
 $max_no=0;
 $md5=[];
@@ -241,7 +263,7 @@ if($no_arr){
 //書き込むログの書式
 $line='';
 if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$time\t$host\t$hash\tres\n";
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\tres\n";
 	if(!is_file('./log/'.$resno.'.log')){
 		error('投稿に失敗しました。');
 	}
@@ -259,7 +281,7 @@ if($resno){//レスの時はスレッド別ログに追記
 } else{
 	//最後の記事ナンバーに+1
 	$no=$max_no+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$time\t$host\t$hash\toya\n";
+	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\toya\n";
 	file_put_contents('./log/'.$no.'.log',$line,FILE_APPEND | LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod('./log/'.$no.'.log',0600);
 }
@@ -408,6 +430,29 @@ function paintcom(){
 	$templete='paint_com.html';
 	return include __DIR__.'/template/'.$templete;
 }
+
+// 動画表示
+function pchview(){
+	global $boardname;
+
+	$imagefile = filter_input(INPUT_GET, 'imagefile');
+	$pch = pathinfo($imagefile, PATHINFO_FILENAME);
+	$pchext = check_pch_ext('./src/' . $pch);
+	if(!$pchext){
+		error('ファイルがありません。');
+	}
+	$pchfile = './src/'.$pch.$pchext;
+
+	list($picw, $pich) = getimagesize('./src/'.$imagefile);
+	$appw = $picw < 200 ? 200 : $picw;
+	$apph = $pich < 200 ? 200 : $pich + 26;
+
+	// HTML出力
+	$templete='pch_view.html';
+	return include __DIR__.'/template/'.$templete;
+
+}
+
 //記事削除
 function del(){
 	$pwd=filter_input(INPUT_POST,'pwd');
@@ -444,7 +489,7 @@ function del(){
 		
 		foreach($line as $i =>$val){
 
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host,$hash,$oya)=explode("\t",$val);
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=explode("\t",$val);
 			if($id==$time){
 			
 				if(!$admindel){
