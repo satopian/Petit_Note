@@ -32,6 +32,10 @@ switch($mode){
 		return paintcom();
 	case 'pchview':
 		return pchview();
+	case 'to_continue':
+		var_dump($mode);
+		exit;
+		return to_continue();
 	case 'del':
 		return del();
 	case 'userdel':
@@ -429,6 +433,54 @@ function paintcom(){
 	// HTML出力
 	$templete='paint_com.html';
 	return include __DIR__.'/template/'.$templete;
+}
+
+//コンティニュー前画面
+function to_continue(){
+
+	$no = filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
+	$id = filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT);
+
+	$page=filter_input(INPUT_POST,'postpage');
+
+	$flag = false;
+
+	if(is_file("./log/$no.log")){
+		
+		$rp=fopen("./log/$no.log","r");
+		while ($line = fgetcsv($rp,"\t")) {
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host,$hash,$oya)=$line;
+			if($id==$time){
+				$flag=true;
+				break;
+			}
+		}
+		closeFile ($rp);
+	}
+
+	if(!$flag || !$imgfile || !is_file('./src/'.$imgfile)){//画像が無い時は処理しない
+		error('記事がありません');
+	}
+	$picfile = './src/'.$imgfile;
+	list($picw, $pich) = getimagesize($picfile);
+	//描画時間
+	if(is_file('./src/'.$time.'.pch')){
+		$ctype_pch = true;
+		$dat['select_app'] = false;
+		$usepbbs = true;
+		$dat['app_to_use'] = "neo";
+		
+	}elseif(is_file(PCH_DIR.$time.'.chi')){
+		$dat['select_app'] = false;
+		$dat['app_to_use'] = 'chicken';
+	}
+
+	//多重送信防止
+echo('あいうえお');
+		// HTML出力
+		$templete='continue.html';
+		return include __DIR__.'/template/'.$templete;
+	
 }
 
 // 動画表示
