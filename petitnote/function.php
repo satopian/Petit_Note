@@ -252,6 +252,19 @@ function safe_unlink ($path) {
 	}
 	return false;
 }
+/**
+ * 一連の画像ファイルを削除（元画像、サムネ、動画）
+ * @param $path
+ * @param $filename
+ * @param $ext
+ */
+function delete_files ($path, $imgfile, $time) {
+	safe_unlink($path.$imgfile);
+	safe_unlink($path.$time.'.pch');
+	safe_unlink($path.$time.'.spch');
+	safe_unlink($path.$time.'.chi');
+}
+
 //png2jpg
 function png2jpg ($src) {
 	global $path;

@@ -228,7 +228,7 @@ if($upfile){
 				while($line=fgetcsv($cp,0,"\t")){
 					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$pchext_,$time_,$host_,$hash_)=$line;
 					if($log_md5 === $img_md5){
-					unlink('./src/'.$imgfile);
+					safe_unlink('./src/'.$imgfile);
 					error('同じ画像がありました。');
 					};
 				}
@@ -242,7 +242,7 @@ if($upfile){
 				$dst = './src/'.$time.$pchext;
 				if(copy($src, $dst)){
 					chmod($dst,0606);
-					unlink($src);
+					safe_unlink($src);
 				}
 			}
 
@@ -253,7 +253,7 @@ if($upfile){
 				$dst = './src/'.$time.'.chi';
 				if(rename($src, $dst)){
 					chmod($dst,0606);
-					unlink($src);
+					safe_unlink($src);
 				}
 			}
 
@@ -272,11 +272,15 @@ if($no_arr){
 }
 //書き込むログの書式
 $line='';
-if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\tres\n";
-	if(!is_file('./log/'.$resno.'.log')){
+if($resno && !is_file('./log/'.$resno.'.log')){
+	if($pictmp!=2){//お絵かきではない時は
 		error('投稿に失敗しました。');
 	}
+		$resno='';//レス先がないお絵かきは新規投稿扱いにする。
+}
+
+if($resno){//レスの時はスレッド別ログに追記
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\tres\n";
 	file_put_contents('./log/'.$resno.'.log',$r_line,FILE_APPEND | LOCK_EX);
 	chmod('./log/'.$resno.'.log',0600);	
 	foreach($alllog_arr as $i =>$val){
@@ -306,16 +310,18 @@ if($resno){//レスの時はスレッド別ログに追記
 		if($alllog_arr[$i]===''){
 			continue;
 		}
-		list($_no,,,,,$imgfile,)=explode("\t",$alllog_arr[$i]);
+		list($_no,,)=explode("\t",$alllog_arr[$i]);
 		if(is_file("./log/$_no.log")){
 	
 			$dp = fopen("./log/$_no.log", "r");//個別スレッドのログを開く
 			flock($dp, LOCK_EX);
 
-			while ($line = fgetcsv($fp, 0, "\t")) {
-			list(,,,,$imgfile,)=$line;
-			safe_unlink('src/'.$imgfile);//画像削除
-		}
+			while ($line = fgetcsv($dp, 0, "\t")) {
+				list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=$line;
+
+			delete_files ('./src/', $_imgfile, $_time);//一連のファイルを削除
+
+			}
 		closeFile($dp);
 		}	
 		safe_unlink('./log/'.$_no.'.log');//スレッド個別ログファイル削除
@@ -597,8 +603,11 @@ function del(){
 				}
 				if(trim($oya)=='oya'){//スレッド削除
 					foreach($line as $r_line) {
-						list(,,,,$imgfile,)=explode("\t",$r_line);
-						safe_unlink('src/'.$imgfile);//画像削除
+						list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=explode("\t",$r_line);
+
+
+						delete_files ('./src/', $_imgfile, $_time);//一連のファイルを削除
+
 					}
 				
 						foreach($alllog_arr as $i =>$val){
