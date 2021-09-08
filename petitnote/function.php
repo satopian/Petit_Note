@@ -142,6 +142,29 @@ function userdel_mode(){
 	return header('Location: ./?page='.$page);
 }
 
+// コンティニュー認証
+function check_cont_pass(){
+
+	$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
+	$id = filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT);
+	$pwd = filter_input(INPUT_POST, 'pwd');
+
+	if(is_file("./log/$no.log")){
+		
+		$rp=fopen("./log/$no.log","r");
+		while ($line = fgetcsv($rp,0,"\t")) {
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pch,$time,$host,$hash,$oya)=$line;
+			if($id==$time && password_verify($pwd,$hash)){
+				closeFile ($rp);
+				return true;
+			}
+		}
+		closeFile ($rp);
+	}
+
+	error('パスワードが違います。');
+}
+
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line){
 	global $max_w,$max_h;
@@ -162,9 +185,13 @@ function create_res($line){
 	}
 
 	$anime = false;
+	$continue = false;
 	if($pchext==='.pch'){
 		$anime = true;
 	}
+	if($tool){
+		$continue = true;
+	} 
 	list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
 	
 	$res=[
@@ -178,6 +205,7 @@ function create_res($line){
 		'tool' => $tool,
 		'pchext' => $pchext,
 		'anime' => $anime,
+		'continue' => $continue,
 		'time' => $time,
 		'host' => $host,
 	];

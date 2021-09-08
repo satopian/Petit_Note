@@ -33,9 +33,12 @@ switch($mode){
 	case 'pchview':
 		return pchview();
 	case 'to_continue':
-		var_dump($mode);
-		exit;
 		return to_continue();
+	case 'contpaint':
+		$type = filter_input(INPUT_POST, 'type');
+		if($type==='rep') check_cont_pass();
+		return paint();
+		
 	case 'del':
 		return del();
 	case 'userdel':
@@ -151,6 +154,7 @@ if($pictmp==2){
 
 	$upfile='src/'.$time.'.tmp';
 	rename($tempfile, $upfile);
+	chmod($upfile,0606);
 	// ワークファイル削除
 	safe_unlink(TEMP_DIR.$picfile.".dat");
 }
@@ -214,7 +218,8 @@ if($upfile){
 	$img_md5=md5_file('./src/'.$imgfile);
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 	if($pictmp!==2){
-		$chk_log_arr=krsort($alllog_arr);
+		$chk_log_arr=$alllog_arr;
+		$chk_log_arr=krsort($chk_log_arr);
 		$chk_log_arr=array_slice($alllog_arr,0,20,false);
 		foreach($chk_log_arr as $chk_log){
 			list($chk_resno)=explode("\t",$chk_log);
@@ -230,16 +235,6 @@ if($upfile){
 			}
 		}
 	}
-			//chiファイルアップロード
-			if(is_file(TEMP_DIR.$picfile.'.chi')){
-				$pchext = '.chi';
-				$src = TEMP_DIR.$picfile.'.chi';
-				$dst = './src/'.$time.'.chi';
-				if(rename($src, $dst)){
-					chmod($dst,0606);
-					unlink($src);
-				}
-			}
 	
 			//PCHファイルアップロード
 			if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
@@ -250,7 +245,18 @@ if($upfile){
 					unlink($src);
 				}
 			}
-	
+
+			//chiファイルアップロード
+			if(is_file(TEMP_DIR.$picfile.'.chi')){
+				$pchext = '.chi';
+				$src = TEMP_DIR.$picfile.'.chi';
+				$dst = './src/'.$time.'.chi';
+				if(rename($src, $dst)){
+					chmod($dst,0606);
+					unlink($src);
+				}
+			}
+
 $no_arr = [];
 $max_no=0;
 $md5=[];
@@ -326,6 +332,7 @@ if($resno){//レスの時はスレッド別ログに追記
 }
 //お絵かき画面
 function paint(){
+
 $app = filter_input(INPUT_POST,'app');
 $picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 $pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
@@ -336,9 +343,45 @@ setcookie("appc", $app , time()+(60*60*24*30));//アプレット選択
 setcookie("picwc", $picw , time()+(60*60*24*30));//幅
 setcookie("pichc", $pich , time()+(60*60*24*30));//高さ
 
+$mode = filter_input(INPUT_POST, 'mode');
+
+$imgfile='';
+$pchfile='';
+$img_chi='';
+$anime=true;
+
+
+if($mode==="contpaint"){
+	$imgfile = filter_input(INPUT_POST,'imgfile');
+	$ctype = filter_input(INPUT_POST, 'ctype');
+	$type = filter_input(INPUT_POST, 'type');
+	$time = filter_input(INPUT_POST, 'time');
+	$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
+	$id = filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT);
+	$pwd = filter_input(INPUT_POST, 'pwd');
+
+
+	list($picw,$pich)=getimagesize('./src/'.$imgfile);//キャンバスサイズ
+	$_pch_ext = check_pch_ext('./src/'.$time);
+
+	if($ctype=='pch'&& $_pch_ext){
+		$pchfile = './src/'.$time.$_pch_ext;
+	}
+
+	if($ctype=='img' && is_file('./src/'.$imgfile)){//画像または
+		$anime=false;
+		$animeform = false;
+		$anime= false;
+		$imgfile = './src/'.$imgfile;
+		if(is_file('./src/'.$time.'.chi')){
+		$img_chi ='./src/'.$time.'.chi';
+		}
+	}
+}
+
 switch($app){
 	case 'chi'://ChickenPaint
-
+	
 		$tool='chi';
 		// HTML出力
 		$templete='paint_chi.html';
@@ -375,6 +418,7 @@ switch($app){
 		// HTML出力
 		$templete='paint_neo.html';
 		return include __DIR__.'/template/'.$templete;
+
 
 	default:
 		return;
@@ -438,6 +482,8 @@ function paintcom(){
 //コンティニュー前画面
 function to_continue(){
 
+	global $boardname;
+
 	$no = filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$id = filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT);
 
@@ -448,8 +494,8 @@ function to_continue(){
 	if(is_file("./log/$no.log")){
 		
 		$rp=fopen("./log/$no.log","r");
-		while ($line = fgetcsv($rp,"\t")) {
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$time,$host,$hash,$oya)=$line;
+		while ($line = fgetcsv($rp,0,"\t")) {
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pch,$time,$host,$hash,$oya)=$line;
 			if($id==$time){
 				$flag=true;
 				break;
@@ -463,20 +509,21 @@ function to_continue(){
 	}
 	$picfile = './src/'.$imgfile;
 	list($picw, $pich) = getimagesize($picfile);
-	//描画時間
-	if(is_file('./src/'.$time.'.pch')){
+
+	$select_app = true;
+	$app_to_use = "";
+	$ctype_pch = false;
+
+	if(($pch==='.pch')&&is_file('./src/'.$time.'.pch')){
 		$ctype_pch = true;
-		$dat['select_app'] = false;
-		$usepbbs = true;
-		$dat['app_to_use'] = "neo";
+		$select_app = false;
+		$app_to_use = "neo";
 		
-	}elseif(is_file(PCH_DIR.$time.'.chi')){
-		$dat['select_app'] = false;
-		$dat['app_to_use'] = 'chicken';
+	}elseif(($pch==='.chi')&&is_file('./src/'.$time.'.chi')){
+		$select_app = false;
+		$app_to_use = 'chi';
 	}
 
-	//多重送信防止
-echo('あいうえお');
 		// HTML出力
 		$templete='continue.html';
 		return include __DIR__.'/template/'.$templete;
@@ -541,17 +588,16 @@ function del(){
 		
 		foreach($line as $i =>$val){
 
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=explode("\t",$val);
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=explode("\t","{$val}\t\t");
 			if($id==$time){
 			
 				if(!$admindel){
 					if(!password_verify($pwd,$hash)){
-					// if(!($pwd=='hoge')){
 						return error('失敗しました。');}
 				}
 				if(trim($oya)=='oya'){//スレッド削除
-					while ($line = fgetcsv($rp, 0, "\t")) {
-						list(,,,,$imgfile,)=$line;
+					foreach($line as $r_line) {
+						list(,,,,$imgfile,)=explode("\t",$r_line);
 						safe_unlink('src/'.$imgfile);//画像削除
 					}
 				

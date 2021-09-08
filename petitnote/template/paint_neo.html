@@ -62,8 +62,8 @@ m2-=q;if(255<m3||0>m3)h*=-1,m2-=h;w+="#"+Hex(m1)+Hex(m2)+Hex(m3)+"\n"}a.paintbbs
 function GetPalette(){d=document;p=String(d.paintbbs.getColors());"null"!=p&&""!=p&&(ps=p.split("\n"),st=d.grad.p_st.selectedIndex,ed=d.grad.p_ed.selectedIndex,d.grad.pst.value=ps[st].substr(1.6),d.grad.ped.value=ps[ed].substr(1.6),GradSelC(),GradView(ps[st],ps[ed]),PaletteListSetColor())}
 function GradSelC(){if(d.grad.view.checked){d=document.grad;l=ps.length;pe="";for(n=0;l>n;n++)R=255+-1*parseInt("0x"+ps[n].substr(1,2)),G=255+-1*parseInt("0x"+ps[n].substr(3,2)),B=255+-1*parseInt("0x"+ps[n].substr(5,2)),255<R?R=255:0>R&&(R=0),255<G?G=255:0>G&&(G=0),255<B?B=255:0>B&&(B=0),pe+="#"+Hex(R)+Hex(G)+Hex(B)+"\n";pe=pe.split("\n");for(n=0;l>n;n++)d.p_st.options[n].style.background=ps[n],d.p_st.options[n].style.color=pe[n],d.p_ed.options[n].style.background=ps[n],d.p_ed.options[n].style.color=
 pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var a=d.layers?d.layers.psft:d.all("psft").style;d.grad.view.checked||(a.visibility="hidden");d.grad.view.checked&&(a.visibility="visible",GetPalette())};
-</SCRIPT>
-<NOSCRIPT><H3>JavaScriptが有効でないため正常に動作致しません</H3></NOSCRIPT>
+</script>
+<noscript><h3>javascriptが有効でないため正常に動作致しません</h3></noscript>
 <div class="appstage"><div class="app">
 <!-- NEOを使う時はアプレットを読み込まないように -->
 <applet-dummy CODE="pbbs.PaintBBS.class" ARCHIVE="./PaintBBS.jar" NAME="paintbbs" WIDTH="<?=h($appw)?>"
@@ -84,7 +84,15 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <param name="thumbnail_height" value="100%">
 <param name="url_save" value="picpost.php">
 <param name="url_exit" value="index.php?mode=paintcom">
+<?php if($anime):?>
 <param name="thumbnail_type" value="animation">
+<?php endif;?>
+<?php if($pchfile):?>
+<param name="pch_file" value="<?=h($pchfile)?>">
+<?php endif;?>
+<?php if($imgfile):?>
+<param name="image_canvas" value="<?=h($imgfile)?>">
+<?php endif;?>
 <param name="send_header" value="usercode=<?=h($usercode)?>&tool=<?=h($tool)?>
 <?php if($resto):?>&resto=<?=h($resto)?><?php endif;?>
 ">
@@ -168,6 +176,5 @@ timerID=10;stime=new Date;function SetTimeCount(){now=new Date;s=Math.floor((now
 <!--PaintBBS HELP START-->
 <div class="paintbbs_memo"><div>基本の動作(恐らくこれだけは覚えておいた方が良い機能)</div><div> &lt;基本&gt;<br>PaintBBSでは右クリック,ctrl+クリック,alt+クリックは同じ動作をします。<br>基本的に操作は一回のクリックか右クリックで動作が完了します。(ベジエやコピー使用時を除く)<br><br>&lt;ツールバー&gt;<br>ツールバーの殆どのボタンは複数回クリックして機能を切り替える事が出来ます。<br>右クリックで逆周り。パレットの色,マスクの色,一字保存ツールに現在の状態を登録は全て右クリックです。<br>逆にクリックでパレットの色と一時保存ツールに保存しておいた状態を取り出せます。<br><br>&lt;キャンバス部分&gt;<br>右クリックで色をスポイトします<br>ベジエやコピー等の処理の途中で右クリックを押すとリセットします。 </div><br><div>特殊動作(使う必要は無いが慣れれば便利な機能)</div><div> &lt;ツールバー&gt;<br>値を変更するバーはドラッグ時バーの外に出した場合変化が緩やかになりますので<br>それを利用して細かく変更する事が出来ます。<br>パレットはShift+クリックで色をデフォルトの状態に戻します。<br><br>&lt;キーボードのショートカット&gt;<br>+で拡大-で縮小。 <br>Ctrl+ZかCtrl+Uで元に戻す、Ctrl+Alt+ZかCtrl+Yでやり直し。<br>Escでコピーやベジエのリセット。（右クリックでも同じ） <br>スペースキーを押しながらキャンバスをドラッグするとスクロールの自由移動。<br>Ctrl+Alt+ドラッグで線の幅を変更。<br><br>&lt;コピーツールの特殊な利用方法&gt;<br>レイヤー間の移動は現時点ではコピーとレイヤー結合のみです。コピーでの移動方法は、<br>まず移動したいレイヤ上の長方形を選択後、移動させたいレイヤを選択後に通常のコピーの作業を<br>続けます。そうする事によりレイヤ間の移動が可能になります。<br></div><br><div>ツールバーのボタンと特殊な機能の簡単な説明</div><div> <ul type="circle"> <li>ペン先(通常ペン,水彩ペン,テキスト)<br>メインのフリーライン系のペンとテキスト<br><br></li><li>ペン先2(トーン,ぼかし,他)<br>特殊な効果を出すフリーライン系のペン<br><br></li><li>図形(円や長方形)<br>長方形や円等の図形<br><br></li><li>特殊(コピーやレイヤー結合,反転等)<br>コピーは一度選択後、ドラッグして移動、コピーさせるツールです。<br><br></li><li>マスクモード指定(通常,マスク,逆マスク）<br>マスクで登録されている色を描写不可にします。逆マスクはその逆。<br>通常でマスク無し。また右クリックでマスクカラーの変更が可能。<br><br></li><li>消しゴム(消しペン,消し四角,全消し)<br>透過レイヤー上を白で塗り潰した場合、下のレイヤーが見えなくなりますので<br>上位レイヤーの線を消す時にはこのツールで消す様にして下さい。全消しはすべてを透過ピクセル化させるツールです。<br>全けしを利用する場合はこのツールを選択後キャンバスをクリックでOK。<br>消しゴムは独立した線の幅を持っています。<br><br></li><li>描写方法の指定。(手書き,直線,ベジエ曲線)<br>ペン先,描写機能指定ではありません。<br>また適用されるのはフリーライン系のツールのみです。<br><br></li><li>カラーパレット郡<br>クリックで色取得。右クリックで色の登録。Shift+クリックでデフォルト値。<br><br></li><li>RGBバーとalphaバー<br>細かい色の変更と透過度の変更。Rは赤,Gは緑,Bは青,Aは透過度を指します。<br>トーンはAlphaバーで値を変更する事で密度の変更が可能です。<br><br></li><li>線幅変更ツール<br>水彩ペンを選択時に線幅を変更した時、デフォルトの値がalpha値に代入されます。<br><br></li><li>線一時保存ツール<br>クリックでデータ取得。右クリックでデータの登録。(マスク値は登録しません)<br><br></li><li>レイヤーツール<br>PaintBBSは透明なキャンバスを二枚重ねたような構造になっています。<br>つまり主線を上に書き、色を下に描くと言う事も可能になるツールです。<br>通常レイヤーと言う種類の物ですので鉛筆で描いたような線もキッチリ透過します。<br>クリックでレイヤー入れ替え。右クリックで選択されているレイヤの表示、非表示切り替え。<br><br></li></ul> </div>投稿に関して： <div> 絵が完成したら投稿ボタンで投稿します。<br>絵の投稿が成功した場合は指定されたURLへジャンプします。<br>失敗した場合は失敗したと報告するのみでどこにも飛びません。<br>単に重かっただけである場合、少し間を置いた後、再度投稿を試みて下さい。<br>この際二重で投稿される場合があるかもしれませんがそれは<br>WebサーバーかCGI側の処理ですのであしからず。 </div></div>
 <!--PaintBBS HELP END-->
-<!--著作権表示 削除しないでください-->
 </body>
 </html>

@@ -37,6 +37,9 @@ new ChickenPaint({
 uiElem: document.getElementById("chickenpaint-parent"),
 canvasWidth: <?=h($picw)?>,
 canvasHeight: <?=h($pich)?>,
+<?php if($imgfile):?>loadImageUrl: "<?=h($imgfile)?>",<?php endif;?>
+<?php if($img_chi):?>loadChibiFileUrl: "<?=h($img_chi)?>",<?php endif;?>
+
 saveUrl: "save.php?usercode=<?=h($usercode)?>&tool=chi<?php if($resto):?>&resto=<?=h($resto)?><?php endif;?>
 ",
 postUrl: "index.php?mode=paintcom",

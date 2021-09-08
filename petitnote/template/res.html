@@ -83,6 +83,10 @@
 
 		<br>
 		<?php if($res['img']):?>
+			<?php if($res['anime']):?>
+				☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank">動画</a><br>
+			<?php endif;?>
+
 			<div class="posted_image"><img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy"></div>
 			
 			<?php endif;?>

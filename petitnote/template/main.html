@@ -152,15 +152,17 @@ selected
 		<?php if($admindel):?>
 		<br>
 		HOST:<?=h($res['host'])?>
-		<br>
 		<?php endif;?> 
 
 		<br>
 		<?php if($res['img']):?>
-			<?php if($res['anime']):?>
-				☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank">動画</a><br>
-			<?php endif;?>
-
+		<?php if($res['continue']):?>
+		☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>">続きを描く</a>
+		<?php endif;?>
+		<?php if($res['anime']):?>
+				☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank">動画</a>
+		<?php endif;?>
+		<br>
 			<div class="posted_image">
 				
 			<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy"></div>

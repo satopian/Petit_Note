@@ -119,6 +119,10 @@ select.post_select_image {
     text-align: right;
     margin: 12px 0 0;
 }
+.continue_img img {
+    max-width: 100%;
+    height: auto;
+}
 /* メディアクエリ */
 @media screen and (max-width:767px){.posted_image{float:none;margin-right:0};}
 @media screen and (max-width:767px){textarea.post_com {max-width: 276px;}
