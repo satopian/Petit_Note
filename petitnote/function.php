@@ -146,7 +146,7 @@ function userdel_mode(){
 function check_cont_pass(){
 
 	$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
-	$id = filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT);
+	$id = filter_input(INPUT_POST, 'time',FILTER_VALIDATE_INT);
 	$pwd = filter_input(INPUT_POST, 'pwd');
 
 	if(is_file("./log/$no.log")){

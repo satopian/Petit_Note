@@ -83,7 +83,12 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <param name="thumbnail_width" value="100%">
 <param name="thumbnail_height" value="100%">
 <param name="url_save" value="picpost.php">
-<param name="url_exit" value="index.php?mode=paintcom">
+<param name="url_exit" value="index.php?mode=<?=h($paintmode)?>
+<?php if($rep):?>
+&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?>
+<?php endif;?>
+">
+
 <?php if($anime):?>
 <param name="thumbnail_type" value="animation">
 <?php endif;?>
@@ -95,7 +100,11 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <?php endif;?>
 <param name="send_header" value="usercode=<?=h($usercode)?>&tool=<?=h($tool)?>
 <?php if($resto):?>&resto=<?=h($resto)?><?php endif;?>
+<?php if($rep):?>
+&repcode=<?=h($repcode)?>
+<?php endif;?>
 ">
+
 </applet-dummy>
 </div>
 <div class="palette_wrap">

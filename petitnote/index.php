@@ -34,11 +34,12 @@ switch($mode){
 		return pchview();
 	case 'to_continue':
 		return to_continue();
-	case 'contpaint':
-		$type = filter_input(INPUT_POST, 'type');
-		if($type==='rep') check_cont_pass();
-		return paint();
-		
+		case 'contpaint':
+			$type = filter_input(INPUT_POST, 'type');
+			if($type==='rep') check_cont_pass();
+			return paint();
+	case 'picrep':
+		return img_replace();
 	case 'del':
 		return del();
 	case 'userdel':
@@ -84,17 +85,9 @@ if($resno&&is_file('./log/'.$resno.'.log')&&(count(file('./log/'.$resno.'.log'))
 	error('最大レス数を超過しています。');
 }
 $adminpost='';
-if(!$resno && $use_diary){
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
-	if(!$adminpost){
-		error('日記にログインしていません。');
-	}
-}
-
 
 //NGワードがあれば拒絶
 Reject_if_NGword_exists_in_the_post();
-
 
 //制限
 if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
@@ -121,7 +114,7 @@ $time = $time.substr(microtime(),2,3);	//投稿時刻
 $upfile='';
 if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK &&
 $use_upload){
-	$img_type = $_FILES['imgfile']['type'] ?? '';
+	$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
 
 	if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
 		error('対応していないフォーマットです。');
@@ -137,7 +130,6 @@ $picfile = t(filter_input(INPUT_POST, 'picfile'));
 if($pictmp==2){
 	if(!$picfile) error('投稿に失敗しました。');
 	$tempfile = TEMP_DIR.$picfile;
-	// $upfile_name = basename($tempfile);
 	$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
 	//選択された絵が投稿者の絵か再チェック
 	if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat")) {
@@ -149,14 +141,23 @@ if($pictmp==2){
 	fclose($fp);
 	list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");
 	if(($ucode != $usercode) && ($uip != $userip)){error('投稿に失敗しました。');}
-	$uresno=filter_var($uresto,FILTER_VALIDATE_INT);
+	$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 	$resno = $uresto ? $uresto : $resno;//変数上書き$userdataのレス先を優先する
 
 	$upfile='src/'.$time.'.tmp';
 	rename($tempfile, $upfile);
 	chmod($upfile,0606);
+	$filesize=filesize($upfile);
+
 	// ワークファイル削除
 	safe_unlink(TEMP_DIR.$picfile.".dat");
+}
+
+if(!$resno && $use_diary){
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	if(!$adminpost){
+		error('日記にログインしていません。');
+	}
 }
 
 
@@ -164,10 +165,10 @@ if(!$sub){
 	$sub='無題';
 }
 $sub=str_replace(["\r\n","\r","\n",],'',$sub);
-$name=str_replace(["\r\n","\r","\n",],'"\n"',$name);
-$com=str_replace(["\r\n","\r","\n",],'"\n"',$com);
+$name=str_replace(["\r\n","\r","\n",],'',$name);
+$com=str_replace(["\r\n","\r","\n",],"\n",$com);
 $com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
-
+$com=str_replace("\n",'"\n"',$com);
 
 if(!$name){
 	$name='anonymous';
@@ -238,6 +239,7 @@ if($upfile){
 	
 			//PCHファイルアップロード
 			if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
+
 				$src = TEMP_DIR.$picfile.$pchext;
 				$dst = './src/'.$time.$pchext;
 				if(copy($src, $dst)){
@@ -304,7 +306,7 @@ if($resno){//レスの時はスレッド別ログに追記
 	if(!$max_log){
 		error('最大スレッド数が設定されていません。');
 	}
-
+	//保存件数超過処理
 	$countlog=count($alllog_arr);
 	for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
 		if($alllog_arr[$i]===''){
@@ -355,26 +357,25 @@ $imgfile='';
 $pchfile='';
 $img_chi='';
 $anime=true;
-
+$rep=false;
+$paintmode='paintcom';
 
 if($mode==="contpaint"){
+
 	$imgfile = filter_input(INPUT_POST,'imgfile');
 	$ctype = filter_input(INPUT_POST, 'ctype');
 	$type = filter_input(INPUT_POST, 'type');
 	$time = filter_input(INPUT_POST, 'time');
-	$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
-	$id = filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT);
-	$pwd = filter_input(INPUT_POST, 'pwd');
 
 
 	list($picw,$pich)=getimagesize('./src/'.$imgfile);//キャンバスサイズ
 	$_pch_ext = check_pch_ext('./src/'.$time);
 
-	if($ctype=='pch'&& $_pch_ext){
+	if($ctype=='pch'&& $_pch_ext){//動画から続き
 		$pchfile = './src/'.$time.$_pch_ext;
 	}
 
-	if($ctype=='img' && is_file('./src/'.$imgfile)){//画像または
+	if($ctype=='img' && is_file('./src/'.$imgfile)){//画像から続き
 		$anime=false;
 		$animeform = false;
 		$anime= false;
@@ -383,6 +384,19 @@ if($mode==="contpaint"){
 		$img_chi ='./src/'.$time.'.chi';
 		}
 	}
+	
+	if($type==='rep'){//画像差し換え
+		$rep=true;
+		$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
+		$pwd = filter_input(INPUT_POST, 'pwd');
+		$userip = get_uip();
+		$paintmode='picrep';
+		$id = $time;
+		$repcode = substr(crypt(md5($no.$id.$userip.$pwd.date("Ymd", time())),time()),-8);
+		//念の為にエスケープ文字があればアルファベットに変換
+		$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
+	}
+
 }
 
 switch($app){
@@ -427,9 +441,9 @@ switch($app){
 
 
 	default:
-		return;
+		return error('失敗しました。');
 }
-			
+
 }
 // お絵かきコメント 
 function paintcom(){
@@ -535,6 +549,138 @@ function to_continue(){
 		return include __DIR__.'/template/'.$templete;
 	
 }
+
+// 画像差し換え
+function img_replace(){
+
+	$no = t(filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
+	$id = t(filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
+	$pwd = filter_input(INPUT_GET, 'pwd');
+	$repcode = filter_input(INPUT_GET, 'repcode');
+	$userip = get_uip();
+	//ホスト取得
+	$host = t(gethostbyaddr($userip));
+
+	/*--- テンポラリ捜査 ---*/
+	$find=false;
+	$handle = opendir(TEMP_DIR);
+	while ($file = readdir($handle)) {
+		if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
+			$fp = fopen(TEMP_DIR.$file, "r");
+			$userdata = fread($fp, 1024);
+			fclose($fp);
+			list($uip,$uhost,$uagent,$imgext,$ucode,$urepcode,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");//区切りの"\t"を行末に
+			$file_name = pathinfo($file, PATHINFO_FILENAME );//拡張子除去
+			//画像があり、認識コードがhitすれば抜ける
+		
+			if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $urepcode === $repcode){
+				// var_dump($file_name,$urepcode , $repcode);
+				$find=true;break;
+			}
+
+		}
+	}
+	closedir($handle);
+	if(!$find){
+	error('失敗しました。');
+	}
+	$tempfile=TEMP_DIR.$file_name.$imgext;
+
+	//ログ読み込み
+	if(!is_file("./log/$no.log")){
+		error('記事がありません。');
+	}
+	$r_arr=[];
+	$rp=fopen("./log/$no.log","r+");
+		while ($line = fgets($rp)) {
+			$r_arr[]=$line;
+		}
+	$flag=false;
+	foreach($r_arr as $i => $line){
+		list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=explode("\t",$line);
+		if($id==$_time && password_verify($pwd,$_hash)){
+
+			$time = time().substr(microtime(),2,3);
+
+			$upfile='./src/'.$time.'.tmp';
+			rename($tempfile, $upfile);
+			if(!is_file($upfile)) error('失敗しました。');
+			chmod($upfile,0606);
+			
+			$filesize=filesize($upfile);
+			if($filesize > 512 * 1024){//指定サイズを超えていたら
+				if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
+	
+					if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
+						rename($im_jpg,$upfile);//JPEGで保存
+						chmod($upfile,0606);
+					} else{//PNGよりファイルサイズが大きくなる時は
+						unlink($im_jpg);//作成したJPEG画像を削除
+					}
+				}
+			}
+				
+			$img_type=mime_content_type($upfile);
+			if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+				safe_unlink($upfile);
+				error('対応していないフォーマットです。');
+			}
+	
+			list($w, $h) = getimagesize($upfile);
+			$img_md5=md5_file($upfile);
+			
+			$imgext = getImgType($img_type, $upfile);
+			$imgfile = $time.$imgext;
+
+			copy($upfile,'./src/'.$imgfile);
+			chmod('./src/'.$imgfile,0606);
+	
+			//縮小表示 元のサイズを最大値にセット
+			list($w,$h)=image_reduction_display($w,$h,$_w,$_h);
+	
+			//ワークファイル削除
+			safe_unlink(TEMP_DIR.$file_name.".dat");
+	
+			//PCHファイルアップロード
+			// .pch, .spch, ブランク どれかが返ってくる
+			if ($pchext = check_pch_ext(TEMP_DIR . $file_name)) {
+				$src = TEMP_DIR . $file_name . $pchext;
+				$dst = './src/' . $time . $pchext;
+				if(rename($src, $dst)){
+					chmod($dst, 0606);
+				}
+			}
+			//chiファイルアップロード
+			if(is_file(TEMP_DIR.$file_name.'.chi')){
+				$pchext = '.chi';
+				$src = TEMP_DIR.$file_name.'.chi';
+				$dst = './src/'.$time.'.chi';
+				if(rename($src, $dst)){
+					chmod($dst,0606);
+				}
+			}
+	
+			//旧ファイル削除
+			delete_files('./src/', $_imgfile, $_time);
+		
+			$r_arr[$i] = "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
+	
+		$flag=true;
+
+		}
+
+}
+if(!$flag){
+	closeFile($rp);
+	error('見つかりませんでした。');
+}
+var_dump(implode("", $r_arr));
+// exit;
+writeFile($rp, implode("", $r_arr));
+closeFile($rp);
+
+}
+
 
 // 動画表示
 function pchview(){
