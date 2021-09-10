@@ -37,8 +37,16 @@
 
 <?php if($select_app):?>
 <select name="app" class="paint_select">
-<option value="neo">PaintBBS NEO</option>
-<option value="chi">ChickenPaint</option>
+<option value="neo"
+<?php if($appc==='neo'):?>
+selected
+<?php endif;?>
+>PaintBBS NEO</option>
+<option value="chi"
+<?php if($appc==='chi'):?>
+selected
+<?php endif;?>
+>ChickenPaint</option>
 </select>
 <?php endif;?>
 <?php if($app_to_use):?>

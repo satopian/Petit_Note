@@ -65,3 +65,9 @@ $badstr_B = ["シャネル","シュプリーム","バレンシアガ","ブラン
 /*変更しないでください*/
 //テンポラリ
 define('TEMP_DIR','./temp/');
+
+//ペイント画面の$pwdの暗号化
+define('CRYPT_PASS','v25Xc9nZ82a5JPT');//暗号鍵初期値
+define('CRYPT_METHOD','aes-128-cbc');
+define('CRYPT_IV','T3pkYxNyjN7Wz3pu');//半角英数16文字
+

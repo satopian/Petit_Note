@@ -77,7 +77,7 @@ function admin_in(){
 //合言葉を再確認	
 function check_aikotoba(){
 	session_sta();
-	$session_aikotoba = $_SESSION['aikotoba'] ?? '';
+	$session_aikotoba = isset($_SESSION['aikotoba']) ? $_SESSION['aikotoba'] : '';
 	if(!$session_aikotoba||$session_aikotoba!=='aikotoba'){
 		return error('合言葉が違います');
 	}
@@ -95,7 +95,7 @@ function diary(){
 	}
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
-	$page = $page ?? 0;
+	$page = isset($page) ? $page : 0;
 	
 	$_SESSION['diary']='admin_post';
 	$_SESSION['aikotoba']='aikotoba';
@@ -119,7 +119,7 @@ function admin_del(){
 		return 	error('パスワードが違います。');
 	}
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-	$page = $page ?? 0;
+	$page = isset($page) ? $page : 0;
 	$_SESSION['admin']='admin_del';
 	$_SESSION['aikotoba']='aikotoba';
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
@@ -133,7 +133,7 @@ function admin_del(){
 function userdel_mode(){
 	session_sta();
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$page = $page ?? 0;
+	$page = isset($page) ? : 0;
 	$_SESSION['userdel']='userdel_mode';
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	if($resno){
@@ -148,6 +148,10 @@ function check_cont_pass(){
 	$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = filter_input(INPUT_POST, 'time',FILTER_VALIDATE_INT);
 	$pwd = filter_input(INPUT_POST, 'pwd');
+
+	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
+	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+
 
 	if(is_file("./log/$no.log")){
 		
@@ -170,12 +174,17 @@ function create_res($line){
 	global $max_w,$max_h;
 	list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pchext,$time,$host)=$line;
 	$res=[];
+
+	$continue = false;
+
 	switch($tool){
 		case 'neo':
 			$tool='PaintBBS NEO';
+			$continue = true;
 			break;
 		case 'chi':
 			$tool='ChickenPaint';
+			$continue = true;
 			break;
 		case 'upload':
 			$tool='アップロード';
@@ -185,15 +194,13 @@ function create_res($line){
 	}
 
 	$anime = false;
-	$continue = false;
 	if($pchext==='.pch'){
 		$anime = true;
 	}
-	if($tool){
-		$continue = true;
-	} 
+
 	list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
-	
+	$datetime=(int)substr($time,-13,10);
+	$date=date('y/m/d',$datetime);
 	$res=[
 		'no' => $no,
 		'sub' => $sub,
@@ -207,6 +214,7 @@ function create_res($line){
 		'anime' => $anime,
 		'continue' => $continue,
 		'time' => $time,
+		'date' => $date,
 		'host' => $host,
 	];
 

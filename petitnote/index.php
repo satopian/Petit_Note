@@ -98,8 +98,8 @@ if(strlen($name) > 30) error('名前が長すぎます。');
 if(strlen($com) > 1000) error('本文が長すぎます。');
 
 //ファイルアップロード
-$tempfile = $_FILES['imgfile']['tmp_name'] ?? ''; // 一時ファイル名
-$filesize = $_FILES['imgfile']['size'] ?? '';
+$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
+$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
 if($filesize > $max_kb*1024){
 	error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 }
@@ -179,7 +179,7 @@ error('何か書いて下さい。');
 }
 
 $pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
-$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwc'));//未入力ならCookieのパスワード
+$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 if(!$pwd){//それでも$pwdが空なら
 	srand((double)microtime()*1000000);
 	$pwd = substr(rand(), 0, 8);
@@ -219,18 +219,20 @@ if($upfile){
 	$img_md5=md5_file('./src/'.$imgfile);
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 	if($pictmp!==2){
+
 		$chk_log_arr=$alllog_arr;
-		$chk_log_arr=krsort($chk_log_arr);
-		$chk_log_arr=array_slice($alllog_arr,0,20,false);
+		krsort($chk_log_arr);
+		$chk_log_arr=array_slice($chk_log_arr,0,20,false);
 		foreach($chk_log_arr as $chk_log){
 			list($chk_resno)=explode("\t",$chk_log);
 			if(is_file("./log/{$chk_resno}.log")){
 			$cp=fopen("./log/{$chk_resno}.log","r+");
 				while($line=fgetcsv($cp,0,"\t")){
 					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$pchext_,$time_,$host_,$hash_)=$line;
+					
 					if($log_md5 === $img_md5){
-					safe_unlink('./src/'.$imgfile);
-					error('同じ画像がありました。');
+						safe_unlink('./src/'.$imgfile);
+						error('同じ画像がありました。');
 					};
 				}
 			}
@@ -346,6 +348,8 @@ $picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 $pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
 $usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
 $resto = t(filter_input(INPUT_POST, 'resto'));
+$postno = filter_input(INPUT_POST,'postno');
+$postpage = filter_input(INPUT_POST,'postpage');
 
 setcookie("appc", $app , time()+(60*60*24*30));//アプレット選択
 setcookie("picwc", $picw , time()+(60*60*24*30));//幅
@@ -389,6 +393,11 @@ if($mode==="contpaint"){
 		$rep=true;
 		$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 		$pwd = filter_input(INPUT_POST, 'pwd');
+		$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+		if($pwd){
+			$pwd=openssl_encrypt ($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//暗号化
+			$pwd=bin2hex($pwd);//16進数に
+		}
 		$userip = get_uip();
 		$paintmode='picrep';
 		$id = $time;
@@ -438,7 +447,6 @@ switch($app){
 		// HTML出力
 		$templete='paint_neo.html';
 		return include __DIR__.'/template/'.$templete;
-
 
 	default:
 		return error('失敗しました。');
@@ -503,6 +511,7 @@ function paintcom(){
 function to_continue(){
 
 	global $boardname;
+	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 
 	$no = filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$id = filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT);
@@ -561,6 +570,10 @@ function img_replace(){
 	//ホスト取得
 	$host = t(gethostbyaddr($userip));
 
+	$pwd=hex2bin($pwd);//バイナリに
+	$pwd=openssl_decrypt($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//復号化
+
+
 	/*--- テンポラリ捜査 ---*/
 	$find=false;
 	$handle = opendir(TEMP_DIR);
@@ -588,7 +601,7 @@ function img_replace(){
 
 	//ログ読み込み
 	if(!is_file("./log/$no.log")){
-		error('記事がありません。');
+		paintcom();//該当記事が無い時は新規投稿。
 	}
 	$r_arr=[];
 	$rp=fopen("./log/$no.log","r+");
@@ -599,6 +612,15 @@ function img_replace(){
 	foreach($r_arr as $i => $line){
 		list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=explode("\t",$line);
 		if($id==$_time && password_verify($pwd,$_hash)){
+			$flag=true;
+			break;
+		}
+	}
+	if(!$flag){
+		closeFile($rp);
+		error('見つかりませんでした。');
+	}
+	
 
 			$time = time().substr(microtime(),2,3);
 
@@ -665,19 +687,12 @@ function img_replace(){
 		
 			$r_arr[$i] = "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
 	
-		$flag=true;
 
-		}
 
-}
-if(!$flag){
+	writeFile($rp, implode("", $r_arr));
 	closeFile($rp);
-	error('見つかりませんでした。');
-}
-var_dump(implode("", $r_arr));
-// exit;
-writeFile($rp, implode("", $r_arr));
-closeFile($rp);
+
+	return header('Location: ./?resno='.$no);
 
 }
 
@@ -745,12 +760,12 @@ function del(){
 			
 				if(!$admindel){
 					if(!password_verify($pwd,$hash)){
-						return error('失敗しました。');}
+						return error('失敗しました。');
+					}
 				}
 				if(trim($oya)=='oya'){//スレッド削除
 					foreach($line as $r_line) {
 						list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=explode("\t",$r_line);
-
 
 						delete_files ('./src/', $_imgfile, $_time);//一連のファイルを削除
 

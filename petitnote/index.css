@@ -69,15 +69,6 @@ hr {
 border: none;
 border-bottom: 1px dashed #888;
 }
-body {
-	margin: 10px;
-	color: #555;
-}
-.container {
-	max-width: 800px;
-	margin: 22px auto;
-	color: #555;
-}
 nav.memu_wrap {
     margin: 0px 0 12px;
 }
@@ -112,6 +103,12 @@ select.post_select_image {
 .post_table_title {
     margin: 0px 0 12px;
 }
+.imginfo_wrap {
+    margin: 5px 0;
+}
+.imginfo_wrap span {
+    display: inline-block;
+}
 .res_wrap {
     display: table;
 }
@@ -125,4 +122,4 @@ select.post_select_image {
 }
 /* メディアクエリ */
 @media screen and (max-width:767px){.posted_image{float:none;margin-right:0};}
-@media screen and (max-width:767px){textarea.post_com {max-width: 276px;}
+@media screen and (max-width:767px){textarea.post_com {max-width: 276px;}}
