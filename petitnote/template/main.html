@@ -131,7 +131,19 @@ selected
 	<h2 class="article_title"><a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a></h2>
 	<?php $resform=true; ?>
 	<!-- スレッドのループ -->
+	<?php
+	$dispres=$dispres+1;
+	$countres=count($ress);
+	$skipres=$countres-$dispres;
+	?>
 	<?php foreach($ress as $i => $res) : ?>
+		<?php if($i===$skipres):?>
+		<hr class="reshr">
+		レス<?=h($skipres)?>件省略中。
+		<?php endif;?>	
+
+		<?php if($i===0 || $i>$skipres):?>
+
 	<hr class="reshr">
 	<?php if($i!==0):?>
 	<div class="res_wrap">	
@@ -172,7 +184,7 @@ selected
 			
 			<?php endif;?>
 			<div class="comment"><?= h($res['com'])?></div>
-	
+
 
 			<?php if($i>=$max_res){
 				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
@@ -181,8 +193,8 @@ selected
 			</div>	
 			<?php endif;?>
 		
-		
-<?php endforeach;?>
+	<?php endif;?>	
+	<?php endforeach;?>
 <!-- 返信フォーム -->
 <div class="clear"></div>
 <?php if($aikotoba && (!$userdel && !$admindel)):?>
@@ -209,6 +221,13 @@ selected
 <input type="submit" value="返信">
 </form>
 <?php endif;?>
+<?php endif;?>
+<!-- レスフォームが閉じていてレス省略表示の時 -->
+<?php if(!$resform):?>
+			<form action="./?resno=<?=h($res['no'])?>" method="POST" class="resform">
+			<input type="submit" value="全件表示">
+			</form>
+
 <?php endif;?>
 <?php endif;?>
 

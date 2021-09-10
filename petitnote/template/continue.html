@@ -30,8 +30,10 @@
  </select>
  画像は <select name="type" class="paint_select">
 <option value="rep">差し換え</option>
+<?php if(!$use_diary || $adminpost):?>
 <option value="new">新規投稿</option>
-  </select>
+<?php endif;?>
+</select>
   </span>
  <br>
 
@@ -59,11 +61,13 @@ selected
 </form>
 
 <!--  コンティニュー説明  -->
+<?php if(!$use_diary || $adminpost):?>
 <div class="howtocontinue">
    <ul id="up_desc">
 <li>新規投稿なら削除キーがなくても続きを描く事ができます。</li>
 </ul>
 </div>
+<?php endif;?>
 </div>
 </div>
 </body>

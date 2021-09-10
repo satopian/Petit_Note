@@ -4,6 +4,8 @@
 require_once(__DIR__.'/config.php');	
 require_once(__DIR__.'/function.php');
 
+$max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
+
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page');
@@ -337,6 +339,9 @@ if($resno){//レスの時はスレッド別ログに追記
 	
 	chmod('./log/alllog.log',0600);
 	//多重送信防止
+	if($resno){
+		return header('Location: ./?resno='.$resno);
+	}
 	return header('Location: ./');
 
 }
@@ -510,7 +515,7 @@ function paintcom(){
 //コンティニュー前画面
 function to_continue(){
 
-	global $boardname;
+	global $boardname,$use_diary;
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 
 	$no = filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
@@ -552,6 +557,9 @@ function to_continue(){
 		$select_app = false;
 		$app_to_use = 'chi';
 	}
+	//日記判定処理
+	session_sta();
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
 
 		// HTML出力
 		$templete='continue.html';
@@ -622,71 +630,72 @@ function img_replace(){
 	}
 	
 
-			$time = time().substr(microtime(),2,3);
+	$time = time().substr(microtime(),2,3);
 
-			$upfile='./src/'.$time.'.tmp';
-			rename($tempfile, $upfile);
-			if(!is_file($upfile)) error('失敗しました。');
-			chmod($upfile,0606);
-			
-			$filesize=filesize($upfile);
-			if($filesize > 512 * 1024){//指定サイズを超えていたら
-				if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
+	$upfile='./src/'.$time.'.tmp';
+	rename($tempfile, $upfile);
+	if(!is_file($upfile)) error('失敗しました。');
+	chmod($upfile,0606);
 	
-					if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
-						rename($im_jpg,$upfile);//JPEGで保存
-						chmod($upfile,0606);
-					} else{//PNGよりファイルサイズが大きくなる時は
-						unlink($im_jpg);//作成したJPEG画像を削除
-					}
-				}
-			}
-				
-			$img_type=mime_content_type($upfile);
-			if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
-				safe_unlink($upfile);
-				error('対応していないフォーマットです。');
-			}
-	
-			list($w, $h) = getimagesize($upfile);
-			$img_md5=md5_file($upfile);
-			
-			$imgext = getImgType($img_type, $upfile);
-			$imgfile = $time.$imgext;
+	$filesize=filesize($upfile);
+	if($filesize > 512 * 1024){//指定サイズを超えていたら
+		if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 
-			copy($upfile,'./src/'.$imgfile);
-			chmod('./src/'.$imgfile,0606);
-	
-			//縮小表示 元のサイズを最大値にセット
-			list($w,$h)=image_reduction_display($w,$h,$_w,$_h);
-	
-			//ワークファイル削除
-			safe_unlink(TEMP_DIR.$file_name.".dat");
-	
-			//PCHファイルアップロード
-			// .pch, .spch, ブランク どれかが返ってくる
-			if ($pchext = check_pch_ext(TEMP_DIR . $file_name)) {
-				$src = TEMP_DIR . $file_name . $pchext;
-				$dst = './src/' . $time . $pchext;
-				if(rename($src, $dst)){
-					chmod($dst, 0606);
-				}
+			if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
+				rename($im_jpg,$upfile);//JPEGで保存
+				chmod($upfile,0606);
+			} else{//PNGよりファイルサイズが大きくなる時は
+				unlink($im_jpg);//作成したJPEG画像を削除
 			}
-			//chiファイルアップロード
-			if(is_file(TEMP_DIR.$file_name.'.chi')){
-				$pchext = '.chi';
-				$src = TEMP_DIR.$file_name.'.chi';
-				$dst = './src/'.$time.'.chi';
-				if(rename($src, $dst)){
-					chmod($dst,0606);
-				}
-			}
-	
-			//旧ファイル削除
-			delete_files('./src/', $_imgfile, $_time);
+		}
+	}
 		
-			$r_arr[$i] = "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
+	$img_type=mime_content_type($upfile);
+	if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+		safe_unlink($upfile);
+		error('対応していないフォーマットです。');
+	}
+
+	list($w, $h) = getimagesize($upfile);
+	$img_md5=md5_file($upfile);
 	
+	$imgext = getImgType($img_type, $upfile);
+	
+	$imgfile = $time.$imgext;
+
+	rename($upfile,'./src/'.$imgfile);
+	chmod('./src/'.$imgfile,0606);
+
+	//縮小表示 元のサイズを最大値にセット
+	list($w,$h)=image_reduction_display($w,$h,$_w,$_h);
+
+	//ワークファイル削除
+	safe_unlink(TEMP_DIR.$file_name.".dat");
+
+	//PCHファイルアップロード
+	// .pch, .spch, ブランク どれかが返ってくる
+	if ($pchext = check_pch_ext(TEMP_DIR . $file_name)) {
+		$src = TEMP_DIR . $file_name . $pchext;
+		$dst = './src/' . $time . $pchext;
+		if(rename($src, $dst)){
+			chmod($dst, 0606);
+		}
+	}
+	//chiファイルアップロード
+	if(is_file(TEMP_DIR.$file_name.'.chi')){
+		$pchext = '.chi';
+		$src = TEMP_DIR.$file_name.'.chi';
+		$dst = './src/'.$time.'.chi';
+		if(rename($src, $dst)){
+			chmod($dst,0606);
+		}
+	}
+
+	//旧ファイル削除
+	delete_files('./src/', $_imgfile, $_time);
+
+	$r_arr[$i] = "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
+
 
 
 	writeFile($rp, implode("", $r_arr));
@@ -805,8 +814,8 @@ function del(){
 
 //通常表示
 function view($page=0){
-global $use_aikotoba,$use_upload,$home,$pagedef;
-global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary; 
+global $use_aikotoba,$use_upload,$home,$pagedef,$dispres;
+global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary; 
 
 if(!isset($page)||!$page){
 	$page=0;
@@ -830,10 +839,9 @@ foreach($alllog_arr as $oya => $alllog){
 		$fp = fopen("./log/$no.log", "r");//個別スレッドのログを開く
 		while ($line = fgetcsv($fp, 0, "\t")) {
 			$res = create_res($line);//$lineから、情報を取り出す
-		$out[$oya][]=$res;
+			$out[$oya][]=$res;
 		}	
 	fclose($fp);
-
 }
 
 //管理者判定処理
@@ -900,5 +908,4 @@ $templete='res.html';
 return include __DIR__.'/template/'.$templete;
 	
 }
-	
-	
+
