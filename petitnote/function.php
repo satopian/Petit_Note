@@ -1,7 +1,6 @@
 <?php
 
 function logout(){
-	$postpage=filter_input(INPUT_POST,'postpage');
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
 	unset($_SESSION['admin']);
@@ -9,22 +8,21 @@ function logout(){
 	if($resno){
 		return header('Location: ./?resno='.$resno);	
 	}
-	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
 	$page= $page ? $page : filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$page = $page ? $page : 0;
 
 	return header('Location: ./?page='.$page);
 }
 function logout_admin(){
-	$postpage=filter_input(INPUT_POST,'postpage');
-	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
 	unset($_SESSION['admin']);
 	unset($_SESSION['diary']);
+	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);	
 	}
-	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
 	$page = $page ? $page : 0;
 
 	return header('Location: ./?page='.$page);
@@ -59,6 +57,7 @@ function admin_in(){
 
 	global $boardname,$use_diary,$use_aikotoba;
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
 	session_sta();
 	$admindel=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_del');
@@ -99,7 +98,6 @@ function diary(){
 	
 	$_SESSION['diary']='admin_post';
 	$_SESSION['aikotoba']='aikotoba';
-
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);
@@ -123,6 +121,9 @@ function admin_del(){
 	$_SESSION['admin']='admin_del';
 	$_SESSION['aikotoba']='aikotoba';
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	var_dump($resno);
+	exit;	
+
 	if($resno){
 		return header('Location: ./?resno='.$resno);
 	}
@@ -133,7 +134,7 @@ function admin_del(){
 function userdel_mode(){
 	session_sta();
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$page = isset($page) ? : 0;
+	$page = isset($page) ? $page : 0;
 	$_SESSION['userdel']='userdel_mode';
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	if($resno){

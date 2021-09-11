@@ -16,9 +16,11 @@
 	<span>[<a href="<?=h($home)?>">HOME</a>]</span>
  <span>[<a href="./?mode=paintcom">アップロード途中の画像</a>]</span>
 <?php if($userdel || $admindel):?>
-<span>[<a href="./?mode=logout&resno=<?=h($resno)?>">削除モード終了</a>]</span>
+<span>[<a href="./?mode=logout&resno=<?=h($resno)?>">編集モード終了</a>]</span>
 <?php else:?>
-<span> [<a href="./?mode=userdel&resno=<?=h($resno)?>">削除</a>]</span>
+<span> [<a href="./?mode=userdel&resno=<?=h($resno)?>">編集</a>]</span>
+<span>[<a href="./?mode=adminin&resno=<?=h($resno)?>">管理</a>]</span>
+
  <?php endif;?>
  <br>
 </nav>
@@ -32,24 +34,6 @@
 	<input type="hidden" name="resno" value="<?=h($out[0][0]['no'])?>">
 	<input type="submit" value="秘密の答え">
 </form><br>
-<?php endif;?>
-<?php if($admindel):?>
-削除したい記事をチェックして削除ボタンを押してください。:
-<?php endif;?>
-<?php if($userdel&&!$admindel):?>
-削除したい記事をチェックしてパスワードを入力してください。:
-<?php endif;?>
-<?php if( $admindel || $aikotoba && $userdel):?>
-<form action="./" method="POST" id="delete" class="aikotoba">
-<?php if(!$admindel):?>
-	<input type="password" name="pwd">
-<?php endif;?>
-<input type="hidden" name="mode" value="del">
-<input type="hidden" name="postpage" value="<?=$page?>">
-<input type="hidden" name="resmode" value="true">
-<input type="hidden" name="resno" value="<?=h($out[0][0]['no'])?>">
-<input type="submit" value="削除">
-</form>
 <?php endif;?>
 
 <hr>
@@ -67,16 +51,12 @@
 	<?php endif;?>
 
 	<div class="imginfo_wrap">
-		<?php if($userdel || $admindel):?>
-	<input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
-	<?php endif;?>
 			<!-- [<?= h($ress[0]['no'])?>-<?= h($i)?>]  -->
 			<span>名前:<?= h($res['name'])?></span>
 			<span><?=h($res['date'])?></span>		
 		<?php if($res['img']):?>
 		<span>(<?=h($res['tool'])?>)</span>
 		<?php endif;?>
-	</label>
 	<?php if($admindel):?>
 		<br>
 		HOST:<?=h($res['host'])?>
@@ -108,10 +88,36 @@
 			</div>	
 			<?php endif;?>
 		
+
+			<?php if($aikotoba && ($userdel || $admindel)):?>
+
+<form action="./" method="POST" class="aikotoba">
+<input type="hidden" name="mode" value="edit">
+<input type="hidden" name="resmode" value="true">
+<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+<input type="hidden" name="postresno" value="<?=h($resno)?>">
+<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
+<input type="submit" value="編集">
+</form>
+<form action="./" method="POST" class="aikotoba">
+<input type="hidden" name="mode" value="before_del">
+<input type="hidden" name="resmode" value="true">
+<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+<input type="hidden" name="postpage" value="<?=h($page)?>">
+<input type="hidden" name="postresno" value="<?=h($resno)?>">
+
+<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
+<input type="submit" value="削除">
+</form>
+<?php endif;?>	
 		
+
 <?php endforeach;?>
 <!-- 返信フォーム -->
 <div class="clear"></div>
+
+
+
 <?php if($aikotoba && (!$userdel && !$admindel)):?>
 <?php if($resform):?>
 
@@ -189,14 +195,14 @@ selected
 	<form action="./" method="post" class="admin">
 <input type="hidden" name="mode" value="logout">
 <input type="hidden" name="postpage" value="<?=$page?>">
-<input type="submit" value="削除モード終了">
+<input type="submit" value="編集モード終了">
 	</form>
 <?php else: ?>
 	<form action="./" method="post" class="admin">
 <input type="password" name="adminpass">
 <input type="hidden" name="mode" value="admin_del">
 <input type="hidden" name="postpage" value="<?=$page?>">
-<input type="submit" value="管理者削除">
+<input type="submit" value="管理者">
 </form>
 <?php endif; ?>
 <div class="copy">

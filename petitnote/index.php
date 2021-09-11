@@ -739,13 +739,16 @@ function pchview(){
 //削除前の確認画面
 function confirmation_before_deletion (){
 
-global $boardname,$max_res;
+global $boardname,$max_res,$home;
 	//管理者判定処理
 session_sta();
 $admindel=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_del');
 $aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 $userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-
+$resmode = filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
+$resmode = $resmode ? 'true' : 'false';
+$postpage = (string)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+$postresno = (string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 
 
 	if(!($admindel||$userdel)){
@@ -784,7 +787,7 @@ $userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 		closeFile ($rp);
 	}
 
-	$templete='res.html';
+	$templete='before_del.html';
 return include __DIR__.'/template/'.$templete;
 
 
@@ -808,8 +811,6 @@ function del(){
 		list($id,$no)=explode(",",filter_input(INPUT_POST,'id_and_no'));
 		$no=trim($no);
 	}
-	
-	$page=filter_input(INPUT_POST,'postpage');
 	
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
@@ -869,10 +870,10 @@ function del(){
 
 	}
 	//多重送信防止
-	if(filter_input(INPUT_POST,'resmode')){
-		return header('Location: ./?mode=res&resno='.filter_input(INPUT_POST,'resno'));
+	if(filter_input(INPUT_POST,'resmode')==='true'){
+		return header('Location: ./?resno='.filter_input(INPUT_POST,'postresno'));
 	}
-	return header('Location: ./?page='.$page);
+	return header('Location: ./?page='.filter_input(INPUT_POST,'postpage'));
 }
 
 //通常表示

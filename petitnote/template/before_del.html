@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="index.css">
+	<title><?=h($boardname)?></title>
+</head>
+<body>
+<div class="container">
+	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+	<?php if($aikotoba):?>
+<nav class="memu_wrap">
+	<span>[<a href="./"><?=h($boardname)?></a>]</span>
+	<span>[<a href="<?=h($home)?>">HOME</a>]</span>
+<?php if($userdel || $admindel):?>
+<span>[<a href="./?mode=logout&<?php if($postpage==='0'||$postpage):?>?page=<?=h($postpage)?><?php else:?>?resno=<?=h($postresno)?><?php endif;?>">編集モード終了</a>]</span>
+<?php endif;?>
+ <br>
+</nav>
+
+<?php if($admindel):?>
+削除したい記事をチェックして削除ボタンを押してください。:
+<?php endif;?>
+<?php if($userdel&&!$admindel):?>
+削除したい記事をチェックしてパスワードを入力してください。:
+<?php endif;?>
+<?php if( $admindel || $aikotoba && $userdel):?>
+<form action="./" method="POST" id="delete" class="aikotoba">
+<?php if(!$admindel):?>
+	<input type="password" name="pwd">
+<?php endif;?>
+<input type="hidden" name="mode" value="del">
+<input type="hidden" name="resmode" value="<?=h($resmode)?>">
+<input type="hidden" name="postresno" value="<?=h($postresno)?>">
+<input type="hidden" name="postpage" value="<?=h($postpage)?>">
+<input type="submit" value="削除">
+</form>
+<?php endif;?>
+
+<hr>
+	<!-- 親のループ -->
+<?php if(isset($out)):?>
+<?php foreach($out as $ress) : ?>
+
+<h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
+	<!-- スレッドのループ -->
+<?php foreach($ress as $i => $res) : ?>
+	<hr class="reshr">
+	<?php if($i!==0):?>
+	<div class="res_wrap">	
+	<?php endif;?>
+
+	<div class="imginfo_wrap">
+		<?php if($userdel || $admindel):?>
+	<label><input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+	<?php endif;?>
+			<!-- [<?= h($ress[0]['no'])?>-<?= h($i)?>]  -->
+			<span>名前:<?= h($res['name'])?></span>
+			<span><?=h($res['date'])?></span>		
+		<?php if($res['img']):?>
+		<span>(<?=h($res['tool'])?>)</span>
+		<?php endif;?>
+	</label>
+	<?php if($admindel):?>
+		<br>
+		HOST:<?=h($res['host'])?>
+		<?php endif;?> 
+	</div>
+		<?php if($res['img']):?>
+
+		<?php if($res['continue']||($res['anime'])):?>
+		<div class="imginfo_wrap">
+		<?php if($res['continue']):?>
+		<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>">続きを描く</a></span>
+		<?php endif;?>
+		<?php if($res['anime']):?>
+				<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank">動画</a></span>
+		<?php endif;?>
+		</div>
+		<?php endif;?>
+			<div class="posted_image">
+
+				<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy"></div>
+			
+			<?php endif;?>
+			<div class="comment"><?= h($res['com'])?></div>
+	
+
+			<?php if($i!==0):?>
+			</div>	
+			<?php endif;?>
+			
+			
+			<?php endforeach;?>
+			<?php endforeach;?>
+			<?php endif;?>
+			<?php endif;?>
+
+<div class="copy">
+<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a>
+</div>
+</div>
+</body>
+</html>
