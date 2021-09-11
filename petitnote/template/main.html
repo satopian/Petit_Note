@@ -106,21 +106,9 @@ selected
 </form><br>
 <?php endif;?>
 
-<?php if($admindel):?>
-削除したい記事をチェックして削除ボタンを押してください。:
-<?php endif;?>
-<?php if($userdel&&!$admindel):?>
-削除したい記事をチェックしてパスワードを入力してください。:
-<?php endif;?>
-<?php if( $admindel || $aikotoba && $userdel):?>
-<form action="./" method="POST" id="delete" class="aikotoba">
-<?php if(!$admindel):?>
-	<input type="password" name="pwd">
-<?php endif;?>
-<input type="hidden" name="mode" value="del">
-<input type="hidden" name="postpage" value="<?=h($page)?>">
-<input type="submit" value="削除">
-</form>
+<?php if($aikotoba && ($admindel || $userdel)):?>
+記事をチェックしてボタンを押してください。:
+
 <?php endif;?>
 
 <hr>
@@ -128,16 +116,19 @@ selected
 <?php if(isset($out)):?>
 <?php foreach($out as $ress) : ?>
 	<!-- タイトル -->
-	<h2 class="article_title"><a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a></h2>
+	<h2 class="article_title"><a href="./?resno=<?= h($ress[0]['no'])?>" target="_blank">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a></h2>
 	<?php $resform=true; ?>
 	<!-- スレッドのループ -->
 	<?php
 	$dispres=$dispres+1;
 	$countres=count($ress);
 	$skipres=$countres-$dispres;
+	if($userdel || $admindel){
+		$skipres=0;	//削除モードの時はレスを省略しない
+	}
 	?>
 	<?php foreach($ress as $i => $res) : ?>
-		<?php if($i===$skipres):?>
+		<?php if($skipres && $i===$skipres):?>
 		<hr class="reshr">
 		レス<?=h($skipres)?>件省略中。
 		<?php endif;?>	
@@ -150,27 +141,22 @@ selected
 	<?php endif;?>
 
 	<div class="imginfo_wrap">
-	<?php if($userdel || $admindel):?>
-	<label><input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
-	<?php endif;?>
-
-			<!-- [<?= h($ress[0]['no'])?>-<?= h($i)?>]  -->
 			<span>名前:<?= h($res['name'])?></span>
 			<span><?=h($res['date'])?></span>		
 		<?php if($res['img']):?>
 		<span>(<?=h($res['tool'])?>)</span>
 		<?php endif;?>
-	</label>
 	<?php if($admindel):?>
 		<br>
 		HOST:<?=h($res['host'])?>
 		<?php endif;?> 
 	</div>
 
+
 		<?php if($res['img']):?>
 		<?php if($res['continue']||($res['anime'])):?>
 		<div class="imginfo_wrap">
-		<?php if($res['continue']):?>
+		<?php if($res['continue'] && $aikotoba):?>
 		<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>">続きを描く</a></span>
 		<?php endif;?>
 		<?php if($res['anime']):?>
@@ -190,37 +176,32 @@ selected
 				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
 			}?>
 			<?php if($i!==0):?>
-			</div>	
+			</div><!-- 子レスのwrap	 -->
 			<?php endif;?>
+			<?php if($aikotoba && ($userdel || $admindel)):?>
+	<form action="./" method="POST" class="aikotoba">
+	<input type="hidden" name="mode" value="edit">
+	<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+	<input type="hidden" name="postpage" value="<?=h($page)?>">
+	<input type="submit" value="編集">
+	</form>
+	<form action="./" method="POST" class="aikotoba">
+	<input type="hidden" name="mode" value="before_del">
+	<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+	<input type="hidden" name="postpage" value="<?=h($page)?>">
+	<input type="submit" value="削除">
+	</form>
+<?php endif;?>
 		
 	<?php endif;?>	
 	<?php endforeach;?>
 <!-- 返信フォーム -->
+
 <div class="clear"></div>
-<?php if($aikotoba && (!$userdel && !$admindel)):?>
 <?php if($resform):?>
-<?php if($use_miniform):?>
-<!-- ミニフォームを表示 -->
-<form action="./" method="POST" enctype="multipart/form-data" class="resform">
-名前:<input type="text" name="name"  value="<?=h($namec)?>"><br>
-<textarea name="com" class="rescom"></textarea>
-<input type="password" name="pwd">
-<input type="hidden" name="resno" value="<?=h($res['no'])?>">
-<input type="hidden" name="mode" value="regist">
-<input type="hidden" name="token" value="<?=h($token)?>">
-<br>
-<?php if($use_upload):?>
-<input type="file" name="imgfile" size="35" accept="image/*">
-<br>
-<?php endif;?>
+<form action="./?resno=<?=h($res['no'])?>" method="POST" class="resform" target="_blank">
 <input type="submit" value="返信">
 </form>
-<!-- ミニフォームを使わない時 -->
-<?php else :?>
-<form action="./?resno=<?=h($res['no'])?>" method="POST" class="resform">
-<input type="submit" value="返信">
-</form>
-<?php endif;?>
 <?php endif;?>
 <!-- レスフォームが閉じていてレス省略表示の時 -->
 <?php if(!$resform):?>
@@ -228,7 +209,6 @@ selected
 			<input type="submit" value="全件表示">
 			</form>
 
-<?php endif;?>
 <?php endif;?>
 
 <hr>

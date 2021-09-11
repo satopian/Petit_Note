@@ -153,9 +153,9 @@ function check_cont_pass(){
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 
 
-	if(is_file("./log/$no.log")){
+	if(is_file(LOG_DIR."$no.log")){
 		
-		$rp=fopen("./log/$no.log","r");
+		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgetcsv($rp,0,"\t")) {
 			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pch,$time,$host,$hash,$oya)=$line;
 			if($id==$time && password_verify($pwd,$hash)){
@@ -405,9 +405,9 @@ function init(){
 	check_dir("src");
 	check_dir("temp");
 	check_dir("log");
-	if(!is_file('./log/alllog.log')){
-	file_put_contents('./log/alllog.log','',FILE_APPEND|LOCK_EX);
-	chmod('./log/alllog.log',0600);	
+	if(!is_file(LOG_DIR.'alllog.log')){
+	file_put_contents(LOG_DIR.'alllog.log','',FILE_APPEND|LOCK_EX);
+	chmod(LOG_DIR.'alllog.log',0600);	
 	}
 }
 

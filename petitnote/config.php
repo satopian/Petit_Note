@@ -14,10 +14,10 @@ $pagedef = 5;
 //最大スレッド数
 $max_log = 1000;
 //1スレッドに返信できるレスの数
-$max_res = 50;
+$max_res = 5;
 //1スレッドに表示するレスの数
 //返信画面で全件表示
-$dispres=10;
+$dispres=5;
 //投稿できる画像のサイズ単位kb
 $max_kb = 2048;
 //お絵かき最大サイズ
@@ -39,20 +39,13 @@ $use_diary = true;
 
 //画像アップロード機能を使う
 // 使う:true 使わない:false
-$use_upload=true;
+$use_upload = true;
 // $use_upload = false;
-
-//各スレッドに返信フォームを表示する
-// する: true しない: false
-$use_minform=true;
-// $use_miniform=false;
-
 
 /*スパム対策*/
 //本文に日本語がなければ拒絶 する:true しない:false
 $use_japanesefilter = true;
 // $use_japanesefilter=false;
-
 
 
 //拒絶する文字列 正規表現
@@ -67,7 +60,11 @@ $badstr_B = ["シャネル","シュプリーム","バレンシアガ","ブラン
 
 /*変更しないでください*/
 //テンポラリ
-define('TEMP_DIR','./temp/');
+define('TEMP_DIR','temp/');
+//ログ
+define('LOG_DIR','log/');
+//画像
+define('IMG_DIR','src/');
 
 //ペイント画面の$pwdの暗号化
 define('CRYPT_PASS','v25Xc9nZ82a5JPT');//暗号鍵初期値

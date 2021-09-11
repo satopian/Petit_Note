@@ -8,6 +8,8 @@
 	<title>続きを描く</title>
 </head>
 <div class="container">
+<?php if($aikotoba):?>
+
 <!--  画像と描画時間  -->
 <div class="continue_img">
 <img src="<?=h($picfile)?>" width="<?=h($picw)?>" height="<?=h($pich)?>" alt="<?=h($picw)?>x<?=h($pich)?> <?=($boardname)?>" title="<?=h($picw)?>x<?=h($pich)?> <?=h($boardname)?>">
@@ -68,7 +70,9 @@ selected
 </ul>
 </div>
 <?php endif;?>
+<?php endif;?>
 </div>
+
 </div>
 </body>
 </html>
