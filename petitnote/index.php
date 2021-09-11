@@ -620,6 +620,9 @@ function img_replace(){
 	if(!is_file(LOG_DIR."$no.log")){
 		paintcom();//該当記事が無い時は新規投稿。
 	}
+	$fp=fopen(LOG_DIR."alllog.log","r+");
+	flock($fp, LOCK_EX);
+
 	$r_arr=[];
 	$rp=fopen(LOG_DIR."$no.log","r+");
 		while ($line = fgets($rp)) {
@@ -628,7 +631,7 @@ function img_replace(){
 	$flag=false;
 	foreach($r_arr as $i => $line){
 		list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=explode("\t",$line);
-		if($id==$_time && password_verify($pwd,$_hash)){
+		if($id===$_time && password_verify($pwd,$_hash)){
 			$flag=true;
 			break;
 		}
@@ -710,6 +713,29 @@ function img_replace(){
 	writeFile($rp, implode("", $r_arr));
 	closeFile($rp);
 
+
+	if(trim($_oya)==='oya'){
+
+		
+
+		while ($_line = fgets($fp)) {
+			$alllog_arr[]=$_line;	
+		}
+		foreach($alllog_arr as $i => $val){
+			list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5_,$tool_,$pch_,$time_,$host_,$hash_,$oya_) = explode("\t",$val);
+
+			if($id===$time_){
+				$alllog_arr[$i] = "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
+			break;
+			}
+
+		}
+		$alllog=implode("",$alllog_arr);
+		writeFile($fp,$alllog);
+
+	}
+	closeFile ($fp);
+
 	return header('Location: ./?resno='.$no);
 
 }
@@ -783,15 +809,11 @@ $postresno = (string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 
 		}
 
-
 		closeFile ($rp);
 	}
 
-	$templete='before_del.html';
+$templete='before_del.html';
 return include __DIR__.'/template/'.$templete;
-
-
-
 
 }
 //記事削除
@@ -811,7 +833,7 @@ function del(){
 		list($id,$no)=explode(",",filter_input(INPUT_POST,'id_and_no'));
 		$no=trim($no);
 	}
-	
+	$alllog_arr=[];
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 	while ($_line = fgets($fp)) {
@@ -857,7 +879,7 @@ function del(){
 			
 				}else{
 						unset($line[$i]);
-						safe_unlink(IMG_DIR.$imgfile);//画像削除
+						delete_files (IMG_DIR, $imgfile, $time);//一連のファイルを削除
 						$line=implode("",$line);
 						writeFile ($rp, $line);
 						closeFile ($rp);
@@ -869,9 +891,13 @@ function del(){
 		closeFile ($fp);
 
 	}
+	$resno=filter_input(INPUT_POST,'postresno');
 	//多重送信防止
 	if(filter_input(INPUT_POST,'resmode')==='true'){
-		return header('Location: ./?resno='.filter_input(INPUT_POST,'postresno'));
+		if(!is_file(LOG_DIR.$resno.'.log')){
+			return header('Location: ./');
+		}
+		return header('Location: ./?resno='.$resno);
 	}
 	return header('Location: ./?page='.filter_input(INPUT_POST,'postpage'));
 }
