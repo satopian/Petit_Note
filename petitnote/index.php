@@ -3,6 +3,7 @@
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 require_once(__DIR__.'/config.php');	
 require_once(__DIR__.'/function.php');
+require_once(__DIR__.'/thumbnail_gd.php');
 
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 
@@ -70,7 +71,8 @@ switch($mode){
 
 //投稿処理
 function post(){	
-global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary;
+global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary,$max_w,$max_h,$use_thumb;
+;
 if($use_aikotoba){
 	check_aikotoba();
 }
@@ -223,7 +225,7 @@ if($upfile){
 	}
 	$img_md5=md5_file(IMG_DIR.$imgfile);
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
-	if($pictmp!==2){
+	if($pictmp!==2 && $imgfile){
 
 		$chk_log_arr=$alllog_arr;
 		krsort($chk_log_arr);
@@ -233,7 +235,7 @@ if($upfile){
 			if(is_file(LOG_DIR."{$chk_resno}.log")){
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r+");
 				while($line=fgetcsv($cp,0,"\t")){
-					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5,$tool_,$pchext_,$time_,$host_,$hash_)=$line;
+					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$thumbnail_,$log_md5,$tool_,$pchext_,$time_,$host_,$hash_)=$line;
 					
 					if($log_md5 === $img_md5){
 						safe_unlink(IMG_DIR.$imgfile);
@@ -243,7 +245,7 @@ if($upfile){
 			}
 		}
 	}
-	
+	if($pictmp===2 && $imgfile){
 			//PCHファイルアップロード
 			if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
 
@@ -265,6 +267,19 @@ if($upfile){
 					safe_unlink($src);
 				}
 			}
+	}
+	$thumbnail='';
+	if($imgfile){
+
+		//縮小表示
+		list($w,$h)=image_reduction_display($w,$h,$max_w,$max_h);
+		//サムネイル
+		if($use_thumb){
+			if(thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
+				$thumbnail='thumbnail';
+			}
+		}
+		}
 
 $no_arr = [];
 $max_no=0;
@@ -289,7 +304,7 @@ if($resno && !is_file(LOG_DIR.$resno.'.log')){
 }
 
 if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\tres\n";
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\tres\n";
 	file_put_contents(LOG_DIR.$resno.'.log',$r_line,FILE_APPEND | LOCK_EX);
 	chmod(LOG_DIR.$resno.'.log',0600);	
 	foreach($alllog_arr as $i =>$val){
@@ -304,7 +319,7 @@ if($resno){//レスの時はスレッド別ログに追記
 } else{
 	//最後の記事ナンバーに+1
 	$no=$max_no+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\toya\n";
+	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\toya\n";
 	file_put_contents(LOG_DIR.$no.'.log',$line,FILE_APPEND | LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod(LOG_DIR.$no.'.log',0600);
 }
@@ -326,7 +341,7 @@ if($resno){//レスの時はスレッド別ログに追記
 			flock($dp, LOCK_EX);
 
 			while ($line = fgetcsv($dp, 0, "\t")) {
-				list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=$line;
+				list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=$line;
 
 			delete_files (IMG_DIR, $_imgfile, $_time);//一連のファイルを削除
 
@@ -532,7 +547,7 @@ function to_continue(){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgetcsv($rp,0,"\t")) {
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pch,$time,$host,$hash,$oya)=$line;
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=$line;
 			if($id==$time){
 				$flag=true;
 				break;
@@ -551,12 +566,12 @@ function to_continue(){
 	$app_to_use = "";
 	$ctype_pch = false;
 
-	if(($pch==='.pch')&&is_file(IMG_DIR.$time.'.pch')){
+	if(($pchext==='.pch')&&is_file(IMG_DIR.$time.'.pch')){
 		$ctype_pch = true;
 		$select_app = false;
 		$app_to_use = "neo";
 		
-	}elseif(($pch==='.chi')&&is_file(IMG_DIR.$time.'.chi')){
+	}elseif(($pchext==='.chi')&&is_file(IMG_DIR.$time.'.chi')){
 		$select_app = false;
 		$app_to_use = 'chi';
 	}
@@ -578,6 +593,8 @@ function to_continue(){
 
 // 画像差し換え
 function img_replace(){
+
+	global $use_thumb;
 
 	$no = t(filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
 	$id = t(filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
@@ -630,7 +647,7 @@ function img_replace(){
 		}
 	$flag=false;
 	foreach($r_arr as $i => $line){
-		list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=explode("\t",$line);
+		list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=explode("\t",$line);
 		if($id===$_time && password_verify($pwd,$_hash)){
 			$flag=true;
 			break;
@@ -678,8 +695,6 @@ function img_replace(){
 	rename($upfile,IMG_DIR.$imgfile);
 	chmod(IMG_DIR.$imgfile,0606);
 
-	//縮小表示 元のサイズを最大値にセット
-	list($w,$h)=image_reduction_display($w,$h,$_w,$_h);
 
 	//ワークファイル削除
 	safe_unlink(TEMP_DIR.$file_name.".dat");
@@ -703,10 +718,21 @@ function img_replace(){
 		}
 	}
 
+	//縮小表示 元のサイズを最大値にセット
+	list($w,$h)=image_reduction_display($w,$h,$_w,$_h);
+	
+	//サムネイル
+	$thumbnail='';
+	if($use_thumb){
+		if(thumb(IMG_DIR,$imgfile,$time,$w,$h)){
+			$thumbnail='thumbnail';
+		}
+	}
+	
 	//旧ファイル削除
 	delete_files(IMG_DIR, $_imgfile, $_time);
 
-	$r_arr[$i] = "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
+	$r_arr[$i] = "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$thumbnail\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
 
 
 
@@ -722,10 +748,10 @@ function img_replace(){
 			$alllog_arr[]=$_line;	
 		}
 		foreach($alllog_arr as $i => $val){
-			list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$log_md5_,$tool_,$pch_,$time_,$host_,$hash_,$oya_) = explode("\t",$val);
+			list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$thumbnail_,$log_md5_,$tool_,$pch_,$time_,$host_,$hash_,$oya_) = explode("\t",$val);
 
 			if($id===$time_){
-				$alllog_arr[$i] = "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
+				$alllog_arr[$i] = "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$thumbnail\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
 			break;
 			}
 
@@ -798,9 +824,9 @@ $postresno = (string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 		$res=[];
 		foreach($line as $i =>$val){
 
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=explode("\t","{$val}\t\t");
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=explode("\t","{$val}\t\t");
 			if($id==$time){
-				$res=(create_res([$no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pchext,$time,$host,$hash,$oya]));	
+				$res=(create_res([$no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$log_md5,$tool,$pchext,$time,$host,$hash,$oya]));	
 				$out[0][]=$res;
 
 				break;
@@ -850,7 +876,7 @@ function del(){
 		
 		foreach($line as $i =>$val){
 
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=explode("\t","{$val}\t\t");
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=explode("\t","{$val}\t\t");
 			if($id==$time){
 			
 				if(!$admindel){
@@ -860,7 +886,7 @@ function del(){
 				}
 				if(trim($oya)=='oya'){//スレッド削除
 					foreach($line as $r_line) {
-						list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=explode("\t",$r_line);
+						list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_log_md5,$_tool,$_pchext,$_time,$_host,$_hash,$_oya)=explode("\t",$r_line);
 
 						delete_files (IMG_DIR, $_imgfile, $_time);//一連のファイルを削除
 

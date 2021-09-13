@@ -26,6 +26,10 @@ $pmax_h = 800;//高さ
 //表示する最大サイズ
 $max_w = 800;
 $max_h = 500;
+//表示する最大サイズを超える時はサムネイルを作成する
+// する: true しない: false
+$use_thumb = true;
+// $use_thumb = false;
 
 //合言葉機能を使って投稿を制限する
 // する: true しない: false
