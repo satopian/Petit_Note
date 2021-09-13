@@ -326,6 +326,11 @@ function session_sta(){
 	}
 }
 
+function getId ($userip) {
+	return substr(hash('sha256', $userip(), false),-8);
+}
+
+
 // テンポラリ内のゴミ除去 
 function deltemp(){
 	$handle = opendir(TEMP_DIR);

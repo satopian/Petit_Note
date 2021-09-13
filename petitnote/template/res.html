@@ -8,7 +8,7 @@
 <?php foreach($out as $ress) : ?>
 	<meta name="Description" content="<?= h(s($res['com']))?>">
 	<meta name="twitter:card" content="summary" />
-	<meta property="og:title" content="[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> by <?= h($res['name'])?> - <?=h($boardname)?>" />
+	<meta property="og:title" content="[<?= h(s($ress[0]['no']))?>] <?= h(s($ress[0]['sub']))?> by <?= h(s($res['name']))?> - <?=h(s($boardname))?>" />
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="?resno=<?= h($ress[0]['no'])?>" />
 	<meta property="og:image" content="src/<?=h($ress[0]['img'])?>" />
@@ -62,21 +62,23 @@
 	<?php endif;?>
 
 	<div class="imginfo_wrap">
-			<span><?= h($res['name'])?></span>
-			<span><?=h($res['date'])?></span>		
-		<?php if($res['img']):?>
-			<span>TOOL:<?=h($res['tool'])?></span>
-			<span><?php if($res['painttime']):?>
-				<span>描画時間:<?=h($res['painttime'])?></span>
-				
-				<?php endif;?>
+		<span><?= h($res['name'])?></span>
+		<span><?=h($res['date'])?></span>		
+	<?php if($res['img']):?>
+		<span>TOOL:<?=h($res['tool'])?></span>
+		<?php if($res['painttime']):?>
+		<span>
+			描画時間:<?=h($res['painttime'])?>
+		</span>
 		<?php endif;?>
+			
+	<?php endif;?>
 	<?php if($admindel):?>
 		<br>
 		HOST:<?=h($res['host'])?>
 		<?php endif;?> 
 	</div>
-		<?php if($res['img']):?>
+	<?php if($res['img']):?>
 		<?php if($res['continue']||($res['anime'])):?>
 		<div class="imginfo_wrap">
 		<?php if($res['continue'] && $aikotoba):?>

@@ -741,7 +741,7 @@ function img_replace(){
 	//描画時間追加
 
 	$painttime = '';
-	if($starttime && is_numeric($starttime)){
+	if($starttime && is_numeric($starttime) && is_numeric($_painttime)){
 		$psec=(int)$postedtime-(int)$starttime;
 		$painttime=(int)$_painttime+(int)$psec;
 	}

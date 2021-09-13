@@ -13,7 +13,8 @@
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
-<span>[<a href="./"><?=h($boardname)?></a>]</span>		
+<span>[<a href="<?=h($home)?>">HOME</a>]</span>
+<span>[<a href="./">更新</a>]</span>		
 <span>[<a href="./?mode=paintcom">アップロード途中の画像</a>]</span>
 <?php if($userdel || $admindel):?>
 <span>[<a href="./?mode=logout&page=<?=h($page)?>">編集モード終了</a>]</span>
@@ -27,7 +28,7 @@
 <?php if($aikotoba&&(!$userdel && !$admindel)):?>
 <?php if(!$use_diary || $adminpost):?>
 
-	<form action="./" method="post">
+<form action="./" method="post">
 <input type="hidden" name="mode" value="paint">
 <input type="submit" value="PAINT" class="paint_button">
 <span class="select_applet bold_gray">TOOL</span>
@@ -135,10 +136,12 @@ selected
 			<span><?=h($res['date'])?></span>		
 		<?php if($res['img']):?>
 			<span>TOOL:<?=h($res['tool'])?></span>
-			<span><?php if($res['painttime']):?>
-				<span>描画時間:<?=h($res['painttime'])?></span>
+			<?php if($res['painttime']):?>
+			<span>
+				描画時間:<?=h($res['painttime'])?>
+			</span>
+			<?php endif;?>
 				
-				<?php endif;?>
 		<?php endif;?>
 	<?php if($admindel):?>
 		<br>
