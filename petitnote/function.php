@@ -157,7 +157,7 @@ function check_cont_pass(){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgetcsv($rp,0,"\t")) {
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=$line;
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=$line;
 			if($id==$time && password_verify($pwd,$hash)){
 				closeFile ($rp);
 				return true;
@@ -172,7 +172,7 @@ function check_cont_pass(){
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line){
 	global $max_w,$max_h;
-	list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=$line;
+	list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=$line;
 	$res=[];
 
 	$continue = false;
@@ -216,6 +216,7 @@ function create_res($line){
 		'time' => $time,
 		'date' => $date,
 		'host' => $host,
+		'userid' => $userid,
 	];
 
 	$res['com']=str_replace('"\n"',"\n",$res['com']);
@@ -327,7 +328,7 @@ function session_sta(){
 }
 
 function getId ($userip) {
-	return substr(hash('sha256', $userip(), false),-8);
+	return substr(hash('sha256', $userip, false),-8);
 }
 
 

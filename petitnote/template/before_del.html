@@ -88,14 +88,11 @@
 				</a>
 			<?php else:?>
 			<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+			</div>
 			<?php endif;?>
 			<?php endif;?>
 			<div class="comment"><?= h($res['com'])?></div>
-	
-
-			</div>	
-				
-			
+			<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
 			<?php endforeach;?>
 			<?php endforeach;?>
 			<?php endif;?>
@@ -107,20 +104,20 @@
 <?php if($postresno):?>
 <a href="./?mode=adminin&resno=<?=h($postresno)?>">管理</a>]
 <?php endif;?>
-<?php if($postpage):?>
+<?php if($postpage==='0'||$postpage):?>
 <a href="./?mode=adminin&page=<?=h($postpage)?>">管理</a>]
 <?php endif;?>
 </div>
 
 <div class="righit_wrap">
-<span><a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a> v0.03</span> <span>Web Style by BASIC</span><br>
-<span>OekakiApp - </span><span><a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a></span> , <span><a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a></span>
+<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a> <span title="<?=h($petit_lot)?>"><?=h($petit_ver)?></span> <span>Web Style by BASIC</span><br>
+<span>OekakiApp - </span><span></span><a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a></span>
 <br>
 <span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
 <!--http://wondercatstudio.com/-->
 </div>
 </div>
-</div>
 <div id="bottom"></div>
 </body>
 </html>
+	

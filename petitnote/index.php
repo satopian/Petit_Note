@@ -5,6 +5,9 @@ require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/function.php');
 require_once(__DIR__.'/thumbnail_gd.php');
 
+$petit_ver='v0.3';
+$petit_lot='lot.210913';
+
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 
 $mode = filter_input(INPUT_POST,'mode');
@@ -220,6 +223,8 @@ if($upfile){
 
 	rename($upfile,IMG_DIR.$imgfile);
 }
+	//ユーザーid
+	$userid = getId($userip);
 
 	//全体ログを開く
 	$fp=fopen(LOG_DIR."alllog.log","r+");
@@ -230,7 +235,7 @@ if($upfile){
 	}
 	$img_md5=md5_file(IMG_DIR.$imgfile);
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
-	if($pictmp!==2 && $imgfile){
+	if($pictmp!=2 && $imgfile){
 
 		$chk_log_arr=$alllog_arr;
 		krsort($chk_log_arr);
@@ -240,7 +245,7 @@ if($upfile){
 			if(is_file(LOG_DIR."{$chk_resno}.log")){
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r+");
 				while($line=fgetcsv($cp,0,"\t")){
-					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$host_,$hash_)=$line;
+					list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$host_,$userid_,$hash_,$oya_)=$line;
 					
 					if($log_md5 === $img_md5){
 						safe_unlink(IMG_DIR.$imgfile);
@@ -250,7 +255,7 @@ if($upfile){
 			}
 		}
 	}
-	if($pictmp===2 && $imgfile){
+	if($pictmp==2 && $imgfile){
 			//PCHファイルアップロード
 			if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
 
@@ -287,17 +292,14 @@ if($upfile){
 		}
 
 $no_arr = [];
-$max_no=0;
-$md5=[];
 foreach($alllog_arr as $i => $_alllog){
 	list($log_no,)=explode("\t",$_alllog);
 	$no_arr[]=$log_no;
 }
 
+$max_no=0;
 if($no_arr){
 	$max_no=max($no_arr);
-}else{
-	$max_no=0;
 }
 //書き込むログの書式
 $line='';
@@ -309,7 +311,7 @@ if($resno && !is_file(LOG_DIR.$resno.'.log')){
 }
 
 if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\tres\n";
+	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\tres\n";
 	file_put_contents(LOG_DIR.$resno.'.log',$r_line,FILE_APPEND | LOCK_EX);
 	chmod(LOG_DIR.$resno.'.log',0600);	
 	foreach($alllog_arr as $i =>$val){
@@ -324,8 +326,8 @@ if($resno){//レスの時はスレッド別ログに追記
 } else{
 	//最後の記事ナンバーに+1
 	$no=$max_no+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$hash\toya\n";
-	file_put_contents(LOG_DIR.$no.'.log',$line,FILE_APPEND | LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
+	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\toya\n";
+	file_put_contents(LOG_DIR.$no.'.log',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 	chmod(LOG_DIR.$no.'.log',0600);
 }
 	$alllog_arr[]=$line;//全体ログの配列に追加
@@ -346,7 +348,7 @@ if($resno){//レスの時はスレッド別ログに追記
 			flock($dp, LOCK_EX);
 
 			while ($line = fgetcsv($dp, 0, "\t")) {
-				list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_log_md5,$_tool,$_pch,$_time,$_host,$_hash,$_oya)=$line;
+				list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_log_md5,$_tool,$_pch,$_time,$_host,$_userid,$_hash,$_oya)=$line;
 
 			delete_files (IMG_DIR, $_imgfile, $_time);//一連のファイルを削除
 
@@ -552,7 +554,7 @@ function to_continue(){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgetcsv($rp,0,"\t")) {
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=$line;
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=$line;
 			if($id==$time){
 				$flag=true;
 				break;
@@ -560,7 +562,6 @@ function to_continue(){
 		}
 		closeFile ($rp);
 	}
-
 	if(!$flag || !$imgfile || !is_file(IMG_DIR.$imgfile)){//画像が無い時は処理しない
 		error('記事がありません');
 	}
@@ -609,6 +610,9 @@ function img_replace(){
 	$userip = get_uip();
 	//ホスト取得
 	$host = t(gethostbyaddr($userip));
+	//ユーザーid
+	$userid = getId($userip);
+
 
 	$pwd=hex2bin($pwd);//バイナリに
 	$pwd=openssl_decrypt($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//復号化
@@ -653,8 +657,8 @@ function img_replace(){
 		}
 	$flag=false;
 	foreach($r_arr as $i => $line){
-		list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_host,$_hash,$_oya)=explode("\t",$line);
-		if($id===$_time && password_verify($pwd,$_hash)){
+		list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_host,$_userid,$_hash,$_oya)=explode("\t",$line);
+		if($id==$_time && password_verify($pwd,$_hash)){
 			$flag=true;
 			break;
 		}
@@ -747,7 +751,7 @@ function img_replace(){
 	}
 	
 
-	$new_line= "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$_hash\t$_oya";
+	$new_line= "$_no\t$_sub\t$_name\t$_com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$_hash\t$_oya";
 
 	$r_arr[$i] = $new_line;
 
@@ -759,15 +763,13 @@ function img_replace(){
 
 	if(trim($_oya)==='oya'){
 
-		
-
 		while ($_line = fgets($fp)) {
 			$alllog_arr[]=$_line;	
 		}
 		foreach($alllog_arr as $i => $val){
-			list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$host_,$hash_,$oya_) = explode("\t",$val);
+			list($no_,$sub_,$name_,$com_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
 
-			if($id===$time_){
+			if($id==$time_){
 				$alllog_arr[$i] = $new_line;
 			break;
 			}
@@ -808,7 +810,7 @@ function pchview(){
 //削除前の確認画面
 function confirmation_before_deletion (){
 
-global $boardname,$max_res,$home;
+global $boardname,$max_res,$home,$petit_ver,$petit_lot;
 	//管理者判定処理
 session_sta();
 $admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
@@ -841,9 +843,9 @@ $postresno = (string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 		$res=[];
 		foreach($line as $i =>$val){
 
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=explode("\t",trim($val));
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
 			if($id==$time){
-				$res=create_res([$no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$hash,$oya]);	
+				$res=create_res([$no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya]);	
 				$out[0][]=$res;
 
 				break;
@@ -893,7 +895,7 @@ function del(){
 		
 		foreach($line as $i =>$val){
 
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=explode("\t",trim($val));
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
 			if($id==$time){
 			
 				if(!$admindel){
@@ -901,17 +903,17 @@ function del(){
 						return error('失敗しました。');
 					}
 				}
-				if(trim($oya)=='oya'){//スレッド削除
+				if(trim($oya)==='oya'){//スレッド削除
 					foreach($line as $r_line) {
-						list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_host,$_hash,$_oya)=explode("\t",trim($r_line));
+						list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
 
 						delete_files (IMG_DIR, $_imgfile, $_time);//一連のファイルを削除
 
 					}
 				
 						foreach($alllog_arr as $i =>$val){
-							list($_no)=explode("\t",$val);
-							if($no==$_no){
+							list($no_,$sub_,$name_,$com_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$val);
+							if($id==$time_){
 								unset($alllog_arr[$i]);
 							}
 						}
@@ -948,7 +950,7 @@ function del(){
 //通常表示
 function view($page=0){
 global $use_aikotoba,$use_upload,$home,$pagedef,$dispres;
-global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary; 
+global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot; 
 
 if(!isset($page)||!$page){
 	$page=0;
@@ -1006,7 +1008,8 @@ return include __DIR__.'/template/'.$templete;
 //レス画面
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$pagedef;
-	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary; 
+	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary,$petit_ver,$petit_lot;
+	
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');
 	if(!is_file(LOG_DIR."$resno.log")){
