@@ -54,7 +54,7 @@ function thumb($path,$fname,$time,$max_w,$max_h){
 	if(function_exists("ImageCreateTrueColor")&&get_gd_ver()=="2"){
 		$im_out = ImageCreateTrueColor($out_w, $out_h);
 		// コピー＆再サンプリング＆縮小
-		if(function_exists("ImageCopyResampled")&&RE_SAMPLED){
+		if(function_exists("ImageCopyResampled")){
 			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $size[0], $size[1]);
 		}else{$nottrue = 1;}
 	}else{$im_out = ImageCreate($out_w, $out_h);$nottrue = 1;}

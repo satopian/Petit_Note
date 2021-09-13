@@ -244,11 +244,9 @@ if($sendheader){
 	$tool = isset($u['tool']) ? $u['tool'] : '';
 	$resto = isset($u['resto']) ? $u['resto'] : '';
 	$repcode = isset($u['repcode']) ? $u['repcode'] : '';
-	// $stime = isset($u['stime']) ? $u['stime'] : '';
+	$stime = isset($u['stime']) ? $u['stime'] : '';
 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
-	// $userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
-	$userdata .= "\t$usercode\t$repcode\t\t\t$resto\t$tool";
-	// $userdata .= "\t$usercode\t\t\t\t$resto\t$tool";
+	$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
 }
 $userdata .= "\n";
 if(is_file(TEMP_DIR.$imgfile.".dat")){

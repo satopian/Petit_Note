@@ -7,10 +7,9 @@ body {
 	margin: 35px auto;
 	color: #555;
 }
-h1 {
-font-size: 26px;
-margin:0 0 5px 0;
-}
+
+h1 {font-size: 26px;margin: 0 0 6px 0;padding: 0;}
+
 h1.title a {
     text-decoration: none;
 	display: block;
@@ -70,7 +69,7 @@ border: none;
 border-bottom: 1px dashed #888;
 }
 nav.memu_wrap {
-    margin: 0px 0 12px;
+    margin: 0px 0 3px;
 }
 nav.memu_wrap span {
     margin: 0 0 8px;
@@ -115,6 +114,17 @@ select.post_select_image {
 .copy {
     text-align: right;
     margin: 12px 0 0;
+}
+.copy span {
+    display: inline-block;
+}
+.left_wrap {
+    float: left;
+}
+
+.righit_wrap {
+    text-align: right;
+    line-height: 1.5;
 }
 .continue_img img {
     max-width: 100%;

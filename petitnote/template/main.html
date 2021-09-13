@@ -9,22 +9,18 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="top">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
-		
-<span>[<a href="<?=h($home)?>">HOME</a>]</span>
-
+<span>[<a href="./"><?=h($boardname)?></a>]</span>		
 <span>[<a href="./?mode=paintcom">アップロード途中の画像</a>]</span>
 <?php if($userdel || $admindel):?>
 <span>[<a href="./?mode=logout&page=<?=h($page)?>">編集モード終了</a>]</span>
 <?php else:?>
-<span>[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]</span>
-<span>[<a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]</span>
-
+<span>[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]</span><a href=""></a> 
  <?php endif;?>
-
+ <a href="#bottom">▽</a>
  <br>
 </nav>
 <?php endif;?>
@@ -135,18 +131,20 @@ selected
 	<?php endif;?>
 
 	<div class="imginfo_wrap">
-			<span>名前:<?= h($res['name'])?></span>
+			<span><?= h($res['name'])?></span>
 			<span><?=h($res['date'])?></span>		
 		<?php if($res['img']):?>
-		<span>(<?=h($res['tool'])?>)</span>
+			<span>TOOL:<?=h($res['tool'])?></span>
+			<span><?php if($res['painttime']):?>
+				<span>描画時間:<?=h($res['painttime'])?></span>
+				
+				<?php endif;?>
 		<?php endif;?>
 	<?php if($admindel):?>
 		<br>
 		HOST:<?=h($res['host'])?>
 		<?php endif;?> 
 	</div>
-
-
 		<?php if($res['img']):?>
 		<?php if($res['continue']||($res['anime'])):?>
 		<div class="imginfo_wrap">
@@ -159,9 +157,15 @@ selected
 		</div>
 		<?php endif;?>
 			<div class="posted_image">
-				
-			<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy"></div>
 			
+			<?php if($res['thumbnail']):?>
+				<a href="src/<?=h($res['img'])?>" target="_bank">
+					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+				</a>
+			<?php else:?>
+			<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+			<?php endif;?>
+			</div>
 			<?php endif;?>
 			<div class="comment"><?= h($res['com'])?></div>
 
@@ -244,23 +248,20 @@ if($page<$pagedef*17){
 	<?php endif;?>
 	<?php endif;?>
 	<?php endfor ;?>
-<?php if($admindel):?>
-	<form action="./" method="post" class="admin">
-<input type="hidden" name="mode" value="logout">
-<input type="hidden" name="postpage" value="<?=h($page)?>">
-<input type="submit" value="編集モード終了">
-	</form>
-<?php else: ?>
-	<form action="./" method="post" class="admin">
-<input type="password" name="adminpass">
-<input type="hidden" name="mode" value="admin_del">
-<input type="hidden" name="postpage" value="<?=h($page)?>">
-<input type="submit" value="管理者">
-</form>
-<?php endif; ?>
+
 <div class="copy">
-<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a>
+<div class="left_wrap"><a href="#top">△</a> [<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
+</div>
+
+<div class="righit_wrap">
+<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a> v0.03 Web Style by BASIC<br>
+OekakiApp - <a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a>
+<br>
+UseFunction - <span title="by WonderCatStudio">DynamicPalette</span>
+<!--http://wondercatstudio.com/-->
 </div>
 </div>
+</div>
+<div id="bottom"></div>
 </body>
 </html>

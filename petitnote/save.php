@@ -63,7 +63,7 @@ $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
 
 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
 	$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
-$userdata .= "\n";
+	$userdata .= "\n";
 // 情報データをファイルに書き込む
 $fp = fopen(TEMP_DIR.$imgfile.".dat","w");
 if(!$fp){

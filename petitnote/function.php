@@ -1,9 +1,9 @@
 <?php
-
+//編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
-	unset($_SESSION['admin']);
+	unset($_SESSION['admindel']);
 	unset($_SESSION['userdel']);
 	if($resno){
 		return header('Location: ./?resno='.$resno);	
@@ -14,9 +14,10 @@ function logout(){
 
 	return header('Location: ./?page='.$page);
 }
+//管理者モードログアウト
 function logout_admin(){
 	session_sta();
-	unset($_SESSION['admin']);
+	unset($_SESSION['admindel']);
 	unset($_SESSION['diary']);
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
@@ -60,7 +61,7 @@ function admin_in(){
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
 	session_sta();
-	$admindel=isset($_SESSION['admin'])&&($_SESSION['admin']==='admin_del');
+	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
@@ -111,18 +112,16 @@ function admin_del(){
 	global $admin_pass;
 	session_sta();
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
-		if(isset($_SESSION['admin'])){
-			unset($_SESSION['admin']);
+		if(isset($_SESSION['admindel'])){
+			unset($_SESSION['admindel']);
 		} 
 		return 	error('パスワードが違います。');
 	}
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$page = isset($page) ? $page : 0;
-	$_SESSION['admin']='admin_del';
+	$_SESSION['admindel']='admin_del';
 	$_SESSION['aikotoba']='aikotoba';
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
-	var_dump($resno);
-	exit;	
 
 	if($resno){
 		return header('Location: ./?resno='.$resno);
@@ -158,7 +157,7 @@ function check_cont_pass(){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgetcsv($rp,0,"\t")) {
-			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=$line;
+			list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=$line;
 			if($id==$time && password_verify($pwd,$hash)){
 				closeFile ($rp);
 				return true;
@@ -173,7 +172,7 @@ function check_cont_pass(){
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line){
 	global $max_w,$max_h;
-	list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=$line;
+	list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$hash,$oya)=$line;
 	$res=[];
 
 	$continue = false;
@@ -194,13 +193,11 @@ function create_res($line){
 			'';
 	}
 
-	$anime = false;
-	if($pchext==='.pch'){
-		$anime = true;
-	}
-
+	$anime = ($pchext==='.pch') ? true : false; 
+	$thumbnail = ($thumbnail==='thumbnail') ? $time.'s.jpg' : false; 
+	$painttime = is_numeric($painttime) ? calcPtime($painttime) : false;  
 	list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
-	$datetime=(int)substr($time,-13,10);
+	$datetime=(int)substr($time,0,-3);
 	$date=date('y/m/d',$datetime);
 	$res=[
 		'no' => $no,
@@ -208,9 +205,10 @@ function create_res($line){
 		'name' => $name,
 		'com' => $com,
 		'img' => $imgfile,
+		'thumbnail' => $thumbnail,
+		'painttime' => $painttime,
 		'w' => $w,
 		'h' => $h,
-		'thumbnail' => $thumbnail,
 		'tool' => $tool,
 		'pchext' => $pchext,
 		'anime' => $anime,
@@ -237,6 +235,10 @@ function get_uip(){
 //タブ除去
 function t($str){
 	return str_replace("\t","",$str);
+}
+//タグ除去
+function s($str){
+	return strip_tags($str);
 }
 //エスケープと改行
 function h($str){
@@ -406,6 +408,7 @@ function is_ngword ($ngwords, $strs) {
 function init(){
 	check_dir("src");
 	check_dir("temp");
+	check_dir("thumbnail");
 	check_dir("log");
 	if(!is_file(LOG_DIR.'alllog.log')){
 	file_put_contents(LOG_DIR.'alllog.log','',FILE_APPEND|LOCK_EX);
@@ -451,6 +454,24 @@ function image_reduction_display($w,$h,$max_w,$max_h){
 	}
 	$reduced_size = [$w,$h];
 	return $reduced_size;
+}
+/**
+ * 描画時間を計算
+ * @param $starttime
+ * @return string
+ */
+function calcPtime ($psec) {
+
+	$D = floor($psec / 86400);
+	$H = floor($psec % 86400 / 3600);
+	$M = floor($psec % 3600 / 60);
+	$S = $psec % 60;
+
+	return
+		($D ? $D.'日'  : '')
+		. ($H ? $H.'時間' : '')
+		. ($M ? $M.'分' : '')
+		. ($S ? $S.'秒' : '');
 }
 
 /**

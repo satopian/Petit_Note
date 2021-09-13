@@ -69,6 +69,8 @@ define('TEMP_DIR','temp/');
 define('LOG_DIR','log/');
 //画像
 define('IMG_DIR','src/');
+//画像
+define('THUMB_DIR','thumbnail/');
 
 //ペイント画面の$pwdの暗号化
 define('CRYPT_PASS','v25Xc9nZ82a5JPT');//暗号鍵初期値

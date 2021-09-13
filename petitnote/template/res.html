@@ -4,24 +4,35 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!--SNS-->
+<?php foreach($out as $ress) : ?>
+	<meta name="Description" content="<?= h(s($res['com']))?>">
+	<meta name="twitter:card" content="summary" />
+	<meta property="og:title" content="[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> by <?= h($res['name'])?> - <?=h($boardname)?>" />
+	<meta property="og:type" content="article" />
+	<meta property="og:url" content="?resno=<?= h($ress[0]['no'])?>" />
+	<meta property="og:image" content="src/<?=h($ress[0]['img'])?>" />
+	<meta property="og:site_name"  content="<?=h($boardname)?>" />
+	<meta property="og:description" content="<?=h($ress[0]['img'])?>" />
+<?php endforeach;?>
+<!--/SNS-->
+
 <link rel="stylesheet" href="index.css">
-	<title><?=h($boardname)?></title>
+	<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> by <?= h($res['name'])?> - <?=h($boardname)?>"</title>
 </head>
 <body>
-<div class="container">
+<div class="container" id="top">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
 	<span>[<a href="./"><?=h($boardname)?></a>]</span>
-	<span>[<a href="<?=h($home)?>">HOME</a>]</span>
  <span>[<a href="./?mode=paintcom">アップロード途中の画像</a>]</span>
 <?php if($userdel || $admindel):?>
 <span>[<a href="./?mode=logout&resno=<?=h($resno)?>">編集モード終了</a>]</span>
 <?php else:?>
 <span> [<a href="./?mode=userdel&resno=<?=h($resno)?>">編集</a>]</span>
-<span>[<a href="./?mode=adminin&resno=<?=h($resno)?>">管理</a>]</span>
-
  <?php endif;?>
+ <a href="#bottom">▽</a>
  <br>
 </nav>
 <?php endif;?>
@@ -51,11 +62,14 @@
 	<?php endif;?>
 
 	<div class="imginfo_wrap">
-			<!-- [<?= h($ress[0]['no'])?>-<?= h($i)?>]  -->
-			<span>名前:<?= h($res['name'])?></span>
+			<span><?= h($res['name'])?></span>
 			<span><?=h($res['date'])?></span>		
 		<?php if($res['img']):?>
-		<span>(<?=h($res['tool'])?>)</span>
+			<span>TOOL:<?=h($res['tool'])?></span>
+			<span><?php if($res['painttime']):?>
+				<span>描画時間:<?=h($res['painttime'])?></span>
+				
+				<?php endif;?>
 		<?php endif;?>
 	<?php if($admindel):?>
 		<br>
@@ -65,7 +79,7 @@
 		<?php if($res['img']):?>
 		<?php if($res['continue']||($res['anime'])):?>
 		<div class="imginfo_wrap">
-		<?php if($res['continue']):?>
+		<?php if($res['continue'] && $aikotoba):?>
 		<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>">続きを描く</a></span>
 		<?php endif;?>
 		<?php if($res['anime']):?>
@@ -75,8 +89,14 @@
 		<?php endif;?>
 			<div class="posted_image">
 
-				<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy"></div>
-			
+			<?php if($res['thumbnail']):?>
+				<a href="src/<?=h($res['img'])?>" target="_bank">
+					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+				</a>
+			<?php else:?>
+			<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+			<?php endif;?>
+			</div>
 			<?php endif;?>
 			<div class="comment"><?= h($res['com'])?></div>
 	
@@ -85,10 +105,8 @@
 				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
 			}?>
 			<?php if($i!==0):?>
-			</div>	
+				</div><!-- 子レスのwrap	 -->
 			<?php endif;?>
-		
-
 			<?php if($aikotoba && ($userdel || $admindel)):?>
 
 <form action="./" method="POST" class="aikotoba">
@@ -191,22 +209,17 @@ selected
 <hr>
 <?php endforeach;?>
 <?php endif;?>
-<?php if($admindel):?>
-	<form action="./" method="post" class="admin">
-<input type="hidden" name="mode" value="logout">
-<input type="hidden" name="postpage" value="<?=$page?>">
-<input type="submit" value="編集モード終了">
-	</form>
-<?php else: ?>
-	<form action="./" method="post" class="admin">
-<input type="password" name="adminpass">
-<input type="hidden" name="mode" value="admin_del">
-<input type="hidden" name="postpage" value="<?=$page?>">
-<input type="submit" value="管理者">
-</form>
-<?php endif; ?>
 <div class="copy">
-<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a>
+<div class="left_wrap"><a href="#top">△</a> [<a href="<?=h($home)?>">HOME</a> /
+<a href="./?mode=adminin&resno=<?=h($resno)?>">管理</a>]
+</div>
+
+<div class="righit_wrap">
+<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a> v0.03 Web Style by BASIC<br>
+OekakiApp - <a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a>
+<br>
+UseFunction - <span title="by WonderCatStudio">DynamicPalette</span>
+<!--http://wondercatstudio.com/-->
 </div>
 </div>
 </body>
