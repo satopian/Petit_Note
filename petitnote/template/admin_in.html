@@ -11,25 +11,11 @@
 
 <div class="container">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
-	<?php if($aikotoba):?>
 <nav class="memu_wrap">
 		
 <span>[<a href="./">掲示板に戻る</a>]</span>
-
-
  <br>
 </nav>
-<?php endif;?>
-<?php if(!$aikotoba):?>
-この掲示板の合言葉はなんですか?: 
-<form action="./" method="post" class="aikotoba">
-	<input type="txt" name="aikotoba">
-	<input type="hidden" name="mode" value="aikotoba">
-	<input type="submit" value="秘密の答え">
-</form><br>
-<?php endif;?>
-
-
 
 <?php if($adminpost||$admindel):?>
 <ul>
@@ -45,7 +31,6 @@
 <?php endif;?>
 </ul>
 
-
 <form action="./" method="post" class="admin">
 <input type="hidden" name="mode" value="logout_admin">
 <input type="hidden" name="postpage" value="<?=h($page)?>">
@@ -53,7 +38,6 @@
 <input type="submit" value="管理者ログアウト">
 	</form>
 	<?php endif;?>
-
 
 	<?php if(!$adminpost || !$admindel):?>
 
@@ -78,7 +62,7 @@
 	</form>
 	<?php endif;?>
 
-
+<hr>
 
 <div class="copy">
 <a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a>

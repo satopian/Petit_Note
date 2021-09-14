@@ -56,7 +56,7 @@
 	<?php $resform=true; ?>
 	<!-- スレッドのループ -->
 	<?php foreach($ress as $i => $res) : ?>
-	<hr class="reshr">
+	<hr>
 	<?php if($i!==0):?>
 	<div class="res_wrap">	
 	<?php endif;?>
@@ -104,8 +104,8 @@
 			<div class="comment"><?= h($res['com'])?></div>
 	
 
-			<?php if($i>=$max_res){
-				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
+			<?php if($i>=$max_res||!$check_elapsed_days){
+				$resform=false;//最大レス数を超えている時と指定した日数を超えた古いスレッドはレスフォームを閉じる
 			}?>
 			<?php if($i!==0):?>
 				</div><!-- 子レスのwrap	 -->

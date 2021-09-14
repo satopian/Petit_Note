@@ -1,6 +1,8 @@
 <?php
 /*設定項目*/
 
+date_default_timezone_set('asia/tokyo');
+
 //管理者パスワード 必ず変更してください。
 $admin_pass = 'kanripass';
 //合言葉 必ず変更してください
@@ -14,11 +16,11 @@ $pagedef = 5;
 //最大スレッド数
 $max_log = 1000;
 //1スレッドに返信できるレスの数
-$max_res = 5;
+$max_res = 50;
 //1スレッドに表示するレスの数
 //返信画面で全件表示
 $dispres=5;
-//投稿できる画像のサイズ単位kb
+//投稿できる画像のファイルサイズ単位kb
 $max_kb = 2048;
 //お絵かき最大サイズ
 $pmax_w = 800;//幅
@@ -36,7 +38,7 @@ $use_thumb = true;
 $use_aikotoba = true;
 // $use_aikotoba=false;
 
-//日記モードを使う
+//日記モードを使用する
 // する: true しない: false
 $use_diary = true;
 // $use_diary = false;
@@ -46,11 +48,12 @@ $use_diary = true;
 $use_upload = true;
 // $use_upload = false;
 
+//古いスレッドを自動的に閉じる日数
+$elapsed_days=1;
 /*スパム対策*/
 //本文に日本語がなければ拒絶 する:true しない:false
 $use_japanesefilter = true;
 // $use_japanesefilter=false;
-
 
 //拒絶する文字列 正規表現
 $badstring = ["example.example.com","未承諾広告"];

@@ -271,11 +271,12 @@ function safe_unlink ($path) {
  * @param $filename
  * @param $ext
  */
-function delete_files ($path, $imgfile, $time) {
-	safe_unlink($path.$imgfile);
-	safe_unlink($path.$time.'.pch');
-	safe_unlink($path.$time.'.spch');
-	safe_unlink($path.$time.'.chi');
+function delete_files ($imgfile, $time) {
+	safe_unlink(IMG_DIR.$imgfile);
+	safe_unlink(THUMB_DIR.$time.'s.jpg');
+	safe_unlink(IMG_DIR.$time.'.pch');
+	safe_unlink(IMG_DIR.$time.'.spch');
+	safe_unlink(IMG_DIR.$time.'.chi');
 }
 
 //png2jpg
@@ -522,6 +523,13 @@ function get_gd_ver(){
 	return $phpinfo;
 	} 
 	return false;
+}
+// 古いスレッドへの投稿を許可するかどうか
+function check_elapsed_days ($postedtime) {
+	global $elapsed_days;
+	return $elapsed_days //古いスレッドのフォームを閉じる日数が設定されていたら
+		? ((time() - (int)(substr($postedtime, 0, -3))) <= ((int)$elapsed_days * 86400)) // 指定日数以内なら許可
+		: true; // フォームを閉じる日数が未設定なら許可
 }
 
 

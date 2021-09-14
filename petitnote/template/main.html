@@ -119,13 +119,13 @@ selected
 	?>
 	<?php foreach($ress as $i => $res) : ?>
 		<?php if($skipres && $i===$skipres):?>
-		<hr class="reshr">
+		<hr>
 		レス<?=h($skipres)?>件省略中。
 		<?php endif;?>	
 
 		<?php if($i===0 || $i>$skipres):?>
 
-	<hr class="reshr">
+	<hr>
 	<?php if($i!==0):?>
 	<div class="res_wrap">	
 	<?php endif;?>

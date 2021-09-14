@@ -55,7 +55,7 @@
 <h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
 	<!-- スレッドのループ -->
 <?php foreach($ress as $i => $res) : ?>
-	<hr class="reshr">
+	<hr>
 	<?php if($i!==0):?>
 	<div class="res_wrap">	
 	<?php endif;?>
@@ -98,7 +98,7 @@
 			<?php endif;?>
 			<?php endif;?>
 <div class="clear"></div>
-<hr class="reshr">
+<hr>
 <div class="copy">
 <div class="left_wrap"><a href="#top">△</a> [<a href="<?=h($home)?>">HOME</a> /
 <?php if($postresno):?>

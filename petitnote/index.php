@@ -91,10 +91,7 @@ $sub = t((string)filter_input(INPUT_POST,'sub'));
 $name = t((string)filter_input(INPUT_POST,'name'));
 $com = t((string)filter_input(INPUT_POST,'com'));
 $resno = t((string)filter_input(INPUT_POST,'resno'));
-if($resno&&is_file(LOG_DIR.$resno.'.log')&&(count(file(LOG_DIR.$resno.'.log'))>$max_res)){//レスの時はスレッド別ログに追記
-	error('最大レス数を超過しています。');
-}
-$adminpost='';
+$check_elapsed_days=false;
 
 //NGワードがあれば拒絶
 Reject_if_NGword_exists_in_the_post();
@@ -114,16 +111,18 @@ if($filesize > $max_kb*1024){
 	error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 }
 
+
+
 $imgfile='';
 $w='';
 $h='';
 $tool='';
 $time = time();
 $time = $time.substr(microtime(),2,3);	//投稿時刻
+
 //ファイルアップロード処理
 $upfile='';
-if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK &&
-$use_upload){
+if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && $use_upload){
 	$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
 
 	if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
@@ -134,10 +133,11 @@ $use_upload){
 	$tool = 'upload'; 
 	
 }
+
 //お絵かきアップロード
 $pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
 $picfile = t(filter_input(INPUT_POST, 'picfile'));
-if($pictmp==2){
+if($pictmp==2){//ユーザーデータを調べる
 	if(!$picfile) error('投稿に失敗しました。');
 	$tempfile = TEMP_DIR.$picfile;
 	$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
@@ -159,22 +159,59 @@ if($pictmp==2){
 		$painttime=(int)$postedtime-(int)$starttime;
 	}
 
-	$upfile=IMG_DIR.$time.'.tmp';
+}
+if(is_file(LOG_DIR."$resno.log")){//エラー処理
+		
+	$rp=fopen(LOG_DIR."$resno.log","r");
+	while ($line = fgetcsv($rp,0,"\t")) {
+		list($n_,$s_,$n_,$c_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$h_,$uid_,$h_,$_)=$line;
+		$check_elapsed_days = check_elapsed_days($postedtime);
+		break;
+	}
+	closeFile ($rp);
+
+	if($pictmp==2){//お絵かきの時は新規投稿にする
+
+		if($resno && !$check_elapsed_days){//お絵かきの時に日数を経過していたら新規投稿。
+			$resno='';
+		}
+		if($resno&&(count(file(LOG_DIR.$resno.'.log'))>$max_res)){//お絵かきの時に最大レス数を超過していたら新規投稿。
+			$resno='';
+		}
+	}
+	//お絵かき以外。
+	if($resno && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
+		safe_unlink($upfile);
+		error('このスレッドには投稿できません。');
+	}
+	if($resno&&(count(file(LOG_DIR.$resno.'.log'))>$max_res)){//最大レス数超過。
+		safe_unlink($upfile);
+		error('最大レス数を超過しています。');
+		}
+}
+
+$adminpost='';
+if(!$resno && $use_diary){
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	if(!$adminpost){
+		safe_unlink($upfile);
+		error('日記にログインしていません。');
+	}
+}
+
+
+//お絵かきアップロード
+if($pictmp==2){
+
+$upfile=IMG_DIR.$time.'.tmp';
 	rename($tempfile, $upfile);
 	chmod($upfile,0606);
 	$filesize=filesize($upfile);
 
 	// ワークファイル削除
 	safe_unlink(TEMP_DIR.$picfile.".dat");
-}
 
-if(!$resno && $use_diary){
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
-	if(!$adminpost){
-		error('日記にログインしていません。');
-	}
 }
-
 
 if(!$sub){
 	$sub='無題';
@@ -341,7 +378,7 @@ if($resno){//レスの時はスレッド別ログに追記
 		if($alllog_arr[$i]===''){
 			continue;
 		}
-		list($_no,,)=explode("\t",$alllog_arr[$i]);
+		list($_no,)=explode("\t",$alllog_arr[$i]);
 		if(is_file(LOG_DIR."$_no.log")){
 	
 			$dp = fopen(LOG_DIR."$_no.log", "r");//個別スレッドのログを開く
@@ -350,7 +387,7 @@ if($resno){//レスの時はスレッド別ログに追記
 			while ($line = fgetcsv($dp, 0, "\t")) {
 				list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_log_md5,$_tool,$_pch,$_time,$_host,$_userid,$_hash,$_oya)=$line;
 
-			delete_files (IMG_DIR, $_imgfile, $_time);//一連のファイルを削除
+			delete_files ($_imgfile, $_time);//一連のファイルを削除
 
 			}
 		closeFile($dp);
@@ -740,7 +777,7 @@ function img_replace(){
 	}
 	
 	//旧ファイル削除
-	delete_files(IMG_DIR, $_imgfile, $_time);
+	delete_files($_imgfile, $_time);
 
 	//描画時間追加
 
@@ -907,7 +944,7 @@ function del(){
 					foreach($line as $r_line) {
 						list($_no,$_sub,$_name,$_com,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
 
-						delete_files (IMG_DIR, $_imgfile, $_time);//一連のファイルを削除
+						delete_files ($_imgfile, $_time);//一連のファイルを削除
 
 					}
 				
@@ -924,7 +961,7 @@ function del(){
 			
 				}else{
 						unset($line[$i]);
-						delete_files (IMG_DIR, $imgfile, $time);//一連のファイルを削除
+						delete_files ($imgfile, $time);//一連のファイルを削除
 						$line=implode("",$line);
 						writeFile ($rp, $line);
 						closeFile ($rp);
@@ -1022,8 +1059,10 @@ function res ($resno){
 			$out[0][]=$res;
 			}	
 		fclose($fp);
-		// }
-//管理者判定処理
+		$postedtime=$out[0][0]['time'];
+		$check_elapsed_days = check_elapsed_days($postedtime);
+
+		//管理者判定処理
 session_sta();
 $admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
 $aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
