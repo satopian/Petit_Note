@@ -61,6 +61,8 @@ switch($mode){
 		return diary();
 	case 'aikotoba':
 		return aikotoba();
+	case 'view_nsfw':
+		return view_nsfw();
 	case 'logout_admin':
 		return logout_admin();
 	case 'logout':
@@ -987,7 +989,7 @@ function del(){
 //通常表示
 function view($page=0){
 global $use_aikotoba,$use_upload,$home,$pagedef,$dispres;
-global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot; 
+global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw; 
 
 if(!isset($page)||!$page){
 	$page=0;
@@ -1033,6 +1035,8 @@ $namec=(string)filter_input(INPUT_COOKIE,'namec');
 $appc=(string)filter_input(INPUT_COOKIE,'appc');
 $picwc=(string)filter_input(INPUT_COOKIE,'picwc');
 $picwh=(string)filter_input(INPUT_COOKIE,'pichc');
+$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+
 
 //token
 $token=get_csrf_token();
@@ -1045,7 +1049,7 @@ return include __DIR__.'/template/'.$templete;
 //レス画面
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$pagedef;
-	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary,$petit_ver,$petit_lot;
+	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary,$petit_ver,$petit_lot,$set_nsfw;
 	
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');
@@ -1077,6 +1081,7 @@ $namec=(string)filter_input(INPUT_COOKIE,'namec');
 $appc=(string)filter_input(INPUT_COOKIE,'appc');
 $picwc=(string)filter_input(INPUT_COOKIE,'picwc');
 $picwh=(string)filter_input(INPUT_COOKIE,'pichc');
+$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
 
 //token
 $token=get_csrf_token();

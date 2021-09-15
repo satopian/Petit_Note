@@ -48,6 +48,12 @@ $use_diary = true;
 $use_upload = true;
 // $use_upload = false;
 
+//年齢制限付きの掲示板として設定する
+// する: true しない: false
+
+$set_nsfw = true;
+// $set_nsfw = false;
+
 //古いスレッドを自動的に閉じる日数
 $elapsed_days=1;
 /*スパム対策*/

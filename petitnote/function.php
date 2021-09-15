@@ -142,6 +142,23 @@ function userdel_mode(){
 	return header('Location: ./?page='.$page);
 }
 
+//センシティブコンテンツ
+function view_nsfw(){
+
+	$view=filter_input(INPUT_POST,'view_nsfw');
+	if($view){
+		setcookie("nsfwc",'on',time()+(60*60*24*30),0,"",false,true);
+	}
+
+	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
+	$page = isset($page) ? $page : 0;
+	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	if($resno){
+		return header('Location: ./?resno='.$resno);
+	}
+	return header('Location: ./?page='.$page);
+}
+
 // コンティニュー認証
 function check_cont_pass(){
 

@@ -22,6 +22,16 @@
 </head>
 <body>
 <div class="container" id="top">
+	<?php if($set_nsfw && !$nsfwc):?>
+	<h2>年齢制限付きのコンテンツを表示してもよろしいでしょうか?</h2>
+	<form action="./" method="post">
+	<input type="hidden" name="mode" value="view_nsfw">
+	<input type="hidden" name="view_nsfw" value="on">
+	<input type="hidden" name="resno" value="<?=h($out[0][0]['no'])?>">
+	<input type="submit" value="はい表示します。">
+	</form>
+	<?php endif;?>
+
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
