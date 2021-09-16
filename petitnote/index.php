@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 require_once(__DIR__.'/config.php');	
-require_once(__DIR__.'/function.php');
+require_once(__DIR__.'/functions.php');
 require_once(__DIR__.'/thumbnail_gd.php');
 
 $petit_ver='v0.3';
@@ -67,6 +67,8 @@ switch($mode){
 		return logout_admin();
 	case 'logout':
 		return logout();
+	case 'catalog':
+		return catalog($page);
 	default:
 		if($resno){
 			return res($resno);
@@ -76,194 +78,195 @@ switch($mode){
 
 //投稿処理
 function post(){	
-global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary,$max_w,$max_h,$use_thumb;
-;
-if($use_aikotoba){
-	check_aikotoba();
-}
-check_csrf_token();
+	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary,$max_w,$max_h,$use_thumb;
 
-//POSTされた内容を取得
-$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
-$userip =t(get_uip());
-//ホスト取得
-$host = t(gethostbyaddr($userip));
-
-$sub = t((string)filter_input(INPUT_POST,'sub'));
-$name = t((string)filter_input(INPUT_POST,'name'));
-$com = t((string)filter_input(INPUT_POST,'com'));
-$resno = t((string)filter_input(INPUT_POST,'resno'));
-$check_elapsed_days=false;
-
-//NGワードがあれば拒絶
-Reject_if_NGword_exists_in_the_post();
-
-//制限
-if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
-if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
-if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
-if(strlen($sub) > 80) error('題名が長すぎます。');
-if(strlen($name) > 30) error('名前が長すぎます。');
-if(strlen($com) > 1000) error('本文が長すぎます。');
-
-//ファイルアップロード
-$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
-$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
-if($filesize > $max_kb*1024){
-	error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
-}
-
-
-
-$imgfile='';
-$w='';
-$h='';
-$tool='';
-$time = time();
-$time = $time.substr(microtime(),2,3);	//投稿時刻
-
-//ファイルアップロード処理
-$upfile='';
-if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && $use_upload){
-	$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
-
-	if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
-		error('対応していないフォーマットです。');
+	if($use_aikotoba){
+		check_aikotoba();
 	}
-	$upfile=IMG_DIR.$time.'.tmp';
-	move_uploaded_file($tempfile,$upfile);
-	$tool = 'upload'; 
-	
-}
+	check_csrf_token();
 
-//お絵かきアップロード
-$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
-$picfile = t(filter_input(INPUT_POST, 'picfile'));
-if($pictmp==2){//ユーザーデータを調べる
-	if(!$picfile) error('投稿に失敗しました。');
-	$tempfile = TEMP_DIR.$picfile;
-	$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
-	//選択された絵が投稿者の絵か再チェック
-	if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat")) {
-		error('投稿に失敗しました。');
-	}
-	//ユーザーデータから情報を取り出す
-	$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
-	$userdata = fread($fp, 1024);
-	fclose($fp);
-	list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");
-	if(($ucode != $usercode) && ($uip != $userip)){error('投稿に失敗しました。');}
-	$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
-	$resno = $uresto ? $uresto : $resno;//変数上書き$userdataのレス先を優先する
-	$painttime ='';
-	//描画時間を$userdataをもとに計算
-	if($starttime && is_numeric($starttime)){
-		$painttime=(int)$postedtime-(int)$starttime;
+	//POSTされた内容を取得
+	$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
+	$userip =t(get_uip());
+	//ホスト取得
+	$host = t(gethostbyaddr($userip));
+
+	$sub = t((string)filter_input(INPUT_POST,'sub'));
+	$name = t((string)filter_input(INPUT_POST,'name'));
+	$com = t((string)filter_input(INPUT_POST,'com'));
+	$resno = t((string)filter_input(INPUT_POST,'resno'));
+	$check_elapsed_days=false;
+
+	//NGワードがあれば拒絶
+	Reject_if_NGword_exists_in_the_post();
+
+	//制限
+	if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
+	if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
+	if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
+	if(strlen($sub) > 80) error('題名が長すぎます。');
+	if(strlen($name) > 30) error('名前が長すぎます。');
+	if(strlen($com) > 1000) error('本文が長すぎます。');
+
+	//ファイルアップロード
+	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
+	$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
+	if($filesize > $max_kb*1024){
+		error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 	}
 
-}
-if(is_file(LOG_DIR."$resno.log")){//エラー処理
+	$imgfile='';
+	$w='';
+	$h='';
+	$tool='';
+	$time = time();
+	$time = $time.substr(microtime(),2,3);	//投稿時刻
+
+	//ファイルアップロード処理
+	$upfile='';
+	if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && $use_upload){
+		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
+
+		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+			error('対応していないフォーマットです。');
+		}
+		$upfile=IMG_DIR.$time.'.tmp';
+		move_uploaded_file($tempfile,$upfile);
+		$tool = 'upload'; 
 		
-	$rp=fopen(LOG_DIR."$resno.log","r");
-	while ($line = fgetcsv($rp,0,"\t")) {
-		list($n_,$s_,$n_,$c_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$h_,$uid_,$h_,$_)=$line;
-		$check_elapsed_days = check_elapsed_days($postedtime);
-		break;
 	}
-	closeFile ($rp);
 
-	if($pictmp==2){//お絵かきの時は新規投稿にする
-
-		if($resno && !$check_elapsed_days){//お絵かきの時に日数を経過していたら新規投稿。
-			$resno='';
+	//お絵かきアップロード
+	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
+	$picfile = t(filter_input(INPUT_POST, 'picfile'));
+	if($pictmp==2){//ユーザーデータを調べる
+		if(!$picfile) error('投稿に失敗しました。');
+		$tempfile = TEMP_DIR.$picfile;
+		$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
+		//選択された絵が投稿者の絵か再チェック
+		if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat")) {
+			error('投稿に失敗しました。');
 		}
-		if($resno&&(count(file(LOG_DIR.$resno.'.log'))>$max_res)){//お絵かきの時に最大レス数を超過していたら新規投稿。
-			$resno='';
+		//ユーザーデータから情報を取り出す
+		$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
+		$userdata = fread($fp, 1024);
+		fclose($fp);
+		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");
+		if(($ucode != $usercode) && ($uip != $userip)){error('投稿に失敗しました。');}
+		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
+		$resno = $uresto ? $uresto : $resno;//変数上書き$userdataのレス先を優先する
+		$painttime ='';
+		//描画時間を$userdataをもとに計算
+		if($starttime && is_numeric($starttime)){
+			$painttime=(int)$postedtime-(int)$starttime;
 		}
+
 	}
-	//お絵かき以外。
-	if($resno && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
+	if($resno && !is_file(LOG_DIR."$resno.log")){//エラー処理
 		safe_unlink($upfile);
-		error('このスレッドには投稿できません。');
+		error('記事が見つかりませんでした。');
 	}
-	if($resno&&(count(file(LOG_DIR.$resno.'.log'))>$max_res)){//最大レス数超過。
-		safe_unlink($upfile);
-		error('最大レス数を超過しています。');
+
+	if($resno && is_file(LOG_DIR."$resno.log")){//エラー処理
+			
+		$rp=fopen(LOG_DIR."$resno.log","r");
+		while ($line = fgetcsv($rp,0,"\t")) {
+			list($n_,$s_,$n_,$c_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$h_,$uid_,$h_,$_)=$line;
+			$check_elapsed_days = check_elapsed_days($postedtime);
+			break;
 		}
-}
+		closeFile ($rp);
 
-$adminpost='';
-if(!$resno && $use_diary){
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
-	if(!$adminpost){
-		safe_unlink($upfile);
-		error('日記にログインしていません。');
-	}
-}
+		if($pictmp==2){//お絵かきの時は新規投稿にする
 
-
-//お絵かきアップロード
-if($pictmp==2){
-
-$upfile=IMG_DIR.$time.'.tmp';
-	rename($tempfile, $upfile);
-	chmod($upfile,0606);
-	$filesize=filesize($upfile);
-
-	// ワークファイル削除
-	safe_unlink(TEMP_DIR.$picfile.".dat");
-
-}
-
-if(!$sub){
-	$sub='無題';
-}
-$sub=str_replace(["\r\n","\r","\n",],'',$sub);
-$name=str_replace(["\r\n","\r","\n",],'',$name);
-$com=str_replace(["\r\n","\r","\n",],"\n",$com);
-$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
-$com=str_replace("\n",'"\n"',$com);
-
-if(!$name){
-	$name='anonymous';
-}
-
-if(!$upfile&&!$com){
-error('何か書いて下さい。');
-}
-
-$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
-$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
-if(!$pwd){//それでも$pwdが空なら
-	srand((double)microtime()*1000000);
-	$pwd = substr(rand(), 0, 8);
-}
-$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
-
-setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
-setcookie("pwdc",$pwd,time()+(60*60*24*30),0,"",false,true);
-
-if($upfile){
-	if($filesize > 512 * 1024){//指定サイズを超えていたら
-		if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
-
-			if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
-				rename($im_jpg,$upfile);//JPEGで保存
-				chmod($upfile,0606);
-			} else{//PNGよりファイルサイズが大きくなる時は
-				unlink($im_jpg);//作成したJPEG画像を削除
+			if($resno && !$check_elapsed_days){//お絵かきの時に日数を経過していたら新規投稿。
+				$resno='';
+			}
+			if($resno&&(count(file(LOG_DIR.$resno.'.log'))>$max_res)){//お絵かきの時に最大レス数を超過していたら新規投稿。
+				$resno='';
 			}
 		}
+		//お絵かき以外。
+		if($resno && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
+			safe_unlink($upfile);
+			error('このスレッドには投稿できません。');
+		}
+		if($resno&&(count(file(LOG_DIR.$resno.'.log'))>$max_res)){//最大レス数超過。
+			safe_unlink($upfile);
+			error('最大レス数を超過しています。');
+			}
 	}
-	list($w,$h)=getimagesize($upfile);
-	$_img_type=mime_content_type($upfile);
-	$ext=getImgType ($_img_type);
-	$imgfile=$time.$ext;
 
-	rename($upfile,IMG_DIR.$imgfile);
-}
-	//ユーザーid
-	$userid = getId($userip);
+	$adminpost='';
+	if(!$resno && $use_diary){
+		$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+		if(!$adminpost){
+			safe_unlink($upfile);
+			error('日記にログインしていません。');
+		}
+	}
+
+	//お絵かきアップロード
+	if($pictmp==2 && is_file($tempfile)){
+
+		$upfile=IMG_DIR.$time.'.tmp';
+			rename($tempfile, $upfile);
+			chmod($upfile,0606);
+			$filesize=filesize($upfile);
+
+			// ワークファイル削除
+			safe_unlink(TEMP_DIR.$picfile.".dat");
+	}
+
+	if(!$sub){
+		$sub='無題';
+	}
+	$sub=str_replace(["\r\n","\r","\n",],'',$sub);
+	$name=str_replace(["\r\n","\r","\n",],'',$name);
+	$com=str_replace(["\r\n","\r","\n",],"\n",$com);
+	$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
+	$com=str_replace("\n",'"\n"',$com);
+
+	if(!$name){
+		$name='anonymous';
+	}
+
+	if(!$upfile&&!$com){
+	error('何か書いて下さい。');
+	}
+
+	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
+	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+	if(!$pwd){//それでも$pwdが空なら
+		srand((double)microtime()*1000000);
+		$pwd = substr(rand(), 0, 8);
+	}
+	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
+
+	setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
+	setcookie("pwdc",$pwd,time()+(60*60*24*30),0,"",false,true);
+
+	if($upfile){
+		if($filesize > 512 * 1024){//指定サイズを超えていたら
+			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
+
+				if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
+					rename($im_jpg,$upfile);//JPEGで保存
+					chmod($upfile,0606);
+				} else{//PNGよりファイルサイズが大きくなる時は
+					unlink($im_jpg);//作成したJPEG画像を削除
+				}
+			}
+		}
+		list($w,$h)=getimagesize($upfile);
+		$_img_type=mime_content_type($upfile);
+		$ext=getImgType ($_img_type);
+		$imgfile=$time.$ext;
+
+		rename($upfile,IMG_DIR.$imgfile);
+	}
+		//ユーザーid
+		$userid = getId($userip);
 
 	//全体ログを開く
 	$fp=fopen(LOG_DIR."alllog.log","r+");
@@ -295,27 +298,27 @@ if($upfile){
 		}
 	}
 	if($pictmp==2 && $imgfile){
-			//PCHファイルアップロード
-			if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
+		//PCHファイルアップロード
+		if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
 
-				$src = TEMP_DIR.$picfile.$pchext;
-				$dst = IMG_DIR.$time.$pchext;
-				if(copy($src, $dst)){
-					chmod($dst,0606);
-					safe_unlink($src);
-				}
+			$src = TEMP_DIR.$picfile.$pchext;
+			$dst = IMG_DIR.$time.$pchext;
+			if(copy($src, $dst)){
+				chmod($dst,0606);
+				safe_unlink($src);
 			}
+		}
 
-			//chiファイルアップロード
-			if(is_file(TEMP_DIR.$picfile.'.chi')){
-				$pchext = '.chi';
-				$src = TEMP_DIR.$picfile.'.chi';
-				$dst = IMG_DIR.$time.'.chi';
-				if(rename($src, $dst)){
-					chmod($dst,0606);
-					safe_unlink($src);
-				}
+		//chiファイルアップロード
+		if(is_file(TEMP_DIR.$picfile.'.chi')){
+			$pchext = '.chi';
+			$src = TEMP_DIR.$picfile.'.chi';
+			$dst = IMG_DIR.$time.'.chi';
+			if(rename($src, $dst)){
+				chmod($dst,0606);
+				safe_unlink($src);
 			}
+		}
 	}
 	$thumbnail='';
 	if($imgfile){
@@ -330,50 +333,50 @@ if($upfile){
 		}
 		}
 
-$no_arr = [];
-foreach($alllog_arr as $i => $_alllog){
-	list($log_no,)=explode("\t",$_alllog);
-	$no_arr[]=$log_no;
-}
-
-$max_no=0;
-if($no_arr){
-	$max_no=max($no_arr);
-}
-//書き込むログの書式
-$line='';
-if($resno && !is_file(LOG_DIR.$resno.'.log')){
-	if($pictmp!=2){//お絵かきではない時は
-		error('投稿に失敗しました。');
+	$no_arr = [];
+	foreach($alllog_arr as $i => $_alllog){
+		list($log_no,)=explode("\t",$_alllog);
+		$no_arr[]=$log_no;
 	}
-		$resno='';//レス先がないお絵かきは新規投稿扱いにする。
-}
 
-if($resno){//レスの時はスレッド別ログに追記
-	$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\tres\n";
-	file_put_contents(LOG_DIR.$resno.'.log',$r_line,FILE_APPEND | LOCK_EX);
-	chmod(LOG_DIR.$resno.'.log',0600);	
-	foreach($alllog_arr as $i =>$val){
-		list($_no)=explode("\t",$val);
-		if($resno==$_no){
-			$line = $val;//レスが付いたスレッドを$lineに保存。あとから配列に追加して上げる
-			unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
-			break;
+	$max_no=0;
+	if($no_arr){
+		$max_no=max($no_arr);
+	}
+	//書き込むログの書式
+	$line='';
+	if($resno && !is_file(LOG_DIR.$resno.'.log')){
+		if($pictmp!=2){//お絵かきではない時は
+			error('投稿に失敗しました。');
 		}
+			$resno='';//レス先がないお絵かきは新規投稿扱いにする。
 	}
-	
-} else{
-	//最後の記事ナンバーに+1
-	$no=$max_no+1;
-	$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\toya\n";
-	file_put_contents(LOG_DIR.$no.'.log',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
-	chmod(LOG_DIR.$no.'.log',0600);
-}
-	$alllog_arr[]=$line;//全体ログの配列に追加
 
-	if(!$max_log){
-		error('最大スレッド数が設定されていません。');
+	if($resno){//レスの時はスレッド別ログに追記
+		$r_line = "$resno\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\tres\n";
+		file_put_contents(LOG_DIR.$resno.'.log',$r_line,FILE_APPEND | LOCK_EX);
+		chmod(LOG_DIR.$resno.'.log',0600);	
+		foreach($alllog_arr as $i =>$val){
+			list($_no)=explode("\t",$val);
+			if($resno==$_no){
+				$line = $val;//レスが付いたスレッドを$lineに保存。あとから配列に追加して上げる
+				unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
+				break;
+			}
+		}
+		
+	} else{
+		//最後の記事ナンバーに+1
+		$no=$max_no+1;
+		$line = "$no\t$sub\t$name\t$com\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\toya\n";
+		file_put_contents(LOG_DIR.$no.'.log',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
+		chmod(LOG_DIR.$no.'.log',0600);
 	}
+		$alllog_arr[]=$line;//全体ログの配列に追加
+
+		if(!$max_log){
+			error('最大スレッド数が設定されていません。');
+		}
 	//保存件数超過処理
 	$countlog=count($alllog_arr);
 	for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
@@ -382,7 +385,7 @@ if($resno){//レスの時はスレッド別ログに追記
 		}
 		list($_no,)=explode("\t",$alllog_arr[$i]);
 		if(is_file(LOG_DIR."$_no.log")){
-	
+
 			$dp = fopen(LOG_DIR."$_no.log", "r");//個別スレッドのログを開く
 			flock($dp, LOCK_EX);
 
@@ -400,131 +403,132 @@ if($resno){//レスの時はスレッド別ログに追記
 	$alllog=implode("",$alllog_arr);
 	writeFile ($fp, $alllog);
 	closeFile($fp);
-	
+
 	chmod(LOG_DIR.'alllog.log',0600);
 	//多重送信防止
 	if($resno){
 		return header('Location: ./?resno='.$resno);
 	}
-	return header('Location: ./');
+	
+return header('Location: ./');
 
 }
 //お絵かき画面
 function paint(){
 
-$app = filter_input(INPUT_POST,'app');
-$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
-$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
-$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
-$resto = t(filter_input(INPUT_POST, 'resto'));
-$postno = filter_input(INPUT_POST,'postno');
-$postpage = filter_input(INPUT_POST,'postpage');
+	$app = filter_input(INPUT_POST,'app');
+	$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
+	$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
+	$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
+	$resto = t(filter_input(INPUT_POST, 'resto'));
+	$postno = filter_input(INPUT_POST,'postno');
+	$postpage = filter_input(INPUT_POST,'postpage');
 
-setcookie("appc", $app , time()+(60*60*24*30));//アプレット選択
-setcookie("picwc", $picw , time()+(60*60*24*30));//幅
-setcookie("pichc", $pich , time()+(60*60*24*30));//高さ
+	setcookie("appc", $app , time()+(60*60*24*30));//アプレット選択
+	setcookie("picwc", $picw , time()+(60*60*24*30));//幅
+	setcookie("pichc", $pich , time()+(60*60*24*30));//高さ
 
-$mode = filter_input(INPUT_POST, 'mode');
+	$mode = filter_input(INPUT_POST, 'mode');
 
-$imgfile='';
-$pchfile='';
-$img_chi='';
-$anime=true;
-$rep=false;
-$paintmode='paintcom';
+	$imgfile='';
+	$pchfile='';
+	$img_chi='';
+	$anime=true;
+	$rep=false;
+	$paintmode='paintcom';
 
-if($mode==="contpaint"){
+	if($mode==="contpaint"){
 
-	$imgfile = filter_input(INPUT_POST,'imgfile');
-	$ctype = filter_input(INPUT_POST, 'ctype');
-	$type = filter_input(INPUT_POST, 'type');
-	$time = filter_input(INPUT_POST, 'time');
+		$imgfile = filter_input(INPUT_POST,'imgfile');
+		$ctype = filter_input(INPUT_POST, 'ctype');
+		$type = filter_input(INPUT_POST, 'type');
+		$time = filter_input(INPUT_POST, 'time');
 
 
-	list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
-	$_pch_ext = check_pch_ext(IMG_DIR.$time);
+		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
+		$_pch_ext = check_pch_ext(IMG_DIR.$time);
 
-	if($ctype=='pch'&& $_pch_ext){//動画から続き
-		$pchfile = IMG_DIR.$time.$_pch_ext;
+		if($ctype=='pch'&& $_pch_ext){//動画から続き
+			$pchfile = IMG_DIR.$time.$_pch_ext;
+		}
+
+		if($ctype=='img' && is_file(IMG_DIR.$imgfile)){//画像から続き
+			$anime=false;
+			$animeform = false;
+			$anime= false;
+			$imgfile = IMG_DIR.$imgfile;
+			if(is_file(IMG_DIR.$time.'.chi')){
+			$img_chi =IMG_DIR.$time.'.chi';
+			}
+		}
+		
+		if($type==='rep'){//画像差し換え
+			$rep=true;
+			$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
+			$pwd = filter_input(INPUT_POST, 'pwd');
+			$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+			if($pwd){
+				$pwd=openssl_encrypt ($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//暗号化
+				$pwd=bin2hex($pwd);//16進数に
+			}
+			$userip = get_uip();
+			$paintmode='picrep';
+			$id = $time;
+			$repcode = substr(crypt(md5($no.$id.$userip.$pwd.date("Ymd", time())),time()),-8);
+			//念の為にエスケープ文字があればアルファベットに変換
+			$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
+		}
+
 	}
 
-	if($ctype=='img' && is_file(IMG_DIR.$imgfile)){//画像から続き
-		$anime=false;
-		$animeform = false;
-		$anime= false;
-		$imgfile = IMG_DIR.$imgfile;
-		if(is_file(IMG_DIR.$time.'.chi')){
-		$img_chi =IMG_DIR.$time.'.chi';
-		}
+	switch($app){
+		case 'chi'://ChickenPaint
+		
+			$tool='chi';
+			// HTML出力
+			$templete='paint_chi.html';
+			return include __DIR__.'/template/'.$templete;
+
+		case 'neo'://PaintBBS NEO
+
+			$tool='neo';
+			$appw = $picw + 150;//PaintBBSの時の幅
+			$apph = $pich + 172;//PaintBBSの時の高さ
+			if($apph < 560){$apph = 560;}//共通の最低高
+			//動的パレット
+			$lines = file('palette.txt');//初期パレット
+			$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
+			$pal=[];
+			$DynP=[];
+			foreach ( $lines as $i => $line ) {
+				$line=str_replace(["\r","\n","\t"],"",$line);
+				$line=h($line);
+				list($pid,$pname,$pal[0],$pal[2],$pal[4],$pal[6],$pal[8],$pal[10],$pal[1],$pal[3],$pal[5],$pal[7],$pal[9],$pal[11],$pal[12],$pal[13]) = explode(",", $line);
+				$DynP[]=$pname;
+				$p_cnt=$i+1;
+				$palettes = 'Palettes['.$p_cnt.'] = "#';
+				ksort($pal);
+				$palettes.=implode('\n#',$pal);
+				$palettes.='";';
+				$arr_pal[$i] = $palettes;
+			}
+			$palettes=$initial_palette.implode('',$arr_pal);
+			$palsize = count($DynP) + 1;
+			foreach ($DynP as $p){
+				$arr_dynp[] = $p;
+			}
+			// HTML出力
+			$templete='paint_neo.html';
+			return include __DIR__.'/template/'.$templete;
+
+		default:
+			return error('失敗しました。');
 	}
-	
-	if($type==='rep'){//画像差し換え
-		$rep=true;
-		$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
-		$pwd = filter_input(INPUT_POST, 'pwd');
-		$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
-		if($pwd){
-			$pwd=openssl_encrypt ($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//暗号化
-			$pwd=bin2hex($pwd);//16進数に
-		}
-		$userip = get_uip();
-		$paintmode='picrep';
-		$id = $time;
-		$repcode = substr(crypt(md5($no.$id.$userip.$pwd.date("Ymd", time())),time()),-8);
-		//念の為にエスケープ文字があればアルファベットに変換
-		$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
-	}
-
-}
-
-switch($app){
-	case 'chi'://ChickenPaint
-	
-		$tool='chi';
-		// HTML出力
-		$templete='paint_chi.html';
-		return include __DIR__.'/template/'.$templete;
-
-	case 'neo'://PaintBBS NEO
-
-		$tool='neo';
-		$appw = $picw + 150;//PaintBBSの時の幅
-		$apph = $pich + 172;//PaintBBSの時の高さ
-		if($apph < 560){$apph = 560;}//共通の最低高
-		//動的パレット
-		$lines = file('palette.txt');//初期パレット
-		$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
-		$pal=[];
-		$DynP=[];
-		foreach ( $lines as $i => $line ) {
-			$line=str_replace(["\r","\n","\t"],"",$line);
-			$line=h($line);
-			list($pid,$pname,$pal[0],$pal[2],$pal[4],$pal[6],$pal[8],$pal[10],$pal[1],$pal[3],$pal[5],$pal[7],$pal[9],$pal[11],$pal[12],$pal[13]) = explode(",", $line);
-			$DynP[]=$pname;
-			$p_cnt=$i+1;
-			$palettes = 'Palettes['.$p_cnt.'] = "#';
-			ksort($pal);
-			$palettes.=implode('\n#',$pal);
-			$palettes.='";';
-			$arr_pal[$i] = $palettes;
-		}
-		$palettes=$initial_palette.implode('',$arr_pal);
-		$palsize = count($DynP) + 1;
-		foreach ($DynP as $p){
-			$arr_dynp[] = $p;
-		}
-		// HTML出力
-		$templete='paint_neo.html';
-		return include __DIR__.'/template/'.$templete;
-
-	default:
-		return error('失敗しました。');
-}
 
 }
 // お絵かきコメント 
 function paintcom(){
-	global $use_aikotoba;
+	global $use_aikotoba,$boardname,$home;
 	$token=get_csrf_token();
 	$userip = get_uip();
 	$namec = filter_input(INPUT_COOKIE,'namec');
@@ -849,16 +853,16 @@ function pchview(){
 //削除前の確認画面
 function confirmation_before_deletion (){
 
-global $boardname,$max_res,$home,$petit_ver,$petit_lot;
-	//管理者判定処理
-session_sta();
-$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
-$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
-$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-$resmode = filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
-$resmode = $resmode ? 'true' : 'false';
-$postpage = (string)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-$postresno = (string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
+	global $boardname,$max_res,$home,$petit_ver,$petit_lot;
+		//管理者判定処理
+	session_sta();
+	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$resmode = filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
+	$resmode = $resmode ? 'true' : 'false';
+	$postpage = (string)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$postresno = (string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 
 
 	if(!($admindel||$userdel)){
@@ -896,8 +900,8 @@ $postresno = (string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 		closeFile ($rp);
 	}
 
-$templete='before_del.html';
-return include __DIR__.'/template/'.$templete;
+	$templete='before_del.html';
+	return include __DIR__.'/template/'.$templete;
 
 }
 //記事削除
@@ -985,65 +989,120 @@ function del(){
 	}
 	return header('Location: ./?page='.filter_input(INPUT_POST,'postpage'));
 }
+//カタログ表示
+function catalog($page=0){
+	global $use_aikotoba,$use_upload,$home,$catalog_pagedef,$dispres;
+	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw; 
+	$pagedef=$catalog_pagedef;
+	if(!isset($page)||!$page){
+		$page=0;
+	}
+
+	$alllog_arr=file(LOG_DIR.'alllog.log');//全体ログを読み込む
+	$count_alllog=count($alllog_arr);
+	krsort($alllog_arr);
+
+	//ページ番号から1ページ分のスレッド分とりだす
+	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
+	//oyaのループ
+	foreach($alllog_arr as $oya => $alllog){
+
+		$_res=[];
+		
+		list($no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=explode("\t",trim($alllog));
+		$line=[$no,$sub,$name,$com,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya];
+
+		$_res = create_res($line);//$lineから、情報を取り出す
+		$out[$oya][]=$_res;
+
+	}
+
+	//管理者判定処理
+	session_sta();
+	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+
+	if(!$use_aikotoba){
+		$aikotoba=true;
+	}
+
+	//Cookie
+	$namec=(string)filter_input(INPUT_COOKIE,'namec');
+	$appc=(string)filter_input(INPUT_COOKIE,'appc');
+	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
+	$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
+	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+
+
+	//token
+	$token=get_csrf_token();
+
+	// HTML出力
+	$templete='catalog.html';
+	return include __DIR__.'/template/'.$templete;
+
+}
 
 //通常表示
 function view($page=0){
-global $use_aikotoba,$use_upload,$home,$pagedef,$dispres;
-global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw; 
+	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres;
+	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw; 
 
-if(!isset($page)||!$page){
-	$page=0;
-}
-
-$alllog_arr=file(LOG_DIR.'alllog.log');//全体ログを読み込む
-$count_alllog=count($alllog_arr);
-krsort($alllog_arr);
-
-//ページ番号から1ページ分のスレッド分とりだす
-$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
-//oyaのループ
-foreach($alllog_arr as $oya => $alllog){
-	
-	list($no)=explode("\t",$alllog);
-	//個別スレッドのループ
-	if(!is_file(LOG_DIR."$no.log")){
-	continue;	
+	if(!isset($page)||!$page){
+		$page=0;
 	}
-	$res=[];
-		$fp = fopen(LOG_DIR."$no.log", "r");//個別スレッドのログを開く
-		$s=0;
-		while ($line = fgetcsv($fp, 0, "\t")) {
-			$res = create_res($line);//$lineから、情報を取り出す
-			$out[$oya][]=$res;
-		}	
-	fclose($fp);
-}
 
-//管理者判定処理
-session_sta();
-$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
-$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
-$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	$alllog_arr=file(LOG_DIR.'alllog.log');//全体ログを読み込む
+	$count_alllog=count($alllog_arr);
+	krsort($alllog_arr);
 
-if(!$use_aikotoba){
-	$aikotoba=true;
-}
+	//ページ番号から1ページ分のスレッド分とりだす
+	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
+	//oyaのループ
+	foreach($alllog_arr as $oya => $alllog){
+		
+		list($no)=explode("\t",$alllog);
+		//個別スレッドのループ
+		if(!is_file(LOG_DIR."$no.log")){
+		continue;	
+		}
+		$_res=[];
+			$fp = fopen(LOG_DIR."$no.log", "r");//個別スレッドのログを開く
+			$s=0;
+			while ($line = fgetcsv($fp, 0, "\t")) {
+				$_res = create_res($line);//$lineから、情報を取り出す
+				$out[$oya][]=$_res;
+			}	
+		fclose($fp);
+	}
 
-//Cookie
-$namec=(string)filter_input(INPUT_COOKIE,'namec');
-$appc=(string)filter_input(INPUT_COOKIE,'appc');
-$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
-$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
-$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+	//管理者判定処理
+	session_sta();
+	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+
+	if(!$use_aikotoba){
+		$aikotoba=true;
+	}
+
+	//Cookie
+	$namec=(string)filter_input(INPUT_COOKIE,'namec');
+	$appc=(string)filter_input(INPUT_COOKIE,'appc');
+	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
+	$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
+	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
 
 
-//token
-$token=get_csrf_token();
+	//token
+	$token=get_csrf_token();
 
-// HTML出力
-$templete='main.html';
-return include __DIR__.'/template/'.$templete;
+	// HTML出力
+	$templete='main.html';
+	return include __DIR__.'/template/'.$templete;
 
 }
 //レス画面
@@ -1056,37 +1115,37 @@ function res ($resno){
 	if(!is_file(LOG_DIR."$resno.log")){
 		error('スレッドがありません');	
 		}
-		$res=[];
+		$_res=[];
 			$fp = fopen(LOG_DIR."$resno.log", "r");//個別スレッドのログを開く
 			while ($line = fgetcsv($fp, 0, "\t")) {
-				$res = create_res($line);//$lineから、情報を取り出す
-			$out[0][]=$res;
+				$_res = create_res($line);//$lineから、情報を取り出す
+			$out[0][]=$_res;
 			}	
 		fclose($fp);
 		$postedtime=$out[0][0]['time'];
 		$check_elapsed_days = check_elapsed_days($postedtime);
 
 		//管理者判定処理
-session_sta();
-$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
-$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
-$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
-if(!$use_aikotoba){
-	$aikotoba=true;
-}
+	session_sta();
+	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	if(!$use_aikotoba){
+		$aikotoba=true;
+	}
 
-//Cookie
-$namec=(string)filter_input(INPUT_COOKIE,'namec');
-$appc=(string)filter_input(INPUT_COOKIE,'appc');
-$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
-$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
-$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+	//Cookie
+	$namec=(string)filter_input(INPUT_COOKIE,'namec');
+	$appc=(string)filter_input(INPUT_COOKIE,'appc');
+	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
+	$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
+	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
 
-//token
-$token=get_csrf_token();
-$templete='res.html';
-return include __DIR__.'/template/'.$templete;
+	//token
+	$token=get_csrf_token();
+	$templete='res.html';
+	return include __DIR__.'/template/'.$templete;
 	
 }
 

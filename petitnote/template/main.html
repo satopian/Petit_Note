@@ -30,16 +30,17 @@
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
-<span>[<a href="<?=h($home)?>">HOME</a>]</span>
-<span>[<a href="./?mode=paintcom">アップロード途中の画像</a>]</span>
+[<a href="<?=h($home)?>">HOME</a>]
+[<a href="./?mode=catalog">カタログ</a>]
+[<a href="./?mode=paintcom"><span class="txtnon">アップロード</span>途中<span class="txtnon">の画像</span></a>]
 <?php if($userdel || $admindel):?>
-<span>[<a href="./?mode=logout&page=<?=h($page)?>">編集モード終了</a>]</span>
+[<a href="./?mode=logout&page=<?=h($page)?>">編集<span class="txtnon">モード</span>終了</a>]
 <?php else:?>
-<span>[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]</span><a href=""></a> 
+[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]
  <?php endif;?>
  <a href="#bottom">▽</a>
  <br>
-</nav>
+	</nav>
 <?php endif;?>
 <?php if($aikotoba&&(!$userdel && !$admindel)):?>
 <?php if(!$use_diary || $adminpost):?>
@@ -189,10 +190,6 @@ selected
 			<?php endif;?>
 			<div class="comment"><?= h($res['com'])?></div>
 
-
-			<?php if($i>=$max_res){
-				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
-			}?>
 			<?php if($i!==0):?>
 			</div><!-- 子レスのwrap	 -->
 			<?php endif;?>
@@ -221,23 +218,17 @@ selected
 <!-- 返信フォーム -->
 
 <div class="clear"></div>
-<?php if($resform):?>
-<form action="./?resno=<?=h($res['no'])?>" method="POST" class="resform" target="_blank">
-<input type="submit" value="返信">
-</form>
-<?php endif;?>
-<!-- レスフォームが閉じていてレス省略表示の時 -->
-<?php if(!$resform):?>
-			<form action="./?resno=<?=h($res['no'])?>" method="POST" class="resform">
-			<input type="submit" value="全件表示">
-			</form>
-
-<?php endif;?>
+<div class="res_button_wrap">
+<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button" target="_blank">
+<input type="submit" value="返信"></form>
+<div class="pagetop"><a href="#top">△</a></div>
+</div>
 
 <hr>
 <?php endforeach;?>
 <?php endif;?>
 <?php
+//ページング
 $start_page=$page-$pagedef*8;
 if($page<$pagedef*17){
 	$start_page=0;
@@ -246,30 +237,40 @@ $end_page=$page+($pagedef*8)	;
 if($page<$pagedef*17){
 	$end_page=$pagedef*17;
 }
+//prev next 
+$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
+$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 ?>
+	<?php if($prev!==false):?>
+		<a href="?page=<?=h($prev)?>">≪prev</a>
+	<?php endif;?>
+	|  
+	<?php if($next):?>
+		<a href="?page=<?=h($next)?>">next≫</a>
+	<?php endif;?>
+
 <?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
 <?php if(($i>=$start_page)&&($i<=$end_page)):?>
-<?php if($page==$i):?>
-		 [<?=h($i/$pagedef)?>]
-	<?php else: ?>
-	<?php if($i==0):?>
-		[<a href="?page=0">0</a>]
-	<?php else:?>	
+	<?php if($page==$i):?>
+			[<?=h($i/$pagedef)?>]
+		<?php else: ?>
+			<?php if($i==0):?>
+				[<a href="?page=0">0</a>]
+			<?php else:?>	
+			<?php if($i === $end_page):?>
+			<!-- 特定のページに代入される記号 エンド -->
+				[<a href="?page=<?=h($i)?>">≫</a>]
+				<?php elseif($i === $start_page):?>
+				[<a href="?page=<?=h($i)?>">≪</a>]
+					<?php else:?>
+			[<a href="?page=<?=h($i)?>"><?=h($i/$pagedef)?></a>]
+			<?php endif;?>
+			<?php endif;?>
+		<?php endif;?>
+	<?php endif;?>
+<?php endfor ;?>
 
-	<!-- 特定のページに代入される記号 エンド -->
-	<?php if($i === $end_page):?>
-		[<a href="?page=<?=h($i)?>">≫</a>]
-		<?php elseif($i === $start_page):?>
-		[<a href="?page=<?=h($i)?>">≪</a>]
-			<?php else:?>
-	  [<a href="?page=<?=h($i)?>"><?=h($i/$pagedef)?></a>]
-	<?php endif;?>
-	<?php endif;?>
-	<?php endif;?>
-	<?php endif;?>
-	<?php endfor ;?>
-
-<div class="copy">
+	<div class="copy">
 <div class="left_wrap"><a href="#top">△</a> [<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
 </div>
 

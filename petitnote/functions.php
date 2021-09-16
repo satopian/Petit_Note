@@ -56,7 +56,7 @@ function aikotoba(){
 }
 function admin_in(){
 
-	global $boardname,$use_diary,$use_aikotoba;
+	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver;
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
@@ -153,6 +153,10 @@ function view_nsfw(){
 	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
 	$page = isset($page) ? $page : 0;
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	$catalogpage=filter_input(INPUT_POST,'catalogpage',FILTER_VALIDATE_INT);
+	if($catalogpage){
+		return header('Location: ./?mode=catalog&page='.$catalogpage);
+	}
 	if($resno){
 		return header('Location: ./?resno='.$resno);
 	}

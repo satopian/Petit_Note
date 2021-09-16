@@ -6,9 +6,9 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--SNS-->
 <?php foreach($out as $ress) : ?>
-	<meta name="Description" content="<?= h(s($res['com']))?>">
+	<meta name="Description" content="<?= h(s($ress[0]['com']))?>">
 	<meta name="twitter:card" content="summary" />
-	<meta property="og:title" content="[<?= h(s($ress[0]['no']))?>] <?= h(s($ress[0]['sub']))?> by <?= h(s($res['name']))?> - <?=h(s($boardname))?>" />
+	<meta property="og:title" content="[<?= h(s($ress[0]['no']))?>] <?= h(s($ress[0]['sub']))?> by <?= h(s($ress[0]['name']))?> - <?=h(s($boardname))?>" />
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="?resno=<?= h($ress[0]['no'])?>" />
 	<meta property="og:image" content="src/<?=h($ress[0]['img'])?>" />
@@ -18,7 +18,13 @@
 <!--/SNS-->
 
 <link rel="stylesheet" href="index.css">
-	<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> by <?= h($res['name'])?> - <?=h($boardname)?>"</title>
+<?php if($set_nsfw && !$nsfwc):?>
+	<!-- センシティブコンテンツにブラーをかける -->
+<style>img {filter:blur(6px);}</style>
+<?php endif;?>
+
+
+	<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> by <?= h($ress[0]['name'])?> - <?=h($boardname)?>"</title>
 </head>
 <body>
 <div class="container" id="top">
@@ -36,6 +42,7 @@
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
 	<span>[<a href="./"><?=h($boardname)?></a>]</span>
+ <span>[<a href="./?mode=catalog">カタログ</a>]</span>
  <span>[<a href="./?mode=paintcom">アップロード途中の画像</a>]</span>
 <?php if($userdel || $admindel):?>
 <span>[<a href="./?mode=logout&resno=<?=h($resno)?>">編集モード終了</a>]</span>
@@ -152,7 +159,7 @@
 <?php if($aikotoba && (!$userdel && !$admindel)):?>
 <?php if($resform):?>
 
-<form action="./" method="post" class="resform">
+<form action="./" method="post" class="res_form">
 <input type="hidden" name="mode" value="paint">
 <input type="hidden" name="resto" value="<?=h($res['no'])?>">
 <input type="submit" value="PAINT" class="paint_button">

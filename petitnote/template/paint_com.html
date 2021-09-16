@@ -9,6 +9,14 @@
 </head>
 <body>
 	<div class="container">
+		<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+		<nav class="memu_wrap">
+		<span>[<a href="<?=h($home)?>">掲示板にもどる</a>]</span>
+		 <a href="#bottom">▽</a>
+		 <br>
+		</nav>
+		<hr>
+			
 		<div>
 			<div class="error">
 				<?php if(!$tmp):?>

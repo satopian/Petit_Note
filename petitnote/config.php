@@ -1,8 +1,6 @@
 <?php
 /*設定項目*/
 
-date_default_timezone_set('asia/tokyo');
-
 //管理者パスワード 必ず変更してください。
 $admin_pass = 'kanripass';
 //合言葉 必ず変更してください
@@ -11,15 +9,17 @@ $aikotoba = 'あいうえお';
 $boardname = 'Petit Note';
 //ホームページ(掲示板からの戻り先)
 $home = './'; //相対パス、絶対パス、URLどれでもOK 
+//最大スレッド保存件数 
+$max_log = 1000;
 //1ページに表示するスレッド数
 $pagedef = 5;
-//最大スレッド数
-$max_log = 1000;
 //1スレッドに返信できるレスの数
 $max_res = 50;
 //1スレッドに表示するレスの数
 //返信画面で全件表示
 $dispres=5;
+//カタログモード時の1ページあたりの表示件数
+$catalog_pagedef = 24;
 //投稿できる画像のファイルサイズ単位kb
 $max_kb = 2048;
 //お絵かき最大サイズ
@@ -28,6 +28,7 @@ $pmax_h = 800;//高さ
 //表示する最大サイズ
 $max_w = 800;
 $max_h = 500;
+
 //表示する最大サイズを超える時はサムネイルを作成する
 // する: true しない: false
 $use_thumb = true;
@@ -55,7 +56,8 @@ $set_nsfw = true;
 // $set_nsfw = false;
 
 //古いスレッドを自動的に閉じる日数
-$elapsed_days=1;
+$elapsed_days=180;
+
 /*スパム対策*/
 //本文に日本語がなければ拒絶 する:true しない:false
 $use_japanesefilter = true;
@@ -70,6 +72,9 @@ $badname = ["ブランド","通販","販売","口コミ"];
 //AとBが両方あったら拒絶 正規表現
 $badstr_A = ["激安","低価","コピー","品質を?重視","大量入荷"];
 $badstr_B = ["シャネル","シュプリーム","バレンシアガ","ブランド"];
+
+//タイムゾーン 日本時間で良ければ初期値 'asia/tokyo'
+date_default_timezone_set('asia/tokyo');
 
 /*変更しないでください*/
 //テンポラリ
