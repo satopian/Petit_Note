@@ -41,13 +41,12 @@
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
-	<span>[<a href="./"><?=h($boardname)?></a>]</span>
- <span>[<a href="./?mode=catalog">カタログ</a>]</span>
- <span>[<a href="./?mode=paintcom">アップロード途中の画像</a>]</span>
+<span>[<a href="./?mode=catalog">カタログ</a>]</span>
+<span> [<a href="./?mode=paintcom"><span class="txtnon">アップロード</span>途中<span class="txtnon">の画像</span></a>]</span>
 <?php if($userdel || $admindel):?>
-<span>[<a href="./?mode=logout&resno=<?=h($resno)?>">編集モード終了</a>]</span>
+<span>[<a href="./?mode=logout&resno=<?=h($resno)?>">編集<span class="txtnon">モード</span>終了</a>]</span>
 <?php else:?>
-<span> [<a href="./?mode=userdel&resno=<?=h($resno)?>">編集</a>]</span>
+<span>[<a href="./?mode=userdel&resno=<?=h($resno)?>">編集</a>]</span>
  <?php endif;?>
  <a href="#bottom">▽</a>
  <br>
@@ -121,7 +120,7 @@
 			<div class="comment"><?= h($res['com'])?></div>
 	
 
-			<?php if($i>=$max_res||!$check_elapsed_days){
+			<?php if($i>=$max_res||!$ress[0]['check_elapsed_days']){
 				$resform=false;//最大レス数を超えている時と指定した日数を超えた古いスレッドはレスフォームを閉じる
 			}?>
 			<?php if($i!==0):?>
@@ -230,10 +229,9 @@ selected
 <?php endforeach;?>
 <?php endif;?>
 <div class="copy">
-<div class="left_wrap"><a href="#top">△</a> [<a href="<?=h($home)?>">HOME</a> /
-<a href="./?mode=adminin&resno=<?=h($resno)?>">管理</a>]
+<div class="left_wrap">
+	[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?>">管理</a>]
 </div>
-
 <div class="righit_wrap">
 <a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a> <span title="<?=h($petit_lot)?>"><?=h($petit_ver)?></span> <span>Web Style by BASIC</span><br>
 <span>OekakiApp - </span><span></span><a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a></span>

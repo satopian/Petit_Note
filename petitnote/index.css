@@ -5,7 +5,7 @@ body {
 }
 .container {
 	max-width: 800px;
-	margin: 35px auto;
+	margin: 0 auto 12px;
 	color: #555;
 }
 hr {
@@ -23,28 +23,38 @@ a {
 	}
 	
 /* 見出し */
-h1 {font-size: 26px;margin: 0 0 6px 0;padding: 0;}
+h1 {
+	font-size: 26px;margin: 16px 0 6px 0;
+	padding: 0;
+}
 
 h1.title a {
     text-decoration: none;
 	display: block;
 }
 
-h2 {font-size: 18px;background-color: #ffe6e6;border-left: 8px solid #ffcfcf;border-bottom: 1px dashed #888;padding: 2px 6px 2px;margin: 8px 0;}
+h2 {
+	font-size: 18px;
+	background-color: #ffe6e6;
+	border-left: 8px solid #ffcfcf;
+	border-bottom: 1px dashed #888;
+	padding: 2px 6px 2px;
+	margin: 8px 0;
+}
 textarea.post_com {
-width: 300px;
-height: 120px;
-margin: 10px 0 0 0;
+	width: 300px;
+	height: 120px;
+	margin: 10px 0 0 0;
 }
 h2.article_title a {
-	text-decoration: none;
-	display: block;
+		text-decoration: none;
+		display: block;
 }
 /* フォーム入力 */
 textarea.rescom {
-width: 300px;
-height: 60px;
-margin: 10px 0;
+	width: 300px;
+	height: 60px;
+	margin: 10px 0;
 }
 
 form.resform {
@@ -70,17 +80,17 @@ input.upfile {
 }
 
 .article_info{
-margin: 5px 0 ;	
+	margin: 5px 0 ;	
 }
 .posted_image {
-max-width: 100%;
-max-height: 500px;
-margin: 0 10px 10px 0;
-float: left;
+	max-width: 100%;
+	max-height: 500px;
+	margin: 0 10px 10px 0;
+	float: left;
 }
 .posted_image img {
-max-width: 100%;
-height: auto;
+	max-width: 100%;
+	height: auto;
 }
 .comment {
     display: table;
@@ -105,12 +115,23 @@ nav.memu_wrap  {
     margin: 0 0 8px;
     display: inline-block;
 }
+nav.memu_wrap_catalog {
+    margin: 0 0 8px;
+	text-align: right;
+	display: block;
+}
+.memu_wrap span {
+    display: inline-block;
+}
 span.canvas_size_wrap {
     display: inline-block;
 }
 label {cursor: pointer;}
 select.post_select_image {
     margin: 10px 6px 0;
+}
+span.txtnon {
+    display: initial;
 }
 
 /* 返信ボタン */
@@ -135,6 +156,10 @@ form.res_form {
 /* アップロード途中の画像 */
 .post_table_title {
     margin: 0px 0 12px;
+}
+.posted_img_form img {
+    max-width: 100%;
+    height: auto;
 }
 
 /* フォーム */

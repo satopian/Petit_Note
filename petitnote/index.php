@@ -108,13 +108,9 @@ function post(){
 	if(strlen($name) > 30) error('名前が長すぎます。');
 	if(strlen($com) > 1000) error('本文が長すぎます。');
 
-	//ファイルアップロード
-	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
-	$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
-	if($filesize > $max_kb*1024){
-		error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
-	}
+	
 
+	$upfile='';
 	$imgfile='';
 	$w='';
 	$h='';
@@ -122,9 +118,15 @@ function post(){
 	$time = time();
 	$time = $time.substr(microtime(),2,3);	//投稿時刻
 
-	//ファイルアップロード処理
-	$upfile='';
-	if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && $use_upload){
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+
+	//ファイルアップロード
+	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
+	$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
+	if($filesize > $max_kb*1024){
+		error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
+	}
+	if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
 		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
 
 		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
@@ -199,12 +201,12 @@ function post(){
 
 	$adminpost='';
 	if(!$resno && $use_diary){
-		$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
 		if(!$adminpost){
 			safe_unlink($upfile);
 			error('日記にログインしていません。');
 		}
 	}
+
 
 	//お絵かきアップロード
 	if($pictmp==2 && is_file($tempfile)){
@@ -674,7 +676,6 @@ function img_replace(){
 			//画像があり、認識コードがhitすれば抜ける
 		
 			if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $urepcode === $repcode){
-				// var_dump($file_name,$urepcode , $repcode);
 				$find=true;break;
 			}
 
@@ -1056,6 +1057,7 @@ function view($page=0){
 
 	$alllog_arr=file(LOG_DIR.'alllog.log');//全体ログを読み込む
 	$count_alllog=count($alllog_arr);
+
 	krsort($alllog_arr);
 
 	//ページ番号から1ページ分のスレッド分とりだす
@@ -1122,8 +1124,8 @@ function res ($resno){
 			$out[0][]=$_res;
 			}	
 		fclose($fp);
-		$postedtime=$out[0][0]['time'];
-		$check_elapsed_days = check_elapsed_days($postedtime);
+		// $postedtime=$out[0][0]['time'];
+		// $check_elapsed_days = check_elapsed_days($postedtime);
 
 		//管理者判定処理
 	session_sta();

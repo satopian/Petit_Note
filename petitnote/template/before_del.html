@@ -11,23 +11,24 @@
 <div class="container" id="top">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
+		
 		<nav class="memu_wrap">
 	<span>[<a href="./"><?=h($boardname)?></a>]</span>
- <span>[<a href="./?mode=paintcom">アップロード途中の画像</a>]</span>
+ <span>[<a href="./?mode=paintcom"><span class="txtnon">アップロード</span>途中<span class="txtnon">の画像</a>]</span>
 <?php if($userdel || $admindel):?>
 	<span>
 		<?php if($postresno):?>
-		[<a href="./?mode=logout&resno=<?=h($postresno)?>">編集モード終了</a>]
+		[<a href="./?mode=logout&resno=<?=h($postresno)?>">編集<span class="txtnon">モード</span>終了</a>]
 		<?php endif;?>
 		<?php if($postpage||$postpage==='0'):?>
-		[<a href="./?mode=logout&page=<?=h($postpage)?>">編集モード終了</a>]
+		[<a href="./?mode=logout&page=<?=h($postpage)?>">編集<span class="txtnon">モード</span>終了</a>]
 		<?php endif;?>
 	</span>
 <?php endif;?>
 <a href="#bottom">▽</a>
  <br>
 </nav>
-
+<br>
 <?php if($admindel):?>
 削除したい記事をチェックして削除ボタンを押してください。:
 <?php endif;?>

@@ -220,6 +220,8 @@ function create_res($line){
 	list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
 	$datetime=(int)substr($time,0,-3);
 	$date=date('y/m/d',$datetime);
+	$check_elapsed_days = check_elapsed_days($time);
+
 	$res=[
 		'no' => $no,
 		'sub' => $sub,
@@ -238,6 +240,7 @@ function create_res($line){
 		'date' => $date,
 		'host' => $host,
 		'userid' => $userid,
+		'check_elapsed_days' => $check_elapsed_days,
 	];
 
 	$res['com']=str_replace('"\n"',"\n",$res['com']);

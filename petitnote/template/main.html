@@ -30,14 +30,13 @@
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
-[<a href="<?=h($home)?>">HOME</a>]
-[<a href="./?mode=catalog">カタログ</a>]
-[<a href="./?mode=paintcom"><span class="txtnon">アップロード</span>途中<span class="txtnon">の画像</span></a>]
+<span>[<a href="./?mode=catalog">カタログ</a>]</span>
+<span>[<a href="./?mode=paintcom"><span class="txtnon">アップロード</span>途中<span class="txtnon">の画像</span></a>]</span>
 <?php if($userdel || $admindel):?>
-[<a href="./?mode=logout&page=<?=h($page)?>">編集<span class="txtnon">モード</span>終了</a>]
+	<span>[<a href="./?mode=logout&page=<?=h($page)?>">編集<span class="txtnon">モード</span>終了</a>]</span>
 <?php else:?>
-[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]
- <?php endif;?>
+	<span>[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]</span>
+<?php endif;?>
  <a href="#bottom">▽</a>
  <br>
 	</nav>
@@ -190,6 +189,10 @@ selected
 			<?php endif;?>
 			<div class="comment"><?= h($res['com'])?></div>
 
+
+			<?php if($i>=$max_res||!$ress[0]['check_elapsed_days']){
+				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
+			}?>
 			<?php if($i!==0):?>
 			</div><!-- 子レスのwrap	 -->
 			<?php endif;?>
@@ -219,10 +222,18 @@ selected
 
 <div class="clear"></div>
 <div class="res_button_wrap">
+
+<?php if($resform):?>
+
 <form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button" target="_blank">
 <input type="submit" value="返信"></form>
+<?php else:?>
+<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button" target="_blank">
+<input type="submit" value="表示"></form>
+<?php endif;?>
 <div class="pagetop"><a href="#top">△</a></div>
 </div>
+
 
 <hr>
 <?php endforeach;?>
@@ -241,6 +252,7 @@ if($page<$pagedef*17){
 $next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 ?>
+<div class="pagelink">
 	<?php if($prev!==false):?>
 		<a href="?page=<?=h($prev)?>">≪prev</a>
 	<?php endif;?>
@@ -248,7 +260,9 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 	<?php if($next):?>
 		<a href="?page=<?=h($next)?>">next≫</a>
 	<?php endif;?>
+</div>
 
+	<a href="?page=0">start</a> |
 <?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
 <?php if(($i>=$start_page)&&($i<=$end_page)):?>
 	<?php if($page==$i):?>
@@ -267,13 +281,15 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 			<?php endif;?>
 			<?php endif;?>
 		<?php endif;?>
-	<?php endif;?>
-<?php endfor ;?>
+		<?php endif;?>
+		<?php endfor ;?>
+		
+		| <a href="?page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?>">end</a>
 
 	<div class="copy">
-<div class="left_wrap"><a href="#top">△</a> [<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
-</div>
-
+		<div class="left_wrap">
+		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
+	</div>
 <div class="righit_wrap">
 <a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a> <span title="<?=h($petit_lot)?>"><?=h($petit_ver)?></span> <span>Web Style by BASIC</span><br>
 <span>OekakiApp - </span><span></span><a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a></span>
