@@ -46,7 +46,6 @@ switch($mode){
 			return paint();
 	case 'picrep':
 		return img_replace();
-
 	case 'before_del':
 		return confirmation_before_deletion();
 	case 'del':
@@ -199,7 +198,6 @@ function post(){
 			}
 	}
 
-	$adminpost='';
 	if(!$resno && $use_diary){
 		if(!$adminpost){
 			safe_unlink($upfile);
@@ -248,7 +246,7 @@ function post(){
 	setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
 	setcookie("pwdc",$pwd,time()+(60*60*24*30),0,"",false,true);
 
-	if($upfile){
+	if($upfile && is_file($upfile)){
 		if($filesize > 512 * 1024){//指定サイズを超えていたら
 			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 
@@ -277,9 +275,10 @@ function post(){
 	while ($_line = fgets($fp)) {
 		$alllog_arr[]=$_line;	
 	}
-	$img_md5=md5_file(IMG_DIR.$imgfile);
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
-	if($pictmp!=2 && $imgfile){
+	if($pictmp!=2 && $imgfile && is_file(IMG_DIR.$imgfile)){
+		
+		$img_md5=md5_file(IMG_DIR.$imgfile);
 
 		$chk_log_arr=$alllog_arr;
 		krsort($chk_log_arr);
@@ -323,7 +322,7 @@ function post(){
 		}
 	}
 	$thumbnail='';
-	if($imgfile){
+	if($imgfile && is_file(IMG_DIR.$imgfile)){
 
 		//縮小表示
 		list($w,$h)=image_reduction_display($w,$h,$max_w,$max_h);
