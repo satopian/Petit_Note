@@ -28,8 +28,9 @@
 <?php endif;?>
 
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
-<nav class="memu_wrap_catalog" >
- <a href="#bottom">▽</a>
+<nav class="memu_wrap" >
+<span>[<a href="./">掲示板にもどる</a>]</span>
+<a href="#bottom">▽</a>
 </nav>
 <hr>
 <div class="catalog_desc_wrap">
@@ -76,14 +77,21 @@ if($page<$pagedef*17){
 $next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 ?>
-	<?php if($prev!==false):?>
-		<a href="?mode=catalog&page=<?=h($prev)?>">≪prev</a>
+<div class="pagelink">
+	<span class="prev">
+			<?php if($prev!==false):?>
+			<a href="?mode=catalog&page=<?=h($prev)?>">≪prev</a>
 	<?php endif;?>
-	|  
+	</span>
+	| <a href="#top">top</a> |
+	<span class="next">
 	<?php if($next):?>
-		<a href="?mode=catalog&page=<?=h($next)?>">next≫</a>
+	<a href="?mode=catalog&page=<?=h($next)?>">next≫</a>
 	<?php endif;?>
+	</span>
+</div>
 
+	<a href="?mode=catalog&page=0">start</a> |
 <?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
 <?php if(($i>=$start_page)&&($i<=$end_page)):?>
 	<?php if($page==$i):?>
@@ -102,22 +110,34 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 			<?php endif;?>
 			<?php endif;?>
 		<?php endif;?>
-	<?php endif;?>
-<?php endfor ;?>
+		<?php endif;?>
+		<?php endfor ;?>
+		
+		| <a href="?mode=catalog&page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?>">end</a>
 
-<div class="copy">
-	<div class="left_wrap">
-		[<a href="<?=h($home)?>">HOME</a>]
+	<div class="copy">
+		<div class="left_wrap">
+		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
 	</div>
-	<div class="righit_wrap">
-	<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a> <span title="<?=h($petit_lot)?>"><?=h($petit_ver)?></span> <span>Web Style by BASIC</span><br>
-	<span>OekakiApp - </span><span></span><a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a></span>
-	<br>
-	<span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
-	<!--http://wondercatstudio.com/-->
-	</div>
+<div class="righit_wrap">
+<a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a> <span title="<?=h($petit_lot)?>"><?=h($petit_ver)?></span> <span>Web Style by BASIC</span><br>
+<span>OekakiApp - </span><span></span><a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a></span>
+<br>
+<span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
+<!--http://wondercatstudio.com/-->
+</div>
 </div>
 </div>
 <div id="bottom"></div>
+<script src="/jquery-3.5.1.min.js"></script>
+<script>
+//送信ボタンを押した際に送信ボタンを無効化する（連打による多数送信回避）
+$(function(){
+$('[type="submit"]').click(function(){
+$(this).prop('disabled',true);//ボタンを無効化する
+$(this).closest('form').submit();//フォームを送信する
+});
+});
+</script>
 </body>
 </html>

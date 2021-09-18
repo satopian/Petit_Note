@@ -132,6 +132,7 @@ function admin_del(){
 //ユーザー削除モード
 function userdel_mode(){
 	session_sta();
+
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$page = isset($page) ? $page : 0;
 	$_SESSION['userdel']='userdel_mode';
@@ -265,11 +266,15 @@ function t($str){
 function s($str){
 	return strip_tags($str);
 }
-//エスケープと改行
+//エスケープ
 function h($str){
-	$str=htmlspecialchars($str,ENT_QUOTES,"utf-8");
+	return htmlspecialchars($str,ENT_QUOTES,"utf-8");;
+}
+//コメント出力
+function com($str){
 	return nl2br($str);
 }
+
 //mimeから拡張子
 function getImgType ($img_type) {
 
@@ -319,6 +324,7 @@ function png2jpg ($src) {
 }
 
 function error($str){
+	global $boardname;
 	$templete='error.html';
 	return include __DIR__.'/template/'.$templete;
 }

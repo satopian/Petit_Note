@@ -31,9 +31,9 @@
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
 <span>[<a href="./?mode=catalog">カタログ</a>]</span>
-<span>[<a href="./?mode=paintcom"><span class="txtnon">アップロード</span>途中<span class="txtnon">の画像</span></a>]</span>
+<span>[<a href="./?mode=paintcom">未投稿画像</span></a>]</span>
 <?php if($userdel || $admindel):?>
-	<span>[<a href="./?mode=logout&page=<?=h($page)?>">編集<span class="txtnon">モード</span>終了</a>]</span>
+	<span>[<a href="./?mode=logout&page=<?=h($page)?>">編集モード終了</a>]</span>
 <?php else:?>
 	<span>[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]</span>
 <?php endif;?>
@@ -44,10 +44,10 @@
 <?php if($aikotoba&&(!$userdel && !$admindel)):?>
 <?php if(!$use_diary || $adminpost):?>
 
-<form action="./" method="post">
+<form action="./" method="post" class="paint_form">
 <input type="hidden" name="mode" value="paint">
 <input type="submit" value="PAINT" class="paint_button">
-<span class="select_applet bold_gray">TOOL</span>
+<span>TOOL:
 <select name="app" class="select_applet">
 <option value="neo" 
 <?php if($appc==='neo'):?>
@@ -60,8 +60,9 @@ selected
 <?php endif;?>
 >ChickenPaint</option>
 </select>
+</span>
 <span class="canvas_size_wrap"> 
-<span class="canvas_size">Size</span>：
+Size:
 <select name="picw" title="幅" class="canvas_select">
 	<?php
 	//幅 300から、$pmax_w で設定した最大値まで。
@@ -90,22 +91,38 @@ selected
 	?>
 	</select>
 </span>
+<!-- フォーム入力欄 -->
 </form>
 
+	<form action="./" method="POST" enctype="multipart/form-data" class="postform">
+	<table>
+	<tr>
+		<td>名前</td>
+		<td>:</td>
+		<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username"></td>
 
-<form action="./" method="POST" enctype="multipart/form-data" class="postform">
-題名:<input type="text" name="sub"><br>
-名前:<input type="text" name="name" value="<?=h($namec)?>"><br>
+	</tr>
+	<tr>
+		<td>題名</td>
+		<td>:</td>
+		<td><input type="text" name="sub"></td>
+	</tr>
+	<tr>
+		<td>URL</td>
+		<td>:</td>
+		<td><input type="text" name="utl" value="<?=h($urlc)?>"></td>
+	</tr>
+	</table>
 <textarea name="com" class="post_com"></textarea><br>
-削除キー:<input type="password" name="pwd">
+パスワード:<input type="password" name="pwd">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <br>
-<?php if($use_upload):?>
-<input type="file" name="imgfile" size="35" accept="image/*" class="upfile">
+<?php if($use_upload || $adminpost):?>
+<input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
 <br>
 <?php endif;?>
-<input type="submit" value="スレッドを立てる">
+<input type="submit" value="スレッドを立てる" class="form_button">
 </form>
 <?php endif;?>
 <?php endif;?>
@@ -119,13 +136,13 @@ selected
 </form><br>
 <?php endif;?>
 <hr>
+<!-- スレッド -->
 	<!-- 親のループ -->
 <?php if(isset($out)):?>
 <?php foreach($out as $ress) : ?>
 	<!-- タイトル -->
 	<h2 class="article_title"><a href="./?resno=<?= h($ress[0]['no'])?>" target="_blank">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a></h2>
 	<?php $resform=true; ?>
-	<!-- スレッドのループ -->
 	<?php
 	$dispres=$dispres+1;
 	$countres=count($ress);
@@ -134,6 +151,7 @@ selected
 		$skipres=0;	//削除モードの時はレスを省略しない
 	}
 	?>
+	<!-- 個別スレッドのループ -->
 	<?php foreach($ress as $i => $res) : ?>
 		<?php if($skipres && $i===$skipres):?>
 		<hr>
@@ -158,7 +176,12 @@ selected
 				描画時間:<?=h($res['painttime'])?>
 			</span>
 			<?php endif;?>
-				
+			<?php if($res['thumbnail']):?>
+			<span>
+			- サムネイル表示中 -
+			</span>
+			<?php endif;?>
+					
 		<?php endif;?>
 	<?php if($admindel):?>
 		<br>
@@ -166,7 +189,7 @@ selected
 		<?php endif;?> 
 	</div>
 		<?php if($res['img']):?>
-		<?php if($res['continue']||($res['anime'])):?>
+		<?php if($res['continue']||$res['anime']):?>
 		<div class="imginfo_wrap">
 		<?php if($res['continue'] && $aikotoba):?>
 		<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>">続きを描く</a></span>
@@ -187,9 +210,7 @@ selected
 			<?php endif;?>
 			</div>
 			<?php endif;?>
-			<div class="comment"><?= h($res['com'])?></div>
-
-
+			<div class="comment"><?= com(h($res['com']))?></div>
 			<?php if($i>=$max_res||!$ress[0]['check_elapsed_days']){
 				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
 			}?>
@@ -197,41 +218,41 @@ selected
 			</div><!-- 子レスのwrap	 -->
 			<?php endif;?>
 			<?php if($aikotoba && ($userdel || $admindel)):?>
-
+<!-- 編集削除のためのボタン -->
 	<form action="./" method="POST" class="aikotoba">
-	<input type="hidden" name="mode" value="edit">
-	<input type="hidden" name="resmode" value="false">
-	<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
-	<input type="hidden" name="postpage" value="<?=h($page)?>">
-	<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
-	<input type="submit" value="編集">
+		<input type="hidden" name="mode" value="before_del">
+		<input type="hidden" name="edit_mode" value="editmode">
+		<input type="hidden" name="resmode" value="false">
+		<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+		<input type="hidden" name="postpage" value="<?=h($page)?>">
+		<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
+		<input type="submit" value="編集">
 	</form>
 	<form action="./" method="POST" class="aikotoba">
-	<input type="hidden" name="mode" value="before_del">
-	<input type="hidden" name="resmode" value="false">
-	<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
-	<input type="hidden" name="postpage" value="<?=h($page)?>">
-	<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
-	<input type="submit" value="削除">
+		<input type="hidden" name="mode" value="before_del">
+		<input type="hidden" name="edit_mode" value="delmode">
+		<input type="hidden" name="resmode" value="false">
+		<input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+		<input type="hidden" name="postpage" value="<?=h($page)?>">
+		<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
+		<input type="submit" value="削除">
 	</form>
 <?php endif;?>
 		
 	<?php endif;?>	
 	<?php endforeach;?>
 <!-- 返信フォーム -->
-
 <div class="clear"></div>
 <div class="res_button_wrap">
 
 <?php if($resform):?>
-
-<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button" target="_blank">
-<input type="submit" value="返信"></form>
+	<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button">
+	<input type="submit" value="返信"></form>
 <?php else:?>
-<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button" target="_blank">
-<input type="submit" value="表示"></form>
+	<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button">
+	<input type="submit" value="表示"></form>
 <?php endif;?>
-<div class="pagetop"><a href="#top">△</a></div>
+	<div class="pagetop"><a href="#top">△</a></div>
 </div>
 
 
@@ -253,13 +274,17 @@ $next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番�
 $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 ?>
 <div class="pagelink">
-	<?php if($prev!==false):?>
-		<a href="?page=<?=h($prev)?>">≪prev</a>
+	<span class="prev">
+			<?php if($prev!==false):?>
+			<a href="?page=<?=h($prev)?>">≪prev</a>
 	<?php endif;?>
-	|  
+	</span>
+	| <a href="#top">top</a> |
+	<span class="next">
 	<?php if($next):?>
-		<a href="?page=<?=h($next)?>">next≫</a>
+	<a href="?page=<?=h($next)?>">next≫</a>
 	<?php endif;?>
+	</span>
 </div>
 
 	<a href="?page=0">start</a> |

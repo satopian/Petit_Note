@@ -41,10 +41,10 @@
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="memu_wrap">
-<span>[<a href="./?mode=catalog">カタログ</a>]</span>
-<span> [<a href="./?mode=paintcom"><span class="txtnon">アップロード</span>途中<span class="txtnon">の画像</span></a>]</span>
+<span>[<a href="./">掲示板にもどる</a>]</span>
+<span> [<a href="./?mode=paintcom">未投稿画像</a>]</span>
 <?php if($userdel || $admindel):?>
-<span>[<a href="./?mode=logout&resno=<?=h($resno)?>">編集<span class="txtnon">モード</span>終了</a>]</span>
+<span>[<a href="./?mode=logout&resno=<?=h($resno)?>">編集モード終了</a>]</span>
 <?php else:?>
 <span>[<a href="./?mode=userdel&resno=<?=h($resno)?>">編集</a>]</span>
  <?php endif;?>
@@ -88,6 +88,11 @@
 			描画時間:<?=h($res['painttime'])?>
 		</span>
 		<?php endif;?>
+		<?php if($res['thumbnail']):?>
+		<span>
+		- サムネイル表示中 -
+		</span>
+		<?php endif;?>
 			
 	<?php endif;?>
 	<?php if($admindel):?>
@@ -117,7 +122,7 @@
 			<?php endif;?>
 			</div>
 			<?php endif;?>
-			<div class="comment"><?= h($res['com'])?></div>
+			<div class="comment"><?=com(h($res['com']))?></div>
 	
 
 			<?php if($i>=$max_res||!$ress[0]['check_elapsed_days']){
@@ -129,7 +134,8 @@
 			<?php if($aikotoba && ($userdel || $admindel)):?>
 
 <form action="./" method="POST" class="aikotoba">
-<input type="hidden" name="mode" value="edit">
+<input type="hidden" name="mode" value="before_del">
+<input type="hidden" name="edit_mode" value="editmode">
 <input type="hidden" name="resmode" value="true">
 <input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
 <input type="hidden" name="postresno" value="<?=h($resno)?>">
@@ -138,6 +144,7 @@
 </form>
 <form action="./" method="POST" class="aikotoba">
 <input type="hidden" name="mode" value="before_del">
+<input type="hidden" name="edit_mode" value="delmode">
 <input type="hidden" name="resmode" value="true">
 <input type="hidden" name="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
 <input type="hidden" name="postpage" value="<?=h($page)?>">
@@ -162,21 +169,21 @@
 <input type="hidden" name="mode" value="paint">
 <input type="hidden" name="resto" value="<?=h($res['no'])?>">
 <input type="submit" value="PAINT" class="paint_button">
-<span class="select_applet bold_gray">TOOL</span>
+<span class="select_applet bold_gray">TOOL:</span>
 <select name="app" class="select_applet">
-<option value="neo" 
-<?php if($appc==='neo'):?>
-selected
-<?php endif;?>
->PaintBBS NEO</option>
-<option value="chi"
-<?php if($appc==='chi'):?>
-selected
-<?php endif;?>
->ChickenPaint</option>
+	<option value="neo" 
+	<?php if($appc==='neo'):?>
+	selected
+	<?php endif;?>
+	>PaintBBS NEO</option>
+	<option value="chi"
+	<?php if($appc==='chi'):?>
+	selected
+	<?php endif;?>
+	>ChickenPaint</option>
 </select>
 <span class="canvas_size_wrap"> 
-<span class="canvas_size">Size</span>：
+<span class="canvas_size">Size</span>:
 <select name="picw" title="幅" class="canvas_select">
 	<?php
 	//幅 300から、$pmax_w で設定した最大値まで。
@@ -209,18 +216,31 @@ selected
 
 
 <form action="./" method="POST" enctype="multipart/form-data" class="resform">
-名前:<input type="text" name="name" value="<?=h($namec)?>"><br>
+
+	<table class="resform">
+		<tr>
+			<td>名前</td>
+			<td>:</td>
+			<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username"></td>
+		</tr>
+		<tr>
+			<td>URL</td>
+			<td>:</td>
+			<td><input type="text" name="utl" value="<?=h($urlc)?>"></td>
+		</tr>
+		</table>
+		<br>
 <textarea name="com" class="post_com"></textarea><br>
-削除キー:<input type="password" name="pwd">
+パスワード:<input type="password" name="pwd">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="resno" value="<?=h($res['no'])?>">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <br>
-<?php if($use_upload):?>
-<input type="file" name="imgfile" size="35" accept="image/*" class="upfile">
+<?php if($use_upload || $adminpost):?>
+<input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
 <br>
 <?php endif;?>
-<input type="submit" value="返信">
+<input type="submit" value="返信" class="form_button">
 </form>
 <?php endif;?>
 <?php endif;?>

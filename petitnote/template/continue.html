@@ -5,9 +5,21 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="index.css">
-	<title>続きを描く</title>
+
+<?php if($set_nsfw && !$nsfwc):?>
+	<!-- センシティブコンテンツにブラーをかける -->
+<style>img {filter:blur(6px);}</style>
+<?php endif;?>
+	<title><?=h($boardname)?></title>
 </head>
 <div class="container">
+	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+	<nav class="memu_wrap" >
+		<span>[<a href="./">掲示板にもどる</a>]</span>
+		<a href="#bottom">▽</a>
+		</nav>
+	<hr>
+
 <?php if($aikotoba):?>
 
 <!--  画像と描画時間  -->
@@ -57,8 +69,8 @@ selected
 <input type="hidden" name="app" value="<?=($app_to_use)?>">
 <?php endif;?>
 
-<span class="non">削除キー<input type="txt" name="txt" size="8" value="" class="paint_password" autocomplete="username"></span>
-<span class="nk">削除キー<input type="password" name="pwd" size="8" value="" class="paint_password" autocomplete="current-password"></span>
+<span class="non"><input type="txt" value="" autocomplete="username"></span>
+<span class="nk">パスワード<input type="password" name="pwd" size="8" value="" class="paint_password" autocomplete="current-password"></span>
 <input type="submit" value="続きを描く">
 
 </form>
@@ -67,7 +79,7 @@ selected
 <?php if(!$use_diary || $adminpost):?>
 <div class="howtocontinue">
    <ul id="up_desc">
-<li>新規投稿なら削除キーがなくても続きを描く事ができます。</li>
+<li>新規投稿ならパスワードがなくても続きを描く事ができます。</li>
 </ul>
 </div>
 <?php endif;?>
