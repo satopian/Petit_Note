@@ -5,53 +5,30 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="index.css">
-	<title><?=h($boardname)?></title>
+<title><?=h($boardname)?></title>
 </head>
 <body>
-<div class="container" id="top">
-	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
-	<?php if($aikotoba):?>
-		
-	<nav class="memu_wrap">
-		<span>[<a href="./"">掲示板にもどる</a>]</span>
-	<?php if($userdel || $admindel):?>
-	<span>
-		<?php if($postresno):?>
-		[<a href="./?mode=logout&resno=<?=h($postresno)?>">編集モード終了</a>]
-		<?php endif;?>
-		<?php if($postpage||$postpage==='0'):?>
-		[<a href="./?mode=logout&page=<?=h($postpage)?>">編集モード終了</a>]
-		<?php endif;?>
-	</span>
-<?php endif;?>
-<a href="#bottom">▽</a>
- <br>
-</nav>
-<br>
-<h2 class="article_title">記事を削除しようとしています。本当に削除しますか?</h2>
 
-<?php if($admindel):?>
-削除したい記事をチェックして削除ボタンを押してください。:
+<div class="container" id="top">
+
+<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+<nav class="memu_wrap">
+<span>[<a href="./">掲示板にもどる</a>]</span>
+<?php if($userdel || $admindel):?>
+	<?php
+	$page= ($page !==false) ? '&page='.$page : ($resno!==false ? '&resno='.$resno :'');
+	?>
+	<span>[<a href="./?mode=logout<?=h($page)?>">編集モード終了</a>]</span>
+<?php else:?>
+	<span>[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]</span>
 <?php endif;?>
-<?php if($userdel&&!$admindel):?>
-削除したい記事をチェックしてパスワードを入力してください。:
-<?php endif;?>
-<?php if( $admindel || $aikotoba && $userdel):?>
-<form action="./" method="POST" id="delete" class="aikotoba">
-<?php if(!$admindel):?>
-	<span class="non"><input type="txt" value="" autocomplete="username"></span>
-	<input type="password" name="pwd">
-<?php endif;?>
-<input type="hidden" name="mode" value="del">
-<input type="hidden" name="resmode" value="<?=h($resmode)?>">
-<input type="hidden" name="postresno" value="<?=h($postresno)?>">
-<input type="hidden" name="postpage" value="<?=h($postpage)?>">
-<input type="submit" value="削除">
-</form>
-<?php endif;?>
+ <a href="#bottom">▽</a>
+ <br>
+	</nav>
+	<h2 class="article_title">記事編集中</h2>
+
 
 <hr>
-	<!-- 親のループ -->
 <?php if(isset($out)):?>
 <?php foreach($out as $ress) : ?>
 
@@ -64,9 +41,6 @@
 	<?php endif;?>
 
 	<div class="imginfo_wrap">
-		<?php if($userdel || $admindel):?>
-	<label><input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
-	<?php endif;?>
 	<span><?= h($res['name'])?></span>
 	<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
 	<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
@@ -89,30 +63,53 @@
 			<div class="posted_image">
 				<?php if($res['thumbnail']):?>
 					<a href="src/<?=h($res['img'])?>" target="_bank">
-					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
 					</a>
 					<?php else:?>
 					<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
 				<?php endif;?>
-		</div>
+			</div>
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>
 			<?php endforeach;?>
 			<?php endforeach;?>
 			<?php endif;?>
-			<?php endif;?>
-<div class="clear"></div>
-<hr>
-<div class="copy">
-<div class="left_wrap"><a href="#top">△</a> [<a href="<?=h($home)?>">HOME</a> /
-<?php if($postresno):?>
-<a href="./?mode=adminin&resno=<?=h($postresno)?>">管理</a>]
-<?php endif;?>
-<?php if($postpage==='0'||$postpage):?>
-<a href="./?mode=adminin&page=<?=h($postpage)?>">管理</a>]
-<?php endif;?>
-</div>
 
+			<div class="clear"></div>
+
+	<form action="./" method="POST" enctype="multipart/form-data" class="resform">
+	<table class="resform">
+	<tr>
+		<td>名前</td>
+		<td>:</td>
+		<td><input type="text" name="name" value="<?=h($name)?>" autocomplete="username"></td>
+	</tr>
+	<tr>
+		<td>題名</td>
+		<td>:</td>
+		<td><input type="text" name="sub" value="<?=h($sub)?>"></td>
+	</tr>
+	<tr>
+		<td>URL</td>
+		<td>:</td>
+		<td><input type="text" name="url" value="<?=h($url)?>"></td>
+	</tr>
+	</table>
+	<br>
+<textarea name="com" class="post_com"><?=h($com)?></textarea><br>
+<input type="hidden" name="pwd" value="<?=h($pwd)?>">
+<input type="hidden" name="id" value="<?=h($time)?>">
+<input type="hidden" name="no" value="<?=h($no)?>">
+<input type="hidden" name="mode" value="edit">
+<input type="hidden" name="token" value="<?=h($token)?>">
+<input type="submit" value="編集" class="form_button">
+</form>
+
+<hr>
+	<div class="copy">
+		<div class="left_wrap">
+		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
+	</div>
 <div class="righit_wrap">
 <a href="https://github.com/satopian/Petit_Note" target="_blank" rel="rel="noopener">Petit Note</a> <span title="<?=h($petit_lot)?>"><?=h($petit_ver)?></span> <span>Web Style by BASIC</span><br>
 <span>OekakiApp - </span><span></span><a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a></span>
@@ -121,7 +118,17 @@
 <!--http://wondercatstudio.com/-->
 </div>
 </div>
+</div>
 <div id="bottom"></div>
+<script src="/jquery-3.5.1.min.js"></script>
+<script>
+//送信ボタンを押した際に送信ボタンを無効化する（連打による多数送信回避）
+$(function(){
+$('[type="submit"]').click(function(){
+$(this).prop('disabled',true);//ボタンを無効化する
+$(this).closest('form').submit();//フォームを送信する
+});
+});
+</script>
 </body>
 </html>
-	

@@ -11,10 +11,9 @@
 <div class="container" id="top">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
-		
 	<nav class="memu_wrap">
 		<span>[<a href="./"">掲示板にもどる</a>]</span>
-	<?php if($userdel || $admindel):?>
+<?php if($userdel || $admindel):?>
 	<span>
 		<?php if($postresno):?>
 		[<a href="./?mode=logout&resno=<?=h($postresno)?>">編集モード終了</a>]
@@ -28,25 +27,26 @@
  <br>
 </nav>
 <br>
-<h2 class="article_title">記事を削除しようとしています。本当に削除しますか?</h2>
+<h2 class="article_title">編集モード</h2>
 
 <?php if($admindel):?>
-削除したい記事をチェックして削除ボタンを押してください。:
+この記事を編集します。編集ボタンを押してください。:
 <?php endif;?>
 <?php if($userdel&&!$admindel):?>
-削除したい記事をチェックしてパスワードを入力してください。:
+この記事を編集します。パスワードを入力してください。:
 <?php endif;?>
 <?php if( $admindel || $aikotoba && $userdel):?>
 <form action="./" method="POST" id="delete" class="aikotoba">
 <?php if(!$admindel):?>
-	<span class="non"><input type="txt" value="" autocomplete="username"></span>
-	<input type="password" name="pwd">
+
+<span class="non"><input type="txt" value="" autocomplete="username"></span>
+<input type="password" name="pwd">
 <?php endif;?>
-<input type="hidden" name="mode" value="del">
+<input type="hidden" name="mode" value="edit_form">
 <input type="hidden" name="resmode" value="<?=h($resmode)?>">
 <input type="hidden" name="postresno" value="<?=h($postresno)?>">
 <input type="hidden" name="postpage" value="<?=h($postpage)?>">
-<input type="submit" value="削除">
+<input type="submit" value="編集">
 </form>
 <?php endif;?>
 
@@ -64,9 +64,7 @@
 	<?php endif;?>
 
 	<div class="imginfo_wrap">
-		<?php if($userdel || $admindel):?>
-	<label><input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
-	<?php endif;?>
+	<input type="hidden" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
 	<span><?= h($res['name'])?></span>
 	<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
 	<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
@@ -85,7 +83,6 @@
 		<?php endif;?> 
 	</div>
 		<?php if($res['img']):?>
-
 			<div class="posted_image">
 				<?php if($res['thumbnail']):?>
 					<a href="src/<?=h($res['img'])?>" target="_bank">
@@ -94,8 +91,8 @@
 					<?php else:?>
 					<img src="src/<?=h($res['img'])?>" alt="" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
 				<?php endif;?>
-		</div>
-			<?php endif;?>
+			</div>
+		<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>
 			<?php endforeach;?>
 			<?php endforeach;?>
@@ -105,10 +102,10 @@
 <hr>
 <div class="copy">
 <div class="left_wrap"><a href="#top">△</a> [<a href="<?=h($home)?>">HOME</a> /
-<?php if($postresno):?>
+<?php if($postresno!==false):?>
 <a href="./?mode=adminin&resno=<?=h($postresno)?>">管理</a>]
 <?php endif;?>
-<?php if($postpage==='0'||$postpage):?>
+<?php if($postpage!==false):?>
 <a href="./?mode=adminin&page=<?=h($postpage)?>">管理</a>]
 <?php endif;?>
 </div>
