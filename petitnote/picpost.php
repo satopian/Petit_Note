@@ -1,8 +1,8 @@
 <?php
 //----------------------------------------------------------------------
-// picpost.php lot.210517  by SakaQ >> http://www.punyu.net/php/
-// & POTI改 >> https://pbbs.sakura.ne.jp/poti/
-//
+// picpost.php lot.210920  for PetitNote
+// by さとぴあ & POTI改 >> https://pbbs.sakura.ne.jp/poti/ 
+// originalscript (c)SakaQ 2005 >> http://www.punyu.net/php/
 // しぃからPOSTされたお絵かき画像をTEMPに保存
 //
 // このスクリプトはPaintBBS（藍珠CGI）のPNG保存ルーチンを参考に

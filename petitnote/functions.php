@@ -56,7 +56,7 @@ function aikotoba(){
 }
 function admin_in(){
 
-	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver;
+	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir;
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
@@ -71,7 +71,7 @@ function admin_in(){
 
 	// HTML出力
 	$templete='admin_in.html';
-	return include __DIR__.'/template/'.$templete;
+	include __DIR__.'/'.$skindir.$templete;
 	
 }
 //合言葉を再確認	
@@ -193,7 +193,7 @@ function check_cont_pass(){
 
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line){
-	global $max_w,$max_h;
+	global $max_w,$max_h,$root_url,$boardname;
 	list($no,$sub,$name,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=$line;
 	$res=[];
 
@@ -224,13 +224,15 @@ function create_res($line){
 	$check_elapsed_days = check_elapsed_days($time);
 	if(!$url||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)) $url="";
 
+	
+
+
 	$res=[
 		'no' => $no,
 		'sub' => $sub,
 		'name' => $name,
 		'com' => $com,
 		'url' => $url,
-
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail,
 		'painttime' => $painttime,
@@ -245,6 +247,12 @@ function create_res($line){
 		'host' => $host,
 		'userid' => $userid,
 		'check_elapsed_days' => $check_elapsed_days,
+		'encoded_name' => urlencode($name),
+		'encoded_no' => urlencode('['.$no.']'),
+		'encoded_sub' => urlencode($sub),
+		'encoded_u' => urlencode($root_url.'?res='.$no),//tweet
+		'encoded_t' => urlencode('['.$no.']'.$sub.' - '.$boardname),
+
 	];
 
 	$res['com']=str_replace('"\n"',"\n",$res['com']);
@@ -327,9 +335,10 @@ function png2jpg ($src) {
 }
 
 function error($str){
-	global $boardname;
+	global $boardname,$skindir;
 	$templete='error.html';
-	return include __DIR__.'/template/'.$templete;
+	include __DIR__.'/'.$skindir.$templete;
+	exit;
 }
 //csrfトークンを作成
 function get_csrf_token(){

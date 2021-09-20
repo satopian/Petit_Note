@@ -4,7 +4,8 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="<?=h($skindir)?>index.css">
+<link rel="stylesheet" href="<?=h($skindir)?>icomoon/style.css">
 
 <?php if($set_nsfw && !$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
@@ -42,8 +43,22 @@
  <br>
 	</nav>
 <?php endif;?>
+
 <?php if($aikotoba&&(!$userdel && !$admindel)):?>
-<?php if(!$use_diary || $adminpost):?>
+<!-- 掲示板の説明文 -->
+<?php if(!empty($descriptions)):?>
+<div class="description">
+<ul>
+<?php foreach($descriptions as $description):?>
+	<li><?=h($description)?></li>
+	<?php endforeach;?>
+</ul>
+</div>
+<?php endif;?>
+
+	<?php if(!$use_diary || $adminpost):?>
+<div class="mainform">
+
 <!-- ペイントフォーム -->
 <form action="./" method="post" class="paint_form">
 <input type="hidden" name="mode" value="paint">
@@ -94,7 +109,7 @@ Size:
 </span>
 <!-- フォーム入力欄 -->
 </form>
-
+	<?php if($use_top_form && ($use_upload||$allow_coments_only||$adminpost)):?>	
 	<form action="./" method="POST" enctype="multipart/form-data" class="postform">
 	<table>
 	<tr>
@@ -126,7 +141,10 @@ Size:
 <input type="submit" value="スレッドを立てる" class="form_button">
 </form>
 <?php endif;?>
+</div>
 <?php endif;?>
+<?php endif;?>
+
 <?php if(!$aikotoba):?>
 この掲示板の合言葉はなんですか?: 
 <form action="./" method="post" class="aikotoba">
@@ -247,7 +265,17 @@ Size:
 		<?php endforeach;?>
 	<!-- 返信ボタン -->
 	<div class="clear"></div>
+
 	<div class="res_button_wrap">
+	<?php if($aikotoba && (!$userdel && !$admindel)):?>
+	<?php if($use_sns_button):?>
+	<span class="share_button">
+		
+		
+	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=$res['encoded_no']?>+<?=$res['encoded_sub']?>+-+<?=h($boardname)?>&amp;url=<?=$res['encoded_u']?>"><span class="icon-twitter"></span>tweet</a>
+	</span>
+	<?php endif; ?>
+	<?php endif; ?>
 
 	<?php if($resform):?>
 		<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button">

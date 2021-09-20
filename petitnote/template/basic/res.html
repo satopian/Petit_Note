@@ -6,25 +6,29 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--SNS-->
 <?php foreach($out as $ress) : ?>
+	<?php if($use_sns_button):?>
 	<meta name="Description" content="<?= h(s($ress[0]['com']))?>">
 	<meta name="twitter:card" content="summary" />
 	<meta property="og:title" content="[<?= h(s($ress[0]['no']))?>] <?= h(s($ress[0]['sub']))?> by <?= h(s($ress[0]['name']))?> - <?=h(s($boardname))?>" />
 	<meta property="og:type" content="article" />
-	<meta property="og:url" content="?resno=<?= h($ress[0]['no'])?>" />
-	<meta property="og:image" content="src/<?=h($ress[0]['img'])?>" />
+	<meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($ress[0]['no'])?>" />
+	<meta property="og:image" content="<?=h($root_url)?>src/<?=h($ress[0]['img'])?>" />
 	<meta property="og:site_name"  content="<?=h($boardname)?>" />
 	<meta property="og:description" content="<?=h($ress[0]['img'])?>" />
+	<?php endif;?>
 <?php endforeach;?>
 <!--/SNS-->
 
-<link rel="stylesheet" href="index.css">
+<link rel="stylesheet" href="<?=h($skindir)?>index.css">
+<link rel="stylesheet" href="<?=h($skindir)?>icomoon/style.css">
+
 <?php if($set_nsfw && !$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
 <style>img {filter:blur(6px);}</style>
 <?php endif;?>
 
 
-	<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> by <?= h($ress[0]['name'])?> - <?=h($boardname)?>"</title>
+	<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> - <?=h($boardname)?>"</title>
 </head>
 <body>
 <div class="container" id="top">
@@ -166,6 +170,14 @@
 
 
 <?php if($aikotoba && (!$userdel && !$admindel)):?>
+<?php if($use_sns_button):?>
+<div class="res_button_wrap">
+<span class="share_button">
+<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=$res['encoded_no']?>+<?=$res['encoded_sub']?>+-+<?=h($boardname)?>&amp;url=<?=$res['encoded_u']?>"><span class="icon-twitter"></span>tweet</a>
+</span>
+</div>
+<?php endif; ?>
+
 <?php if($resform):?>
 
 <form action="./" method="post" class="res_form">
@@ -232,7 +244,7 @@
 			<td><input type="text" name="url" value="<?=h($urlc)?>"></td>
 		</tr>
 		</table>
-		<br>
+		<!-- <br> -->
 <textarea name="com" class="post_com"></textarea><br>
 パスワード:<input type="password" name="pwd">
 <input type="hidden" name="mode" value="regist">

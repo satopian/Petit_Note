@@ -4,17 +4,17 @@
 require_once(__DIR__.'/config.php');	
 require_once(__DIR__.'/functions.php');
 require_once(__DIR__.'/thumbnail_gd.php');
+//テンプレート
+$skindir='template/'.$skindir;
 
-
-$petit_ver='v0.3';
-$petit_lot='lot.210913';
+$petit_ver='v0.5.5';
+$petit_lot='lot.210920';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
 }
 
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
-
 
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
@@ -87,8 +87,9 @@ switch($mode){
 }
 
 //投稿処理
-function post(){	
+function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary,$max_w,$max_h,$use_thumb;
+	global $allow_coments_only,$res_max_w,$res_max_h;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -152,7 +153,7 @@ function post(){
 	//お絵かきアップロード
 	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
 	$picfile = t(filter_input(INPUT_POST, 'picfile'));
-	if($pictmp==2){//ユーザーデータを調べる
+	if($pictmp===2){//ユーザーデータを調べる
 		if(!$picfile) error('投稿に失敗しました。');
 		$tempfile = TEMP_DIR.$picfile;
 		$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
@@ -177,7 +178,7 @@ function post(){
 	}
 
 	if($resno && !is_file(LOG_DIR."$resno.log")){//エラー処理
-		if($pictmp!=2){//お絵かきではない時は
+		if($pictmp!==2){//お絵かきではない時は
 			safe_unlink($upfile);
 			error('記事がありません。');
 		}
@@ -194,7 +195,7 @@ function post(){
 		}
 		closeFile ($rp);
 
-		if($pictmp==2){//お絵かきの時は新規投稿にする
+		if($pictmp===2){//お絵かきの時は新規投稿にする
 
 			if($resno && !$check_elapsed_days){//お絵かきの時に日数を経過していたら新規投稿。
 				$resno='';
@@ -221,16 +222,13 @@ function post(){
 		}
 	}
 
-
 	//お絵かきアップロード
-	if($pictmp==2 && is_file($tempfile)){
+	if($pictmp===2 && is_file($tempfile)){
 
 		$upfile=IMG_DIR.$time.'.tmp';
 			copy($tempfile, $upfile);
 			chmod($upfile,0606);
 			$filesize=filesize($upfile);
-
-			// ワークファイル削除
 	}
 
 	if(!$sub){
@@ -248,6 +246,10 @@ function post(){
 
 	if(!$upfile&&!$com){
 	error('何か書いて下さい。');
+	}
+
+	if(!$allow_coments_only && !$upfile && !$adminpost & $com){
+	error('画像がありません。');
 	}
 
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
@@ -349,7 +351,7 @@ function post(){
 			}
 		}
 	}
-	if($pictmp==2 && $imgfile){
+	if($pictmp===2 && $imgfile){
 		//PCHファイルアップロード
 		if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
 
@@ -378,6 +380,8 @@ function post(){
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
 
+		$max_w = $resno ? $res_max_w : $max_w; 
+		$max_h = $resno ? $res_max_h : $max_h; 
 		//縮小表示
 		list($w,$h)=image_reduction_display($w,$h,$max_w,$max_h);
 		//サムネイル
@@ -462,15 +466,13 @@ return header('Location: ./');
 //お絵かき画面
 function paint(){
 
-	global $boardname;
+	global $boardname,$skindir;
 
 	$app = filter_input(INPUT_POST,'app');
 	$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 	$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
 	$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
-	$resto = t(filter_input(INPUT_POST, 'resto'));
-	$postno = filter_input(INPUT_POST,'postno');
-	$postpage = filter_input(INPUT_POST,'postpage');
+	$resto = t(filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
 
 	setcookie("appc", $app , time()+(60*60*24*30));//アプレット選択
 	setcookie("picwc", $picw , time()+(60*60*24*30));//幅
@@ -535,7 +537,7 @@ function paint(){
 			$tool='chi';
 			// HTML出力
 			$templete='paint_chi.html';
-			return include __DIR__.'/template/'.$templete;
+			return include __DIR__.'/'.$skindir.$templete;
 
 		case 'neo'://PaintBBS NEO
 
@@ -567,7 +569,7 @@ function paint(){
 			}
 			// HTML出力
 			$templete='paint_neo.html';
-			return include __DIR__.'/template/'.$templete;
+			return include __DIR__.'/'.$skindir.$templete;
 
 		default:
 			return error('失敗しました。');
@@ -576,7 +578,7 @@ function paint(){
 }
 // お絵かきコメント 
 function paintcom(){
-	global $use_aikotoba,$boardname,$home;
+	global $use_aikotoba,$boardname,$home,$skindir;
 	$token=get_csrf_token();
 	$userip = get_uip();
 	$usercode = filter_input(INPUT_COOKIE,'usercode');
@@ -626,20 +628,18 @@ function paintcom(){
 
 	// HTML出力
 	$templete='paint_com.html';
-	return include __DIR__.'/template/'.$templete;
+	return include __DIR__.'/'.$skindir.$templete;
 }
 
 //コンティニュー前画面
 function to_continue(){
 
-	global $boardname,$use_diary,$use_aikotoba,$set_nsfw;
+	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir;
 
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 
 	$no = filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$id = filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT);
-
-	$page=filter_input(INPUT_POST,'postpage');
 
 	$flag = false;
 
@@ -689,14 +689,14 @@ function to_continue(){
 
 		// HTML出力
 		$templete='continue.html';
-		return include __DIR__.'/template/'.$templete;
+		return include __DIR__.'/'.$skindir.$templete;
 	
 }
 
 // 画像差し換え
 function img_replace(){
 
-	global $use_thumb;
+	global $use_thumb,$skindir;
 
 	$no = t(filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
 	$id = t(filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
@@ -879,10 +879,9 @@ function img_replace(){
 
 }
 
-
 // 動画表示
 function pchview(){
-	global $boardname;
+	global $boardname,$skindir;
 
 	$imagefile = filter_input(INPUT_GET, 'imagefile');
 	$pch = pathinfo($imagefile, PATHINFO_FILENAME);
@@ -898,13 +897,13 @@ function pchview(){
 
 	// HTML出力
 	$templete='pch_view.html';
-	return include __DIR__.'/template/'.$templete;
+	return include __DIR__.'/'.$skindir.$templete;
 
 }
 //削除前の確認画面
 function confirmation_before_deletion ($edit_mode=''){
 
-	global $boardname,$max_res,$home,$petit_ver,$petit_lot;
+	global $boardname,$max_res,$home,$petit_ver,$petit_lot,$skindir;
 		//管理者判定処理
 	session_sta();
 	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
@@ -956,17 +955,17 @@ function confirmation_before_deletion ($edit_mode=''){
 	}
 	if($edit_mode==='delmode'){
 		$templete='before_del.html';
-		return include __DIR__.'/template/'.$templete;
+		return include __DIR__.'/'.$skindir.$templete;
 	}
 	if($edit_mode==='editmode'){
 		$templete='before_edit.html';
-		return include __DIR__.'/template/'.$templete;
+		return include __DIR__.'/'.$skindir.$templete;
 	}
 	error('失敗しました。');
 }
 //編集画面
 function edit_form(){
-	global  $petit_ver,$boardname;
+	global  $petit_ver,$boardname,$skindir;
 
 	$token=get_csrf_token();
 	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
@@ -1036,12 +1035,12 @@ function edit_form(){
 	$resno = $resno ? $resno : false;
 // HTML出力
 	$templete='edit_form.html';
-	return include __DIR__.'/template/'.$templete;
+	return include __DIR__.'/'.$skindir.$templete;
 
 }
 //編集
 function edit(){
-	global  $petit_ver,$boardname;
+	global  $petit_ver,$boardname,$skindir;
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary,$max_w,$max_h,$use_thumb;
 
 	check_csrf_token();
@@ -1240,7 +1239,7 @@ function del(){
 
 //カタログ表示
 function catalog($page=0){
-	global $use_aikotoba,$use_upload,$home,$catalog_pagedef,$dispres;
+	global $use_aikotoba,$use_upload,$home,$catalog_pagedef,$dispres,$skindir;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw; 
 	$pagedef=$catalog_pagedef;
 	if(!isset($page)||!$page){
@@ -1283,14 +1282,14 @@ function catalog($page=0){
 
 	// HTML出力
 	$templete='catalog.html';
-	return include __DIR__.'/template/'.$templete;
+	return include __DIR__.'/'.$skindir.$templete;
 
 }
 
 //通常表示
 function view($page=0){
-	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw; 
+	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions;
+	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button; 
 
 	if(!isset($page)||!$page){
 		$page=0;
@@ -1346,13 +1345,13 @@ function view($page=0){
 
 	// HTML出力
 	$templete='main.html';
-	return include __DIR__.'/template/'.$templete;
+	return include __DIR__.'/'.$skindir.$templete;
 
 }
 //レス画面
 function res ($resno){
-	global $use_aikotoba,$use_upload,$home,$pagedef;
-	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary,$petit_ver,$petit_lot,$set_nsfw;
+	global $use_aikotoba,$use_upload,$home,$pagedef,$skindir,$root_url;
+	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button;
 	
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');
@@ -1390,7 +1389,7 @@ function res ($resno){
 	//token
 	$token=get_csrf_token();
 	$templete='res.html';
-	return include __DIR__.'/template/'.$templete;
+	return include __DIR__.'/'.$skindir.$templete;
 	
 }
 

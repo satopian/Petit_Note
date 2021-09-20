@@ -12,7 +12,17 @@ hr {
 	border: none;
 	border-bottom: 1px dashed #888;
 	}
-	
+.description {
+	margin: 0 0 15px 0;
+}
+.description ul {
+	margin: 0;
+	padding: 0 0 0 10px;
+}
+
+.description li {
+	list-style-position: inside;
+}
 /* リンク */
 a {
 	color: #555;
@@ -103,6 +113,11 @@ input.form_button {
     display: inline-block;
     vertical-align: bottom;
 }
+/* ツイートボタン */
+span.share_button {
+    vertical-align: bottom;
+    margin: 0 6px;
+}
 
 .catalog_pagetop {
     display: block;
@@ -154,7 +169,7 @@ form.res_form {
 	margin: 16px 0 0;
 }
 table.resform {
-    display: inline;
+	margin: 0 0 0 auto;
 }
 
 /* 改ページ */
@@ -183,6 +198,9 @@ span.prev {
 }
 
 /* フォーム */
+.mainform {
+    margin: 0 0 15px;
+}
 form.admin {
 	text-align: right;
 	margin: 5px 0 0 0;

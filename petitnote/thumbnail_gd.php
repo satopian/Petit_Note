@@ -1,5 +1,10 @@
 <?php
+// thumbnail_gd.php for PetitNote by さとぴあ 2021   
+// thumbnail_gd.php by POTI改 >> https://pbbs.sakura.ne.jp/poti/ 
+// originalscript (c)SakaQ 2005 >> http://www.punyu.net/php/
+
 //サムネイル作成
+//210920 PetitNote用にコードを修正
 //210203 コード整理
 //201218 webp形式対応
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
