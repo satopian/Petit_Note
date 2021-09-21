@@ -40,7 +40,7 @@
 <form action="./" method="POST" id="delete" class="aikotoba">
 <?php if(!$admindel):?>
 	<span class="non"><input type="txt" value="" autocomplete="username"></span>
-	<input type="password" name="pwd">
+	<input type="password" name="pwd" value="<?=h($pwdc)?>">
 <?php endif;?>
 <input type="hidden" name="mode" value="del">
 <input type="hidden" name="resmode" value="<?=h($resmode)?>">

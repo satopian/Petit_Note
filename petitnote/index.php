@@ -29,7 +29,7 @@ if(!$usercode){//falseなら発行
 	//念の為にエスケープ文字があればアルファベットに変換
 	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
 }
-setcookie("usercode", $usercode, time()+(86400*365));//1年間
+setcookie("usercode", $usercode, time()+(86400*365),0,"",false,true);//1年間
 
 //初期化
 init();
@@ -121,6 +121,15 @@ function post(){
 	if(strlen($sub) > 80) error('題名が長すぎます。');
 	if(strlen($name) > 30) error('名前が長すぎます。');
 	if(strlen($com) > 1000) error('本文が長すぎます。');
+	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
+	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+	if(!$pwd){//それでも$pwdが空なら
+		srand((double)microtime()*1000000);
+		$pwd = substr(rand(), 0, 8);
+	}
+	if(strlen($pwd) <= 6) error('パスワードが短すぎます。最低8文字。');
+
+
 
 	$upfile='';
 	$imgfile='';
@@ -252,12 +261,6 @@ function post(){
 	error('画像がありません。');
 	}
 
-	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
-	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
-	if(!$pwd){//それでも$pwdが空なら
-		srand((double)microtime()*1000000);
-		$pwd = substr(rand(), 0, 8);
-	}
 	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
 
 	setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
@@ -476,9 +479,9 @@ function paint(){
 	$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
 	$resto = t(filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
 
-	setcookie("appc", $app , time()+(60*60*24*30));//アプレット選択
-	setcookie("picwc", $picw , time()+(60*60*24*30));//幅
-	setcookie("pichc", $pich , time()+(60*60*24*30));//高さ
+	setcookie("appc", $app , time()+(60*60*24*30),0,"",false,true);//アプレット選択
+	setcookie("picwc", $picw , time()+(60*60*24*30),0,"",false,true);//幅
+	setcookie("pichc", $pich , time()+(60*60*24*30),0,"",false,true);//高さ
 
 	$mode = filter_input(INPUT_POST, 'mode');
 
@@ -626,6 +629,7 @@ function paintcom(){
 		$aikotoba=true;
 	}
 	$namec = filter_input(INPUT_COOKIE,'namec');
+	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
 	$urlc=(string)filter_input(INPUT_COOKIE,'urlc');
 
 	// HTML出力
@@ -639,6 +643,8 @@ function to_continue(){
 	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir;
 
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
+	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
+
 
 	$no = filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$id = filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT);
@@ -914,6 +920,9 @@ function confirmation_before_deletion ($edit_mode=''){
 	$postpage = ($postpage || $postpage===0) ? $postpage : false; 
 	$postresno = ($postresno) ? $postresno : false; 
 
+	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
+
+
 	$edit_mode = filter_input(INPUT_POST,'edit_mode');
 
 	if(!($admindel||$userdel)){
@@ -1143,6 +1152,7 @@ if(!$_imgfile && !$com){
 
 	}
 	closeFile ($fp);
+	
 
 	return header('Location: ./?resno='.$no);
 
@@ -1344,11 +1354,13 @@ function view($page=0){
 
 	//Cookie
 	$namec=(string)filter_input(INPUT_COOKIE,'namec');
+	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
 	$urlc=(string)filter_input(INPUT_COOKIE,'urlc');
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
 	$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
 	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+
 
 
 	//token
@@ -1403,6 +1415,7 @@ function res ($resno){
 
 	//Cookie
 	$namec=(string)filter_input(INPUT_COOKIE,'namec');
+	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
 	$urlc=(string)filter_input(INPUT_COOKIE,'urlc');
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');

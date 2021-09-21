@@ -254,6 +254,11 @@ function create_res($line){
 	];
 
 	$res['com']=str_replace('"\n"',"\n",$res['com']);
+
+	foreach($res as $key=>$val){
+		$res[$key]=h($val);
+	}
+	
 	return $res;
 }
 
@@ -277,7 +282,7 @@ function s($str){
 }
 //エスケープ
 function h($str){
-	return htmlspecialchars($str,ENT_QUOTES,"utf-8");;
+	return htmlspecialchars($str,ENT_QUOTES,"utf-8",false);
 }
 //コメント出力
 function com($str){
