@@ -1,10 +1,11 @@
+@charset "utf-8";
 /* 全体 */
 body {
 	margin: 10px;
 	color: #555;
 }
 .container {
-	max-width: 800px;
+	max-width: 928px;
 	margin: 0 auto 12px;
 	color: #555;
 }
@@ -73,7 +74,26 @@ form.resform {
 input.form_button {
     margin: 8px 0 0;
 }
+
+/* 投稿者名から検索文字列にリンク */
+
+span.info_name {
+    display: inline-block;
+    border: 1px solid #ffcfcf;
+    border-radius: 5px;
+    line-height: 1;
+    margin: 0 2px 2px 0px;
+}
+span.info_name:hover {background-color: #fff7f7;}
+span.info_name a {
+    display: block;
+    padding: 5px;
+    text-decoration: none;
+    font-weight: 600;
+}
+
 /* 記事 */
+
 .imginfo_wrap {
     margin: 5px 0;
 }
@@ -93,8 +113,8 @@ input.form_button {
 }
 .posted_image {
 	max-width: 100%;
-	max-height: 500px;
-	margin: 0 10px 10px 0;
+	height: auto;
+	margin: 10px 10px 10px 0;
 	float: left;
 }
 .posted_image img {
@@ -122,6 +142,17 @@ span.share_button {
 .catalog_pagetop {
     display: block;
     text-align: right;
+}
+/* 投稿者名をコピー */
+button.copy_button {
+    background-color: transparent;
+    border-radius: 6px;
+    border: 1px solid #ffcfcf;
+    color: #555;
+}
+
+button.copy_button:hover {
+    background-color: #fff7f7;
 }
 
 /* メニューのラップ */
@@ -221,17 +252,20 @@ form.aikotoba {
 
 /* カタログ */
 .catalog_desc_wrap div:nth-of-type(3n){
-	margin-right:  0; 
+	margin-right: -2%;
 }
 .catalog_image img {
     max-width: 100%;
     height: auto;
+	vertical-align:top;
+	margin: 0;
 }
 .catalog_image {
-    width: 30%;
-    margin-right: 1%;
+    width: 32.5%;
+    margin: 0.5% 0.5% 0.5% 0;
     display: inline-block;
 }
+
 /* お絵かき画面 */
 .app_toolleft {
     margin: 16px auto;
@@ -258,6 +292,28 @@ form.aikotoba {
     line-height: 1.5;
 }
 
+
+@media screen and (max-width:599px){
+	/* カタログ表示を3列にするか2列にするか */
+
+	.catalog_image {
+		width: 49%;
+		margin: 0.8% 0.8% 0.8% 0;
+		display: inline-block;
+	}
+	
+	.catalog_desc_wrap div:nth-of-type(3n){
+		margin-right:  0.8%; 
+	}
+	.catalog_desc_wrap div:nth-of-type(2n){
+		margin-right:  -3%; 
+	}
+	span.txtnon {
+		display: none;
+	}
+
+}
+
 /* メディアクエリ */
 @media screen and (max-width:767px){
 	textarea.post_com {
@@ -266,27 +322,4 @@ form.aikotoba {
 	.posted_image{
 		float:none;margin-right:0
 	};
-}
-
-@media screen and (max-width:599px){
-/* カタログ表示を3列にするか2列にするか */
-
-	.catalog_desc_wrap div:nth-of-type(3n){
-		margin-right:  0; 
-	}
-	.catalog_image {
-		width: 46%;
-		margin-right: 1%;
-		display: inline-block;
-	}
-	.catalog_desc_wrap div:nth-of-type(3n){
-		margin-right:  inherit; 
-	}
-	.catalog_desc_wrap div:nth-of-type(2n){
-		margin-right:  0; 
-	}
-	span.txtnon {
-		display: none;
-	}
-
 }

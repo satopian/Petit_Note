@@ -12,7 +12,7 @@
 	<meta property="og:title" content="[<?= h(s($ress[0]['no']))?>] <?= h(s($ress[0]['sub']))?> by <?= h(s($ress[0]['name']))?> - <?=h(s($boardname))?>" />
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($ress[0]['no'])?>" />
-	<meta property="og:image" content="<?=h($root_url)?>src/<?=h($ress[0]['img'])?>" />
+	<meta property="og:image" content="<?php if($ress[0]['img']):?><?=h($root_url)?>src/<?=h($ress[0]['img'])?><?php endif;?>" />
 	<meta property="og:site_name"  content="<?=h($boardname)?>" />
 	<meta property="og:description" content="<?=h($ress[0]['img'])?>" />
 	<?php endif;?>
@@ -28,7 +28,7 @@
 <?php endif;?>
 
 
-	<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> - <?=h($boardname)?>"</title>
+	<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> - <?=h($boardname)?></title>
 </head>
 <body>
 <div class="container" id="top">
@@ -82,7 +82,7 @@
 	<?php endif;?>
 
 	<div class="imginfo_wrap">
-		<span><?= h($res['name'])?></span>
+		<span class="info_name"><a href="./?mode=catalog&q=<?=h($res['encoded_name'])?>" target="_blak"><?= h($res['name'])?></a></span>
 		<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
 		<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
 		<span><?=h($res['date'])?></span>		
@@ -172,6 +172,13 @@
 <?php if($aikotoba && (!$userdel && !$admindel)):?>
 <?php if($use_sns_button):?>
 <div class="res_button_wrap">
+	<div class="res_button_wrap">
+	<?php if($resname):?>
+		<script>function add_to_com(){
+		document.getElementById("res_com").value += "<?=h($resname)?>さん";
+		}</script>
+		<button class="copy_button" onclick="add_to_com()">投稿者名をコピー</button>
+	<?php endif;?>
 <span class="share_button">
 <a target="_blank" href="https://twitter.com/intent/tweet?text=<?=$res['encoded_no']?>+<?=$res['encoded_sub']?>+-+<?=h($boardname)?>&amp;url=<?=$res['encoded_u']?>"><span class="icon-twitter"></span>tweet</a>
 </span>
@@ -245,7 +252,7 @@
 		</tr>
 		</table>
 		<!-- <br> -->
-<textarea name="com" class="post_com"></textarea><br>
+<textarea name="com" class="post_com" id="res_com"></textarea><br>
 パスワード:<input type="password" name="pwd">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="resno" value="<?=h($res['no'])?>">

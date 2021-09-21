@@ -185,8 +185,8 @@ Size:
 		<?php endif;?>
 
 		<div class="imginfo_wrap">
-				<span><?= h($res['name'])?></span>
-				<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
+			<span class="info_name"><a href="./?mode=catalog&q=<?=h($res['encoded_name'])?>" target="_blak"><?= h($res['name'])?></a></span>
+			<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
 				<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
 				<span><?=h($res['date'])?></span>		
 			<?php if($res['img']):?>

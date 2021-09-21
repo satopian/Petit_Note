@@ -108,7 +108,7 @@
 <?php if($postresno):?>
 <a href="./?mode=adminin&resno=<?=h($postresno)?>">管理</a>]
 <?php endif;?>
-<?php if($postpage==='0'||$postpage):?>
+<?php if($postpage!==false||$postpage):?>
 <a href="./?mode=adminin&page=<?=h($postpage)?>">管理</a>]
 <?php endif;?>
 </div>
