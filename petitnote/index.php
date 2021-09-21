@@ -7,8 +7,8 @@ require_once(__DIR__.'/thumbnail_gd.php');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.5.5';
-$petit_lot='lot.210920';
+$petit_ver='v0.5.6';
+$petit_lot='lot.210921';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -18,7 +18,7 @@ $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
-$page=filter_input(INPUT_GET,'page');
+$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 $resno=filter_input(INPUT_GET,'resno');
 
 $usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//nullならuser-codeを発行
@@ -351,6 +351,7 @@ function post(){
 			}
 		}
 	}
+	$src='';
 	if($pictmp===2 && $imgfile){
 		//PCHファイルアップロード
 		if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
@@ -359,7 +360,6 @@ function post(){
 			$dst = IMG_DIR.$time.$pchext;
 			if(copy($src, $dst)){
 				chmod($dst,0606);
-				safe_unlink($src);
 			}
 		}
 
@@ -368,14 +368,10 @@ function post(){
 			$pchext = '.chi';
 			$src = TEMP_DIR.$picfile.'.chi';
 			$dst = IMG_DIR.$time.'.chi';
-			if(rename($src, $dst)){
+			if(copy($src, $dst)){
 				chmod($dst,0606);
-				safe_unlink($src);
 			}
 		}
-		//ワークファイル削除
-		safe_unlink($tempfile);
-		safe_unlink(TEMP_DIR.$picfile.".dat");
 	}
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
@@ -390,7 +386,7 @@ function post(){
 				$thumbnail='thumbnail';
 			}
 		}
-		}
+	}
 
 	$no_arr = [];
 	foreach($alllog_arr as $i => $_alllog){
@@ -455,6 +451,12 @@ function post(){
 	closeFile($fp);
 
 	chmod(LOG_DIR.'alllog.log',0600);
+
+	//ワークファイル削除
+	safe_unlink($src);
+	safe_unlink($tempfile);
+	safe_unlink(TEMP_DIR.$picfile.".dat");
+
 	//多重送信防止
 	if($resno){
 		return header('Location: ./?resno='.$resno);
@@ -523,7 +525,7 @@ function paint(){
 			}
 			$userip = get_uip();
 			$paintmode='picrep';
-			$id = $time;
+			$id=$time;	//テンプレートでも使用。
 			$repcode = substr(crypt(md5($no.$id.$userip.$pwd.date("Ymd", time())),time()),-8);
 			//念の為にエスケープ文字があればアルファベットに変換
 			$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
@@ -660,7 +662,6 @@ function to_continue(){
 	}
 	$picfile = IMG_DIR.$imgfile;
 	list($picw, $pich) = getimagesize($picfile);
-	
 
 	$select_app = true;
 	$app_to_use = "";
@@ -686,10 +687,9 @@ function to_continue(){
 	// nsfw
 	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
 
-
-		// HTML出力
-		$templete='continue.html';
-		return include __DIR__.'/'.$skindir.$templete;
+	// HTML出力
+	$templete='continue.html';
+	return include __DIR__.'/'.$skindir.$templete;
 	
 }
 
@@ -766,7 +766,7 @@ function img_replace(){
 	$time = time().substr(microtime(),2,3);
 
 	$upfile=IMG_DIR.$time.'.tmp';
-	rename($tempfile, $upfile);
+	copy($tempfile, $upfile);
 	if(!is_file($upfile)) error('失敗しました。');
 	chmod($upfile,0606);
 	
@@ -799,16 +799,13 @@ function img_replace(){
 	rename($upfile,IMG_DIR.$imgfile);
 	chmod(IMG_DIR.$imgfile,0606);
 
-
-	//ワークファイル削除
-	safe_unlink(TEMP_DIR.$file_name.".dat");
-
+	$src='';
 	//PCHファイルアップロード
 	// .pch, .spch, ブランク どれかが返ってくる
 	if ($pchext = check_pch_ext(TEMP_DIR . $file_name)) {
 		$src = TEMP_DIR . $file_name . $pchext;
 		$dst = IMG_DIR . $time . $pchext;
-		if(rename($src, $dst)){
+		if(copy($src, $dst)){
 			chmod($dst, 0606);
 		}
 	}
@@ -817,7 +814,7 @@ function img_replace(){
 		$pchext = '.chi';
 		$src = TEMP_DIR.$file_name.'.chi';
 		$dst = IMG_DIR.$time.'.chi';
-		if(rename($src, $dst)){
+		if(copy($src, $dst)){
 			chmod($dst,0606);
 		}
 	}
@@ -833,9 +830,6 @@ function img_replace(){
 		}
 	}
 	
-	//旧ファイル削除
-	delete_files($_imgfile, $_time);
-
 	//描画時間追加
 
 	$painttime = '';
@@ -844,12 +838,9 @@ function img_replace(){
 		$painttime=(int)$_painttime+(int)$psec;
 	}
 	
-
 	$new_line= "$_no\t$_sub\t$_name\t$_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$_hash\t$_oya";
 
 	$r_arr[$i] = $new_line;
-
-
 
 	writeFile($rp, implode("", $r_arr));
 	closeFile($rp);
@@ -874,6 +865,13 @@ function img_replace(){
 
 	}
 	closeFile ($fp);
+	
+	//旧ファイル削除
+	delete_files($_imgfile, $_time);
+	//ワークファイル削除
+	safe_unlink($src);
+	safe_unlink($tempfile);
+	safe_unlink(TEMP_DIR.$file_name.".dat");
 
 	return header('Location: ./?resno='.$no);
 
@@ -1238,21 +1236,37 @@ function del(){
 }
 
 //カタログ表示
-function catalog($page=0){
+function catalog($page=0,$q=''){
 	global $use_aikotoba,$use_upload,$home,$catalog_pagedef,$dispres,$skindir;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw; 
 	$pagedef=$catalog_pagedef;
-	if(!isset($page)||!$page){
-		$page=0;
-	}
+	
+	$q=filter_input(INPUT_GET,'q');
 
 	$alllog_arr=file(LOG_DIR.'alllog.log');//全体ログを読み込む
-	$count_alllog=count($alllog_arr);
+
 	krsort($alllog_arr);
+	$encoded_q='';
+	$result=[];
+	if($q){//名前検索の時
+		foreach($alllog_arr as $oya => $alllog){
+			$line=explode("\t",trim($alllog));
+			list($no,$sub,$name,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=$line;
+	
+			if($name===$q){//検索結果と一致した投稿を配列に入れる
+				$result[]=$alllog;
+			}
+		}
+		$alllog_arr=$result;
+		$encoded_q=urlencode($q);
+	}
+
+	$count_alllog=count($alllog_arr);
 
 	//ページ番号から1ページ分のスレッド分とりだす
 	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
+
 	foreach($alllog_arr as $oya => $alllog){
 
 		$_res=[];
@@ -1280,6 +1294,7 @@ function catalog($page=0){
 	//token
 	$token=get_csrf_token();
 
+
 	// HTML出力
 	$templete='catalog.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -1290,10 +1305,6 @@ function catalog($page=0){
 function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button; 
-
-	if(!isset($page)||!$page){
-		$page=0;
-	}
 
 	$alllog_arr=file(LOG_DIR.'alllog.log');//全体ログを読み込む
 	$count_alllog=count($alllog_arr);
@@ -1358,17 +1369,29 @@ function res ($resno){
 	if(!is_file(LOG_DIR."$resno.log")){
 		error('スレッドがありません');	
 		}
-		$_res=[];
+		$rresname = [];
+		$resname = '';
 			$fp = fopen(LOG_DIR."$resno.log", "r");//個別スレッドのログを開く
 			while ($line = fgetcsv($fp, 0, "\t")) {
 				$_res = create_res($line);//$lineから、情報を取り出す
+
+				if($_res['oya']==='oya'){
+					$oyaname = $_res['name']; //投稿者名をコピー
+				}
+					// 投稿者名を配列にいれる
+					if ($oyaname !== $_res['name'] && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
+						$rresname[] = $_res['name'];
+					}
+			
+				if($rresname){//レスがある時
+					$resname = $rresname ? implode('さん'.' ',$rresname) : false; // レス投稿者一覧
+				}
+
 			$out[0][]=$_res;
 			}	
 		fclose($fp);
-		// $postedtime=$out[0][0]['time'];
-		// $check_elapsed_days = check_elapsed_days($postedtime);
 
-		//管理者判定処理
+	//管理者判定処理
 	session_sta();
 	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');

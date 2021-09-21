@@ -107,7 +107,7 @@ function diary(){
 	return header('Location: ./?page='.$page);
 }
 
-//管理者モード
+//管理者削除モード
 function admin_del(){
 	global $admin_pass;
 	session_sta();
@@ -134,7 +134,7 @@ function userdel_mode(){
 	session_sta();
 
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$page = isset($page) ? $page : 0;
+	$page = $page ? $page : 0;
 	$_SESSION['userdel']='userdel_mode';
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	if($resno){
@@ -218,14 +218,12 @@ function create_res($line){
 	$anime = ($pchext==='.pch') ? true : false; 
 	$thumbnail = ($thumbnail==='thumbnail') ? $time.'s.jpg' : false; 
 	$painttime = is_numeric($painttime) ? calcPtime($painttime) : false;  
-	list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
+
+	// list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
 	$datetime=(int)substr($time,0,-3);
 	$date=date('y/m/d',$datetime);
 	$check_elapsed_days = check_elapsed_days($time);
 	if(!$url||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)) $url="";
-
-	
-
 
 	$res=[
 		'no' => $no,
@@ -252,7 +250,7 @@ function create_res($line){
 		'encoded_sub' => urlencode($sub),
 		'encoded_u' => urlencode($root_url.'?res='.$no),//tweet
 		'encoded_t' => urlencode('['.$no.']'.$sub.' - '.$boardname),
-
+		'oya' => $oya,
 	];
 
 	$res['com']=str_replace('"\n"',"\n",$res['com']);
@@ -283,7 +281,28 @@ function h($str){
 }
 //コメント出力
 function com($str){
+	
+	global $use_autolink;
+
+	if($use_autolink){
+	$str=md_link($str);
+	$str=auto_link($str);
+	}
 	return nl2br($str,false);
+
+}
+//マークダウン記法のリンクをHTMLに変換
+function md_link($str){
+	$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","<a href=\"\\2\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\\1</a>",$str);
+	return $str;
+}
+
+// 自動リンク
+function auto_link($str){
+	if(strpos($str,'<a')===false){//マークダウン記法がなかった時
+		$str= preg_replace("{(https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)}","<a href=\"\\1\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\\1</a>",$str);
+	}
+	return $str;
 }
 
 //mimeから拡張子
@@ -392,11 +411,16 @@ function deltemp(){
 
 // NGワードがあれば拒絶
 function Reject_if_NGword_exists_in_the_post(){
-	global $use_japanesefilter,$badstring,$badname,$badstr_A,$badstr_B;
+	global $use_japanesefilter,$badstring,$badname,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass;
+
+	session_sta();
+	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+
 
 	$sub = t((string)filter_input(INPUT_POST,'sub'));
 	$name = t((string)filter_input(INPUT_POST,'name'));
 	$com = t((string)filter_input(INPUT_POST,'com'));
+	$pwd = t((string)filter_input(INPUT_POST,'pwd'));
 
 	//チェックする項目から改行・スペース・タブを消す
 	$chk_com  = preg_replace("/\s/u", "", $com );
@@ -406,11 +430,13 @@ function Reject_if_NGword_exists_in_the_post(){
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
 		mb_regex_encoding("UTF-8");
-		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) error('半角英数のみの投稿はできません。');
+		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) error('日本語で何か書いてください。');
 	}
 
 	//本文へのURLの書き込みを禁止
+	if(!$allow_comments_url && !$adminpost && $pwd !== $admin_pass){
 		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) error('URLの記入はできません。');
+	}
 
 	// 使えない文字チェック
 	if (is_ngword($badstring, [$chk_com, $chk_sub, $chk_name])) {
