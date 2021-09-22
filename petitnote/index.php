@@ -450,7 +450,7 @@ function post(){
 			}
 		closeFile($dp);
 		}	
-		safe_unlink(LOG_DIR.$_no.'.log');//スレッド個別ログファイル削除
+		safe_unlink(LOG_DIR.$d_no.'.log');//スレッド個別ログファイル削除
 		unset($alllog_arr[$i]);//全体ログ記事削除
 	}
 	$alllog=implode("",$alllog_arr);
