@@ -39,6 +39,9 @@ deltemp();//テンポラリ自動削除
 
 switch($mode){
 	case 'regist':
+		if($denny_all_posts){
+			return view();	
+		}
 		return post();
 	case 'paint':
 		return paint();
