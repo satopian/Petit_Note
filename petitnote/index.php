@@ -4,6 +4,8 @@
 require_once(__DIR__.'/config.php');	
 require_once(__DIR__.'/functions.php');
 require_once(__DIR__.'/thumbnail_gd.php');
+require_once(__DIR__.'/noticemail.inc');
+
 //テンプレート
 $skindir='template/'.$skindir;
 
@@ -106,7 +108,7 @@ function post(){
 	$name = t((string)filter_input(INPUT_POST,'name'));
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
-	$resno = t((string)filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT));
+	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
 	$check_elapsed_days=false;
 
 	//NGワードがあれば拒絶
@@ -127,7 +129,7 @@ function post(){
 		srand((double)microtime()*1000000);
 		$pwd = substr(rand(), 0, 8);
 	}
-	if(strlen($pwd) <= 6) error('パスワードが短すぎます。最低8文字。');
+	if(strlen($pwd) < 6) error('パスワードが短すぎます。最低6文字。');
 
 
 
@@ -162,6 +164,8 @@ function post(){
 	//お絵かきアップロード
 	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
 	$picfile = t(filter_input(INPUT_POST, 'picfile'));
+	$painttime ='';
+
 	if($pictmp===2){//ユーザーデータを調べる
 		if(!$picfile) error('投稿に失敗しました。');
 		$tempfile = TEMP_DIR.$picfile;
@@ -177,8 +181,7 @@ function post(){
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");
 		if(($ucode != $usercode) && ($uip != $userip)){error('投稿に失敗しました。');}
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
-		$resno = $uresto ? $uresto : $resno;//変数上書き$userdataのレス先を優先する
-		$painttime ='';
+		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
 		//描画時間を$userdataをもとに計算
 		if($starttime && is_numeric($starttime)){
 			$painttime=(int)$postedtime-(int)$starttime;
@@ -186,17 +189,17 @@ function post(){
 
 	}
 
-	if($resno && !is_file(LOG_DIR."$resno.log")){//エラー処理
+	if($resto && !is_file(LOG_DIR."$resto.log")){//エラー処理
 		if($pictmp!==2){//お絵かきではない時は
 			safe_unlink($upfile);
 			error('記事がありません。');
 		}
-		$resno='';//レス先がないお絵かきは新規投稿扱いにする。
+		$resto='';//レス先がないお絵かきは新規投稿扱いにする。
 	}
 
-	if($resno && is_file(LOG_DIR."$resno.log")){//エラー処理
+	if($resto && is_file(LOG_DIR."$resto.log")){//エラー処理
 			
-		$rp=fopen(LOG_DIR."$resno.log","r");
+		$rp=fopen(LOG_DIR."$resto.log","r");
 		while ($line = fgetcsv($rp,0,"\t")) {
 			list($n_,$s_,$n_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$h_,$uid_,$h_,$_)=$line;
 			$check_elapsed_days = check_elapsed_days($postedtime);
@@ -206,25 +209,25 @@ function post(){
 
 		if($pictmp===2){//お絵かきの時は新規投稿にする
 
-			if($resno && !$check_elapsed_days){//お絵かきの時に日数を経過していたら新規投稿。
-				$resno='';
+			if($resto && !$check_elapsed_days){//お絵かきの時に日数を経過していたら新規投稿。
+				$resto='';
 			}
-			if($resno&&(count(file(LOG_DIR.$resno.'.log'))>$max_res)){//お絵かきの時に最大レス数を超過していたら新規投稿。
-				$resno='';
+			if($resto&&(count(file(LOG_DIR.$resto.'.log'))>$max_res)){//お絵かきの時に最大レス数を超過していたら新規投稿。
+				$resto='';
 			}
 		}
 		//お絵かき以外。
-		if($resno && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
+		if($resto && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
 			safe_unlink($upfile);
 			error('このスレッドには投稿できません。');
 		}
-		if($resno&&(count(file(LOG_DIR.$resno.'.log'))>$max_res)){//最大レス数超過。
+		if($resto&&(count(file(LOG_DIR.$resto.'.log'))>$max_res)){//最大レス数超過。
 			safe_unlink($upfile);
 			error('最大レス数を超過しています。');
 			}
 	}
 
-	if(!$resno && $use_diary){
+	if(!$resto && $use_diary){
 		if(!$adminpost){
 			safe_unlink($upfile);
 			error('日記にログインしていません。');
@@ -355,6 +358,7 @@ function post(){
 		}
 	}
 	$src='';
+	$pchext = '';
 	if($pictmp===2 && $imgfile){
 		//PCHファイルアップロード
 		if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
@@ -379,8 +383,8 @@ function post(){
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
 
-		$max_w = $resno ? $res_max_w : $max_w; 
-		$max_h = $resno ? $res_max_h : $max_h; 
+		$max_w = $resto ? $res_max_w : $max_w; 
+		$max_h = $resto ? $res_max_h : $max_h; 
 		//縮小表示
 		list($w,$h)=image_reduction_display($w,$h,$max_w,$max_h);
 		//サムネイル
@@ -404,13 +408,13 @@ function post(){
 	//書き込むログの書式
 	$line='';
 
-	if($resno){//レスの時はスレッド別ログに追記
-		$r_line = "$resno\t$sub\t$name\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\tres\n";
-		file_put_contents(LOG_DIR.$resno.'.log',$r_line,FILE_APPEND | LOCK_EX);
-		chmod(LOG_DIR.$resno.'.log',0600);	
+	if($resto){//レスの時はスレッド別ログに追記
+		$r_line = "$resto\t$sub\t$name\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\tres\n";
+		file_put_contents(LOG_DIR.$resto.'.log',$r_line,FILE_APPEND | LOCK_EX);
+		chmod(LOG_DIR.$resto.'.log',0600);	
 		foreach($alllog_arr as $i =>$val){
 			list($_no)=explode("\t",$val);
-			if($resno==$_no){
+			if($resto==$_no){
 				$line = $val;//レスが付いたスレッドを$lineに保存。あとから配列に追加して上げる
 				unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
 				break;
@@ -429,17 +433,17 @@ function post(){
 	//保存件数超過処理
 	$countlog=count($alllog_arr);
 	for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
-		if($alllog_arr[$i]===''){
+		if(isset($alllog_arr[$i]) && $alllog_arr[$i]===''){
 			continue;
 		}
-		list($_no,)=explode("\t",$alllog_arr[$i]);
-		if(is_file(LOG_DIR."$_no.log")){
+		list($d_no,)=explode("\t",$alllog_arr[$i]);
+		if(is_file(LOG_DIR."$d_no.log")){
 
-			$dp = fopen(LOG_DIR."$_no.log", "r");//個別スレッドのログを開く
+			$dp = fopen(LOG_DIR."$d_no.log", "r");//個別スレッドのログを開く
 			flock($dp, LOCK_EX);
 
 			while ($line = fgetcsv($dp, 0, "\t")) {
-				list($_no,$_sub,$_name,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_host,$_userid,$_hash,$_oya)=$line;
+				list($d_no,$_sub,$_name,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_host,$_userid,$_hash,$_oya)=$line;
 
 			delete_files ($d_imgfile, $d_time);//一連のファイルを削除
 
@@ -460,9 +464,45 @@ function post(){
 	safe_unlink($tempfile);
 	safe_unlink(TEMP_DIR.$picfile.".dat");
 
+	global $send_email,$to_mail,$root_url,$boardname;
+
+	if($send_email){
+	//template_ini.phpで未定義の時の初期値
+	//このままでよければ定義不要
+	defined('NOTICE_MAIL_TITLE') or define('NOTICE_MAIL_TITLE', '記事題名');
+	defined('NOTICE_MAIL_IMG') or define('NOTICE_MAIL_IMG', '投稿画像');
+	defined('NOTICE_MAIL_THUMBNAIL') or define('NOTICE_MAIL_THUMBNAIL', 'サムネイル画像');
+	defined('NOTICE_MAIL_ANIME') or define('NOTICE_MAIL_ANIME', 'アニメファイル');
+	defined('NOTICE_MAIL_URL') or define('NOTICE_MAIL_URL', '記事URL');
+	defined('NOTICE_MAIL_REPLY') or define('NOTICE_MAIL_REPLY', 'へのレスがありました');
+	defined('NOTICE_MAIL_NEWPOST') or define('NOTICE_MAIL_NEWPOST', '新規投稿がありました');
+
+		$data['to'] = $to_mail;
+		$data['name'] = $name;
+		$data['option'][] = 'URL,'.$url;
+		$data['option'][] = NOTICE_MAIL_TITLE.','.$sub;
+		if($imgfile) $data['option'][] = NOTICE_MAIL_IMG.','.$root_url.IMG_DIR.$imgfile;//拡張子があったら
+		if(is_file(THUMB_DIR.$time.'s.jpg')) $data['option'][] = NOTICE_MAIL_THUMBNAIL.','.$root_url.THUMB_DIR.$time.'s.jpg';
+		if ($_pch_ext = check_pch_ext(__DIR__.'/'.IMG_DIR.$time)) {
+			$data['option'][] = NOTICE_MAIL_ANIME.','.$root_url.IMG_DIR.$time.$_pch_ext;
+		}
+		if($resto){
+			$data['subject'] = '['.$boardname.'] No.'.$resto.NOTICE_MAIL_REPLY;
+			$data['option'][] = "\n".NOTICE_MAIL_URL.','.$root_url.'?res='.$resto;
+		}else{
+			$data['subject'] = '['.$boardname.'] '.NOTICE_MAIL_NEWPOST;
+			$data['option'][] = "\n".NOTICE_MAIL_URL.','.$root_url.'?res='.$no;
+		}
+
+		$data['comment'] = str_replace('"\n"',"\n",$com);
+
+		noticemail::send($data);
+
+	}
+
 	//多重送信防止
-	if($resno){
-		return header('Location: ./?resno='.$resno);
+	if($resto){
+		return header('Location: ./?resno='.$resto);
 	}
 	
 return header('Location: ./');
@@ -907,7 +947,7 @@ function pchview(){
 //削除前の確認画面
 function confirmation_before_deletion ($edit_mode=''){
 
-	global $boardname,$max_res,$home,$petit_ver,$petit_lot,$skindir;
+	global $boardname,$max_res,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba;
 		//管理者判定処理
 	session_sta();
 	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
@@ -932,12 +972,11 @@ function confirmation_before_deletion ($edit_mode=''){
 	if($edit_mode!=='delmode' && $edit_mode!=='editmode'){
 		error('失敗しました。');
 	}
-
 	$id = t((string)filter_input(INPUT_POST,'id',FILTER_VALIDATE_INT));
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 
 	if(is_file(LOG_DIR."$no.log")){
-		
+				
 		$rp=fopen(LOG_DIR."$no.log","r+");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
@@ -960,6 +999,11 @@ function confirmation_before_deletion ($edit_mode=''){
 
 		closeFile ($rp);
 	}
+
+	if(!$use_aikotoba){
+		$aikotoba=true;
+	}
+
 	if($edit_mode==='delmode'){
 		$templete='before_del.html';
 		return include __DIR__.'/'.$skindir.$templete;

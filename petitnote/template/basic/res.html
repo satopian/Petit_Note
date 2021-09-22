@@ -253,9 +253,9 @@
 		</table>
 		<!-- <br> -->
 <textarea name="com" class="post_com" id="res_com"></textarea><br>
-パスワード:<input type="password" name="pwd" value="<?=h($pwdc)?>">
+パスワード:<input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password" minlength="6">
 <input type="hidden" name="mode" value="regist">
-<input type="hidden" name="resno" value="<?=h($res['no'])?>">
+<input type="hidden" name="resto" value="<?=h($res['no'])?>">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <br>
 <?php if($use_upload || $adminpost):?>
