@@ -1,6 +1,7 @@
 License
 
 main program - Copyright (C) 2021 satopian and POTI-board redevelopment team.
+
 MIT License
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,7 +26,9 @@ Each module is subject to its own license
 
 picpost.php  - Copyright (C)SakaQ 2005 >> http://www.punyu.net/php/
 thumbnail_gd.php - Copyright (C)SakaQ 2005 >> http://www.punyu.net/php/
-PaintBBS NEO - Copyright (C) 2016-2021 funige
+noticemail.inc - Copyright (C)SakaQ 2004-2007 >> http://www.punyu.net/php/
 DynamicPalette - Copyright (C) 2005 noraneko
+
+PaintBBS NEO - Copyright (C) 2016-2021 funige
 ChickenPaint Copyright (C) 2007 Free Software Foundation, Inc. <http://fsf.org/> GNU GENERAL PUBLIC LICENSE Version 3
 Revised 2021/05/11 by Nicholas Sherlock. 
