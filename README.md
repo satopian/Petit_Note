@@ -1,9 +1,17 @@
 # Petit Note
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
-- まだログファイルの形式が定まっていないため、ウェブに設置して使わないでください。 予期せぬエラー、ログ消失が発生しても何もできません。  
 
- ![image](https://user-images.githubusercontent.com/44894014/132039172-ddda46c8-f2f8-454e-a05d-6892b98acbce.png)
+## DEMO
+[Petit Note](https://pbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
+  
+![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
+
+## 21/09/23 v0.6
+
+- 記事の編集･削除。続きを描く、管理者認証マークの表示。カタログ機能。投稿者名の名前で記事の一覧。メール通知機能。  
+ログファイルの拡張に区切をつけて、ログファイルの形式をいったん確定。
+
 ## 21/09/06 v0.02
 - 投稿時のパスワードをパスワードハッシュで保存。
 - ユーザー削除機能を追加しました。
