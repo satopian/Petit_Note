@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.6.0';
+$petit_ver='v0.6.1';
 $petit_lot='lot.210923';
 
 if(!$max_log){
@@ -547,7 +547,6 @@ function paint(){
 		$type = filter_input(INPUT_POST, 'type');
 		$time = filter_input(INPUT_POST, 'time');
 
-
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
 		$_pch_ext = check_pch_ext(IMG_DIR.$time);
 
@@ -581,7 +580,6 @@ function paint(){
 			//念の為にエスケープ文字があればアルファベットに変換
 			$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
 		}
-
 	}
 
 	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
@@ -807,7 +805,7 @@ function img_replace(){
 		}
 	$flag=false;
 	foreach($r_arr as $i => $line){
-		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",$line);
+		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id==$_time && password_verify($pwd,$_hash)){
 			$flag=true;
 			break;
@@ -894,7 +892,7 @@ function img_replace(){
 		$painttime=(int)$_painttime+(int)$psec;
 	}
 	
-	$new_line= "$_no\t$_sub\t$_name\t$_verified\t$_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya";
+	$new_line= "$_no\t$_sub\t$_name\t$_verified\t$_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 
 	$r_arr[$i] = $new_line;
 
@@ -902,7 +900,7 @@ function img_replace(){
 	closeFile($rp);
 
 
-	if(trim($_oya)==='oya'){
+	if($_oya==='oya'){
 
 		while ($_line = fgets($fp)) {
 			$alllog_arr[]=$_line;	
@@ -1162,7 +1160,7 @@ function edit(){
 	$flag=false;
 	$_res=[];
 	foreach($r_arr as $i => $line){
-		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",$line);
+		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id==$_time && password_verify($pwd,$_hash)){
 			$flag=true;
 	
@@ -1178,7 +1176,7 @@ function edit(){
 	}
 	$time = time().substr(microtime(),2,3);
 
-	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$_userid\t$_hash\t$_oya";
+	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$_userid\t$_hash\t$_oya\n";
 
 	$r_arr[$i] = $new_line;
 
@@ -1187,7 +1185,7 @@ function edit(){
 	closeFile($rp);
 
 
-	if(trim($_oya)==='oya'){
+	if($_oya==='oya'){
 
 		while ($_line = fgets($fp)) {
 			$alllog_arr[]=$_line;	
