@@ -20,7 +20,7 @@
 		<?php if($postresno):?>
 		[<a href="./?mode=logout&resno=<?=h($postresno)?>">編集モード終了</a>]
 		<?php endif;?>
-		<?php if($postpage||$postpage===0):?>
+		<?php if(!$postresno && ($postpage||$postpage===0)):?>
 		[<a href="./?mode=logout&page=<?=h($postpage)?>">編集モード終了</a>]
 		<?php endif;?>
 	</span>

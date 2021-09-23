@@ -8,7 +8,16 @@
 	<title><?=h($boardname)?></title>
 </head>
 <body>
-<div class="container error">
+	<div class="container">
+	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+	<nav class="memu_wrap" >
+		<span>[<a href="./">掲示板にもどる</a>]</span>
+		<a href="#bottom">▽</a>
+		</nav>
+			<hr>
+<div class="error">
 <?=h($str)?><br>
 <a href="#" onClick="javascript:window.history.back(-1);return false;">もどる</a>
 <?php exit;?>
+</div>
+</div>
