@@ -5,6 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
+<link rel="stylesheet" href="<?=h($skindir)?>icomoon/style.css">
 	<title><?=h($boardname)?></title>
 </head>
 <body>
@@ -19,7 +20,7 @@
 		<?php if($postresno):?>
 		[<a href="./?mode=logout&resno=<?=h($postresno)?>">編集モード終了</a>]
 		<?php endif;?>
-		<?php if($postpage||$postpage==='0'):?>
+		<?php if($postpage||$postpage===0):?>
 		[<a href="./?mode=logout&page=<?=h($postpage)?>">編集モード終了</a>]
 		<?php endif;?>
 	</span>
@@ -68,6 +69,9 @@
 	<label><input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
 	<?php endif;?>
 	<span><?= h($res['name'])?></span>
+	<?php if($res['verified']):?>
+	<span class="icon-checkmark2"></span>
+	<?php endif?>
 	<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
 	<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
 	<span><?=h($res['date'])?></span>		

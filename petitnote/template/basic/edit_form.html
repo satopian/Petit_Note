@@ -42,6 +42,9 @@
 
 	<div class="imginfo_wrap">
 	<span><?= h($res['name'])?></span>
+	<?php if($res['verified']):?>
+	<span class="icon-checkmark2"></span>
+	<?php endif?>
 	<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
 	<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
 	<span><?=h($res['date'])?></span>		

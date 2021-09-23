@@ -56,11 +56,28 @@ $send_email = false;
 //投稿があった事を通知するメールアドレス
 $to_mail = 'example@example.com';
 
+/*スパム対策*/
+//本文に日本語がなければ拒絶 する:true しない:false
+$use_japanesefilter = true;
+// $use_japanesefilter=false;
+
+//拒絶する文字列 正規表現
+// 設定しないなら[]で。
+$badstring = ['example.example.com','未承諾広告'];
+
+//使用できない名前 正規表現
+$badname = ['ブランド','通販','販売','口コミ'];
+
+//AとBが両方あったら拒絶 正規表現
+$badstr_A = ['激安','低価','コピー','品質を?重視','大量入荷'];
+$badstr_B = ['シャネル','シュプリーム','バレンシアガ','ブランド'];
+
+
 /*使用目的別設定*/
 
 // 本文へのURLの書き込みを許可する
-// URLを書き込むスパムを排除するなら しない: false
-// 管理者は設定に関わらず許可。
+// URLを書き込むスパムを排除する時は しない: false
+// 管理者は設定に関わらずURLを本文に書けます。
 
 // $allow_comments_url = true; 
 $allow_comments_url = false; 
@@ -79,13 +96,6 @@ $use_autolink = true;
 $use_top_form = true;
 // $use_top_form = false;
 
-//日記モードを使用する
-//する: true でスレッド立ては管理者のみになります。
-// する: true しない: false
-
-// $use_diary = true;
-$use_diary = false;
-
 //画像アップロード機能を使う
 //日記モードの管理者は使わないに設定しても、ファイルアップロードが可能です。
 // 使う:true 使わない:false
@@ -100,14 +110,22 @@ $use_upload = true;
 $allow_coments_only = true;
 // $allow_coments_only = false;
 
+//日記モードを使用する
+//する: true でスレッド立ては管理者のみになります。
+// する: true しない: false
+
+// $use_diary = true;
+$use_diary = false;
+
 //合言葉機能を使って投稿を制限する
 // する: true しない: false
+
 // $use_aikotoba = true;
 $use_aikotoba=false;
 
 //合言葉機能で投稿を制限する時の合言葉
 //この合言葉が入力されていない時には書き込むことができません。
-// 変更して使ってください。
+// 必要に応じて変更してください。
 $aikotoba = 'あいうえお';
 
 //年齢制限付きの掲示板として設定する
@@ -117,21 +135,22 @@ $aikotoba = 'あいうえお';
 // $set_nsfw = true;
 $set_nsfw = false;
 
-/*スパム対策*/
-//本文に日本語がなければ拒絶 する:true しない:false
-$use_japanesefilter = true;
-// $use_japanesefilter=false;
+//編集しても投稿日時を変更しないようにする 
+//日記などで日付が変わると困る人のための設定
+//する: trueに設定すると編集しても投稿日時が変わりません。 通常は しない: false 。
+// する: true しない: false
 
-//拒絶する文字列 正規表現
-// 設定しないなら[]で。
-$badstring = ['example.example.com','未承諾広告'];
+// $do_not_change_posts_time = true;
+$do_not_change_posts_time = false;
 
-//使用できない名前 正規表現
-$badname = ['ブランド','通販','販売','口コミ'];
+//管理者を認証する
+//する: true で、管理者の投稿の時は認証マークが出ます。初期テンプレートではチェックマーク。
+//日記ログイン、またはパスワード一致の時に管理者と判定します。
+// する: true しない: false
 
-//AとBが両方あったら拒絶 正規表現
-$badstr_A = ['激安','低価','コピー','品質を?重視','大量入荷'];
-$badstr_B = ['シャネル','シュプリーム','バレンシアガ','ブランド'];
+$verified_adminpost = true; 
+// $verified_adminpost = false; 
+
 
 /*表示件数*/
 

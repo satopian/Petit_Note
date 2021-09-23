@@ -94,7 +94,10 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 	</span>
 </div>
 
-	<a href="?mode=catalog&page=0<?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">start</a> |
+<?php if($start_page!==0 && $prev!==false):?>
+<a href="?mode=catalog&page=0<?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">start</a> |
+<?php endif;?>
+
 <?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
 <?php if(($i>=$start_page)&&($i<=$end_page)):?>
 	<?php if($page==$i):?>
@@ -115,8 +118,10 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 		<?php endif;?>
 		<?php endif;?>
 		<?php endfor ;?>
-		
+		<?php if($next):?>
 		| <a href="?mode=catalog&page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?><?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">end</a>
+		<?php endif;?>
+
 
 	<div class="copy">
 		<div class="left_wrap">

@@ -186,6 +186,9 @@ Size:
 
 		<div class="imginfo_wrap">
 			<span class="info_name"><a href="./?mode=catalog&q=<?=h($res['encoded_name'])?>" target="_blak"><?= h($res['name'])?></a></span>
+			<?php if($res['verified']):?>
+			<span class="icon-checkmark2"></span>
+			<?php endif?>
 			<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
 				<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
 				<span><?=h($res['date'])?></span>		
@@ -317,8 +320,10 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 	<?php endif;?>
 	</span>
 </div>
+<?php if($start_page!==0 && $prev!==false):?>
+<a href="?page=0">start</a> |
+<?php endif;?>
 
-	<a href="?page=0">start</a> |
 <?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
 <?php if(($i>=$start_page)&&($i<=$end_page)):?>
 	<?php if($page==$i):?>
@@ -339,8 +344,11 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 		<?php endif;?>
 		<?php endif;?>
 		<?php endfor ;?>
-		
+
+		<?php if($next):?>
 		| <a href="?page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?>">end</a>
+		<?php endif;?>
+	
 
 	<div class="copy">
 		<div class="left_wrap">

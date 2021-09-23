@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.5.6';
-$petit_lot='lot.210921';
+$petit_ver='v0.6.0';
+$petit_lot='lot.210923';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -94,7 +94,7 @@ switch($mode){
 //投稿処理
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary,$max_w,$max_h,$use_thumb;
-	global $allow_coments_only,$res_max_w,$res_max_h;
+	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -204,7 +204,7 @@ function post(){
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
 		while ($line = fgetcsv($rp,0,"\t")) {
-			list($n_,$s_,$n_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$h_,$uid_,$h_,$_)=$line;
+			list($n_,$s_,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=$line;
 			$check_elapsed_days = check_elapsed_days($postedtime);
 			break;
 		}
@@ -272,8 +272,13 @@ function post(){
 	setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
 	setcookie("pwdc",$pwd,time()+(60*60*24*30),0,"",false,true);
 
+
 		//ユーザーid
 		$userid = getId($userip);
+
+	if($adminpost||$pwd===$admin_pass){
+		$verified='adminpost';
+	}
 
 	//全体ログを開く
 	$fp=fopen(LOG_DIR."alllog.log","r+");
@@ -293,7 +298,7 @@ function post(){
 		if(is_file(LOG_DIR."{$chk_resno}.log")){
 		$cp=fopen(LOG_DIR."{$chk_resno}.log","r+");
 			while($line=fgetcsv($cp,0,"\t")){
-				list($no_,$sub_,$name_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$host_,$userid_,$hash_,$oya_)=$line;
+				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
 				if($host === $host_){
 					$chk_com[$time_]=$line;
 				};
@@ -302,7 +307,7 @@ function post(){
 	}
 	krsort($chk_com);
 	foreach($chk_com as $line){
-		list($no__,$sub__,$name__,$com__,$url__,$imgfile__,$w__,$h__,$thumbnail__,$painttime__,$log_md5__,$tool__,$pchext__,$time__,$host__,$userid__,$hash__,$oya__)=$line;
+		list($no__,$sub__,$name__,$verified__,$com__,$url__,$imgfile__,$w__,$h__,$thumbnail__,$painttime__,$log_md5__,$tool__,$pchext__,$time__,$first_posted_time__,$host__,$userid__,$hash__,$oya__)=$line;
 		if($com && ($com === $com__)){
 			safe_unlink($upfile);
 			error('同じコメントがありました。');
@@ -350,7 +355,7 @@ function post(){
 			if(is_file(LOG_DIR."{$chk_resno}.log")){
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r+");
 				while($line=fgetcsv($cp,0,"\t")){
-					list($no_,$sub_,$name_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$host_,$userid_,$hash_,$oya_)=$line;
+					list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
 					
 					if($log_md5 === $img_md5){
 						safe_unlink(IMG_DIR.$imgfile);
@@ -412,7 +417,7 @@ function post(){
 	$line='';
 
 	if($resto){//レスの時はスレッド別ログに追記
-		$r_line = "$resto\t$sub\t$name\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\tres\n";
+		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
 		file_put_contents(LOG_DIR.$resto.'.log',$r_line,FILE_APPEND | LOCK_EX);
 		chmod(LOG_DIR.$resto.'.log',0600);	
 		foreach($alllog_arr as $i =>$val){
@@ -427,7 +432,7 @@ function post(){
 	} else{
 		//最後の記事ナンバーに+1
 		$no=$max_no+1;
-		$line = "$no\t$sub\t$name\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$hash\toya\n";
+		$line = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
 		file_put_contents(LOG_DIR.$no.'.log',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 		chmod(LOG_DIR.$no.'.log',0600);
 	}
@@ -446,7 +451,7 @@ function post(){
 			flock($dp, LOCK_EX);
 
 			while ($line = fgetcsv($dp, 0, "\t")) {
-				list($d_no,$_sub,$_name,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_host,$_userid,$_hash,$_oya)=$line;
+				list($d_no,$_sub,$_name,$_verified,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=$line;
 
 			delete_files ($d_imgfile, $d_time);//一連のファイルを削除
 
@@ -579,6 +584,8 @@ function paint(){
 
 	}
 
+	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
+
 	switch($app){
 		case 'chi'://ChickenPaint
 		
@@ -698,7 +705,7 @@ function to_continue(){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgetcsv($rp,0,"\t")) {
-			list($no,$sub,$name,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=$line;
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 			if($id==$time){
 				$flag=true;
 				break;
@@ -800,7 +807,7 @@ function img_replace(){
 		}
 	$flag=false;
 	foreach($r_arr as $i => $line){
-		list($_no,$_sub,$_name,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_host,$_userid,$_hash,$_oya)=explode("\t",$line);
+		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",$line);
 		if($id==$_time && password_verify($pwd,$_hash)){
 			$flag=true;
 			break;
@@ -808,7 +815,7 @@ function img_replace(){
 	}
 	if(!$flag){
 		closeFile($rp);
-		error('見つかりませんでした。');
+		return error('見つかりませんでした。');
 	}
 	
 
@@ -887,7 +894,7 @@ function img_replace(){
 		$painttime=(int)$_painttime+(int)$psec;
 	}
 	
-	$new_line= "$_no\t$_sub\t$_name\t$_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$host\t$userid\t$_hash\t$_oya";
+	$new_line= "$_no\t$_sub\t$_name\t$_verified\t$_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya";
 
 	$r_arr[$i] = $new_line;
 
@@ -901,7 +908,7 @@ function img_replace(){
 			$alllog_arr[]=$_line;	
 		}
 		foreach($alllog_arr as $i => $val){
-			list($no_,$sub_,$name_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
+			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
 
 			if($id==$time_){
 				$alllog_arr[$i] = $new_line;
@@ -960,7 +967,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	$resmode = $resmode ? 'true' : 'false';
 	$postpage = filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$postresno = filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
-	$postpage = ($postpage || $postpage===0) ? $postpage : false; 
+	$postpage = ($postpage || $postpage===0) ? $postpage : 0; 
 	$postresno = ($postresno) ? $postresno : false; 
 
 	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
@@ -989,7 +996,7 @@ function confirmation_before_deletion ($edit_mode=''){
 		foreach($line as $i =>$val){
 
 			$_line=explode("\t",trim($val));
-			list($no,$sub,$name,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=$_line;
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
 			if($id==$time){
 				$res=create_res($_line);	
 				$out[0][]=$res;
@@ -1056,7 +1063,7 @@ function edit_form(){
 			
 			$line_=explode("\t",trim($val));
 
-			list($no,$sub,$name,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=$line_;
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line_;
 			if($id==$time){
 			
 				if(!$admindel){
@@ -1155,7 +1162,7 @@ function edit(){
 	$flag=false;
 	$_res=[];
 	foreach($r_arr as $i => $line){
-		list($_no,$_sub,$_name,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_host,$_userid,$_hash,$_oya)=explode("\t",$line);
+		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",$line);
 		if($id==$_time && password_verify($pwd,$_hash)){
 			$flag=true;
 	
@@ -1164,14 +1171,14 @@ function edit(){
 	}
 	if(!$flag){
 		closeFile($rp);
-		error('見つかりませんでした。');
+		return error('見つかりませんでした。');
 	}
-if(!$_imgfile && !$com){
-	error('何か書いてください。');
-}
+	if(!$_imgfile && !$com){
+		error('何か書いてください。');
+	}
 	$time = time().substr(microtime(),2,3);
 
-	$new_line= "$_no\t$sub\t$name\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$host\t$_userid\t$_hash\t$_oya";
+	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$_userid\t$_hash\t$_oya";
 
 	$r_arr[$i] = $new_line;
 
@@ -1186,7 +1193,7 @@ if(!$_imgfile && !$com){
 			$alllog_arr[]=$_line;	
 		}
 		foreach($alllog_arr as $i => $val){
-			list($no_,$sub_,$name_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
+			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
 
 			if($id==$time_){
 				$alllog_arr[$i] = $new_line;
@@ -1240,7 +1247,7 @@ function del(){
 		
 		foreach($line as $i =>$val){
 
-			list($no,$sub,$name,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
 			if($id==$time){
 			
 				if(!$admindel){
@@ -1250,14 +1257,14 @@ function del(){
 				}
 				if($oya==='oya'){//スレッド削除
 					foreach($line as $r_line) {
-						list($_no,$_sub,$_name,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
+						list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
 
 						delete_files ($_imgfile, $_time);//一連のファイルを削除
 
 					}
 				
 						foreach($alllog_arr as $i =>$val){
-							list($no_,$sub_,$name_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$val);
+							list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$val);
 							if($id==$time_){
 								unset($alllog_arr[$i]);
 							}
@@ -1308,7 +1315,7 @@ function catalog($page=0,$q=''){
 	if($q){//名前検索の時
 		foreach($alllog_arr as $oya => $alllog){
 			$line=explode("\t",trim($alllog));
-			list($no,$sub,$name,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$host,$userid,$hash,$oya)=$line;
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 	
 			if($name===$q){//検索結果と一致した投稿を配列に入れる
 				$result[]=$alllog;
@@ -1434,11 +1441,10 @@ function res ($resno){
 			while ($line = fgetcsv($fp, 0, "\t")) {
 				$_res = create_res($line);//$lineから、情報を取り出す
 
-				if($_res['oya']==='oya'){
-					$oyaname = $_res['name']; //投稿者名をコピー
-				}
-					// 投稿者名を配列にいれる
-					if ($oyaname !== $_res['name'] && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
+				$oyaname = ($_res['oya']==='oya') ? $_res['name'] :''; 
+
+				// 投稿者名を配列にいれる
+					if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
 						$rresname[] = $_res['name'];
 					}
 			
