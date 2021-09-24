@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.6.3';
+$petit_ver='v0.6.5';
 $petit_lot='lot.210924';
 
 if(!$max_log){
@@ -263,13 +263,14 @@ function post(){
 	error('何か書いて下さい。');
 	}
 
-	if(!$allow_coments_only && !$upfile && !$adminpost & $com){
+	if(!$resto && !$allow_coments_only && !$upfile && !$adminpost){
 	error('画像がありません。');
 	}
 
 	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
 
 	setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
+	setcookie("urlc",$url,time()+(60*60*24*30),0,"",false,true);
 	setcookie("pwdc",$pwd,time()+(60*60*24*30),0,"",false,true);
 
 
@@ -1367,7 +1368,7 @@ function catalog($page=0,$q=''){
 //通常表示
 function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button; 
+	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts; 
 
 	$alllog_arr=file(LOG_DIR.'alllog.log');//全体ログを読み込む
 	$count_alllog=count($alllog_arr);
@@ -1427,7 +1428,7 @@ function view($page=0){
 //レス画面
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$skindir,$root_url;
-	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button;
+	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts;
 	
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');
