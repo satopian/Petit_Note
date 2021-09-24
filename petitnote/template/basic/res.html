@@ -14,7 +14,7 @@
 	<meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($ress[0]['no'])?>" />
 	<meta property="og:image" content="<?php if($ress[0]['img']):?><?=h($root_url)?>src/<?=h($ress[0]['img'])?><?php endif;?>" />
 	<meta property="og:site_name"  content="<?=h($boardname)?>" />
-	<meta property="og:description" content="<?=h($ress[0]['img'])?>" />
+	<meta property="og:description" content="<?=h($ress[0]['com'])?>" />
 	<?php endif;?>
 <?php endforeach;?>
 <!--/SNS-->
@@ -59,7 +59,7 @@
 <?php if(!$aikotoba):?>
 この掲示板の合言葉はなんですか?: 
 <form action="./" method="post" class="aikotoba">
-	<input type="txt" name="aikotoba">
+	<input type="text" name="aikotoba" class="input_txt"> 
 	<input type="hidden" name="mode" value="aikotoba">
 	<input type="hidden" name="resmode" value="true">
 	<input type="hidden" name="resno" value="<?=h($out[0][0]['no'])?>">
@@ -246,12 +246,12 @@
 		<tr>
 			<td>名前</td>
 			<td>:</td>
-			<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username"></td>
+			<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username" class="input_txt"></td>
 		</tr>
 		<tr>
 			<td>URL</td>
 			<td>:</td>
-			<td><input type="text" name="url" value="<?=h($urlc)?>"></td>
+			<td><input type="text" name="url" value="<?=h($urlc)?>" autocomplete="off" class="input_txt"></td>
 		</tr>
 		</table>
 		<!-- <br> -->

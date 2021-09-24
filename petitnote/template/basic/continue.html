@@ -35,14 +35,14 @@
  <input type="hidden" name="no" value="<?=h($no)?>">
  <input type="hidden" name="time" value="<?=h($time)?>">
  <input type="hidden" name="imgfile" value="<?=h($imgfile)?>">
- <span class="nk">
  <select name="ctype" class="paint_select">
    <?php if($ctype_pch):?>
    <option value="pch">動画より続きを描く</option>
    <?php endif;?>
    <option value="img">画像より続きを描く</option>
  </select>
- 画像は <select name="type" class="paint_select">
+ <span class="continue_menu">
+	画像は <select name="type" class="paint_select">
 <option value="rep">差し換え</option>
 <?php if(!$use_diary || $adminpost):?>
 <option value="new">新規投稿</option>
@@ -69,8 +69,8 @@ selected
 <input type="hidden" name="app" value="<?=($app_to_use)?>">
 <?php endif;?>
 
-<span class="non"><input type="txt" value="" autocomplete="username"></span>
-<span class="nk">パスワード<input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
+<span class="non"><input type="text" value="" autocomplete="username"></span>
+<span class="continue_menu">パスワード <input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
 <input type="submit" value="続きを描く">
 
 </form>

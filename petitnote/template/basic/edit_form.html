@@ -85,20 +85,20 @@
 	<tr>
 		<td>名前</td>
 		<td>:</td>
-		<td><input type="text" name="name" value="<?=h($name)?>" autocomplete="username"></td>
+		<td><input type="text" name="name" value="<?=h($name)?>" autocomplete="username" class="input_txt"></td>
 	</tr>
 	<?php if($oya==='oya'):?>
 		<!-- レスの時は題名を出さない -->
 		<tr>
 			<td>題名</td>
 			<td>:</td>
-			<td><input type="text" name="sub" value="<?=h($sub)?>"></td>
+			<td><input type="text" name="sub" value="<?=h($sub)?>" class="input_txt"></td>
 		</tr>
 	<?php endif;?>
 	<tr>
 		<td>URL</td>
 		<td>:</td>
-		<td><input type="text" name="url" value="<?=h($url)?>"></td>
+		<td><input type="text" name="url" value="<?=h($url)?>" autocomplete="off" class="input_txt"></td>
 	</tr>
 	</table>
 <textarea name="com" class="post_com"><?=h($com)?></textarea><br>

@@ -252,7 +252,7 @@ function create_res($line){
 		'encoded_name' => urlencode($name),
 		'encoded_no' => urlencode('['.$no.']'),
 		'encoded_sub' => urlencode($sub),
-		'encoded_u' => urlencode($root_url.'?res='.$no),//tweet
+		'encoded_u' => urlencode($root_url.'?resno='.$no),//tweet
 		'encoded_t' => urlencode('['.$no.']'.$sub.' - '.$boardname),
 		'oya' => $oya,
 	];

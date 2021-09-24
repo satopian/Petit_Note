@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.6.1';
-$petit_lot='lot.210923';
+$petit_ver='v0.6.3';
+$petit_lot='lot.210924';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -273,8 +273,8 @@ function post(){
 	setcookie("pwdc",$pwd,time()+(60*60*24*30),0,"",false,true);
 
 
-		//ユーザーid
-		$userid = getId($userip);
+	//ユーザーid
+	$userid = t(getId($userip));
 
 	if($adminpost||$pwd===$admin_pass){
 		$verified='adminpost';
@@ -756,11 +756,11 @@ function img_replace(){
 	$id = t(filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
 	$pwd = filter_input(INPUT_GET, 'pwd');
 	$repcode = filter_input(INPUT_GET, 'repcode');
-	$userip = get_uip();
+	$userip = t(get_uip());
 	//ホスト取得
 	$host = t(gethostbyaddr($userip));
 	//ユーザーid
-	$userid = getId($userip);
+	$userid = t(getId($userip));
 
 
 	$pwd=hex2bin($pwd);//バイナリに
@@ -900,7 +900,7 @@ function img_replace(){
 	closeFile($rp);
 
 
-	if($_oya==='oya'){
+	if($_oya ==='oya'){
 
 		while ($_line = fgets($fp)) {
 			$alllog_arr[]=$_line;	
@@ -1024,7 +1024,7 @@ function confirmation_before_deletion ($edit_mode=''){
 }
 //編集画面
 function edit_form(){
-	global  $petit_ver,$boardname,$skindir;
+	global  $petit_ver,$petit_lot,$home,$boardname,$skindir;
 
 	$token=get_csrf_token();
 	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
@@ -1108,6 +1108,7 @@ function edit(){
 	$userip =t(get_uip());
 	//ホスト取得
 	$host = t(gethostbyaddr($userip));
+	$userid = t(getId($userip));
 
 	$sub = t((string)filter_input(INPUT_POST,'sub'));
 	$name = t((string)filter_input(INPUT_POST,'name'));
@@ -1176,7 +1177,7 @@ function edit(){
 	}
 	$time = time().substr(microtime(),2,3);
 
-	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$_userid\t$_hash\t$_oya\n";
+	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 
 	$r_arr[$i] = $new_line;
 
@@ -1439,8 +1440,9 @@ function res ($resno){
 			while ($line = fgetcsv($fp, 0, "\t")) {
 				$_res = create_res($line);//$lineから、情報を取り出す
 
-				$oyaname = ($_res['oya']==='oya') ? $_res['name'] :''; 
-
+				if($_res['oya']==='oya'){
+					$oyaname = $_res['name'];
+				} 
 				// 投稿者名を配列にいれる
 					if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
 						$rresname[] = $_res['name'];

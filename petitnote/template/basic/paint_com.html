@@ -41,18 +41,18 @@
 		<tr>
 			<td>名前</td>
 			<td>:</td>
-			<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username"></td>
+			<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username" class="input_txt"></td>
 	
 		</tr>
 		<tr>
 			<td>題名</td>
 			<td>:</td>
-			<td><input type="text" name="sub"></td>
+			<td><input type="text" name="sub" class="input_txt"></td>
 		</tr>
 		<tr>
 			<td>URL</td>
 			<td>:</td>
-			<td><input type="text" name="utl" value="<?=h($urlc)?>"></td>
+			<td><input type="text" name="utl" value="<?=h($urlc)?>" class="input_txt"></td>
 		</tr>
 		</table>
 	
@@ -75,7 +75,7 @@
 <?php else:?>
 この掲示板の合言葉はなんですか?: 
 <form action="./" method="post" class="aikotoba">
-	<input type="txt" name="aikotoba">
+	<input type="text" name="aikotoba" class="input_txt">
 	<input type="hidden" name="mode" value="aikotoba">
 	<input type="hidden" name="paintcom" value="true">
 	<input type="submit" value="秘密の答え">
