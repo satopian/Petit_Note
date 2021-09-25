@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.6.5';
-$petit_lot='lot.210924';
+$petit_ver='v0.6.7';
+$petit_lot='lot.210925';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -203,11 +203,9 @@ function post(){
 	if($resto && is_file(LOG_DIR."$resto.log")){//エラー処理
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
-		while ($line = fgetcsv($rp,0,"\t")) {
+		$line = fgetcsv($rp,0,"\t");
 			list($n_,$s_,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=$line;
 			$check_elapsed_days = check_elapsed_days($postedtime);
-			break;
-		}
 		closeFile ($rp);
 
 		if($pictmp===2){//お絵かきの時は新規投稿にする
@@ -277,9 +275,7 @@ function post(){
 	//ユーザーid
 	$userid = t(getId($userip));
 
-	if($adminpost||$pwd===$admin_pass){
-		$verified='adminpost';
-	}
+	$verified = ($adminpost||$pwd===$admin_pass) ? 'adminpost' : ''; //管理者の投稿ならadminpost
 
 	//全体ログを開く
 	$fp=fopen(LOG_DIR."alllog.log","r+");
