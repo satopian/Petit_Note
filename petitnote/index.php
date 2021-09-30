@@ -167,7 +167,7 @@ function post(){
 
 	//お絵かきアップロード
 	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
-	$picfile = t(filter_input(INPUT_POST, 'picfile'));
+	list($picfile,) = explode(",",filter_input(INPUT_POST, 'picfile'));
 	$painttime ='';
 
 	if($pictmp===2){//ユーザーデータを調べる
@@ -305,19 +305,19 @@ function post(){
 	}
 	krsort($chk_com);
 	foreach($chk_com as $line){
-		list($no__,$sub__,$name__,$verified__,$com__,$url__,$imgfile__,$w__,$h__,$thumbnail__,$painttime__,$log_md5__,$tool__,$pchext__,$time__,$first_posted_time__,$host__,$userid__,$hash__,$oya__)=$line;
-		if($com && ($com === $com__)){
+		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
+		if($com && ($com === $_com_)){
 			safe_unlink($upfile);
 			error('同じコメントがありました。');
 		}
 		// 画像アップロードの場合
-		if($imgfile && time()-substr($time__,0,-3)<15){
+		if($imgfile && time()-substr($_time_,0,-3)<30){
 			safe_unlink($upfile);
 			error('少し待ってください。');
 
 		}
 		//コメントの場合
-		if(time()-substr($time__,0,-3)<10){
+		if(time()-substr($_time_,0,-3)<15){
 			safe_unlink($upfile);
 			error('少し待ってください。');
 		}
@@ -682,37 +682,41 @@ function paintcom(){
 	$usercode = filter_input(INPUT_COOKIE,'usercode');
 	//テンポラリ画像リスト作成
 	$tmplist = [];
+	$uresto = '';
 	$handle = opendir(TEMP_DIR);
 	while ($file = readdir($handle)) {
 		if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
 			$fp = fopen(TEMP_DIR.$file, "r");
 			$userdata = fread($fp, 1024);
 			fclose($fp);
-			list($uip,$uhost,$uagent,$imgext,$ucode,) = explode("\t", rtrim($userdata));
+			list($uip,$uhost,$uagent,$imgext,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata));
 			$file_name = pathinfo($file, PATHINFO_FILENAME);
+			$uresto = $uresto ? 'res' :''; 
 			if(is_file(TEMP_DIR.$file_name.$imgext)){ //画像があればリストに追加
-				$tmplist[] = $ucode."\t".$uip."\t".$file_name.$imgext;
+				$tmplist[] = $ucode."\t".$uip."\t".$file_name.$imgext."\t".$uresto;
 			}
 		}
 	}
 	closedir($handle);
-	$tmp = [];
+	$tmps = [];
 	if(count($tmplist)!==0){
 		foreach($tmplist as $tmpimg){
-			list($ucode,$uip,$ufilename) = explode("\t", $tmpimg);
+			list($ucode,$uip,$ufilename,$uresto) = explode("\t", $tmpimg);
 			if($ucode == $usercode||$uip == $userip){
-				$tmp[] = $ufilename;
+				$tmps[] = [$ufilename,$uresto];
 			}
 		}
 	}
 
-	if(count($tmp)!==0){
+	if(count($tmps)!==0){
 		$pictmp = 2;
-		sort($tmp);
-		reset($tmp);
-		foreach($tmp as $tmpfile){
+		sort($tmps);
+		reset($tmps);
+		foreach($tmps as $tmp){
+			list($tmpfile,$resto)=$tmp;
 			$tmp_img['src'] = TEMP_DIR.$tmpfile;
 			$tmp_img['srcname'] = $tmpfile;
+			$tmp_img['slect_src_val'] = $tmpfile.','.$resto;
 			$tmp_img['date'] = date("Y/m/d H:i", filemtime($tmp_img['src']));
 			$out['tmp'][] = $tmp_img;
 		}

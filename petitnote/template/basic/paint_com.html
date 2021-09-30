@@ -6,6 +6,25 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="<?=h($skindir)?>index.css">
 	<title><?=h($boardname)?></title>
+
+	<script>
+	function select_pic(){
+	if(document.getElementById('select_picfile')){
+	id = document.getElementById('select_picfile').value;
+
+	var csvString = id;
+	var csvArray = csvString.split(',');
+	
+	if(csvArray[1] == 'res'){
+	document.getElementById('paintcom_title').style.display = "none";
+	}else{
+		document.getElementById('paintcom_title').style.display = "";
+	}
+	}
+	}
+	window.onload = select_pic;
+	</script>
+
 </head>
 <body>
 	<div class="container">
@@ -18,12 +37,12 @@
 			
 		<div>
 			<div class="error">
-				<?php if(!$tmp):?>
+				<?php if(!$tmps):?>
 				画像が見当たりません。<br>
 				<a href="#" onClick="javascript:window.history.back(-1);return false;">もどる</a>
 			</div>
 			<?php endif;?>
-<?php if($tmp):?>
+<?php if($tmps):?>
 			<?php foreach($out as $i=>$val):?>
 			<?php foreach($val as $tempimg):?>
 <div class="posted_img_form">
@@ -44,7 +63,7 @@
 			<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username" class="input_txt"></td>
 	
 		</tr>
-		<tr>
+		<tr id="paintcom_title">
 			<td>題名</td>
 			<td>:</td>
 			<td><input type="text" name="sub" class="input_txt"></td>
@@ -61,10 +80,16 @@
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <input type="hidden" name="pictmp" value="<?=h($pictmp)?>">
-<div class="post_table_title">画像<select name="picfile" class="post_select_image">
-			<?php foreach($out as $i=>$val):?>
+<div class="post_table_title">画像
+	<select name="picfile" class="post_select_image" onchange="select_pic();" id="select_picfile">
+
+?>
+	<?php foreach($out as $i=>$val):?>
+
+	<?php krsort($val);?>
+
 			<?php foreach($val as $tempimg):?>
-				<option value="<?=h($tempimg['srcname'])?>"><?=h($tempimg['srcname'])?></option>
+				<option value="<?=h($tempimg['slect_src_val'])?>"><?=h($tempimg['srcname'])?></option>
 				<?php endforeach;?>
 				<?php endforeach;?>
 			</select>
@@ -85,7 +110,7 @@
 			<?php endif; ?>
 
 <br>
-<?php if($tmp):?>
+<?php if($tmps):?>
 [<a href="./">掲示板に戻る</a>]
 <?php endif;?>
 </div>
