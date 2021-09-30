@@ -10,7 +10,7 @@ require_once(__DIR__.'/noticemail.inc');
 $skindir='template/'.$skindir;
 
 $petit_ver='v0.6.7';
-$petit_lot='lot.210925';
+$petit_lot='lot.210930';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -72,8 +72,8 @@ switch($mode){
 		return admin_in();
 	case 'admin_del':
 		return admin_del();
-	case 'diary':
-		return diary();
+	case 'adminpost':
+		return adminpost();
 	case 'aikotoba':
 		return aikotoba();
 	case 'view_nsfw':
@@ -134,8 +134,6 @@ function post(){
 	}
 	if(strlen($pwd) < 6) error('パスワードが短すぎます。最低6文字。');
 
-
-
 	$upfile='';
 	$imgfile='';
 	$w='';
@@ -144,11 +142,14 @@ function post(){
 	$time = time();
 	$time = $time.substr(microtime(),2,3);	//投稿時刻
 
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
 
 	//ファイルアップロード
 	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
+	if($tempfile && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
+		error('ファイルサイズが大きすぎます。');
+	} 
 	if($filesize > $max_kb*1024){
 		error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 	}
@@ -275,7 +276,7 @@ function post(){
 	//ユーザーid
 	$userid = t(getId($userip));
 
-	$verified = ($adminpost||$pwd===$admin_pass) ? 'adminpost' : ''; //管理者の投稿ならadminpost
+	$verified = ($adminpost||$pwd===$admin_pass) ? 'adminpost' : ''; 
 
 	//全体ログを開く
 	$fp=fopen(LOG_DIR."alllog.log","r+");
@@ -537,6 +538,53 @@ function paint(){
 	$rep=false;
 	$paintmode='paintcom';
 
+	session_sta();
+
+
+	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
+
+	//pchファイルアップロードペイント
+	if($adminpost){
+		
+		$pchfilename = isset($_FILES['pchup']['name']) ? basename($_FILES['pchup']['name']) : '';
+		
+		$pchtmp=isset($_FILES['pchup']['tmp_name']) ? $_FILES['pchup']['tmp_name'] : '';
+
+		if($pchtmp && in_array($_FILES['pchup']['error'],[1,2])){//容量オーバー
+			error('ファイルサイズが大きすぎます。');
+		} 
+
+		if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK){
+	
+			$time = time().substr(microtime(),2,3);
+			$pchext=pathinfo($pchfilename, PATHINFO_EXTENSION);
+			$pchext=strtolower($pchext);//すべて小文字に
+			//拡張子チェック
+			if (!in_array($pchext, ['pch','chi'])) {
+				error('アップロードペイントで使用できるファイルはpch、chiです',$pchtmp);
+			}
+			$pchup = TEMP_DIR.'pchup-'.$time.'-tmp.'.$pchext;//アップロードされるファイル名
+
+			if(move_uploaded_file($pchtmp, $pchup)){//アップロード成功なら続行
+
+				$pchup=TEMP_DIR.basename($pchup);//ファイルを開くディレクトリを固定
+				if(!in_array(mime_content_type($pchup),["application/octet-stream","application/gzip"])){
+					safe_unlink($pchup);
+					error('ファイルの形式が一致しません。');
+				}
+				if($pchext==="pch"){
+					$app='neo';
+					$pchfile = $pchup;
+				} elseif($pchext==="chi"){
+					$app='chi';
+					$img_chi = $pchup;
+				}
+			}
+		}
+	}
+
+
+
 	if($mode==="contpaint"){
 
 		$imgfile = filter_input(INPUT_POST,'imgfile');
@@ -729,7 +777,7 @@ function to_continue(){
 	}
 	//日記判定処理
 	session_sta();
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 
 	if(!$use_aikotoba){
@@ -1343,7 +1391,7 @@ function catalog($page=0,$q=''){
 	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
 
 	if(!$use_aikotoba){
 		$aikotoba=true;
@@ -1396,7 +1444,7 @@ function view($page=0){
 	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
 
 	if(!$use_aikotoba){
 		$aikotoba=true;
@@ -1458,7 +1506,7 @@ function res ($resno){
 	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}

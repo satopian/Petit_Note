@@ -18,7 +18,7 @@ function logout(){
 function logout_admin(){
 	session_sta();
 	unset($_SESSION['admindel']);
-	unset($_SESSION['diary']);
+	unset($_SESSION['adminpost']);
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);	
@@ -64,7 +64,7 @@ function admin_in(){
 	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
@@ -84,12 +84,12 @@ function check_aikotoba(){
 	return true;
 }
 
-function diary(){
+function adminpost(){
 	global $admin_pass;
 	session_sta();
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
-		if(isset($_SESSION['diary'])){
-			unset($_SESSION['diary']);
+		if(isset($_SESSION['adminpost'])){
+			unset($_SESSION['adminpost']);
 		} 
 		return 	error('パスワードが違います。');
 	}
@@ -97,7 +97,7 @@ function diary(){
 
 	$page = isset($page) ? $page : 0;
 	
-	$_SESSION['diary']='admin_post';
+	$_SESSION['adminpost']='admin_post';
 	$_SESSION['aikotoba']='aikotoba';
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
@@ -412,6 +412,13 @@ function deltemp(){
 			if($lapse > (3*24*3600)){//3日
 				unlink(TEMP_DIR.$file);
 			}
+			//pchアップロードペイントファイル削除
+			if(preg_match("/\A(pchup-.*-tmp\.s?pch)\z/i",$file)) {
+				$lapse = time() - filemtime(TEMP_DIR.$file);
+				if($lapse > (300)){//5分
+					unlink(TEMP_DIR.$file);
+				}
+			}
 		}
 	}
 	
@@ -423,7 +430,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	global $use_japanesefilter,$badstring,$badname,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass;
 
 	session_sta();
-	$adminpost=isset($_SESSION['diary'])&&($_SESSION['diary']==='admin_post');
+	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
 
 
 	$sub = t((string)filter_input(INPUT_POST,'sub'));
