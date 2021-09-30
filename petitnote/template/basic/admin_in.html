@@ -21,7 +21,12 @@
 <ul>
 <?php if($adminpost):?>
 <li>
-	日記モードでログイン中です。
+<?php if($use_diary):?>
+			日記モードでログイン中です。
+			<?php else:?>
+			管理者投稿モードでログイン中です。
+			<?php endif;?>
+
 </li>
 <?php endif;?>
 <?php if($admindel):?>
@@ -46,14 +51,20 @@
 		
 		<label><input type="radio" name="mode" value="admin_del" checked>[管理者編集モード]</label><br>
 		<?php endif;?>
-		<?php if($use_diary):?>
 		<?php if(!$adminpost):?>
-		<label><input type="radio" name="mode" value="diary" 
+		
+		<label><input type="radio" name="mode" value="adminpost" 
 			<?php if(!$admindel):?>checked<?php endif;?>
 			
-			>[日記モード]</label><br>
-		<?php endif;?>
-		<?php endif;?>
+			>
+			<?php if($use_diary):?>
+			[日記モード]
+			<?php else:?>
+			[管理者投稿]
+				<?php endif;?>
+			</label><br>
+			<?php endif;?>
+		
 		
 		<input type="password" name="adminpass">
 		<input type="hidden" name="postpage" value="<?=h($page)?>">

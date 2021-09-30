@@ -206,7 +206,7 @@ form.res_button {
 /* 返信フォーム */
 form.res_form {
 	text-align: right;
-	margin: 16px 0 0;
+	margin: 16px 0 5px;
 }
 table.resform {
 	margin: 0 0 0 auto;
@@ -246,7 +246,7 @@ form.admin {
 	margin: 5px 0 0 0;
 }
 form.paint_form {
-    margin: 3px 0 0;
+    margin: 3px 0 5px;
 	
 }
 form.aikotoba {
