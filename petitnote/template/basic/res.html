@@ -183,7 +183,7 @@
 		<button class="copy_button" onclick="add_to_com()">投稿者名をコピー</button>
 	<?php endif;?>
 <span class="share_button">
-<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=$res['encoded_no']?>+<?=$res['encoded_sub']?>+-+<?=h($boardname)?>&amp;url=<?=$res['encoded_u']?>"><span class="icon-twitter"></span>tweet</a>
+<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=$ress[0]['encoded_no']?>+<?=$ress[0]['encoded_sub']?>+-+<?=h($boardname)?>&amp;url=<?=$ress[0]['encoded_u']?>"><span class="icon-twitter"></span>tweet</a>
 </span>
 </div>
 <?php endif; ?>
@@ -287,15 +287,17 @@
 </div>
 </div>
 <div id="bottom"></div>
-<script src="/jquery-3.5.1.min.js"></script>
+<script src="<?=h($skindir)?>jquery-3.5.1.min.js"></script>
 <script>
-//送信ボタンを押した際に送信ボタンを無効化する（連打による多数送信回避）
-$(function(){
-$('[type="submit"]').click(function(){
-$(this).prop('disabled',true);//ボタンを無効化する
-$(this).closest('form').submit();//フォームを送信する
-});
-});
+	window.onpageshow = function(){
+		var $btn = $('[type="submit"]');
+		//disbledを解除
+		$btn.prop("disabled", false);
+		$btn.click(function(){//送信ボタン2度押し対策
+			$(this).prop('disabled',true);
+			$(this).closest('form').submit();
+		});
+	}
 </script>
 </body>
 </html>

@@ -279,7 +279,7 @@ span.continue_menu {
 	margin: 0;
 }
 .catalog_image {
-    width: 32.5%;
+    width: 32.6%;
     margin: 0.5% 0.5% 0.5% 0;
     display: inline-block;
 }
@@ -315,7 +315,7 @@ span.continue_menu {
 	/* カタログ表示を3列にするか2列にするか */
 
 	.catalog_image {
-		width: 49%;
+		width: 48.8%;
 		margin: 0.8% 0.8% 0.8% 0;
 		display: inline-block;
 	}

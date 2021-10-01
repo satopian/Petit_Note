@@ -43,6 +43,7 @@ $skindir='basic/';
 // 文字をシングルクオートで囲って、カンマで区切ります。
 // 説明文が不要なら []で。
 
+// $descriptions = ['iPadやスマートフォンでも描けるお絵かき掲示板です。','楽しくお絵かき。'];	
 $descriptions = ['iPadやスマートフォンでも描けるお絵かき掲示板です。','楽しくお絵かき。'];	
 
 /*メール通知*/
@@ -107,8 +108,8 @@ $use_upload = true;
 //しない: false で、スレ立てに画像が必須になります。
 // する: true しない: false
 
-$allow_coments_only = true;
-// $allow_coments_only = false;
+// $allow_coments_only = true;
+$allow_coments_only = false;
 
 //日記モードを使用する
 //する: true でスレッド立ては管理者のみになります。
