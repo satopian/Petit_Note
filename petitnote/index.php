@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.7.2';
+$petit_ver='v0.7.3';
 $petit_lot='lot.211003';
 
 if(!$max_log){
@@ -205,7 +205,7 @@ function post(){
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
 		$line = fgetcsv($rp,0,"\t");
-			list($n_,$s_,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=$line;
+			list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=$line;
 			$check_elapsed_days = check_elapsed_days($postedtime);
 		closeFile ($rp);
 
@@ -227,6 +227,8 @@ function post(){
 			safe_unlink($upfile);
 			error('最大レス数を超過しています。');
 			}
+
+		$sub='Re: '.$oyasub;
 	}
 
 	if(!$resto && $use_diary){
