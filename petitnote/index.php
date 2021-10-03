@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.7.1';
+$petit_ver='v0.7.2';
 $petit_lot='lot.211003';
 
 if(!$max_log){
