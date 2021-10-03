@@ -195,12 +195,14 @@ span.txtnon {
 }
 
 /* 返信ボタン */
+
 .res_button_wrap {
     text-align: right;
+	margin: 16px 0 0;
 }
 form.res_button {
 	text-align: right;
-	margin: 16px 0 0;
+	margin: 0;
 	display: inline-block;
 }
 /* 返信フォーム */
