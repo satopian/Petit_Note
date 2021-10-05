@@ -98,18 +98,24 @@ $use_top_form = true;
 // $use_top_form = false;
 
 //画像アップロード機能を使う
-//日記モードの管理者は使わないに設定しても、ファイルアップロードが可能です。
+//管理者投稿モード(日記)でログインしている時は使わないに設定しても、ファイルアップロードが可能です。
 // 使う:true 使わない:false
 
 $use_upload = true;
 // $use_upload = false;
 
+//レスで画像アップロード機能を使う
+//管理者投稿モード(日記)でログインしている時は使わないに設定しても、レスでお絵かきやレス画像のファイルアップロードが可能です。
+
+$use_res_upload = true;
+// $use_res_upload =  false;
+
 //コメントのみの新規投稿を許可する、しない。
 //しない: false で、スレ立てに画像が必須になります。
 // する: true しない: false
 
-// $allow_coments_only = true;
-$allow_coments_only = false;
+$allow_coments_only = true;
+// $allow_coments_only = false;
 
 //日記モードを使用する
 //する: true でスレッド立ては管理者のみになります。

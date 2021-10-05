@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.7.5';
+$petit_ver='v0.8.0';
 $petit_lot='lot.211005';
 
 if(!$max_log){
@@ -93,7 +93,7 @@ switch($mode){
 
 //投稿処理
 function post(){
-	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary,$max_w,$max_h,$use_thumb;
+	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb;
 	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass;
 
 	if($use_aikotoba){
@@ -154,9 +154,16 @@ function post(){
 		error("アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 	}
 	if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
+
+		if($resto && $tempfile && !$use_res_upload && !$adminpost){
+			safe_unlink($tempfile);
+			error('日記にログインしていません。');
+		}
+
 		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
 
 		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+			safe_unlink($tempfile);
 			error('対応していないフォーマットです。');
 		}
 		$upfile=IMG_DIR.$time.'.tmp';
@@ -171,6 +178,7 @@ function post(){
 	$painttime ='';
 
 	if($pictmp===2){//ユーザーデータを調べる
+
 		if(!$picfile) error('投稿に失敗しました。');
 		$tempfile = TEMP_DIR.$picfile;
 		$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
@@ -189,6 +197,9 @@ function post(){
 		//描画時間を$userdataをもとに計算
 		if($starttime && is_numeric($starttime)){
 			$painttime=(int)$postedtime-(int)$starttime;
+		}
+		if($resto && $picfile && !$use_res_upload && !$adminpost){
+			error('日記にログインしていません。');
 		}
 
 	}
@@ -248,8 +259,9 @@ function post(){
 			$filesize=filesize($upfile);
 	}
 
-	$sub=(!$sub) ? '無題' : $sub;
-
+	if(!$sub){
+		$sub='無題';
+	}
 	$sub=str_replace(["\r\n","\r","\n",],'',$sub);
 	$name=str_replace(["\r\n","\r","\n",],'',$name);
 	$com=str_replace(["\r\n","\r","\n",],"\n",$com);
@@ -310,18 +322,18 @@ function post(){
 		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
 		if($com && ($com === $_com_)){
 			safe_unlink($upfile);
-			error('同じコメントがありました。');
+			return error('同じコメントがありました。');
 		}
 		// 画像アップロードの場合
 		if($imgfile && time()-substr($_time_,0,-3)<30){
 			safe_unlink($upfile);
-			error('少し待ってください。');
+			return error('少し待ってください。');
 
 		}
 		//コメントの場合
 		if(time()-substr($_time_,0,-3)<15){
 			safe_unlink($upfile);
-			error('少し待ってください。');
+			return error('少し待ってください。');
 		}
 	}
 	if($upfile && is_file($upfile)){
@@ -359,7 +371,7 @@ function post(){
 					
 					if($log_md5 === $img_md5){
 						safe_unlink(IMG_DIR.$imgfile);
-						error('同じ画像がありました。');
+						return error('同じ画像がありました。');
 					};
 				}
 			}
@@ -1151,7 +1163,7 @@ function edit_form(){
 //編集
 function edit(){
 	global  $petit_ver,$boardname,$skindir;
-	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_diary,$max_w,$max_h,$use_thumb;
+	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_diary,$max_w,$max_h,$use_thumb;
 
 	check_csrf_token();
 
@@ -1231,6 +1243,7 @@ function edit(){
 	$sub=($_oya==='res') ? $_sub : $sub; 
 
 	$sub=(!$sub) ? '無題' : $sub;
+	
 
 	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 
@@ -1355,7 +1368,7 @@ function del(){
 
 //カタログ表示
 function catalog($page=0,$q=''){
-	global $use_aikotoba,$use_upload,$home,$catalog_pagedef,$dispres,$skindir;
+	global $use_aikotoba,$home,$catalog_pagedef,$dispres,$skindir;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw; 
 	$pagedef=$catalog_pagedef;
 	
@@ -1481,7 +1494,7 @@ function view($page=0){
 }
 //レス画面
 function res ($resno){
-	global $use_aikotoba,$use_upload,$home,$pagedef,$skindir,$root_url;
+	global $use_aikotoba,$use_upload,$home,$pagedef,$skindir,$root_url,$use_res_upload;
 	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts;
 	
 	$page='';
