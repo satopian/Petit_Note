@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.7.3';
-$petit_lot='lot.211003';
+$petit_ver='v0.7.5';
+$petit_lot='lot.211005';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -228,7 +228,8 @@ function post(){
 			error('最大レス数を超過しています。');
 			}
 
-		$sub='Re: '.$oyasub;
+			$sub='Re: '.$oyasub;
+
 	}
 
 	if(!$resto && $use_diary){
@@ -247,9 +248,8 @@ function post(){
 			$filesize=filesize($upfile);
 	}
 
-	if(!$sub){
-		$sub='無題';
-	}
+	$sub=(!$sub) ? '無題' : $sub;
+
 	$sub=str_replace(["\r\n","\r","\n",],'',$sub);
 	$name=str_replace(["\r\n","\r","\n",],'',$name);
 	$com=str_replace(["\r\n","\r","\n",],"\n",$com);
@@ -1227,6 +1227,10 @@ function edit(){
 		error('何か書いてください。');
 	}
 	$time = time().substr(microtime(),2,3);
+
+	$sub=($_oya==='res') ? $_sub : $sub; 
+
+	$sub=(!$sub) ? '無題' : $sub;
 
 	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 
