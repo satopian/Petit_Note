@@ -16,7 +16,7 @@ $home = './'; //相対パス、絶対パス、URLどれでもOK
 //最低500スレッド。
 $max_log = 1000;
 
-// 設置場所のurl
+// 設置場所のurl `/`まで。
 $root_url = 'http://example.com/oekaki/';
 
 
