@@ -3,9 +3,16 @@
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
 ## DEMO
-[Petit Note](https://pbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
+- [Petit Note](https://pbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
+- [イラスト投稿サイトPetit Note](https://pbbs.sakura.ne.jp/petit/)
   
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
+## 21/09/23 v0.7.5
+
+- 編集時にタイトル欄を空にした時にも｢無題｣と入るようにした。レスの題名をスレッドの親のタイトルにRe:を付けたものに。
+- レスの時は親のタイトルを自動で入れる。ただし掲示板には表示されない。外部プログラム使用時に必要。
+- お絵かきコメントのJavaScriptの修正。
+レスでお絵かきの時に題名欄が表示されないようにする工夫ですが、動作していれば従来通りでも問題ありません。 
 
 ## 21/09/23 v0.6
 
