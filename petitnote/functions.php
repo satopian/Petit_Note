@@ -387,10 +387,12 @@ function check_csrf_token(){
 }
 //session開始
 function session_sta(){
+	global $session_name;
 	if(!isset($_SESSION)){
 		session_set_cookie_params(
 			0,null,null,null,true
 		);
+		session_name($session_name);
 		session_start();
 		header('Expires:');
 		header('Cache-Control:');
