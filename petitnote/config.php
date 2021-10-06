@@ -106,6 +106,7 @@ $use_upload = true;
 
 //レスで画像アップロード機能を使う
 //管理者投稿モード(日記)でログインしている時は使わないに設定しても、レスでお絵かきやレス画像のファイルアップロードが可能です。
+// 使う: true 使わない: false
 
 $use_res_upload = true;
 // $use_res_upload =  false;

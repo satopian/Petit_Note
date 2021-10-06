@@ -165,19 +165,19 @@ button.copy_button:hover {
 }
 
 /* メニューのラップ */
-nav.memu_wrap  {
+nav.menu_wrap  {
     margin: 0 0 8px;
     display: inline-block;
     line-height: 1.8;
 }
 
-nav.memu_wrap_catalog {
+nav.menu_wrap_catalog {
     margin: 0 0 8px;
 	text-align: right;
 	display: block;
     line-height: 1.8;
 }
-.memu_wrap span {
+.menu_wrap span {
     display: inline-block;
 }
 span.canvas_size_wrap {
