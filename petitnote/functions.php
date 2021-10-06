@@ -61,10 +61,10 @@ function admin_in(){
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
 	session_sta();
-	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$admindel=admindel_valid();
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
+	$adminpost=adminpost_valid();
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
@@ -96,8 +96,10 @@ function adminpost(){
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
 	$page = isset($page) ? $page : 0;
+
+	$hash = password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]);
 	
-	$_SESSION['adminpost']='admin_post';
+	$_SESSION['adminpost']=$hash;
 	$_SESSION['aikotoba']='aikotoba';
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
@@ -119,7 +121,9 @@ function admin_del(){
 	}
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$page = isset($page) ? $page : 0;
-	$_SESSION['admindel']='admin_del';
+	$hash = password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]);
+
+	$_SESSION['admindel']=$hash;
 	$_SESSION['aikotoba']='aikotoba';
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 
@@ -141,6 +145,20 @@ function userdel_mode(){
 		return header('Location: ./?resno='.$resno);
 	}
 	return header('Location: ./?page='.$page);
+}
+
+//管理者パスワードを再チェック
+function adminpost_valid(){
+	global $admin_pass;
+	session_sta();
+	$adminpost=isset($_SESSION['adminpost'])&&password_verify($admin_pass,$_SESSION['adminpost']);
+return $adminpost;
+}
+function admindel_valid(){
+	global $admin_pass;
+	session_sta();
+	$admindel=isset($_SESSION['admindel'])&&password_verify($admin_pass,$_SESSION['admindel']);
+return $admindel;
 }
 
 //センシティブコンテンツ
@@ -387,12 +405,10 @@ function check_csrf_token(){
 }
 //session開始
 function session_sta(){
-	global $session_name;
 	if(!isset($_SESSION)){
 		session_set_cookie_params(
 			0,null,null,null,true
 		);
-		session_name($session_name);
 		session_start();
 		header('Expires:');
 		header('Cache-Control:');
@@ -431,9 +447,7 @@ function deltemp(){
 function Reject_if_NGword_exists_in_the_post(){
 	global $use_japanesefilter,$badstring,$badname,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass;
 
-	session_sta();
-	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
-
+	$adminpost=adminpost_valid();
 
 	$sub = t((string)filter_input(INPUT_POST,'sub'));
 	$name = t((string)filter_input(INPUT_POST,'name'));

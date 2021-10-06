@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.8.1';
+$petit_ver='v0.9.0';
 $petit_lot='lot.211006';
 
 if(!$max_log){
@@ -142,7 +142,7 @@ function post(){
 	$time = time();
 	$time = $time.substr(microtime(),2,3);	//投稿時刻
 
-	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
+	$adminpost=adminpost_valid();
 
 	//ファイルアップロード
 	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
@@ -555,7 +555,7 @@ function paint(){
 	session_sta();
 
 
-	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
+	$adminpost=adminpost_valid();
 
 	//pchファイルアップロードペイント
 	if($adminpost){
@@ -795,7 +795,7 @@ function to_continue(){
 	}
 	//日記判定処理
 	session_sta();
-	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
+	$adminpost=adminpost_valid();
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 
 	if(!$use_aikotoba){
@@ -1021,7 +1021,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	global $boardname,$max_res,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba;
 		//管理者判定処理
 	session_sta();
-	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$admindel=admindel_valid();
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$resmode = filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
@@ -1090,7 +1090,7 @@ function edit_form(){
 	global  $petit_ver,$petit_lot,$home,$boardname,$skindir;
 
 	$token=get_csrf_token();
-	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$admindel=admindel_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 
 	$pwd=filter_input(INPUT_POST,'pwd');
@@ -1184,7 +1184,7 @@ function edit(){
 	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
 	session_sta();
-	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$admindel=admindel_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	if(!($admindel||($userdel&&$pwd))){
 		return error('失敗しました。');
@@ -1287,7 +1287,7 @@ function del(){
 	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
 	session_sta();
-	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$admindel=admindel_valid();
 	$userdel_mode=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	if(!($admindel||($userdel_mode&&$pwd))){
 		return error('失敗しました。');
@@ -1411,10 +1411,10 @@ function catalog($page=0,$q=''){
 
 	//管理者判定処理
 	session_sta();
-	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$admindel=admindel_valid();
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
+	$adminpost=adminpost_valid();
 
 	if(!$use_aikotoba){
 		$aikotoba=true;
@@ -1464,10 +1464,10 @@ function view($page=0){
 
 	//管理者判定処理
 	session_sta();
-	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$admindel=admindel_valid();
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
+	$adminpost=adminpost_valid();
 
 	if(!$use_aikotoba){
 		$aikotoba=true;
@@ -1526,10 +1526,10 @@ function res ($resno){
 
 	//管理者判定処理
 	session_sta();
-	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admin_del');
+	$admindel=admindel_valid();
 	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='admin_post');
+	$adminpost=adminpost_valid();
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
