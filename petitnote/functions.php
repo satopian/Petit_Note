@@ -40,7 +40,9 @@ function aikotoba(){
 		} 
 		return 	error('合言葉が違います。');
 	}
-	$_SESSION['aikotoba']='aikotoba';
+	$hash=hash('sha256',$aikotoba, false);
+
+	$_SESSION['aikotoba']=$hash;
 	if(filter_input(INPUT_POST,'paintcom')){
 		return header('Location: ./?mode=paintcom');
 	}
@@ -62,7 +64,7 @@ function admin_in(){
 
 	session_sta();
 	$admindel=admindel_valid();
-	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
 	if(!$use_aikotoba){
@@ -76,16 +78,14 @@ function admin_in(){
 }
 //合言葉を再確認	
 function check_aikotoba(){
-	session_sta();
-	$session_aikotoba = isset($_SESSION['aikotoba']) ? $_SESSION['aikotoba'] : '';
-	if(!$session_aikotoba||$session_aikotoba!=='aikotoba'){
+	if(!aikotoba_valid()){
 		return error('合言葉が違います');
 	}
 	return true;
 }
 
 function adminpost(){
-	global $admin_pass;
+	global $admin_pass,$aikotoba;
 	session_sta();
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['adminpost'])){
@@ -97,10 +97,11 @@ function adminpost(){
 
 	$page = isset($page) ? $page : 0;
 
-	$hash = password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]);
+	$hash_aikotoba=hash('sha256',$aikotoba, false);
+	$_SESSION['aikotoba']=$hash_aikotoba;
 	
-	$_SESSION['adminpost']=$hash;
-	$_SESSION['aikotoba']='aikotoba';
+	$hash_pwd = password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]);
+	$_SESSION['adminpost']=$hash_pwd;
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);
@@ -159,6 +160,12 @@ function admindel_valid(){
 	session_sta();
 	$admindel=isset($_SESSION['admindel'])&&password_verify($admin_pass,$_SESSION['admindel']);
 return $admindel;
+}
+function aikotoba_valid(){
+	global $aikotoba;
+	session_sta();
+
+	return isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']===hash('sha256',$aikotoba, false));
 }
 
 //センシティブコンテンツ

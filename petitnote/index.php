@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.0';
-$petit_lot='lot.211006';
+$petit_ver='v0.9.1';
+$petit_lot='lot.211007';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -259,9 +259,7 @@ function post(){
 			$filesize=filesize($upfile);
 	}
 
-	if(!$sub){
-		$sub='無題';
-	}
+	$sub=(!$sub) ? '無題' : $sub;
 	$sub=str_replace(["\r\n","\r","\n",],'',$sub);
 	$name=str_replace(["\r\n","\r","\n",],'',$name);
 	$com=str_replace(["\r\n","\r","\n",],"\n",$com);
@@ -735,7 +733,7 @@ function paintcom(){
 			$out['tmp'][] = $tmp_img;
 		}
 	}
-	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$aikotoba=aikotoba_valid();
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
@@ -796,7 +794,7 @@ function to_continue(){
 	//日記判定処理
 	session_sta();
 	$adminpost=adminpost_valid();
-	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$aikotoba=aikotoba_valid();
 
 	if(!$use_aikotoba){
 	$aikotoba=true;
@@ -1022,7 +1020,7 @@ function confirmation_before_deletion ($edit_mode=''){
 		//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
-	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$resmode = filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
 	$resmode = $resmode ? 'true' : 'false';
@@ -1412,7 +1410,7 @@ function catalog($page=0,$q=''){
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
-	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
 
@@ -1465,7 +1463,7 @@ function view($page=0){
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
-	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
 
@@ -1527,7 +1525,7 @@ function res ($resno){
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
-	$aikotoba=isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
 	if(!$use_aikotoba){
