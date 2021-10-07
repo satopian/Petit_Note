@@ -40,9 +40,8 @@ function aikotoba(){
 		} 
 		return 	error('合言葉が違います。');
 	}
-	$hash=hash('sha256',$aikotoba, false);
 
-	$_SESSION['aikotoba']=$hash;
+	$_SESSION['aikotoba']='aikotoba';
 	if(filter_input(INPUT_POST,'paintcom')){
 		return header('Location: ./?mode=paintcom');
 	}
@@ -83,9 +82,9 @@ function check_aikotoba(){
 	}
 	return true;
 }
-
+//管理者投稿モード
 function adminpost(){
-	global $admin_pass,$aikotoba;
+	global $admin_pass;
 	session_sta();
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['adminpost'])){
@@ -98,11 +97,9 @@ function adminpost(){
 
 	$page = isset($page) ? $page : 0;
 
-	$hash_aikotoba=hash('sha256',$aikotoba, false);
-	$_SESSION['aikotoba']=$hash_aikotoba;
-	
-	$hash_pwd = password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]);
-	$_SESSION['adminpost']=$hash_pwd;
+	$_SESSION['aikotoba']='aikotoba';
+	$_SESSION['adminpost']='adminpost';
+
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);
@@ -127,10 +124,9 @@ function admin_del(){
 	
 
 	$hash_aikotoba=hash('sha256',$aikotoba, false);
-	$_SESSION['aikotoba']=$hash_aikotoba;
+	$_SESSION['aikotoba']='aikotoba';
 	
-	$hash_pwd = password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]);
-	$_SESSION['admindel']=$hash_pwd;
+	$_SESSION['admindel']='admindel';
 
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 
@@ -158,21 +154,20 @@ function userdel_mode(){
 function adminpost_valid(){
 	global $admin_pass;
 	session_sta();
-	$adminpost=isset($_SESSION['adminpost'])&&password_verify($admin_pass,$_SESSION['adminpost']);
+	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='adminpost');
 return $adminpost;
 }
 function admindel_valid(){
 	global $admin_pass;
 	session_sta();
-	$admindel=isset($_SESSION['admindel'])&&password_verify($admin_pass,$_SESSION['admindel']);
+	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admindel');
 return $admindel;
 }
 function aikotoba_valid(){
 	global $aikotoba;
 	session_sta();
-	$hash=hash('sha256',$aikotoba, false);
 
-	return isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']===hash('sha256',$aikotoba, false));
+	return isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 }
 
 //センシティブコンテンツ
