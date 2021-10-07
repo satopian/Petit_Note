@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.1';
+$petit_ver='v0.9.2';
 $petit_lot='lot.211007';
 
 if(!$max_log){
@@ -1241,7 +1241,6 @@ function edit(){
 	$sub=($_oya==='res') ? $_sub : $sub; 
 
 	$sub=(!$sub) ? '無題' : $sub;
-	
 
 	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 

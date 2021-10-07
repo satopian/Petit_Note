@@ -93,6 +93,7 @@ function adminpost(){
 		} 
 		return 	error('パスワードが違います。');
 	}
+	session_regenerate_id(true);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
 	$page = isset($page) ? $page : 0;
@@ -112,7 +113,7 @@ function adminpost(){
 
 //管理者削除モード
 function admin_del(){
-	global $admin_pass;
+	global $admin_pass,$aikotoba;
 	session_sta();
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['admindel'])){
@@ -120,12 +121,17 @@ function admin_del(){
 		} 
 		return 	error('パスワードが違います。');
 	}
+	session_regenerate_id(true);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$page = isset($page) ? $page : 0;
-	$hash = password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]);
+	
 
-	$_SESSION['admindel']=$hash;
-	$_SESSION['aikotoba']='aikotoba';
+	$hash_aikotoba=hash('sha256',$aikotoba, false);
+	$_SESSION['aikotoba']=$hash_aikotoba;
+	
+	$hash_pwd = password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]);
+	$_SESSION['admindel']=$hash_pwd;
+
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 
 	if($resno){
@@ -164,6 +170,7 @@ return $admindel;
 function aikotoba_valid(){
 	global $aikotoba;
 	session_sta();
+	$hash=hash('sha256',$aikotoba, false);
 
 	return isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']===hash('sha256',$aikotoba, false));
 }
@@ -414,7 +421,7 @@ function check_csrf_token(){
 function session_sta(){
 	if(!isset($_SESSION)){
 		session_set_cookie_params(
-			0,null,null,null,true
+			0,"",null,null,true
 		);
 		session_start();
 		header('Expires:');
