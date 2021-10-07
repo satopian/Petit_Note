@@ -110,7 +110,7 @@ function adminpost(){
 
 //管理者削除モード
 function admin_del(){
-	global $admin_pass,$aikotoba;
+	global $admin_pass;
 	session_sta();
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['admindel'])){
@@ -123,7 +123,6 @@ function admin_del(){
 	$page = isset($page) ? $page : 0;
 	
 
-	$hash_aikotoba=hash('sha256',$aikotoba, false);
 	$_SESSION['aikotoba']='aikotoba';
 	
 	$_SESSION['admindel']='admindel';
@@ -150,23 +149,17 @@ function userdel_mode(){
 	return header('Location: ./?page='.$page);
 }
 
-//管理者パスワードを再チェック
+//sessionの確認
 function adminpost_valid(){
-	global $admin_pass;
 	session_sta();
-	$adminpost=isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='adminpost');
-return $adminpost;
+	return isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='adminpost');
 }
 function admindel_valid(){
-	global $admin_pass;
 	session_sta();
-	$admindel=isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admindel');
-return $admindel;
+	return isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admindel');;
 }
 function aikotoba_valid(){
-	global $aikotoba;
 	session_sta();
-
 	return isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
 }
 
@@ -415,8 +408,9 @@ function check_csrf_token(){
 //session開始
 function session_sta(){
 	if(!isset($_SESSION)){
+		ini_set('session.use_strict_mode', 1);
 		session_set_cookie_params(
-			0,"",null,null,true
+			0,"","",null,true
 		);
 		session_start();
 		header('Expires:');

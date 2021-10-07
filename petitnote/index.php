@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.3';
-$petit_lot='lot.211007';
+$petit_ver='v0.9.3.2';
+$petit_lot='lot.211008';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
