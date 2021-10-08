@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.3.2';
-$petit_lot='lot.211008';
+$petit_ver='v0.9.3.3';
+$petit_lot='lot.211009';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -1069,6 +1069,8 @@ function confirmation_before_deletion ($edit_mode=''){
 		closeFile ($rp);
 	}
 
+	$token=get_csrf_token();
+
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
@@ -1283,6 +1285,7 @@ function del(){
 	$pwd=filter_input(INPUT_POST,'pwd');
 	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
+	check_csrf_token();
 	session_sta();
 	$admindel=admindel_valid();
 	$userdel_mode=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
