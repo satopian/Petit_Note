@@ -79,6 +79,8 @@ $badstr_B = ['シャネル','シュプリーム','バレンシアガ','ブラン
 // 本文へのURLの書き込みを許可する
 // URLを書き込むスパムを排除する時は しない: false
 // 管理者は設定に関わらず本文にURLを書き込めます。
+// する: true しない: false
+
 
 // $allow_comments_url = true; 
 $allow_comments_url = false; 
