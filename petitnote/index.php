@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.3.3';
+$petit_ver='v0.9.5.0';
 $petit_lot='lot.211009';
 
 if(!$max_log){
@@ -94,7 +94,7 @@ switch($mode){
 //投稿処理
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb;
-	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass;
+	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -267,7 +267,11 @@ function post(){
 	$com=str_replace("\n",'"\n"',$com);
 
 	if(!$name){
-		$name='anonymous';
+		if($name_input_required){
+			error('名前がありません。');
+		}else{
+			$name='anonymous';
+		}
 	}
 
 	if(!$upfile&&!$com){
@@ -1163,7 +1167,7 @@ function edit_form(){
 //編集
 function edit(){
 	global  $petit_ver,$boardname,$skindir;
-	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_diary,$max_w,$max_h,$use_thumb;
+	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_diary,$max_w,$max_h,$use_thumb,$name_input_required;
 
 	check_csrf_token();
 
@@ -1235,6 +1239,14 @@ function edit(){
 		closeFile($rp);
 		return error('見つかりませんでした。');
 	}
+	if(!$name){
+		if($name_input_required){
+			error('名前がありません。');
+		}else{
+			$name='anonymous';
+		}
+	}
+
 	if(!$_imgfile && !$com){
 		error('何か書いてください。');
 	}

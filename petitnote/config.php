@@ -19,6 +19,12 @@ $max_log = 1000;
 // 設置場所のurl `/`まで。
 $root_url = 'http://example.com/oekaki/';
 
+//名前を必須にする
+// しない: false の時に名前を空欄で投稿すると、｢anonymous｣になります。
+// する: true しない: false
+
+$name_input_required = true;
+// $name_input_required = false;
 
 /*-----絶対に変更が必要な項目ここまで-----*/
 
@@ -80,7 +86,6 @@ $badstr_B = ['シャネル','シュプリーム','バレンシアガ','ブラン
 // URLを書き込むスパムを排除する時は しない: false
 // 管理者は設定に関わらず本文にURLを書き込めます。
 // する: true しない: false
-
 
 // $allow_comments_url = true; 
 $allow_comments_url = false; 
