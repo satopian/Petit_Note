@@ -8,6 +8,19 @@
   
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
+## v0.9.3.2以前のPetit Noteをご利用の方へのお願い
+
+- テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.phpの更新が必要です。  
+セキュリティリスクを回避するためのアップデートをお願いします。
+
+## 21/10/09 v0.9.5
+
+- 名前の入力を必須にする、しないを設定できるようにしました。  
+
+安定版をリリースからダウンロードできます。  
+
+[PetitNote v0.9.5.0 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.5.0)
+
 ## 21/10/09 v0.9.3.3
 
 - セキュリティ対策。
