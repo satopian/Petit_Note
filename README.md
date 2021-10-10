@@ -2,6 +2,10 @@
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
+## ダウンロード
+
+- [リリース](https://github.com/satopian/Petit_Note/releases)から安定版をダウンロードできます。
+
 ## DEMO
 - [Petit Note](https://pbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
 - [イラスト投稿サイトPetit Note](https://pbbs.sakura.ne.jp/petit/)
