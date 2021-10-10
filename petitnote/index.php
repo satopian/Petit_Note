@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.5.0';
-$petit_lot='lot.211009';
+$petit_ver='v0.9.5.1';
+$petit_lot='lot.211010';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -112,6 +112,7 @@ function post(){
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
+	$sage = t((string)filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN));
 	$check_elapsed_days=false;
 
 	//NGワードがあれば拒絶
@@ -433,15 +434,18 @@ function post(){
 	if($resto){//レスの時はスレッド別ログに追記
 		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
 		file_put_contents(LOG_DIR.$resto.'.log',$r_line,FILE_APPEND | LOCK_EX);
-		chmod(LOG_DIR.$resto.'.log',0600);	
-		foreach($alllog_arr as $i =>$val){
-			list($_no)=explode("\t",$val);
-			if($resto==$_no){
-				$line = $val;//レスが付いたスレッドを$lineに保存。あとから配列に追加して上げる
-				unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
-				break;
+		chmod(LOG_DIR.$resto.'.log',0600);
+		if(!$sage){
+			foreach($alllog_arr as $i =>$val){
+				list($_no)=explode("\t",$val);
+				if($resto==$_no){
+					$line = $val;//レスが付いたスレッドを$lineに保存。あとから配列に追加して上げる
+					unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
+					break;
+				}
 			}
-		}
+			$alllog_arr[]=$line;//全体ログの配列に追加
+		}	
 		
 	} else{
 		//最後の記事ナンバーに+1
@@ -449,8 +453,8 @@ function post(){
 		$line = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
 		file_put_contents(LOG_DIR.$no.'.log',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 		chmod(LOG_DIR.$no.'.log',0600);
-	}
 		$alllog_arr[]=$line;//全体ログの配列に追加
+	}
 
 	//保存件数超過処理
 	$countlog=count($alllog_arr);

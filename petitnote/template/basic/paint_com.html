@@ -17,8 +17,10 @@
 	
 	if(csvArray[1] == 'res'){
 	document.getElementById('paintcom_title').style.display = "none";
+	document.getElementById('paintcom_sage').style.display = "";
 	}else{
-		document.getElementById('paintcom_title').style.display = "";
+	document.getElementById('paintcom_title').style.display = "";
+	document.getElementById('paintcom_sage').style.display = "none";
 	}
 	}
 	}
@@ -96,7 +98,8 @@
 			</select>
 			<br>
 		</div>
-	<input type="submit" value="投稿する">
+		<input type="submit" value="投稿する">
+		<label id="paintcom_sage">sage:<input type="checkbox" name="sage" value="on" class="form_button"></label>
 </form>
 <?php else:?>
 この掲示板の合言葉はなんですか?: 
