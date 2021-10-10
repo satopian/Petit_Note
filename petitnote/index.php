@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.5.1';
+$petit_ver='v0.9.5.2';
 $petit_lot='lot.211010';
 
 if(!$max_log){
@@ -31,7 +31,7 @@ if(!$usercode){//falseなら発行
 	//念の為にエスケープ文字があればアルファベットに変換
 	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
 }
-setcookie("usercode", $usercode, time()+(86400*365),0,"",false,true);//1年間
+setcookie("usercode", $usercode, time()+(86400*365),"","",false,true);//1年間
 
 //初期化
 init();
@@ -112,7 +112,7 @@ function post(){
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
-	$sage = t((string)filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN));
+	$sage = filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
 	$check_elapsed_days=false;
 
 	//NGワードがあれば拒絶
@@ -261,11 +261,13 @@ function post(){
 	}
 
 	$sub=(!$sub) ? '無題' : $sub;
-	$sub=str_replace(["\r\n","\r","\n",],'',$sub);
-	$name=str_replace(["\r\n","\r","\n",],'',$name);
-	$com=str_replace(["\r\n","\r","\n",],"\n",$com);
+	$sub=str_replace(["\r\n","\r","\n","\t"],'',$sub);
+	$name=str_replace(["\r\n","\r","\n","\t"],'',$name);
+	$url=str_replace(["\r\n","\r","\n","\t"],'',$url);
+	$com=str_replace(["\r\n","\r","\n"],"\n",$com);
 	$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
 	$com=str_replace("\n",'"\n"',$com);
+	$com=str_replace("\t",'',$com);
 
 	if(!$name){
 		if($name_input_required){
@@ -285,9 +287,9 @@ function post(){
 
 	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
 
-	setcookie("namec",$name,time()+(60*60*24*30),0,"",false,true);
-	setcookie("urlc",$url,time()+(60*60*24*30),0,"",false,true);
-	setcookie("pwdc",$pwd,time()+(60*60*24*30),0,"",false,true);
+	setcookie("namec",$name,time()+(60*60*24*30),"","",false,true);
+	setcookie("urlc",$url,time()+(60*60*24*30),"","",false,true);
+	setcookie("pwdc",$pwd,time()+(60*60*24*30),"","",false,true);
 
 
 	//ユーザーid
@@ -545,9 +547,9 @@ function paint(){
 	$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
 	$resto = t(filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
 
-	setcookie("appc", $app , time()+(60*60*24*30),0,"",false,true);//アプレット選択
-	setcookie("picwc", $picw , time()+(60*60*24*30),0,"",false,true);//幅
-	setcookie("pichc", $pich , time()+(60*60*24*30),0,"",false,true);//高さ
+	setcookie("appc", $app , time()+(60*60*24*30),"","",false,true);//アプレット選択
+	setcookie("picwc", $picw , time()+(60*60*24*30),"","",false,true);//幅
+	setcookie("pichc", $pich , time()+(60*60*24*30),"","",false,true);//高さ
 
 	$mode = filter_input(INPUT_POST, 'mode');
 
