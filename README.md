@@ -13,13 +13,14 @@
 - テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.phpの更新が必要です。  
 セキュリティリスクを回避するためのアップデートをお願いします。
 
-## 21/10/09 v0.9.5
+## 21/10/09 v0.9.5.2
 
-- 名前の入力を必須にする、しないを設定できるようにしました。  
+- 名前の入力を必須にする、しないを設定できるようにしました。
+- sage機能を追加しました。  
 
 安定版をリリースからダウンロードできます。  
 
-[PetitNote v0.9.5.0 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.5.0)
+[PetitNote v0.9.5.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.5.2)
 
 ## 21/10/09 v0.9.3.3
 
