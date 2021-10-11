@@ -24,7 +24,7 @@
 - 最下部の｢管理｣メニューが2重に表示されるバグを修正。
 安定版をリリースからダウンロードできます。  
 
-[PetitNote v0.9.6.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.2)
+[Petite Note v0.9.6.2 リリース](https://github.com/satopian/Petite_Note/releases/tag/v0.9.6.2)
 
 
 ## 21/10/11 v0.9.6.1
