@@ -168,9 +168,9 @@ function aikotoba_valid(){
 //センシティブコンテンツ
 function view_nsfw(){
 
-	$view=filter_input(INPUT_POST,'view_nsfw');
+	$view=filter_input(INPUT_POST,'view_nsfw',FILTER_VALIDATE_BOOLEAN);
 	if($view){
-		setcookie("nsfwc",'on',time()+(60*60*24*30),0,"",false,true);
+		setcookie("nsfwc",'on',time()+(60*60*24*30),"","",false,true);
 	}
 
 	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
