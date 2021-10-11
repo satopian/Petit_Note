@@ -84,7 +84,7 @@ function check_aikotoba(){
 }
 //管理者投稿モード
 function adminpost(){
-	global $admin_pass;
+	global $admin_pass,$second_pass;
 	session_sta();
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['adminpost'])){
@@ -98,7 +98,7 @@ function adminpost(){
 	$page = isset($page) ? $page : 0;
 
 	$_SESSION['aikotoba']='aikotoba';
-	$_SESSION['adminpost']='adminpost';
+	$_SESSION['adminpost']=$second_pass;
 
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
@@ -110,7 +110,7 @@ function adminpost(){
 
 //管理者削除モード
 function admin_del(){
-	global $admin_pass;
+	global $admin_pass,$second_pass;
 	session_sta();
 	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['admindel'])){
@@ -125,7 +125,7 @@ function admin_del(){
 
 	$_SESSION['aikotoba']='aikotoba';
 	
-	$_SESSION['admindel']='admindel';
+	$_SESSION['admindel']=$second_pass;
 
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 
@@ -151,12 +151,14 @@ function userdel_mode(){
 
 //sessionの確認
 function adminpost_valid(){
+	global $second_pass;
 	session_sta();
-	return isset($_SESSION['adminpost'])&&($_SESSION['adminpost']==='adminpost');
+	return isset($_SESSION['adminpost'])&&($_SESSION['adminpost']===$second_pass);
 }
 function admindel_valid(){
+	global $second_pass;
 	session_sta();
-	return isset($_SESSION['admindel'])&&($_SESSION['admindel']==='admindel');;
+	return isset($_SESSION['admindel'])&&($_SESSION['admindel']===$second_pass);
 }
 function aikotoba_valid(){
 	session_sta();
