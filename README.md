@@ -12,8 +12,8 @@
 - [リリース](https://github.com/satopian/Petit_Note/releases)から安定版をダウンロードできます。
 
 ## DEMO
-- [Petite Note](https://pbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
-- [イラスト投稿サイトPetite Note](https://pbbs.sakura.ne.jp/petit/)
+- [Petit Note](https://pbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
+- [イラスト投稿サイトPetit Note](https://pbbs.sakura.ne.jp/petit/)
   
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
@@ -24,7 +24,7 @@
 - 最下部の｢管理｣メニューが2重に表示されるバグを修正。
 安定版をリリースからダウンロードできます。  
 
-[Petite Note v0.9.6.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.2)
+[Petit Note v0.9.6.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.2)
 
 
 ## 21/10/11 v0.9.6.1
