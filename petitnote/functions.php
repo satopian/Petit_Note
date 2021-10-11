@@ -86,7 +86,7 @@ function check_aikotoba(){
 function adminpost(){
 	global $admin_pass,$second_pass;
 	session_sta();
-	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
+	if($admin_pass!==filter_input(INPUT_POST,'adminpass')||$admin_pass===$second_pass){
 		if(isset($_SESSION['adminpost'])){
 			unset($_SESSION['adminpost']);
 		} 
@@ -112,7 +112,7 @@ function adminpost(){
 function admin_del(){
 	global $admin_pass,$second_pass;
 	session_sta();
-	if($admin_pass!==filter_input(INPUT_POST,'adminpass')){
+	if($admin_pass!==filter_input(INPUT_POST,'adminpass')||$admin_pass===$second_pass){
 		if(isset($_SESSION['admindel'])){
 			unset($_SESSION['admindel']);
 		} 
