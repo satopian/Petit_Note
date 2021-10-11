@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.6.1';
+$petit_ver='v0.9.6.2';
 $petit_lot='lot.211011';
 
 if(!$max_log){
@@ -1218,7 +1218,13 @@ function edit(){
 	$com=str_replace(["\r\n","\r","\n",],"\n",$com);
 	$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
 	$com=str_replace("\n",'"\n"',$com);
-
+	if(!$name){
+		if($name_input_required){
+			error('名前がありません。');
+		}else{
+			$name='anonymous';
+		}
+	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."$no.log")){
 		error('記事がありません。');//該当記事が無い時は新規投稿。
@@ -1235,9 +1241,14 @@ function edit(){
 	$_res=[];
 	foreach($r_arr as $i => $line){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
-		if($id==$_time && password_verify($pwd,$_hash)){
+		if($id==$_time){
+
+			if(!$admindel){
+				if(!password_verify($pwd,$_hash)){
+					return error('失敗しました。');
+				}
+			}
 			$flag=true;
-	
 			break;
 		}
 	}
@@ -1245,14 +1256,6 @@ function edit(){
 		closeFile($rp);
 		return error('見つかりませんでした。');
 	}
-	if(!$name){
-		if($name_input_required){
-			error('名前がありません。');
-		}else{
-			$name='anonymous';
-		}
-	}
-
 	if(!$_imgfile && !$com){
 		error('何か書いてください。');
 	}
