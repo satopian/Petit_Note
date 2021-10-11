@@ -78,7 +78,7 @@
 	<span><?=h($res['date'])?></span>		
 <?php if($res['img']):?>
 	<span>TOOL:<?=h($res['tool'])?></span>
-	<span><?php if($res['painttime']):?>
+	<?php if($res['painttime']):?>
 		<span>描画時間:<?=h($res['painttime'])?></span>
 		
 		<?php endif;?>
