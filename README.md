@@ -1,8 +1,8 @@
-# Petite Note
+# Petit Note
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
-## v0.9.5以前のPetite Noteをご利用の方へのお願い
+## v0.9.5以前のPetit Noteをご利用の方へのお願い
 
 - テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.php、config.phpの更新が必要です。  
 セキュリティリスクを回避するためのアップデートをお願いします。
@@ -24,7 +24,7 @@
 - 最下部の｢管理｣メニューが2重に表示されるバグを修正。
 安定版をリリースからダウンロードできます。  
 
-[Petite Note v0.9.6.2 リリース](https://github.com/satopian/Petite_Note/releases/tag/v0.9.6.2)
+[Petite Note v0.9.6.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.2)
 
 
 ## 21/10/11 v0.9.6.1
