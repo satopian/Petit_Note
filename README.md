@@ -19,14 +19,14 @@
 
 ## 履歴
 
-## 21/10/09 v0.9.5.2
+## 21/10/11 v0.9.6.0
 
 - 名前の入力を必須にする、しないを設定できるようにしました。
-- sage機能を追加しました。  
-
+- sage機能を追加しました。
+- config.phpに新規設定項目。第2パスワードを使って管理者である事を再確認する処理を追加。 
 安定版をリリースからダウンロードできます。  
 
-[PetitNote v0.9.5.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.5.2)
+[PetitNote v0.9.6.0 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.0)
 
 ## 21/10/09 v0.9.3.3
 
