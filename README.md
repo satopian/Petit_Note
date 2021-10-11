@@ -1,8 +1,8 @@
-# Petit Note
+# Petite Note
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
-## v0.9.5以前のPetit Noteをご利用の方へのお願い
+## v0.9.5以前のPetite Noteをご利用の方へのお願い
 
 - テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.php、config.phpの更新が必要です。  
 セキュリティリスクを回避するためのアップデートをお願いします。
@@ -12,8 +12,8 @@
 - [リリース](https://github.com/satopian/Petit_Note/releases)から安定版をダウンロードできます。
 
 ## DEMO
-- [Petit Note](https://pbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
-- [イラスト投稿サイトPetit Note](https://pbbs.sakura.ne.jp/petit/)
+- [Petite Note](https://pbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
+- [イラスト投稿サイトPetite Note](https://pbbs.sakura.ne.jp/petit/)
   
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
