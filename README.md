@@ -2,9 +2,9 @@
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
-## v0.9.3.2以前のPetit Noteをご利用の方へのお願い
+## v0.9.5以前のPetit Noteをご利用の方へのお願い
 
-- テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.phpの更新が必要です。  
+- テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.php、config.phpの更新が必要です。  
 セキュリティリスクを回避するためのアップデートをお願いします。
 
 ## ダウンロード
@@ -19,14 +19,14 @@
 
 ## 履歴
 
-## 21/10/11 v0.9.6.0
+## 21/10/11 v0.9.6.1
 
 - 名前の入力を必須にする、しないを設定できるようにしました。
 - sage機能を追加しました。
 - config.phpに新規設定項目。第2パスワードを使って管理者である事を再確認する処理を追加。 
 安定版をリリースからダウンロードできます。  
 
-[PetitNote v0.9.6.0 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.0)
+[PetitNote v0.9.6.1 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.1)
 
 ## 21/10/09 v0.9.3.3
 
