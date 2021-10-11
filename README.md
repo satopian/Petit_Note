@@ -26,7 +26,7 @@
 - config.phpに新規設定項目。第2パスワードを使って管理者である事を再確認する処理を追加。 
 安定版をリリースからダウンロードできます。  
 
-[PetitNote v0.9.6.1 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.1)
+[PetitNote v0.9.6.1 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.1.1)
 
 ## 21/10/09 v0.9.3.3
 
