@@ -18,13 +18,14 @@
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
 ## 履歴
-## 21/10/11 v0.9.6.2
+## 21/10/11 v0.9.6.3
 
 - 管理者編集モードで編集に失敗するバグを修正。
 - 最下部の｢管理｣メニューが2重に表示されるバグを修正。
+- 管理パス、第2パス未設定時にはパス不一致とする処理を追加。
 安定版をリリースからダウンロードできます。  
 
-[Petit Note v0.9.6.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.2)
+[Petit Note v0.9.6.3 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.6.3)
 
 
 ## 21/10/11 v0.9.6.1
