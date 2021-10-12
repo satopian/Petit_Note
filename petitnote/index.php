@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.6.2';
-$petit_lot='lot.211011';
+$petit_ver='v0.9.6.3';
+$petit_lot='lot.211012';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -295,7 +295,7 @@ function post(){
 	//ユーザーid
 	$userid = t(getId($userip));
 
-	$verified = ($adminpost||$pwd===$admin_pass) ? 'adminpost' : ''; 
+	$verified = ($adminpost||($admin_pass && $pwd===$admin_pass)) ? 'adminpost' : ''; 
 
 	//全体ログを開く
 	$fp=fopen(LOG_DIR."alllog.log","r+");

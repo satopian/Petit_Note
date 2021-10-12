@@ -34,7 +34,7 @@ function aikotoba(){
 	global $aikotoba;
 
 	session_sta();
-	if($aikotoba!==filter_input(INPUT_POST,'aikotoba')){
+	if(!$aikotoba || $aikotoba!==filter_input(INPUT_POST,'aikotoba')){
 		if(isset($_SESSION['aikotoba'])){
 			unset($_SESSION['aikotoba']);
 		} 
@@ -86,7 +86,7 @@ function check_aikotoba(){
 function adminpost(){
 	global $admin_pass,$second_pass;
 	session_sta();
-	if($admin_pass!==filter_input(INPUT_POST,'adminpass')||$admin_pass===$second_pass){
+	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['adminpost'])){
 			unset($_SESSION['adminpost']);
 		} 
@@ -112,7 +112,7 @@ function adminpost(){
 function admin_del(){
 	global $admin_pass,$second_pass;
 	session_sta();
-	if($admin_pass!==filter_input(INPUT_POST,'adminpass')||$admin_pass===$second_pass){
+	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['admindel'])){
 			unset($_SESSION['admindel']);
 		} 
@@ -471,7 +471,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	}
 
 	//本文へのURLの書き込みを禁止
-	if(!$allow_comments_url && !$adminpost && $pwd !== $admin_pass){
+	if(!$allow_comments_url && !$adminpost && (!$admin_pass||$pwd !== $admin_pass)){
 		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) error('URLの記入はできません。');
 	}
 
