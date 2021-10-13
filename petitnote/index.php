@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.6.3';
-$petit_lot='lot.211012';
+$petit_ver='v0.9.7.2';
+$petit_lot='lot.211013';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -306,9 +306,7 @@ function post(){
 	}
 	$img_md5='';
 
-	$chk_log_arr=$alllog_arr;
-	krsort($chk_log_arr);
-	$chk_log_arr=array_slice($chk_log_arr,0,5,false);
+	$chk_log_arr=array_slice($alllog_arr,0,5,false);
 	$chk_com=[];
 	foreach($chk_log_arr as $chk_log){
 		list($chk_resno)=explode("\t",$chk_log);
@@ -322,7 +320,6 @@ function post(){
 			}
 		}
 	}
-	krsort($chk_com);
 	foreach($chk_com as $line){
 		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
 		if($com && ($com === $_com_)){
@@ -364,9 +361,7 @@ function post(){
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 	if($pictmp!=2 && $imgfile && is_file(IMG_DIR.$imgfile)){
 		$img_md5=md5_file(IMG_DIR.$imgfile);
-		$chk_log_arr=$alllog_arr;
-		krsort($chk_log_arr);
-		$chk_log_arr=array_slice($chk_log_arr,0,20,false);
+		$chk_log_arr=array_slice($alllog_arr,0,20,false);
 		foreach($chk_log_arr as $chk_log){
 			list($chk_resno)=explode("\t",$chk_log);
 			if(is_file(LOG_DIR."{$chk_resno}.log")){
@@ -441,27 +436,27 @@ function post(){
 			foreach($alllog_arr as $i =>$val){
 				list($_no)=explode("\t",$val);
 				if($resto==$_no){
-					$line = $val;//レスが付いたスレッドを$lineに保存。あとから配列に追加して上げる
+					$newline = $val;//レスが付いたスレッドを$newlineに保存。あとから全体ログの先頭に追加して上げる
 					unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
 					break;
 				}
 			}
-			$alllog_arr[]=$line;//全体ログの配列に追加
 		}	
 		
 	} else{
 		//最後の記事ナンバーに+1
 		$no=$max_no+1;
-		$line = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
-		file_put_contents(LOG_DIR.$no.'.log',$line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
+		$newline = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
+		file_put_contents(LOG_DIR.$no.'.log',$newline,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 		chmod(LOG_DIR.$no.'.log',0600);
-		$alllog_arr[]=$line;//全体ログの配列に追加
 	}
 
 	//保存件数超過処理
 	$countlog=count($alllog_arr);
-	for($i=0;$i<$countlog-$max_log;++$i){//$max_logスレッド分残して削除
-		if(isset($alllog_arr[$i]) && $alllog_arr[$i]===''){
+	if($max_log<=$countlog){
+		for($i=$max_log-1; $i<$countlog;++$i){
+
+			if(isset($alllog_arr[$i]) && $alllog_arr[$i]===''){
 			continue;
 		}
 		list($d_no,)=explode("\t",$alllog_arr[$i]);
@@ -480,9 +475,12 @@ function post(){
 		}	
 		safe_unlink(LOG_DIR.$d_no.'.log');//スレッド個別ログファイル削除
 		unset($alllog_arr[$i]);//全体ログ記事削除
+		}
 	}
-	$alllog=implode("",$alllog_arr);
-	writeFile ($fp, $alllog);
+	$newline.=implode("",$alllog_arr);
+
+
+	writeFile ($fp, $newline);
 	closeFile($fp);
 
 	chmod(LOG_DIR.'alllog.log',0600);
@@ -1299,8 +1297,6 @@ function edit(){
 
 }
 
-
-
 //記事削除
 function del(){
 	$pwd=filter_input(INPUT_POST,'pwd');
@@ -1395,9 +1391,12 @@ function catalog($page=0,$q=''){
 	
 	$q=filter_input(INPUT_GET,'q');
 
-	$alllog_arr=file(LOG_DIR.'alllog.log');//全体ログを読み込む
+	$fp=fopen(LOG_DIR."alllog.log","r");
+	$alllog_arr=[];
+	while ($_line = fgets($fp)) {
+		$alllog_arr[]=$_line;	
+	}
 
-	krsort($alllog_arr);
 	$encoded_q='';
 	$result=[];
 	if($q){//名前検索の時
@@ -1458,12 +1457,15 @@ function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts; 
 
-	$alllog_arr=file(LOG_DIR.'alllog.log');//全体ログを読み込む
+	$fp=fopen(LOG_DIR."alllog.log","r");
+	$alllog_arr=[];
+	while ($_line = fgets($fp)) {
+		$alllog_arr[]=$_line;	
+	}
 	$count_alllog=count($alllog_arr);
 
-	krsort($alllog_arr);
 
-	//ページ番号から1ページ分のスレッド分とりだす
+	//ページ番号から1ページ分のスレッドをとりだす
 	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
 	foreach($alllog_arr as $oya => $alllog){
@@ -1502,8 +1504,6 @@ function view($page=0){
 	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
 	$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
 	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
-
-
 
 	//token
 	$token=get_csrf_token();
