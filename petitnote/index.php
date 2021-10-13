@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.7.2';
+$petit_ver='v0.9.7.3';
 $petit_lot='lot.211013';
 
 if(!$max_log){
@@ -1113,12 +1113,9 @@ function edit_form(){
 	if($id_and_no){
 		list($id,$no)=explode(",",trim(filter_input(INPUT_POST,'id_and_no')));
 	}
-	$alllog_arr=[];
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
-	while ($_line = fgets($fp)) {
-		$alllog_arr[]=$_line;	
-	}
+
 	$flag=false;
 
 	if(is_file(LOG_DIR."$no.log")){
