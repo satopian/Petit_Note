@@ -327,7 +327,7 @@ function post(){
 			return error('同じコメントがありました。');
 		}
 		// 画像アップロードの場合
-		if($imgfile && time()-substr($_time_,0,-3)<30){
+		if($upfile && time()-substr($_time_,0,-3)<30){
 			safe_unlink($upfile);
 			return error('少し待ってください。');
 

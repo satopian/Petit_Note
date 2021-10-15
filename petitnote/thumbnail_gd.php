@@ -23,7 +23,7 @@ function thumb($path,$fname,$time,$max_w,$max_h){
 	// リサイズ
 	$key_w = $max_w / $size[0];
 	$key_h = $max_h / $size[1];
-	($key_w < $key_h) ? $keys = $key_w : $keys = $key_h;
+	$keys = ($key_w < $key_h) ? $key_w : $key_h;
 	$out_w = $w_h_size_over ? ceil($size[0] * $keys):$size[0];//端数の切り上げ
 	$out_h = $w_h_size_over ? ceil($size[1] * $keys):$size[1];
 
