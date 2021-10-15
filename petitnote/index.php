@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.7.3';
-$petit_lot='lot.211013';
+$petit_ver='v0.9.7.5';
+$petit_lot='lot.211015';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -1499,7 +1499,7 @@ function view($page=0){
 	$urlc=(string)filter_input(INPUT_COOKIE,'urlc');
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
-	$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
+	$pichc=(string)filter_input(INPUT_COOKIE,'pichc');
 	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
 
 	//token
@@ -1558,7 +1558,7 @@ function res ($resno){
 	$urlc=(string)filter_input(INPUT_COOKIE,'urlc');
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
-	$picwh=(string)filter_input(INPUT_COOKIE,'pichc');
+	$pichc=(string)filter_input(INPUT_COOKIE,'pichc');
 	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
 
 	//token
