@@ -148,8 +148,9 @@
 <input type="hidden" name="id" value="<?=h($res['time'])?>">
 <input type="hidden" name="no" value="<?=h($res['no'])?>">
 <input type="hidden" name="postresno" value="<?=h($resno)?>">
-<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
+<?php if($ress[0]['check_elapsed_days']||$admindel):?>
 <input type="submit" value="編集">
+<?php endif;?>
 </form>
 <form action="./" method="POST" class="aikotoba">
 <input type="hidden" name="mode" value="before_del">
@@ -160,7 +161,6 @@
 <input type="hidden" name="postpage" value="<?=h($page)?>">
 <input type="hidden" name="postresno" value="<?=h($resno)?>">
 
-<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
 <input type="submit" value="削除">
 </form>
 <?php endif;?>	
