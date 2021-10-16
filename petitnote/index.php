@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.7.8';
+$petit_ver='v0.9.8.0';
 $petit_lot='lot.211016';
 
 if(!$max_log){
@@ -1060,18 +1060,23 @@ function confirmation_before_deletion ($edit_mode=''){
 			$line[]=$r_line;
 		}
 		$res=[];
+		$find=false;
 		foreach($line as $i =>$val){
 
 			$_line=explode("\t",trim($val));
-			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
-			if($id==$time){
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
+			if($id===$time && $no===$_no){
 				$res=create_res($_line);	
 				$out[0][]=$res;
 
+				$find=true;
 				break;
 				
 			}
 
+		}
+		if(!$find){
+			error('見つかりませんでした。');
 		}
 
 		closeFile ($rp);
@@ -1133,7 +1138,8 @@ function edit_form(){
 			if($id==$time && $no===$_no){
 			
 				if(!$admindel){
-					if(!password_verify($pwd,$hash)){
+					
+					if(!check_elapsed_days($time)||!password_verify($pwd,$hash)){
 						return error('失敗しました。');
 					}
 				}
@@ -1239,7 +1245,8 @@ function edit(){
 		if($id===$_time && $no===$_no){
 
 			if(!$admindel){
-				if(!password_verify($pwd,$_hash)){
+
+				if(!check_elapsed_days($_time)||!password_verify($pwd,$_hash)){
 					return error('失敗しました。');
 				}
 			}
