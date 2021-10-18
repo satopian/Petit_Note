@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.0';
-$petit_lot='lot.211016';
+$petit_ver='v0.9.8.2';
+$petit_lot='lot.211018';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -244,11 +244,9 @@ function post(){
 
 	}
 
-	if(!$resto && $use_diary){
-		if(!$adminpost){
+	if(!$resto && $use_diary && !$adminpost){
 			safe_unlink($upfile);
 			error('日記にログインしていません。');
-		}
 	}
 
 	//お絵かきアップロード
@@ -338,6 +336,23 @@ function post(){
 			return error('少し待ってください。');
 		}
 	}
+
+	$thumbnail='';
+	if($upfile && is_file($upfile)){
+
+		$max_w = $resto ? $res_max_w : $max_w; 
+		$max_h = $resto ? $res_max_h : $max_h; 
+		//縮小表示
+		list($w,$h)=getimagesize($upfile);
+		list($w,$h)=image_reduction_display($w,$h,$max_w,$max_h);
+		//サムネイル
+		if($use_thumb){
+			if(thumb($upfile,$time,$max_w,$max_h)){
+				$thumbnail='thumbnail';
+			}
+		}
+	}
+
 	if($upfile && is_file($upfile)){
 		if($filesize > 512 * 1024){//指定サイズを超えていたら
 			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
@@ -350,9 +365,15 @@ function post(){
 				}
 			}
 		}
-		list($w,$h)=getimagesize($upfile);
 		$_img_type=mime_content_type($upfile);
 		$ext=getImgType ($_img_type);
+		if (!$ext) {
+			safe_unlink($upfile);
+			safe_unlink(THUMB_DIR.$time.'s.jpg');
+			$thumbnail='';
+			error('対応していないフォーマットです。');
+		}
+	
 		$imgfile=$time.$ext;
 
 		rename($upfile,IMG_DIR.$imgfile);
@@ -371,6 +392,8 @@ function post(){
 					
 					if($log_md5 === $img_md5){
 						safe_unlink(IMG_DIR.$imgfile);
+						safe_unlink(THUMB_DIR.$time.'s.jpg');
+						$thumbnail='';
 						return error('同じ画像がありました。');
 					};
 				}
@@ -397,20 +420,6 @@ function post(){
 			$dst = IMG_DIR.$time.'.chi';
 			if(copy($src, $dst)){
 				chmod($dst,0606);
-			}
-		}
-	}
-	$thumbnail='';
-	if($imgfile && is_file(IMG_DIR.$imgfile)){
-
-		$max_w = $resto ? $res_max_w : $max_w; 
-		$max_h = $resto ? $res_max_h : $max_h; 
-		//縮小表示
-		list($w,$h)=image_reduction_display($w,$h,$max_w,$max_h);
-		//サムネイル
-		if($use_thumb){
-			if(thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
-				$thumbnail='thumbnail';
 			}
 		}
 	}
@@ -892,7 +901,19 @@ function img_replace(){
 	copy($tempfile, $upfile);
 	if(!is_file($upfile)) error('失敗しました。');
 	chmod($upfile,0606);
-	
+
+	list($w, $h) = getimagesize($upfile);
+	//縮小表示 元のサイズを最大値にセット
+	list($w,$h)=image_reduction_display($w,$h,$_w,$_h);
+
+	//サムネイル
+	$thumbnail='';
+	if($use_thumb){
+		if(thumb($upfile,$time,$_w,$_h)){
+			$thumbnail='thumbnail';
+		}
+	}
+
 	$filesize=filesize($upfile);
 	if($filesize > 512 * 1024){//指定サイズを超えていたら
 		if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
@@ -907,15 +928,17 @@ function img_replace(){
 	}
 		
 	$img_type=mime_content_type($upfile);
-	if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
-		safe_unlink($upfile);
-		error('対応していないフォーマットです。');
-	}
 
-	list($w, $h) = getimagesize($upfile);
+
 	$img_md5=md5_file($upfile);
 	
 	$imgext = getImgType($img_type, $upfile);
+
+	if (!$imgext) {
+		safe_unlink($upfile);
+		safe_unlink(THUMB_DIR.$time.'s.jpg');
+		error('対応していないフォーマットです。');
+	}
 	
 	$imgfile = $time.$imgext;
 
@@ -942,16 +965,7 @@ function img_replace(){
 		}
 	}
 
-	//縮小表示 元のサイズを最大値にセット
-	list($w,$h)=image_reduction_display($w,$h,$_w,$_h);
 	
-	//サムネイル
-	$thumbnail='';
-	if($use_thumb){
-		if(thumb(IMG_DIR,$imgfile,$time,$_w,$_h)){
-			$thumbnail='thumbnail';
-		}
-	}
 	
 	//描画時間追加
 
