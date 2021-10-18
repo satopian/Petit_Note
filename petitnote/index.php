@@ -929,9 +929,7 @@ function img_replace(){
 		
 	$img_type=mime_content_type($upfile);
 
-
 	$img_md5=md5_file($upfile);
-	
 	$imgext = getImgType($img_type, $upfile);
 
 	if (!$imgext) {
@@ -965,7 +963,6 @@ function img_replace(){
 		}
 	}
 
-	
 	
 	//描画時間追加
 
