@@ -9,9 +9,11 @@
 //201218 webp形式対応
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
-function thumb($path,$fname,$time,$max_w,$max_h){
+function thumb($fname,$time,$max_w,$max_h){
+	if(!is_file($fname)){
+		return;
+	}
 	if(!gd_check()||!function_exists("ImageCreate")||!function_exists("ImageCreateFromJPEG"))return;
-	$fname=$path.$fname;
 	$fsize = filesize($fname);    // ファイルサイズを取得
 	$size = GetImageSize($fname); // 画像の幅と高さとタイプを取得
 	$w_h_size_over=($size[0] > $max_w || $size[1] > $max_h);
@@ -77,11 +79,9 @@ function thumb($path,$fname,$time,$max_w,$max_h){
 		return;
 	}
 
-	$thumbnail_size = [
-		'w' => $out_w,
-		'h' => $out_h,
-	];
-return $thumbnail_size;
+	$thumbnail_size = [$out_w,$out_h];
+
+	return $thumbnail_size;
 
 }
 
