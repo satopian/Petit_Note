@@ -4,6 +4,7 @@
 // originalscript (c)SakaQ 2005 >> http://www.punyu.net/php/
 
 //サムネイル作成
+//211018 PetitNote v0.9.8.2用にコードを修正
 //210920 PetitNote用にコードを修正
 //210203 コード整理
 //201218 webp形式対応
