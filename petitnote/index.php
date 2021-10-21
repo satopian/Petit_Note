@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.3';
-$petit_lot='lot.211018';
+$petit_ver='v0.9.8.6';
+$petit_lot='lot.211021';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -131,7 +131,7 @@ function post(){
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
 		srand((double)microtime()*1000000);
-		$pwd = substr(rand(), 0, 8);
+		$pwd = substr(md5(uniqid(rand())),2,15);
 	}
 	if(strlen($pwd) < 6) error('パスワードが短すぎます。最低6文字。');
 
@@ -216,8 +216,8 @@ function post(){
 	if($resto && is_file(LOG_DIR."$resto.log")){//エラー処理
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
-		$line = fgetcsv($rp,0,"\t");
-			list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=$line;
+		$line = fgets($rp);
+			list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=explode("\t",$line);
 			$check_elapsed_days = check_elapsed_days($postedtime);
 		closeFile ($rp);
 
@@ -310,16 +310,16 @@ function post(){
 		list($chk_resno)=explode("\t",$chk_log);
 		if(is_file(LOG_DIR."{$chk_resno}.log")){
 		$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-			while($line=fgetcsv($cp,0,"\t")){
-				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
-				if($host === $host_){
+		while($line=fgets($cp)){
+			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
+			if($host === $host_){
 					$chk_com[$time_]=$line;
 				};
 			}
 		}
 	}
 	foreach($chk_com as $line){
-		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
+		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",$line);
 		if($com && ($com === $_com_)){
 			safe_unlink($upfile);
 			return error('同じコメントがありました。');
@@ -369,9 +369,9 @@ function post(){
 			list($chk_resno)=explode("\t",$chk_log);
 			if(is_file(LOG_DIR."{$chk_resno}.log")){
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-				while($line=fgetcsv($cp,0,"\t")){
-					list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
-					
+			while($line=fgets($cp)){
+				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
+				
 					if($log_md5 === $img_md5){
 						safe_unlink(IMG_DIR.$imgfile);
 						return error('同じ画像がありました。');
@@ -468,8 +468,8 @@ function post(){
 			$dp = fopen(LOG_DIR."$d_no.log", "r");//個別スレッドのログを開く
 			flock($dp, LOCK_EX);
 
-			while ($line = fgetcsv($dp, 0, "\t")) {
-				list($d_no,$_sub,$_name,$_verified,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=$line;
+			while ($line = fgets($dp)) {
+				list($d_no,$_sub,$_name,$_verified,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",$line);
 
 			delete_files ($d_imgfile, $d_time);//一連のファイルを削除
 
@@ -774,8 +774,8 @@ function to_continue(){
 	if(is_file(LOG_DIR."$no.log")){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
-		while ($line = fgetcsv($rp,0,"\t")) {
-			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+		while ($line = fgets($rp)) {
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
 			if($id==$time){
 				$flag=true;
 				break;
@@ -1494,8 +1494,8 @@ function view($page=0){
 		$_res=[];
 			$fp = fopen(LOG_DIR."$no.log", "r");//個別スレッドのログを開く
 			$s=0;
-			while ($line = fgetcsv($fp, 0, "\t")) {
-				$_res = create_res($line);//$lineから、情報を取り出す
+			while ($line = fgets($fp)) {
+				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
 				$out[$oya][]=$_res;
 			}	
 		fclose($fp);
@@ -1542,11 +1542,14 @@ function res ($resno){
 		$rresname = [];
 		$resname = '';
 			$fp = fopen(LOG_DIR."$resno.log", "r");//個別スレッドのログを開く
-			while ($line = fgetcsv($fp, 0, "\t")) {
-				$_res = create_res($line);//$lineから、情報を取り出す
+			while ($line = fgets($fp)) {
+				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
+
 
 				if($_res['oya']==='oya'){
+
 					$oyaname = $_res['name'];
+
 				} 
 				// 投稿者名を配列にいれる
 					if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外

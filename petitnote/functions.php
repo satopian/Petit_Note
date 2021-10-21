@@ -200,8 +200,8 @@ function check_cont_pass(){
 	if(is_file(LOG_DIR."$no.log")){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
-		while ($line = fgetcsv($rp,0,"\t")) {
-			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+		while ($line = fgets($rp)) {
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id==$time && password_verify($pwd,$hash)){
 				closeFile ($rp);
 				return true;
