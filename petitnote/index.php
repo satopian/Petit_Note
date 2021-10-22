@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.6';
+$petit_ver='v0.9.8.7';
 $petit_lot='lot.211021';
 
 if(!$max_log){
@@ -1416,9 +1416,9 @@ function catalog($page=0,$q=''){
 	$encoded_q='';
 	$result=[];
 	if($q){//名前検索の時
-		foreach($alllog_arr as $oya => $alllog){
+		foreach($alllog_arr as $alllog){
 			$line=explode("\t",trim($alllog));
-			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$_oya)=$line;
 	
 			if($name===$q){//検索結果と一致した投稿を配列に入れる
 				$result[]=$alllog;
