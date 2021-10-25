@@ -1,6 +1,6 @@
 <?php
 // thumbnail_gd.php for PetitNote by さとぴあ 2021   
-// thumbnail_gd.php by POTI改 >> https://pbbs.sakura.ne.jp/poti/ 
+// thumbnail_gd.php by POTI改 >> https://paintbbs.sakura.ne.jp/poti/ 
 // originalscript (c)SakaQ 2005 >> http://www.punyu.net/php/
 
 //サムネイル作成

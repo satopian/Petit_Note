@@ -2,7 +2,7 @@
 /*
 ** メール通知クラス(UTF-8) lot.21922 for PetitNote
 **
-** https://pbbs.sakura.ne.jp/poti/
+** https://paintbbs.sakura.ne.jp/poti/
 ** by POTI改
 ** originalscript (C)SakaQ 2004-2007
 ** http://www.punyu.net/php/

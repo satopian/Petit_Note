@@ -1,7 +1,7 @@
 <?php
 //----------------------------------------------------------------------
 // picpost.php lot.210920  for PetitNote
-// by さとぴあ & POTI改 >> https://pbbs.sakura.ne.jp/poti/ 
+// by さとぴあ & POTI改 >> https://paintbbs.sakura.ne.jp/poti/ 
 // originalscript (c)SakaQ 2005 >> http://www.punyu.net/php/
 // しぃからPOSTされたお絵かき画像をTEMPに保存
 //
