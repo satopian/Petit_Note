@@ -18,12 +18,15 @@
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
 ## 履歴
+## 21/10/22 v0.9.8.7.1
+- 著作リンクを変更しました。templateのリンク先が変わっただけです。  
+新url [https://paintbbs.sakura.ne.jp/](https://paintbbs.sakura.ne.jp/petit/)
+
+[Petit Note v0.9.8.7.1 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.8.7.1)
 
 ## 21/10/22 v0.9.8.7
 - csv(tsv)としてログファイルを読み込んでいたため、ダブルクォートが入力された時にデータが壊れていました。
 - 重大なバグですので、アップデートが必要です。
-
-[Petit Note v0.9.8.7 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.8.7)
 
 ### 21/10/13 v0.9.8.3
 - お絵かきアプリの幅と高さのcookieが正しく処理されていなかったのを修正しました。
