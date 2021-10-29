@@ -18,11 +18,16 @@
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
 ## 履歴
-## 21/10/22 v0.9.8.7.1
+## 21/10/29 v0.9.8.7.2  
+ログファイルを外部から直接開かれる事が無いよいうにパーミッションを600にしているログファイルですが、`.htaccess`で開く事ができないようにしていおたほうがより安全なため、`.htaccess`というファイルを追加しました。  
+`index.php`と同じディレクトリにアップロードします。
+
+[Petit Note v0.9.8.7.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.8.7.2)
+
+## 21/10/27 v0.9.8.7.1
 - 著作リンクを変更しました。templateのリンク先が変わっただけです。  
 新url [https://paintbbs.sakura.ne.jp/](https://paintbbs.sakura.ne.jp/petit/)
 
-[Petit Note v0.9.8.7.1 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.8.7.1)
 
 ## 21/10/22 v0.9.8.7
 - csv(tsv)としてログファイルを読み込んでいたため、ダブルクォートが入力された時にデータが壊れていました。
