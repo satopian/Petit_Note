@@ -94,7 +94,7 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 	</span>
 </div>
 
-<?php if($start_page!==0 && $prev!==false):?>
+<?php if($prev!==false):?>
 <a href="?mode=catalog&page=0<?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">start</a> |
 <?php endif;?>
 

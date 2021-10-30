@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.7';
+$petit_ver='v0.9.8.8';
 $petit_lot='lot.211021';
 
 if(!$max_log){
@@ -21,6 +21,7 @@ $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+$page= $page ? $page : 0; 
 $resno=filter_input(INPUT_GET,'resno');
 
 $usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//nullならuser-codeを発行
