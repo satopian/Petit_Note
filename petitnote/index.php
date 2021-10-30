@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.8';
-$petit_lot='lot.211021';
+$petit_ver='v0.9.8.9';
+$petit_lot='lot.211030';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -128,6 +128,7 @@ function post(){
 	if(strlen($sub) > 80) error('題名が長すぎます。');
 	if(strlen($name) > 30) error('名前が長すぎます。');
 	if(strlen($com) > 1000) error('本文が長すぎます。');
+	if(strlen($url) > 100) error('urlが長すぎます。');
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
@@ -1217,6 +1218,7 @@ function edit(){
 	if(strlen($sub) > 80) error('題名が長すぎます。');
 	if(strlen($name) > 30) error('名前が長すぎます。');
 	if(strlen($com) > 1000) error('本文が長すぎます。');
+	if(strlen($url) > 100) error('urlが長すぎます。');
 
 	$sub=str_replace(["\r\n","\r","\n",],'',$sub);
 	$name=str_replace(["\r\n","\r","\n",],'',$name);
