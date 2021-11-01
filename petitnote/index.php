@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.9';
-$petit_lot='lot.211030';
+$petit_ver='v0.9.8.10';
+$petit_lot='lot.211101';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -113,6 +113,7 @@ function post(){
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
+	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$sage = filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
 	$check_elapsed_days=false;
 
@@ -129,11 +130,12 @@ function post(){
 	if(strlen($name) > 30) error('名前が長すぎます。');
 	if(strlen($com) > 1000) error('本文が長すぎます。');
 	if(strlen($url) > 100) error('urlが長すぎます。');
-	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
+	if(strlen($pwd) > 100) error('パスワードが長すぎます。');
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
 		srand((double)microtime()*1000000);
 		$pwd = substr(md5(uniqid(rand())),2,15);
+		$pwd = strtr($pwd,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
 	}
 	if(strlen($pwd) < 6) error('パスワードが短すぎます。最低6文字。');
 
@@ -542,13 +544,21 @@ return header('Location: ./');
 //お絵かき画面
 function paint(){
 
-	global $boardname,$skindir;
+	global $boardname,$skindir,$pmax_w,$pmax_h;
 
 	$app = filter_input(INPUT_POST,'app');
 	$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 	$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
 	$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
 	$resto = t(filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
+	if(strlen($resto>1000)){
+		error('問題が発生しました。');
+	}
+
+	if($picw < 300) $picw = 300;
+	if($pich < 300) $pich = 300;
+	if($picw > $pmax_w) $picw = $pmax_w;
+	if($pich > $pmax_h) $pich = $pmax_h;
 
 	setcookie("appc", $app , time()+(60*60*24*30),"","",false,true);//アプレット選択
 	setcookie("picwc", $picw , time()+(60*60*24*30),"","",false,true);//幅
@@ -639,6 +649,7 @@ function paint(){
 			$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 			$pwd = filter_input(INPUT_POST, 'pwd');
 			$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+			if(strlen($pwd) > 100) error('パスワードが長すぎます。');
 			if($pwd){
 				$pwd=openssl_encrypt ($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//暗号化
 				$pwd=bin2hex($pwd);//16進数に
@@ -1219,6 +1230,7 @@ function edit(){
 	if(strlen($name) > 30) error('名前が長すぎます。');
 	if(strlen($com) > 1000) error('本文が長すぎます。');
 	if(strlen($url) > 100) error('urlが長すぎます。');
+	if(strlen($pwd) > 100) error('パスワードが長すぎます。');
 
 	$sub=str_replace(["\r\n","\r","\n",],'',$sub);
 	$name=str_replace(["\r\n","\r","\n",],'',$name);
