@@ -32,6 +32,9 @@ $root_url = 'http://example.com/oekaki/';
 $name_input_required = true;
 // $name_input_required = false;
 
+//本文の制限文字数。半角で
+$max_com=1000;
+
 /*-----絶対に変更が必要な項目ここまで-----*/
 
 /*SNS連携*/
