@@ -9,14 +9,15 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.10';
-$petit_lot='lot.211101';
+$petit_ver='v0.9.8.11';
+$petit_lot='lot.211102';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
 }
 
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
+$max_com= isset($max_com) ? $max_com : 1000;
 
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
@@ -95,7 +96,7 @@ switch($mode){
 //投稿処理
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb;
-	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required;
+	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -128,7 +129,7 @@ function post(){
 
 	if(strlen($sub) > 80) error('題名が長すぎます。');
 	if(strlen($name) > 30) error('名前が長すぎます。');
-	if(strlen($com) > 1000) error('本文が長すぎます。');
+	if(strlen($com) > $max_com) error('本文が長すぎます。');
 	if(strlen($url) > 100) error('urlが長すぎます。');
 	if(strlen($pwd) > 100) error('パスワードが長すぎます。');
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
@@ -341,6 +342,7 @@ function post(){
 		}
 	}
 	if($upfile && is_file($upfile)){
+
 		if($filesize > 512 * 1024){//指定サイズを超えていたら
 			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 
@@ -1040,7 +1042,7 @@ function pchview(){
 //削除前の確認画面
 function confirmation_before_deletion ($edit_mode=''){
 
-	global $boardname,$max_res,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba;
+	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba;
 		//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
@@ -1189,8 +1191,7 @@ function edit_form(){
 }
 //編集
 function edit(){
-	global  $petit_ver,$boardname,$skindir;
-	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_diary,$max_w,$max_h,$use_thumb,$name_input_required;
+	global $name_input_required,$max_com;
 
 	check_csrf_token();
 
@@ -1228,7 +1229,7 @@ function edit(){
 
 	if(strlen($sub) > 80) error('題名が長すぎます。');
 	if(strlen($name) > 30) error('名前が長すぎます。');
-	if(strlen($com) > 1000) error('本文が長すぎます。');
+	if(strlen($com) > $max_com) error('本文が長すぎます。');
 	if(strlen($url) > 100) error('urlが長すぎます。');
 	if(strlen($pwd) > 100) error('パスワードが長すぎます。');
 
@@ -1416,8 +1417,8 @@ function del(){
 
 //カタログ表示
 function catalog($page=0,$q=''){
-	global $use_aikotoba,$home,$catalog_pagedef,$dispres,$skindir;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw; 
+	global $use_aikotoba,$home,$catalog_pagedef,$skindir;
+	global $boardname,$petit_ver,$petit_lot,$set_nsfw; 
 	$pagedef=$catalog_pagedef;
 	
 	$q=filter_input(INPUT_GET,'q');
@@ -1546,8 +1547,8 @@ function view($page=0){
 }
 //レス画面
 function res ($resno){
-	global $use_aikotoba,$use_upload,$home,$pagedef,$skindir,$root_url,$use_res_upload;
-	global $pagedef,$boardname,$max_res,$pmax_w,$pmax_h,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts;
+	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload;
+	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts;
 	
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');
