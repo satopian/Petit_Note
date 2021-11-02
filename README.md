@@ -2,10 +2,10 @@
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
-## v0.9.5以前のPetit Noteをご利用の方へのお願い
+## v0.9.8.7.2以前のPetit Noteをご利用の方へのお願い
 
-- テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.php、config.phpの更新が必要です。  
-セキュリティリスクを回避するためのアップデートをお願いします。
+- テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.php、config.php、thumbnail_gd.phpの更新が必要です。  
+セキュリティリスクを回避するためアップデートをお願いします。
 
 ## ダウンロード
 
