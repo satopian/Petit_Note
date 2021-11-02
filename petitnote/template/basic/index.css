@@ -3,6 +3,7 @@
 body {
 	margin: 10px;
 	color: #555;
+	word-break:break-all;
 }
 .container {
 	max-width: 928px;
