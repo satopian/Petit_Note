@@ -9,11 +9,14 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.11';
+$petit_ver='v0.9.8.12';
 $petit_lot='lot.211102';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
+}
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<2){
+	error('thumbnail_gd.phpのバージョンが古いため動作しません。');
 }
 
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
@@ -96,7 +99,7 @@ switch($mode){
 //投稿処理
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb;
-	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com;
+	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -343,6 +346,10 @@ function post(){
 	}
 	if($upfile && is_file($upfile)){
 
+		if($pictmp!==2){//実態データの縮小
+		$max_px=isset($max_px) ? $max_px : 1024;
+			thumb(IMG_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
+		}	
 		if($filesize > 512 * 1024){//指定サイズを超えていたら
 			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 

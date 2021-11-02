@@ -7,9 +7,9 @@
 //210920 PetitNote用にコードを修正
 //210203 コード整理
 //201218 webp形式対応
+$thumbnail_gd_ver=2;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
-
-function thumb($path,$fname,$time,$max_w,$max_h){
+function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$fname=$path.$fname;
 	if(!is_file($fname)){
 		return;
@@ -18,7 +18,7 @@ function thumb($path,$fname,$time,$max_w,$max_h){
 	$fsize = filesize($fname);    // ファイルサイズを取得
 	$size = GetImageSize($fname); // 画像の幅と高さとタイプを取得
 	$w_h_size_over=($size[0] > $max_w || $size[1] > $max_h);
-	$f_size_over=($fsize>1024*1024);
+	$f_size_over=!isset($options['toolarge']) ? ($fsize>1024*1024) : false;
 
 	if(!$w_h_size_over && !$f_size_over){
 		return;
@@ -71,12 +71,22 @@ function thumb($path,$fname,$time,$max_w,$max_h){
 	}else{$im_out = ImageCreate($out_w, $out_h);$nottrue = 1;}
 	// コピー＆縮小
 	if($nottrue) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $size[0], $size[1]);
+	if(isset($options['toolarge'])){
+		$outfile=$fname;
+	//本体画像を縮小	
+		ImageJPEG($im_out, $outfile,98);
+
+	}else{
+		$outfile=THUMB_DIR.$time.'s.jpg';
 	// サムネイル画像を保存
-	ImageJPEG($im_out, THUMB_DIR.$time.'s.jpg',90);
+		ImageJPEG($im_out, THUMB_DIR.$time.'s.jpg',90);
+
+	}
 	// 作成したイメージを破棄
 	ImageDestroy($im_in);
 	ImageDestroy($im_out);
-	if(!chmod(THUMB_DIR.$time.'s.jpg',PERMISSION_FOR_DEST)){
+
+	if(!chmod($outfile,PERMISSION_FOR_DEST)){
 		return;
 	}
 
