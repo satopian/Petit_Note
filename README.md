@@ -2,10 +2,10 @@
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
-## v0.9.5以前のPetit Noteをご利用の方へのお願い
+## v0.9.8.7.2以前のPetit Noteをご利用の方へのお願い
 
-- テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.php、config.phpの更新が必要です。  
-セキュリティリスクを回避するためのアップデートをお願いします。
+- テーマのHTMLの｢BASIC｣ディレクトリと、index.php、functions.php、config.php、thumbnail_gd.phpの更新が必要です。  
+セキュリティリスクを回避するためアップデートをお願いします。
 
 ## ダウンロード
 
@@ -18,11 +18,32 @@
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
 ## 履歴
+
+## PitNoteとは
+- 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
+- PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
+## 21/11/03 v0.9.8.12
+
+- config.phpに新規設定項目追加  
+- コメント欄に投稿可能な最大文字数を設定できるようになりました。 
+- 投稿できる画像の幅と高さを設定できるようになりました。サイズ超過の時は設定したサイズの範囲内になるように自動的に縮小します。  
+index.phpとthumbnail_gd.phpを同時に更新する必要があります。
+thumbnail_gd.phpのバージョンが古い時は、バージョンが古いというエラーメッセージがでます。通常通り起動していれば更新に成功しています。
+
+- save.phpを更新しました。ChickenPaintによる投稿の時に画像の幅と高さのサイズ違反をチェックするようになりました。
+- picpost.phpを更新しました。PaintBBSNEOによる投稿の時に幅と高さのサイズ違反をチェックするようになりました。
+- template/basic/ ディレクトリの index.css を更新しました。長い英数字の時に文字列がコンテナを突き抜けて横に長く表示されてしまう問題を解決しました。
+
+安定版をリリースからダウンロードできます。  
+[Petit Note v0.9.8.12 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.8.9.12)
+
+## 21/10/29 v0.9.8.9
+- 重大バグ修正 urlの長さチェックを追加しました  
+- エラーメッセージurlが長すぎますを追加しました。  
+
 ## 21/10/29 v0.9.8.7.2  
 ログファイルを外部から直接開かれる事が無いよいうにパーミッションを600にしているログファイルですが、さらに`.htaccess`というファイルを追加して、拡張子がlogのファイルを外部から開けないようにしました。
 `.htaccess`を`index.php`と同じディレクトリにアップロードします。
-
-[Petit Note v0.9.8.7.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.8.7.2)
 
 ## 21/10/27 v0.9.8.7.1
 - 著作リンクを変更しました。templateのリンク先が変わっただけです。  
