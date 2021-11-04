@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.12';
-$petit_lot='lot.211102';
+$petit_ver='v0.9.8.15';
+$petit_lot='lot.211104';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -844,7 +844,7 @@ function to_continue(){
 // 画像差し換え
 function img_replace(){
 
-	global $use_thumb,$skindir;
+	global $use_thumb,$skindir,$max_w,$max_h,$res_max_w,$res_max_h;
 
 	$no = t(filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
 	$id = t(filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
@@ -887,7 +887,7 @@ function img_replace(){
 
 	//ログ読み込み
 	if(!is_file(LOG_DIR."$no.log")){
-		paintcom();//該当記事が無い時は新規投稿。
+		return paintcom();//該当記事が無い時は新規投稿。
 	}
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
@@ -966,14 +966,18 @@ function img_replace(){
 			chmod($dst,0606);
 		}
 	}
+	list($w,$h)=getimagesize(IMG_DIR.$imgfile);
 
-	//縮小表示 元のサイズを最大値にセット
-	list($w,$h)=image_reduction_display($w,$h,$_w,$_h);
+	//縮小表示 
+	$max_w = ($_oya==='res') ? $res_max_w : $max_w; 
+	$max_h = ($_oya==='res') ? $res_max_h : $max_h; 
+
+	list($w,$h)=image_reduction_display($w,$h,$max_w,$max_h);
 	
 	//サムネイル
 	$thumbnail='';
 	if($use_thumb){
-		if(thumb(IMG_DIR,$imgfile,$time,$_w,$_h)){
+		if(thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
 			$thumbnail='thumbnail';
 		}
 	}
