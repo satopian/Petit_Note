@@ -7,6 +7,7 @@ include(__DIR__.'/config.php');
 define('SIZE_CHECK', '1');
 //PNG画像データ投稿容量制限KB(chiは含まない)
 define('PICTURE_MAX_KB', '5120');//5MBまで
+define('CHIBI_MAX_KB', '10240');//10MBまで。ただしサーバのPHPの設定によって2MB以下に制限される可能性があります。
 
 defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
@@ -34,13 +35,22 @@ if(SIZE_CHECK && ($_FILES['picture']['size'] > (PICTURE_MAX_KB * 1024))){
 
 	chibi_die("Your picture upload failed! Please try again!");
 }
+if(isset($_FILES['chibifile']) && ($_FILES['chibifile']['size'] > CHIBI_MAX_KB * 1024)){
+
+	chibi_die("Your picture upload failed! Please try again!");
+}
 
 list($w,$h)=getimagesize($_FILES['picture']['tmp_name']);
+
+if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
+    chibi_die("Your picture upload failed! Please try again!");
+}
 
 if($w > $pmax_w || $h > $pmax_h){//幅と高さ
 	//規定サイズ違反を検出しました。画像は保存されません。
     chibi_die("Your picture upload failed! Please try again!");
 }
+
 
 $success = $success && move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
 

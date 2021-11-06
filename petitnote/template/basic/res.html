@@ -7,14 +7,14 @@
 <!--SNS-->
 <?php foreach($out as $ress) : ?>
 	<?php if($use_sns_button):?>
-	<meta name="Description" content="<?= h(s($ress[0]['com']))?>">
+	<meta name="Description" content="<?= h(s($ress[0]['descriptioncom']))?>">
 	<meta name="twitter:card" content="summary" />
 	<meta property="og:title" content="[<?= h(s($ress[0]['no']))?>] <?= h(s($ress[0]['sub']))?> by <?= h(s($ress[0]['name']))?> - <?=h(s($boardname))?>" />
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($ress[0]['no'])?>" />
 	<meta property="og:image" content="<?php if($ress[0]['img']):?><?=h($root_url)?>src/<?=h($ress[0]['img'])?><?php endif;?>" />
 	<meta property="og:site_name"  content="<?=h($boardname)?>" />
-	<meta property="og:description" content="<?=h($ress[0]['com'])?>" />
+	<meta property="og:description" content="<?=h($ress[0]['descriptioncom'])?>" />
 	<?php endif;?>
 <?php endforeach;?>
 <!--/SNS-->
