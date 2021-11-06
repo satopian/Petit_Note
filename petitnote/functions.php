@@ -121,7 +121,6 @@ function admin_del(){
 	session_regenerate_id(true);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$page = isset($page) ? $page : 0;
-	
 
 	$_SESSION['aikotoba']='aikotoba';
 	
@@ -256,7 +255,7 @@ function create_res($line){
 		'name' => $name,
 		'verified' => $verified,
 		'com' => $com,
-		'descriptioncom' => strip_tags(mb_strcut($com,0,100)),
+		'descriptioncom' => strip_tags(mb_strcut(str_replace('"\n"'," ",$com),0,100)),
 		'url' => $url,
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail,
