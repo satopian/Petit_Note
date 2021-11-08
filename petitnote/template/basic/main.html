@@ -9,7 +9,7 @@
 
 <?php if($set_nsfw && !$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
-<style>img {filter:blur(6px);}</style>
+<style>img {filter:blur(10px);}</style>
 <?php endif;?>
 
 <title><?=h($boardname)?></title>
@@ -278,8 +278,7 @@ Size:
 	<?php if($use_sns_button):?>
 	<span class="share_button">
 		
-		
-	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=$ress[0]['encoded_no']?>+<?=$ress[0]['encoded_sub']?>+-+<?=h($boardname)?>&amp;url=<?=$ress[0]['encoded_u']?>"><span class="icon-twitter"></span>tweet</a>
+	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_no'])?>+<?=h($ress[0]['encoded_sub'])?>+-+<?=h($boardname)?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>tweet</a> <a href="#top">△</a>
 	</span>
 	<?php endif; ?>
 	<?php endif; ?>
@@ -333,7 +332,7 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 	<?php if($page==$i):?>
 			[<?=h($i/$pagedef)?>]
 		<?php else: ?>
-			<?php if($i==0):?>
+			<?php if($i===0):?>
 				[<a href="?page=0">0</a>]
 			<?php else:?>	
 			<?php if($i === $end_page):?>

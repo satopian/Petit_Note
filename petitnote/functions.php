@@ -255,7 +255,7 @@ function create_res($line){
 		'name' => $name,
 		'verified' => $verified,
 		'com' => $com,
-		'descriptioncom' => strip_tags(mb_strcut(str_replace('"\n"'," ",$com),0,100)),
+		'descriptioncom' => s(mb_strcut(str_replace('"\n"'," ",$com),0,300)),
 		'url' => $url,
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail,

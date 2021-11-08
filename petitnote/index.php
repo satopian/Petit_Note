@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.16';
-$petit_lot='lot.211107';
+$petit_ver='v0.9.8.17';
+$petit_lot='lot.211108';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -318,9 +318,9 @@ function post(){
 		list($chk_resno)=explode("\t",$chk_log);
 		if(is_file(LOG_DIR."{$chk_resno}.log")){
 		$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-		while($line=fgets($cp)){
-			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
-			if($host === $host_){
+			while($line=fgets($cp)){
+				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
+				if($host === $host_){
 					$chk_com[$time_]=$line;
 				};
 			}
@@ -348,7 +348,7 @@ function post(){
 
 		if($pictmp!==2){//実態データの縮小
 		$max_px=isset($max_px) ? $max_px : 1024;
-			thumb(IMG_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
+		thumb(IMG_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
 		}	
 		if($filesize > 512 * 1024){//指定サイズを超えていたら
 			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
@@ -368,7 +368,7 @@ function post(){
 			safe_unlink($upfile);
 			error('対応していないフォーマットです。');
 		}
-	
+
 		$imgfile=$time.$ext;
 
 		rename($upfile,IMG_DIR.$imgfile);
@@ -382,8 +382,8 @@ function post(){
 			list($chk_resno)=explode("\t",$chk_log);
 			if(is_file(LOG_DIR."{$chk_resno}.log")){
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-			while($line=fgets($cp)){
-				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
+				while($line=fgets($cp)){
+					list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
 				
 					if($log_md5 === $img_md5){
 						safe_unlink(IMG_DIR.$imgfile);
@@ -844,7 +844,7 @@ function to_continue(){
 // 画像差し換え
 function img_replace(){
 
-	global $use_thumb,$skindir,$max_w,$max_h,$res_max_w,$res_max_h;
+	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h;
 
 	$no = t(filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
 	$id = t(filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
@@ -981,7 +981,7 @@ function img_replace(){
 			$thumbnail='thumbnail';
 		}
 	}
-	
+
 	//描画時間追加
 
 	$painttime = '';
@@ -1167,7 +1167,7 @@ function edit_form(){
 			if($id==$time && $no===$_no){
 			
 				if(!$admindel){
-					
+
 					if(!check_elapsed_days($time)||!password_verify($pwd,$hash)){
 						return error('失敗しました。');
 					}
@@ -1512,7 +1512,7 @@ function view($page=0){
 	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
 	foreach($alllog_arr as $oya => $alllog){
-		
+
 		list($no)=explode("\t",$alllog);
 		//個別スレッドのループ
 		if(!is_file(LOG_DIR."$no.log")){

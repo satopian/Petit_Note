@@ -12,9 +12,14 @@
 	<meta property="og:title" content="[<?= h(s($ress[0]['no']))?>] <?= h(s($ress[0]['sub']))?> by <?= h(s($ress[0]['name']))?> - <?=h(s($boardname))?>" />
 	<meta property="og:type" content="article" />
 	<meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($ress[0]['no'])?>" />
+	<!-- thumbnail -->
+	<?php if($ress[0]['thumbnail']):?>
+	<meta property="og:image" content="<?=h($root_url)?>thumbnail/<?=h($ress[0]['thumbnail'])?>" />
+	<?php else:?>
 	<meta property="og:image" content="<?php if($ress[0]['img']):?><?=h($root_url)?>src/<?=h($ress[0]['img'])?><?php endif;?>" />
+	<?php endif;?>
 	<meta property="og:site_name"  content="<?=h($boardname)?>" />
-	<meta property="og:description" content="<?=h($ress[0]['descriptioncom'])?>" />
+	<meta property="og:description" content="<?=h(s($ress[0]['descriptioncom']))?>" />
 	<?php endif;?>
 <?php endforeach;?>
 <!--/SNS-->
@@ -24,7 +29,7 @@
 
 <?php if($set_nsfw && !$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
-<style>img {filter:blur(6px);}</style>
+<style>img {filter:blur(10px);}</style>
 <?php endif;?>
 
 
@@ -53,7 +58,6 @@
 <span>[<a href="./?mode=userdel&resno=<?=h($resno)?>">編集</a>]</span>
  <?php endif;?>
  <a href="#bottom">▽</a>
- <br>
 </nav>
 <?php endif;?>
 <?php if(!$aikotoba):?>
@@ -183,7 +187,7 @@
 		<button class="copy_button" onclick="add_to_com()">投稿者名をコピー</button>
 	<?php endif;?>
 <span class="share_button">
-<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=$ress[0]['encoded_no']?>+<?=$ress[0]['encoded_sub']?>+-+<?=h($boardname)?>&amp;url=<?=$ress[0]['encoded_u']?>"><span class="icon-twitter"></span>tweet</a> <a href="#top">△</a>
+<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_no'])?>+<?=h($ress[0]['encoded_sub'])?>+-+<?=h($boardname)?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>tweet</a> <a href="#top">△</a>
 </span>
 </div>
 <?php endif; ?>
