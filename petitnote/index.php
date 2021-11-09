@@ -56,10 +56,10 @@ switch($mode){
 		return pchview();
 	case 'to_continue':
 		return to_continue();
-		case 'contpaint':
-			$type = filter_input(INPUT_POST, 'type');
-			if($type==='rep') check_cont_pass();
-			return paint();
+	case 'contpaint':
+		$type = filter_input(INPUT_POST, 'type');
+		if($type==='rep') check_cont_pass();
+		return paint();
 	case 'picrep':
 		return img_replace();
 
@@ -385,7 +385,7 @@ function post(){
 				while($line=fgets($cp)){
 					list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
 				
-					if($log_md5 === $img_md5){
+					if($log_md5 && ($log_md5 === $img_md5)){
 						safe_unlink(IMG_DIR.$imgfile);
 						return error('同じ画像がありました。');
 					};
