@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.17';
+$petit_ver='v0.9.8.18';
 $petit_lot='lot.211108';
 
 if(!$max_log){
@@ -788,8 +788,8 @@ function to_continue(){
 	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
 
 
-	$no = filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
-	$id = filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT);
+	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
+	$id = (string)filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT);
 
 	$flag = false;
 
@@ -797,8 +797,8 @@ function to_continue(){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgets($rp)) {
-			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
-			if($id==$time){
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
+			if($id===$time && $no===$_no){
 				$flag=true;
 				break;
 			}
@@ -846,8 +846,8 @@ function img_replace(){
 
 	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h;
 
-	$no = t(filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
-	$id = t(filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
+	$no = t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
+	$id = t((string)filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
 	$pwd = filter_input(INPUT_GET, 'pwd');
 	$repcode = filter_input(INPUT_GET, 'repcode');
 	$userip = t(get_uip());
@@ -900,7 +900,7 @@ function img_replace(){
 	$flag=false;
 	foreach($r_arr as $i => $line){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
-		if($id==$_time && password_verify($pwd,$_hash)){
+		if($id===$_time && $no===$_no && $pwd && password_verify($pwd,$_hash)){
 			$flag=true;
 			break;
 		}
@@ -1006,7 +1006,7 @@ function img_replace(){
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
 
-			if($id==$time_){
+			if($id===$time_ && $no===$no_){
 				$alllog_arr[$i] = $new_line;
 			break;
 			}
@@ -1168,7 +1168,7 @@ function edit_form(){
 			
 				if(!$admindel){
 
-					if(!check_elapsed_days($time)||!password_verify($pwd,$hash)){
+					if(!check_elapsed_days($time)||!$pwd||!password_verify($pwd,$hash)){
 						return error('失敗しました。');
 					}
 				}
@@ -1276,7 +1276,7 @@ function edit(){
 
 			if(!$admindel){
 
-				if(!check_elapsed_days($_time)||!password_verify($pwd,$_hash)){
+				if(!check_elapsed_days($_time)||!$pwd||!password_verify($pwd,$_hash)){
 					return error('失敗しました。');
 				}
 			}
@@ -1372,7 +1372,7 @@ function del(){
 			if($id===$time && $no===$_no){
 			
 				if(!$admindel){
-					if(!password_verify($pwd,$hash)){
+					if(!$pwd||!password_verify($pwd,$hash)){
 						return error('失敗しました。');
 					}
 				}
