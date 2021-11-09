@@ -188,8 +188,8 @@ function view_nsfw(){
 // コンティニュー認証
 function check_cont_pass(){
 
-	$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
-	$id = filter_input(INPUT_POST, 'time',FILTER_VALIDATE_INT);
+	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
+	$id = (string)filter_input(INPUT_POST, 'time',FILTER_VALIDATE_INT);
 	$pwd = filter_input(INPUT_POST, 'pwd');
 
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
@@ -200,8 +200,8 @@ function check_cont_pass(){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgets($rp)) {
-			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-			if($id==$time && password_verify($pwd,$hash)){
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+			if($id===$time && $no===$_no && $pwd && password_verify($pwd,$hash)){
 				closeFile ($rp);
 				return true;
 			}
