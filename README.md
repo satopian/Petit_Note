@@ -22,6 +22,16 @@
 ## PitNoteとは
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
+## 21/11/08 v0.9.8.18
+### picpost.php save.php
+- 簡易的なCSRF対策を行いました。  
+`picpost.php` `save.php` と、`index.php`のアップデートをお願いします。  
+
+## 21/11/08 v0.9.8.16
+### index.php
+- Descriptionが長くなりすぎる問題に対応しました。  
+これまではスレッドの親のコメント全文がDescriptionに入っていました。
+
 ## 21/11/03 v0.9.8.12
 
 - config.phpに新規設定項目追加  
