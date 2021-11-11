@@ -27,6 +27,9 @@
 - 簡易的なCSRF対策を行いました。  
 `picpost.php` `save.php` と、`index.php`のアップデートをお願いします。  
 
+安定版をリリースからダウンロードできます。  
+[Petit Note v0.9.8.18 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.8.18)
+
 ## 21/11/08 v0.9.8.16
 ### index.php
 - Descriptionが長くなりすぎる問題に対応しました。  
@@ -43,9 +46,6 @@ thumbnail_gd.phpのバージョンが古い時は、バージョンが古いと�
 - save.phpを更新しました。ChickenPaintによる投稿の時に画像の幅と高さのサイズ違反をチェックするようになりました。
 - picpost.phpを更新しました。PaintBBSNEOによる投稿の時に幅と高さのサイズ違反をチェックするようになりました。
 - template/basic/ ディレクトリの index.css を更新しました。長い英数字の時に文字列がコンテナを突き抜けて横に長く表示されてしまう問題を解決しました。
-
-安定版をリリースからダウンロードできます。  
-[Petit Note v0.9.8.12 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.8.9.12)
 
 ## 21/10/29 v0.9.8.9
 - 重大バグ修正 urlの長さチェックを追加しました  
