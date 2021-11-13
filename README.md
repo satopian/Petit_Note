@@ -22,10 +22,12 @@
 ## PitNoteとは
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
-## 21/11/08 v0.9.8.18
+## 21/11/08 v0.9.8.18.1
 ### picpost.php save.php
 - 簡易的なCSRF対策を行いました。  
-`picpost.php` `save.php` と、`index.php`のアップデートをお願いします。  
+`picpost.php` `save.php` と、`index.php`のアップデートをお願いします。
+- PaintBBS NEO v1.5.15 の右ボタン常時表示に対応しました。
+`neo.js`と、neo_paint.htmlのアップデートをお願いします。
 
 安定版をリリースからダウンロードできます。  
 [Petit Note v0.9.8.18 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.8.18)
