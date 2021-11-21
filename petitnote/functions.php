@@ -436,7 +436,7 @@ function deltemp(){
 				unlink(TEMP_DIR.$file);
 			}
 			//pchアップロードペイントファイル削除
-			if(preg_match("/\A(pchup-.*-tmp\.s?pch)\z/i",$file)) {
+			if(preg_match("/\A(pchup-.*-tmp\.(s?pch|chi))\z/i",$file)) {
 				$lapse = time() - filemtime(TEMP_DIR.$file);
 				if($lapse > (300)){//5分
 					unlink(TEMP_DIR.$file);
