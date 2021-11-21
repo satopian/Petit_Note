@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.18';
-$petit_lot='lot.211108';
+$petit_ver='v0.9.8.20';
+$petit_lot='lot.211121';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -213,7 +213,7 @@ function post(){
 
 	}
 
-	if($resto && !is_file(LOG_DIR."$resto.log")){//エラー処理
+	if($resto && !is_file(LOG_DIR."{$resto}.log")){//エラー処理
 		if($pictmp!==2){//お絵かきではない時は
 			safe_unlink($upfile);
 			error('記事がありません。');
@@ -221,7 +221,7 @@ function post(){
 		$resto='';//レス先がないお絵かきは新規投稿扱いにする。
 	}
 
-	if($resto && is_file(LOG_DIR."$resto.log")){//エラー処理
+	if($resto && is_file(LOG_DIR."{$resto}.log")){//エラー処理
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
 		$line = fgets($rp);
@@ -314,24 +314,40 @@ function post(){
 
 	$chk_log_arr=array_slice($alllog_arr,0,5,false);
 	$chk_com=[];
+	$chk_resnos=[];
 	foreach($chk_log_arr as $chk_log){
 		list($chk_resno)=explode("\t",$chk_log);
+		$chk_resnos[]=$chk_resno;
+	}
+	if($resto){//レスの時はレスファイルをチェックに追加
+		$chk_resnos=array_merge($chk_resnos,[$resto]);
+	} 
+	foreach($chk_resnos as $chk_resno){
 		if(is_file(LOG_DIR."{$chk_resno}.log")){
-		$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
+
+			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
 			while($line=fgets($cp)){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
+				if($time==$time_){
+					safe_unlink($upfile);
+					return error('少し待ってください。');
+				}
 				if($host === $host_){
-					$chk_com[$time_]=$line;
+					$chk_com[]=$line;
 				};
 			}
+			fclose($cp);
 		}
+
 	}
+
 	foreach($chk_com as $line){
 		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",$line);
 		if($com && ($com === $_com_)){
 			safe_unlink($upfile);
 			return error('同じコメントがありました。');
 		}
+
 		// 画像アップロードの場合
 		if($upfile && time()-substr($_time_,0,-3)<30){
 			safe_unlink($upfile);
@@ -375,15 +391,28 @@ function post(){
 	}
 
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
+	$_chk_resnos=[];
 	if($pictmp!=2 && $imgfile && is_file(IMG_DIR.$imgfile)){
 		$img_md5=md5_file(IMG_DIR.$imgfile);
 		$chk_log_arr=array_slice($alllog_arr,0,20,false);
 		foreach($chk_log_arr as $chk_log){
-			list($chk_resno)=explode("\t",$chk_log);
-			if(is_file(LOG_DIR."{$chk_resno}.log")){
-			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
+			list($_chk_resno)=explode("\t",$chk_log);
+			$_chk_resnos[]=$_chk_resno;
+		}
+		if($resto){
+			$_chk_resnos=array_merge($_chk_resnos,[$resto]);
+		} 
+		foreach($_chk_resnos as $_chk_resno){
+	
+			if(is_file(LOG_DIR."{$_chk_resno}.log")){
+			$cp=fopen(LOG_DIR."{$_chk_resno}.log","r");
 				while($line=fgets($cp)){
 					list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
+
+					if($time==$time_){
+						safe_unlink(IMG_DIR.$imgfile);
+						return error('少し待ってください。');
+					}
 				
 					if($log_md5 && ($log_md5 === $img_md5)){
 						safe_unlink(IMG_DIR.$imgfile);
@@ -391,6 +420,7 @@ function post(){
 					};
 				}
 			}
+			fclose($cp);
 		}
 	}
 	$src='';
@@ -685,9 +715,9 @@ function paint(){
 		case 'neo'://PaintBBS NEO
 
 			$tool='neo';
-			$appw = $picw + 150;//PaintBBSの時の幅
-			$apph = $pich + 172;//PaintBBSの時の高さ
-			if($apph < 560){$apph = 560;}//共通の最低高
+			$appw = $picw + 150;//NEOの幅
+			$apph = $pich + 172;//NEOの高さ
+			if($apph < 560){$apph = 560;}//最低高
 			//動的パレット
 			$lines = file('palette.txt');//初期パレット
 			$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
