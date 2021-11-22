@@ -9,7 +9,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.25';
+$petit_ver='v0.9.8.26';
 $petit_lot='lot.211122';
 
 if(!$max_log){
@@ -339,7 +339,6 @@ function post(){
 			}
 			fclose($cp);
 		}
-
 	}
 
 	foreach($chk_com as $line){
@@ -508,9 +507,9 @@ function post(){
 			continue;
 		}
 		list($d_no,)=explode("\t",$alllog_arr[$i]);
-		if(is_file(LOG_DIR."$d_no.log")){
+		if(is_file(LOG_DIR."{$d_no}.log")){
 
-			$dp = fopen(LOG_DIR."$d_no.log", "r");//個別スレッドのログを開く
+			$dp = fopen(LOG_DIR."{$d_no}.log", "r");//個別スレッドのログを開く
 			flock($dp, LOCK_EX);
 
 			while ($line = fgets($dp)) {
@@ -825,9 +824,9 @@ function to_continue(){
 
 	$flag = false;
 
-	if(is_file(LOG_DIR."$no.log")){
+	if(is_file(LOG_DIR."{$no}.log")){
 		
-		$rp=fopen(LOG_DIR."$no.log","r");
+		$rp=fopen(LOG_DIR."{$no}.log","r");
 		while ($line = fgets($rp)) {
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
 			if($id===$time && $no===$_no){
@@ -918,14 +917,14 @@ function img_replace(){
 	$tempfile=TEMP_DIR.$file_name.$imgext;
 
 	//ログ読み込み
-	if(!is_file(LOG_DIR."$no.log")){
+	if(!is_file(LOG_DIR."{$no}.log")){
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
 	$r_arr=[];
-	$rp=fopen(LOG_DIR."$no.log","r+");
+	$rp=fopen(LOG_DIR."{$no}.log","r+");
 		while ($line = fgets($rp)) {
 			$r_arr[]=$line;
 		}
@@ -1113,9 +1112,9 @@ function confirmation_before_deletion ($edit_mode=''){
 	$id = t((string)filter_input(INPUT_POST,'id',FILTER_VALIDATE_INT));
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 
-	if(is_file(LOG_DIR."$no.log")){
+	if(is_file(LOG_DIR."{$no}.log")){
 				
-		$rp=fopen(LOG_DIR."$no.log","r");
+		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
 			$line[]=$r_line;
@@ -1184,9 +1183,9 @@ function edit_form(){
 
 	$flag=false;
 
-	if(is_file(LOG_DIR."$no.log")){
+	if(is_file(LOG_DIR."{$no}.log")){
 		
-		$rp=fopen(LOG_DIR."$no.log","r");
+		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
 			$line[]=$r_line;
@@ -1289,14 +1288,14 @@ function edit(){
 		}
 	}
 	//ログ読み込み
-	if(!is_file(LOG_DIR."$no.log")){
+	if(!is_file(LOG_DIR."{$no}.log")){
 		error('記事がありません。');//該当記事が無い時は新規投稿。
 	}
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
 	$r_arr=[];
-	$rp=fopen(LOG_DIR."$no.log","r+");
+	$rp=fopen(LOG_DIR."{$no}.log","r+");
 		while ($line = fgets($rp)) {
 			$r_arr[]=$line;
 		}
@@ -1390,9 +1389,9 @@ function del(){
 		$alllog_arr[]=$_line;	
 	}
 
-	if(is_file(LOG_DIR."$no.log")){
+	if(is_file(LOG_DIR."{$no}.log")){
 		
-		$rp=fopen(LOG_DIR."$no.log","r+");
+		$rp=fopen(LOG_DIR."{$no}.log","r+");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
 			$line[]=$r_line;
@@ -1547,11 +1546,11 @@ function view($page=0){
 
 		list($no)=explode("\t",$alllog);
 		//個別スレッドのループ
-		if(!is_file(LOG_DIR."$no.log")){
+		if(!is_file(LOG_DIR."{$no}.log")){
 		continue;	
 		}
 		$_res=[];
-			$fp = fopen(LOG_DIR."$no.log", "r");//個別スレッドのログを開く
+			$fp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
 			$s=0;
 			while ($line = fgets($fp)) {
 				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
@@ -1595,12 +1594,12 @@ function res ($resno){
 	
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');
-	if(!is_file(LOG_DIR."$resno.log")){
+	if(!is_file(LOG_DIR."{$resno}.log")){
 		error('スレッドがありません');	
 		}
 		$rresname = [];
 		$resname = '';
-			$fp = fopen(LOG_DIR."$resno.log", "r");//個別スレッドのログを開く
+			$fp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 			while ($line = fgets($fp)) {
 				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
 
