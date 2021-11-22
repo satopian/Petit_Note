@@ -33,7 +33,7 @@
 	<?php if($aikotoba):?>
 <nav class="menu_wrap">
 <span>[<a href="./?mode=catalog">カタログ</a>]</span>
-<span>[<a href="./?mode=paintcom">未投稿画像</span></a>]</span>
+<span>[<a href="./?mode=paintcom">未投稿画像</a>]</span>
 <?php if($userdel || $admindel):?>
 	<span>[<a href="./?mode=logout&page=<?=h($page)?>">編集モード終了</a>]</span>
 <?php else:?>
@@ -188,7 +188,7 @@ Size:
 		<?php endif;?>
 
 		<div class="imginfo_wrap">
-			<span class="info_name"><a href="./?mode=catalog&q=<?=h($res['encoded_name'])?>" target="_blak"><?= h($res['name'])?></a></span>
+			<span class="info_name"><a href="./?mode=catalog&q=<?=h($res['encoded_name'])?>" target="_blank"><?= h($res['name'])?></a></span>
 			<?php if($res['verified']):?>
 			<span class="icon-checkmark2"></span>
 			<?php endif?>
@@ -358,7 +358,7 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
 	</div>
 <div class="righit_wrap">
-<a href="https://paintbbs.sakura.ne.jp/petit/" target="_blank" rel="rel="noopener" title="Petit Note <?=h($petit_ver)?> <?=h($petit_lot)?>">Petit Note <?=h($petit_ver)?></a> <span>Web Style by BASIC</span><br>
+<a href="https://paintbbs.sakura.ne.jp/petit/" target="_blank" rel="noopener noreferrer" title="Petit Note <?=h($petit_ver)?> <?=h($petit_lot)?>">Petit Note <?=h($petit_ver)?></a> <span>Web Style by BASIC</span><br>
 <span>OekakiApp -</span> <a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a></span>
 <br>
 <span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
