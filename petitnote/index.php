@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.20';
-$petit_lot='lot.211121';
+$petit_ver='v0.9.8.25';
+$petit_lot='lot.211122';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -328,8 +328,9 @@ function post(){
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
 			while($line=fgets($cp)){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
-				if($time==$time_){
+				if(($time-$time_)<1000){//投稿時刻の重複回避が主目的
 					safe_unlink($upfile);
+
 					return error('少し待ってください。');
 				}
 				if($host === $host_){
@@ -349,13 +350,13 @@ function post(){
 		}
 
 		// 画像アップロードの場合
-		if($upfile && time()-substr($_time_,0,-3)<30){
+		if($upfile && (time()-substr($_time_,0,-3))<30){
 			safe_unlink($upfile);
 			return error('少し待ってください。');
 
 		}
 		//コメントの場合
-		if(time()-substr($_time_,0,-3)<15){
+		if((time()-substr($_time_,0,-3))<15){
 			safe_unlink($upfile);
 			return error('少し待ってください。');
 		}
@@ -409,8 +410,9 @@ function post(){
 				while($line=fgets($cp)){
 					list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
 
-					if($time==$time_){
+					if(($time-$time_)<1000){//投稿時刻の重複回避が主目的
 						safe_unlink(IMG_DIR.$imgfile);
+
 						return error('少し待ってください。');
 					}
 				
@@ -419,8 +421,8 @@ function post(){
 						return error('同じ画像がありました。');
 					};
 				}
+				fclose($cp);
 			}
-			fclose($cp);
 		}
 	}
 	$src='';
@@ -473,7 +475,7 @@ function post(){
 	}
 	//書き込むログの書式
 	$line='';
-
+	$newline='';
 	if($resto){//レスの時はスレッド別ログに追記
 		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
 		file_put_contents(LOG_DIR.$resto.'.log',$r_line,FILE_APPEND | LOCK_EX);
