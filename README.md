@@ -22,15 +22,27 @@
 ## PitNoteとは
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
+## 21/11/13 v0.9.8.18.2
+### PaintBBS NEO v1.5.15 の右ボタン常時表示に対応
+- PaintBBS NEO v1.5.15 の右ボタン常時表示に対応しました。
+`neo.js`と、`paint_neo.html`のアップデートをお願いします。  
+また、ブラウザの言語が日本語以外の時に表示されるPaintBBS NEOの英語表記版の半角文字列の改行が意図通りに行われずレイアウトがくずれていたのを修正しました。  
+`paint_neo.html`のアップデートをお願いします。
+
+v0.9.8.18.1に更新したファイルが入っていなかったため、改めて更新をお願いします。  
+
+安定版をリリースからダウンロードできます。  
+[Petit Note v0.9.8.18.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.8.18.2)
+
 ## 21/11/13 v0.9.8.18.1
 ### picpost.php save.php
 - 簡易的なCSRF対策を行いました。  
 `picpost.php` `save.php` と、`index.php`のアップデートをお願いします。
-- PaintBBS NEO v1.5.15 の右ボタン常時表示に対応しました。
-`neo.js`と、`paint_neo.html`のアップデートをお願いします。
 
-また、ブラウザの言語が日本語以外の時に表示されるPaintBBS NEOの英語表記版の半角文字列の改行が意図通りに行われずレイアウトがくずれていたのを修正しました。  
-`paint_neo.html`のアップデートをお願いします    
+- ~~PaintBBS NEO v1.5.15 の右ボタン常時表示に対応しました。~~
+~~`neo.js`と、`paint_neo.html`のアップデートをお願いします。~~  
+~~また、ブラウザの言語が日本語以外の時に表示されるPaintBBS NEOの英語表記版の半角文字列の改行が意図通りに行われずレイアウトがくずれていたのを修正しました。~~  
+~~`paint_neo.html`のアップデートをお願いします。~~
 
 安定版をリリースからダウンロードできます。  
 [Petit Note v0.9.8.18.1 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.8.18.1)
