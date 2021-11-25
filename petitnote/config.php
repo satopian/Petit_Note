@@ -167,6 +167,13 @@ $set_nsfw = false;
 // $do_not_change_posts_time = true;
 $do_not_change_posts_time = false;
 
+//レスがついてもスレッドがあがらないようにする
+//する: trueに設定するとレスがついてもスレッドがあがりません。(全てsage)。
+//初期値 false
+
+//$sage_all = true;
+$sage_all = false;
+
 //管理者を認証する
 //する: true で、管理者の投稿の時は認証マークが出ます。初期テンプレートではチェックマーク。
 //管理者モードでログイン、またはパスワード一致の時に管理者と判定します。

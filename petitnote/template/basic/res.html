@@ -270,7 +270,9 @@
 <input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
 <br>
 <?php endif;?>
+<?php if(!$sage_all):?>
 <label>sage:<input type="checkbox" name="sage" value="on" class="form_button"></label>
+<?php endif;?>
 <input type="submit" value="返信" class="form_button">
 
 </form>

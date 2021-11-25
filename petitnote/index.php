@@ -9,8 +9,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.26';
-$petit_lot='lot.211122';
+$petit_ver='v0.9.8.28';
+$petit_lot='lot.211125';
 
 if(!$max_log){
 	error('最大スレッド数が設定されていません。');
@@ -21,6 +21,7 @@ if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<2){
 
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 $max_com= isset($max_com) ? $max_com : 1000;
+$sage_all= isset($sage_all) ? $sage_all : false;
 
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
@@ -99,7 +100,7 @@ switch($mode){
 //投稿処理
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb;
-	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px;
+	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -118,7 +119,7 @@ function post(){
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
-	$sage = filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
+	$sage = $sage_all ? true : filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
 	$check_elapsed_days=false;
 
 	//NGワードがあれば拒絶
@@ -752,7 +753,7 @@ function paint(){
 }
 // お絵かきコメント 
 function paintcom(){
-	global $use_aikotoba,$boardname,$home,$skindir;
+	global $use_aikotoba,$boardname,$home,$skindir,$sage_all;
 	$token=get_csrf_token();
 	$userip = get_uip();
 	$usercode = filter_input(INPUT_COOKIE,'usercode');
@@ -1084,7 +1085,7 @@ function pchview(){
 //削除前の確認画面
 function confirmation_before_deletion ($edit_mode=''){
 
-	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba;
+	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw;
 		//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
@@ -1147,6 +1148,8 @@ function confirmation_before_deletion ($edit_mode=''){
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
+	// nsfw
+	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
 
 	if($edit_mode==='delmode'){
 		$templete='before_del.html';
@@ -1160,7 +1163,7 @@ function confirmation_before_deletion ($edit_mode=''){
 }
 //編集画面
 function edit_form(){
-	global  $petit_ver,$petit_lot,$home,$boardname,$skindir;
+	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw;
 
 	$token=get_csrf_token();
 	$admindel=admindel_valid();
@@ -1226,6 +1229,8 @@ function edit_form(){
 
 	$page = ($page||$page===0) ? $page : false; 
 	$resno = $resno ? $resno : false;
+	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+
 // HTML出力
 	$templete='edit_form.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -1590,7 +1595,7 @@ function view($page=0){
 //レス画面
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts;
+	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts,$sage_all;
 	
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');

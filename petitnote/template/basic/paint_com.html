@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="<?=h($skindir)?>index.css">
 	<title><?=h($boardname)?></title> 
 
+	<?php if(!$sage_all):?>
 	<script>
 	function select_pic(){
 	if(document.getElementById('select_picfile')){
@@ -27,7 +28,7 @@
 	window.addEventListener('DOMContentLoaded',select_pic,false);
 
 	</script>
-
+	<?php endif;?>
 </head>
 <body>
 	<div class="container">
@@ -99,7 +100,9 @@
 			<br>
 		</div>
 	<input type="submit" value="投稿する">
+	<?php if(!$sage_all):?>
 	<label id="paintcom_sage">sage:<input type="checkbox" name="sage" value="on" class="form_button"></label>
+	<?php endif;?>
 </form>
 <?php else:?>
 この掲示板の合言葉はなんですか?: 
