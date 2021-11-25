@@ -33,7 +33,7 @@
 <?php endif;?>
 
 
-	<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> - <?=h($boardname)?></title>
+	<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> by <?= h($ress[0]['name'])?> -  <?=h($boardname)?></title>
 </head>
 <body>
 <div class="container" id="top">
@@ -58,7 +58,7 @@
 <span>[<a href="./?mode=userdel&resno=<?=h($resno)?>">編集</a>]</span>
  <?php endif;?>
  <a href="#bottom">▽</a>
-</nav>
+ </nav>
 <?php endif;?>
 <?php if(!$aikotoba):?>
 この掲示板の合言葉はなんですか?: 
@@ -126,7 +126,7 @@
 			<div class="posted_image">
 
 			<?php if($res['thumbnail']):?>
-				<a href="src/<?=h($res['img'])?>" target="_bank">
+				<a href="src/<?=h($res['img'])?>" target="_blank">
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
 				</a>
 			<?php else:?>
@@ -179,7 +179,6 @@
 <?php if($aikotoba && (!$userdel && !$admindel)):?>
 <?php if($use_sns_button):?>
 <div class="res_button_wrap">
-	<div class="res_button_wrap">
 	<?php if($resname):?>
 		<script>function add_to_com(){
 		document.getElementById("res_com").value += "<?=h($resname)?>さん";
@@ -187,14 +186,14 @@
 		<button class="copy_button" onclick="add_to_com()">投稿者名をコピー</button>
 	<?php endif;?>
 <span class="share_button">
-<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_no'])?>+<?=h($ress[0]['encoded_sub'])?>+-+<?=h($boardname)?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>tweet</a> <a href="#top">△</a>
+	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>tweet</a> <a href="#top">△</a>
 </span>
 </div>
 <?php endif; ?>
 
 <?php if($resform && !$denny_all_posts):?>
 
-	<?php if($use_res_upload || $adminpost):?>
+<?php if($use_res_upload || $adminpost):?>
 
 <form action="./" method="post" class="res_form">
 <input type="hidden" name="mode" value="paint">

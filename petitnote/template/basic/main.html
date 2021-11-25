@@ -12,7 +12,7 @@
 <style>img {filter:blur(10px);}</style>
 <?php endif;?>
 
-<title><?=h($boardname)?></title>
+<title><?=h($boardname)?></title> 
 </head>
 <body>
 
@@ -228,7 +228,7 @@ Size:
 			<div class="posted_image">
 			
 			<?php if($res['thumbnail']):?>
-				<a href="src/<?=h($res['img'])?>" target="_bank">
+				<a href="src/<?=h($res['img'])?>" target="_blank">
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
 				</a>
 			<?php else:?>
@@ -277,8 +277,8 @@ Size:
 	<?php if($aikotoba && (!$userdel && !$admindel)):?>
 	<?php if($use_sns_button):?>
 	<span class="share_button">
-		
-	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_no'])?>+<?=h($ress[0]['encoded_sub'])?>+-+<?=h($boardname)?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>tweet</a> <a href="#top">△</a>
+
+	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>tweet</a> <a href="#top">△</a>
 	</span>
 	<?php endif; ?>
 	<?php endif; ?>

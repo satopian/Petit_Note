@@ -6,7 +6,12 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
 <link rel="stylesheet" href="<?=h($skindir)?>icomoon/style.css">
-	<title><?=h($boardname)?></title>
+<?php if(isset($set_nsfw)&&$set_nsfw&&!$nsfwc):?>
+	<!-- センシティブコンテンツにブラーをかける -->
+<style>img {filter:blur(10px);}</style>
+<?php endif;?>
+
+	<title><?=h($boardname)?></title> 
 </head>
 <body>
 <div class="container" id="top">
@@ -14,7 +19,7 @@
 	<?php if($aikotoba):?>
 		
 	<nav class="menu_wrap">
-		<span>[<a href="./"">掲示板にもどる</a>]</span>
+		<span>[<a href="./">掲示板にもどる</a>]</span>
 	<?php if($userdel || $admindel):?>
 	<span>
 		<?php if($postresno):?>
@@ -27,7 +32,6 @@
 <?php endif;?>
 <a href="#bottom">▽</a>
 </nav>
-<br>
 <h2 class="article_title">記事を削除しようとしています。本当に削除しますか?</h2>
 
 <?php if($admindel):?>
@@ -60,10 +64,6 @@
 	<!-- スレッドのループ -->
 <?php foreach($ress as $i => $res) : ?>
 	<hr>
-	<?php if($i!==0):?>
-	<div class="res_wrap">	
-	<?php endif;?>
-
 	<div class="imginfo_wrap">
 		<?php if($userdel || $admindel):?>
 	<label><input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
@@ -92,7 +92,7 @@
 
 			<div class="posted_image">
 				<?php if($res['thumbnail']):?>
-					<a href="src/<?=h($res['img'])?>" target="_bank">
+					<a href="src/<?=h($res['img'])?>" target="_blank">
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
 					</a>
 					<?php else:?>
@@ -123,6 +123,7 @@
 <br>
 <span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
 <!--http://wondercatstudio.com/-->
+</div>
 </div>
 </div>
 <div id="bottom"></div>

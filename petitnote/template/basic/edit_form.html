@@ -5,7 +5,11 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
-<title><?=h($boardname)?></title>
+<?php if(isset($set_nsfw)&&$set_nsfw&&!$nsfwc):?>
+	<!-- センシティブコンテンツにブラーをかける -->
+<style>img {filter:blur(10px);}</style>
+<?php endif;?>
+<title><?=h($boardname)?></title> 
 </head>
 <body>
 
@@ -63,7 +67,7 @@
 
 			<div class="posted_image">
 				<?php if($res['thumbnail']):?>
-					<a href="src/<?=h($res['img'])?>" target="_bank">
+					<a href="src/<?=h($res['img'])?>" target="_blank">
 						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
 					</a>
 					<?php else:?>
@@ -119,6 +123,7 @@
 <br>
 <span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
 <!--http://wondercatstudio.com/-->
+</div>
 </div>
 </div>
 </div>

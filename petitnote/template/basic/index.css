@@ -166,6 +166,11 @@ button.copy_button:hover {
 }
 
 /* メニューのラップ */
+.menu_pr {
+    float: right;
+    line-height: 1.8;
+}
+
 nav.menu_wrap  {
     margin: 0 0 8px;
     display: inline-block;
@@ -330,6 +335,10 @@ span.continue_menu {
 		margin-right:  -3%; 
 	}
 	span.txtnon {
+		display: none;
+	}
+
+	.menu_pr{
 		display: none;
 	}
 

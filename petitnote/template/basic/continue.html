@@ -10,7 +10,7 @@
 	<!-- センシティブコンテンツにブラーをかける -->
 <style>img {filter:blur(10px);}</style>
 <?php endif;?>
-	<title><?=h($boardname)?></title>
+	<title><?=h($boardname)?></title> 
 </head>
 <div class="container">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
@@ -24,7 +24,7 @@
 
 <!--  画像と描画時間  -->
 <div class="continue_img">
-<img src="<?=h($picfile)?>" width="<?=h($w)?>" height="<?=h($h)?>" alt="<?=h($sub)?> by <?=h($name)?> <?=h($picw)?>x<?=h($pich)?>" title="<?=h($sub)?> by <?=h($name)?> <?=h($picw)?>x<?=h($pich)?>">
+	<img src="<?=h($picfile)?>" width="<?=h($w)?>" height="<?=h($h)?>" alt="<?=h($sub)?> by <?=h($name)?> <?=h($picw)?>x<?=h($pich)?>" title="<?=h($sub)?> by <?=h($name)?> <?=h($picw)?>x<?=h($pich)?>">
 </div>
 <!-- コンティニューフォーム欄 -->
 <form action="./" method="post">
