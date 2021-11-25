@@ -271,11 +271,12 @@ function create_res($line){
 		'host' => $host,
 		'userid' => $userid,
 		'check_elapsed_days' => $check_elapsed_days,
+		'encoded_boardname' => urlencode($boardname),
 		'encoded_name' => urlencode($name),
 		'encoded_no' => urlencode('['.$no.']'),
 		'encoded_sub' => urlencode($sub),
 		'encoded_u' => urlencode($root_url.'?resno='.$no),//tweet
-		'encoded_t' => urlencode('['.$no.']'.$sub.' - '.$boardname),
+		'encoded_t' => urlencode('['.$no.']'.$sub.' by '.$name.' - '.$boardname),
 		'oya' => $oya,
 	];
 
