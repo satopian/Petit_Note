@@ -17,18 +17,18 @@
 
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <nav class="menu_wrap">
-<span>[<a href="./">掲示板にもどる</a>]</span>
+<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 <?php if($userdel || $admindel):?>
 	<?php
 	$page= ($page !==false) ? '&page='.$page : ($resno!==false ? '&resno='.$resno :'');
 	?>
-	<span>[<a href="./?mode=logout<?=h($page)?>">編集モード終了</a>]</span>
+	<span>[<a href="./?mode=logout<?=h($page)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
 <?php else:?>
-	<span>[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]</span>
+	<span>[<a href="./?mode=userdel&page=<?=h($page)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
 <?php endif;?>
  <a href="#bottom">▽</a>
 	</nav>
-	<h2 class="article_title">記事編集中</h2>
+	<h2 class="article_title"><?php if($en):?>Editing an article<?php else:?>記事編集中<?php endif;?></h2>
 
 
 <hr>
@@ -54,7 +54,7 @@
 <?php if($res['img']):?>
 	<span>TOOL:<?=h($res['tool'])?></span>
 	<?php if($res['painttime']):?>
-		<span>描画時間:<?=h($res['painttime'])?></span>
+		<span><?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?></span>
 		
 		<?php endif;?>
 <?php endif;?>
@@ -85,14 +85,14 @@
 	<form action="./" method="POST" enctype="multipart/form-data" class="resform">
 	<table class="resform">
 	<tr>
-		<td>名前</td>
+		<td><?php if($en):?>Name<?php else:?>名前<?php endif;?></td>
 		<td>:</td>
 		<td><input type="text" name="name" value="<?=h($name)?>" autocomplete="username" class="input_txt"></td>
 	</tr>
 	<?php if($oya==='oya'):?>
 		<!-- レスの時は題名を出さない -->
 		<tr>
-			<td>題名</td>
+			<td><?php if($en):?>Subject<?php else:?>題名<?php endif;?></td>
 			<td>:</td>
 			<td><input type="text" name="sub" value="<?=h($sub)?>" class="input_txt"></td>
 		</tr>
@@ -109,13 +109,13 @@
 <input type="hidden" name="no" value="<?=h($no)?>">
 <input type="hidden" name="mode" value="edit">
 <input type="hidden" name="token" value="<?=h($token)?>">
-<input type="submit" value="編集" class="form_button">
+<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>" class="form_button">
 </form>
 
 <hr>
 	<div class="copy">
 		<div class="left_wrap">
-		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
+		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 	</div>
 <div class="righit_wrap">
 <a href="https://paintbbs.sakura.ne.jp/petit/" target="_blank" rel="noopener noreferrer" title="Petit Note <?=h($petit_ver)?> <?=h($petit_lot)?>">Petit Note <?=h($petit_ver)?></a> <span>Web Style by BASIC</span><br>

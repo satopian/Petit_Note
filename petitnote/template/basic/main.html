@@ -19,12 +19,12 @@
 <div class="container" id="top">
 
 <?php if($set_nsfw && !$nsfwc):?>
-	<h2>年齢制限付きのコンテンツを表示してもよろしいでしょうか?</h2>
+	<h2><?php if($en):?>View NSFW images?<?php else:?>年齢制限付きのコンテンツを表示してもよろしいでしょうか?<?php endif;?></h2>
 	<form action="./" method="post">
 	<input type="hidden" name="mode" value="view_nsfw">
 	<input type="hidden" name="view_nsfw" value="on">
 	<input type="hidden" name="page" value="<?=h($page)?>">
-	<input type="submit" value="はい表示します。">
+	<input type="submit" value="<?php if($en):?>Yes<?php else:?>はい表示します。<?php endif;?>">
 </form>
 <?php endif;?>
 
@@ -32,12 +32,12 @@
 <!-- ナビゲーション -->
 	<?php if($aikotoba):?>
 <nav class="menu_wrap">
-<span>[<a href="./?mode=catalog">カタログ</a>]</span>
-<span>[<a href="./?mode=paintcom">未投稿画像</a>]</span>
+<span>[<a href="./?mode=catalog"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
+<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
 <?php if($userdel || $admindel):?>
-	<span>[<a href="./?mode=logout&page=<?=h($page)?>">編集モード終了</a>]</span>
+	<span>[<a href="./?mode=logout&page=<?=h($page)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
 <?php else:?>
-	<span>[<a href="./?mode=userdel&page=<?=h($page)?>">編集</a>]</span>
+	<span>[<a href="./?mode=userdel&page=<?=h($page)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
 <?php endif;?>
  <a href="#bottom">▽</a>
 	</nav>
@@ -116,13 +116,13 @@ Size:
 	<form action="./" method="POST" enctype="multipart/form-data" class="postform">
 	<table>
 	<tr>
-		<td>名前</td>
+		<td><?php if($en):?>Name<?php else:?>名前<?php endif;?></td>
 		<td>:</td>
 		<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username" class="input_txt"></td>
 
 	</tr>
 	<tr>
-		<td>題名</td>
+		<td><?php if($en):?>Subject<?php else:?>題名<?php endif;?></td>
 		<td>:</td>
 		<td><input type="text" name="sub" class="input_txt"></td>
 	</tr>
@@ -133,7 +133,7 @@ Size:
 	</tr>
 	</table>
 <textarea name="com" class="post_com"></textarea><br>
-パスワード:<input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
+<?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <br>
@@ -141,7 +141,7 @@ Size:
 <input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
 <br>
 <?php endif;?>
-<input type="submit" value="スレッドを立てる" class="form_button">
+<input type="submit" value="<?php if($en):?>New Thread<?php else:?>スレッドを立てる<?php endif;?>" class="form_button">
 </form>
 <?php endif;?>
 </div>
@@ -149,12 +149,12 @@ Size:
 <?php endif;?>
 
 <?php if(!$aikotoba):?>
-この掲示板の合言葉はなんですか?: 
+<?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
 <form action="./" method="post" class="aikotoba">
 	<input type="text" name="aikotoba" class="input_txt">
 	<input type="hidden" name="mode" value="aikotoba">
 	<input type="hidden" name="postpage" value="<?=h($page)?>">
-	<input type="submit" value="秘密の答え">
+	<input type="submit" value="<?php if($en):?>Answer<?php else:?>秘密の答え<?php endif;?>">
 </form><br>
 <?php endif;?>
 <hr>
@@ -199,12 +199,12 @@ Size:
 				<span>TOOL:<?=h($res['tool'])?></span>
 				<?php if($res['painttime']):?>
 				<span>
-					描画時間:<?=h($res['painttime'])?>
+					<?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?>
 				</span>
 				<?php endif;?>
 				<?php if($res['thumbnail']):?>
 				<span>
-				- サムネイル表示中 -
+					<?php if($en):?>- Showing thumbnail -<?php else:?>- サムネイル表示中 -<?php endif;?>	
 				</span>
 				<?php endif;?>
 						
@@ -218,10 +218,10 @@ Size:
 			<?php if($res['continue']||$res['anime']):?>
 			<div class="imginfo_wrap">
 			<?php if($res['continue'] && $aikotoba):?>
-			<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>">続きを描く</a></span>
+			<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>"><?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?></a></span>
 			<?php endif;?>
 			<?php if($res['anime']):?>
-					<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank">動画</a></span>
+					<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
 			<?php endif;?>
 			</div>
 			<?php endif;?>
@@ -253,7 +253,7 @@ Size:
 				<input type="hidden" name="no" value="<?=h($res['no'])?>">
 				<input type="hidden" name="postpage" value="<?=h($page)?>">
 				<?php if($ress[0]['check_elapsed_days']||$admindel):?>
-				<input type="submit" value="編集">
+				<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
 				<?php endif;?>
 			</form>
 			<form action="./" method="POST" class="aikotoba">
@@ -264,7 +264,7 @@ Size:
 				<input type="hidden" name="no" value="<?=h($res['no'])?>">
 				<input type="hidden" name="postpage" value="<?=h($page)?>">
 				<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
-				<input type="submit" value="削除">
+				<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
 			</form>
 		<?php endif;?>
 			
@@ -285,10 +285,10 @@ Size:
 
 	<?php if($resform):?>
 		<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button">
-		<input type="submit" value="返信"></form>
+		<input type="submit" value="<?php if($en):?>Reply<?php else:?>返信<?php endif;?>"></form>
 	<?php else:?>
 		<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button">
-		<input type="submit" value="表示"></form>
+		<input type="submit" value="<?php if($en):?>View thread<?php else:?>表示<?php endif;?>"></form>
 	<?php endif;?>
 		<div class="pagetop"><a href="#top">△</a></div>
 	</div>
@@ -355,7 +355,7 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 
 	<div class="copy">
 		<div class="left_wrap">
-		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
+		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 	</div>
 <div class="righit_wrap">
 <a href="https://paintbbs.sakura.ne.jp/petit/" target="_blank" rel="noopener noreferrer" title="Petit Note <?=h($petit_ver)?> <?=h($petit_lot)?>">Petit Note <?=h($petit_ver)?></a> <span>Web Style by BASIC</span><br>

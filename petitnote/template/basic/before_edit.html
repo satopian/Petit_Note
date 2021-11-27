@@ -18,26 +18,26 @@
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 	<nav class="menu_wrap">
-		<span>[<a href="./">掲示板にもどる</a>]</span>
+		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 <?php if($userdel || $admindel):?>
 	<span>
 		<?php if($postresno):?>
-		[<a href="./?mode=logout&resno=<?=h($postresno)?>">編集モード終了</a>]
+		[<a href="./?mode=logout&resno=<?=h($postresno)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
 		<?php endif;?>
 		<?php if(!$postresno && ($postpage||$postpage===0)):?>
-		[<a href="./?mode=logout&page=<?=h($postpage)?>">編集モード終了</a>]
+		[<a href="./?mode=logout&page=<?=h($postpage)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
 		<?php endif;?>
 	</span>
 <?php endif;?>
 <a href="#bottom">▽</a>
 </nav>
-<h2 class="article_title">編集モード</h2>
+<h2 class="article_title"><?php if($en):?>Edit mode<?php else:?>編集モード<?php endif;?></h2>
 
 <?php if($admindel):?>
-この記事を編集します。編集ボタンを押してください。:
+	<?php if($en):?>Edit this article. Press the edit button.<?php else:?>この記事を編集します。編集ボタンを押してください。<?php endif;?>: 
 <?php endif;?>
 <?php if($userdel&&!$admindel):?>
-この記事を編集します。パスワードを入力してください。:
+	<?php if($en):?>Edit this article. Please enter password.<?php else:?>この記事を編集します。パスワードを入力してください。<?php endif;?>: 
 <?php endif;?>
 <?php if( $admindel || $aikotoba && $userdel):?>
 <form action="./" method="POST" id="delete" class="aikotoba">
@@ -50,7 +50,7 @@
 <input type="hidden" name="resmode" value="<?=h($resmode)?>">
 <input type="hidden" name="postresno" value="<?=h($postresno)?>">
 <input type="hidden" name="postpage" value="<?=h($postpage)?>">
-<input type="submit" value="編集">
+<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
 </form>
 <?php endif;?>
 
@@ -75,7 +75,7 @@
 <?php if($res['img']):?>
 	<span>TOOL:<?=h($res['tool'])?></span>
 	<?php if($res['painttime']):?>
-		<span>描画時間:<?=h($res['painttime'])?></span>
+		<span><?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?></span>
 		
 		<?php endif;?>
 <?php endif;?>
@@ -105,10 +105,10 @@
 <div class="copy">
 <div class="left_wrap"><a href="#top">△</a> [<a href="<?=h($home)?>">HOME</a> /
 <?php if($postresno!==false):?>
-<a href="./?mode=adminin&resno=<?=h($postresno)?>">管理</a>]
+<a href="./?mode=adminin&resno=<?=h($postresno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 <?php endif;?>
 <?php if(!$postresno && ($postpage||$postpage===0)):?>
-<a href="./?mode=adminin&page=<?=h($postpage)?>">管理</a>]
+<a href="./?mode=adminin&page=<?=h($postpage)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 <?php endif;?>
 </div>
 

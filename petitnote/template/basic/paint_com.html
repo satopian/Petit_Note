@@ -32,7 +32,7 @@
 	<div class="container">
 		<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 		<nav class="menu_wrap" >
-			<span>[<a href="./">掲示板にもどる</a>]</span>
+			<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 			<a href="#bottom">▽</a>
 			</nav>
 							   <hr>
@@ -40,8 +40,8 @@
 		<div>
 			<div class="error">
 				<?php if(!$tmps):?>
-				画像が見当たりません。<br>
-				<a href="#" onClick="javascript:window.history.back(-1);return false;">もどる</a>
+				<?php if($en):?>The images was not found.<?php else:?>画像が見当たりません。<?php endif;?><br>
+				<a href="#" onClick="javascript:window.history.back(-1);return false;"><?php if($en):?>Back<?php else:?>もどる<?php endif;?></a>
 			</div>
 			<?php endif;?>
 <?php if($tmps):?>
@@ -60,13 +60,13 @@
 <form action="./" method="POST" enctype="multipart/form-data" class="postform">
 	<table>
 		<tr>
-			<td>名前</td>
+			<td><?php if($en):?>Name<?php else:?>名前<?php endif;?></td>
 			<td>:</td>
 			<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username" class="input_txt"></td>
 	
 		</tr>
 		<tr id="paintcom_title">
-			<td>題名</td>
+			<td><?php if($en):?>Subject<?php else:?>題名<?php endif;?></td>
 			<td>:</td>
 			<td><input type="text" name="sub" class="input_txt"></td>
 		</tr>
@@ -78,11 +78,11 @@
 		</table>
 	
 <textarea name="com" class="post_com"></textarea><br>
-<input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
+<?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <input type="hidden" name="pictmp" value="<?=h($pictmp)?>">
-<div class="post_table_title">画像
+<div class="post_table_title"><?php if($en):?>Images<?php else:?>画像<?php endif;?>
 	<select name="picfile" class="post_select_image" onchange="select_pic();" id="select_picfile">
 
 ?>
@@ -93,11 +93,12 @@
 			<?php foreach($val as $tempimg):?>
 				<option value="<?=h($tempimg['slect_src_val'])?>"><?=h($tempimg['srcname'])?></option>
 				<?php endforeach;?>
+	
 				<?php endforeach;?>
 			</select>
 			<br>
 		</div>
-	<input type="submit" value="投稿する">
+	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>">
 	
 	<label id="paintcom_sage">
 	<?php if(!$sage_all):?>
@@ -106,12 +107,12 @@
 	</label>
 </form>
 <?php else:?>
-この掲示板の合言葉はなんですか?: 
+<?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
 <form action="./" method="post" class="aikotoba">
 	<input type="text" name="aikotoba" class="input_txt">
 	<input type="hidden" name="mode" value="aikotoba">
 	<input type="hidden" name="paintcom" value="true">
-	<input type="submit" value="秘密の答え">
+	<input type="submit" value="<?php if($en):?>Answer<?php else:?>秘密の答え<?php endif;?>">
 	</form>
 <?php endif;?>
 
@@ -119,7 +120,7 @@
 
 <br>
 <?php if($tmps):?>
-[<a href="./">掲示板に戻る</a>]
+[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]
 <?php endif;?>
 </div>
 </div>

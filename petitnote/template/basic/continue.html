@@ -15,7 +15,7 @@
 <div class="container">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<nav class="menu_wrap" >
-		<span>[<a href="./">掲示板にもどる</a>]</span>
+		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 		<a href="#bottom">▽</a>
 		</nav>
 	<hr>
@@ -37,15 +37,15 @@
  <input type="hidden" name="imgfile" value="<?=h($imgfile)?>">
  <select name="ctype" class="paint_select">
    <?php if($ctype_pch):?>
-   <option value="pch">動画より続きを描く</option>
+   <option value="pch"><?php if($en):?>Return<?php else:?>動画から続きを描く<?php endif;?></option>
    <?php endif;?>
-   <option value="img">画像より続きを描く</option>
+   <option value="img"><?php if($en):?>from picture<?php else:?>画像から続きを描く<?php endif;?></option>
  </select>
  <span class="continue_menu">
-	画像は <select name="type" class="paint_select">
-<option value="rep">差し換え</option>
+ <?php if($en):?>The image is a<?php else:?>画像は<?php endif;?> <select name="type" class="paint_select">
+<option value="rep"><?php if($en):?>replace<?php else:?>差し換え<?php endif;?></option>
 <?php if(!$use_diary || $adminpost):?>
-<option value="new">新規投稿</option>
+<option value="new"><?php if($en):?>new post<?php else:?>新規投稿<?php endif;?></option>
 <?php endif;?>
 </select>
   </span>
@@ -70,8 +70,8 @@ selected
 <?php endif;?>
 
 <span class="non"><input type="text" value="" autocomplete="username"></span>
-<span class="continue_menu">パスワード <input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
-<input type="submit" value="続きを描く">
+<span class="continue_menu"><?php if($en):?>Password<?php else:?>パスワード<?php endif;?> <input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
+<input type="submit" value="<?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?>">
 
 </form>
 
@@ -79,7 +79,7 @@ selected
 <?php if(!$use_diary || $adminpost):?>
 <div class="howtocontinue">
    <ul id="up_desc">
-<li>新規投稿ならパスワードがなくても続きを描く事ができます。</li>
+<li><?php if($en):?>If it is a new post, you can draw the continuation without a password.<?php else:?>新規投稿ならパスワードがなくても続きを描く事ができます。<?php endif;?></li>
 </ul>
 </div>
 <?php endif;?>

@@ -13,7 +13,7 @@
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <nav class="menu_wrap">
 		
-<span>[<a href="./">掲示板に戻る</a>]</span>
+<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板に戻る<?php endif;?></a>]</span>
 </nav>
 
 <?php if($adminpost||$admindel):?>
@@ -21,16 +21,17 @@
 <?php if($adminpost):?>
 <li>
 <?php if($use_diary):?>
-			日記モードでログイン中です。
-			<?php else:?>
-			管理者投稿モードでログイン中です。
-			<?php endif;?>
+	<?php if($en):?>You are logged in in diary mode.<?php else:?>日記モードでログイン中です。<?php endif;?>
+			
+<?php else:?>
+		<?php if($en):?>You are logged in in admin post mode.<?php else:?>管理者投稿モードでログイン中です。<?php endif;?>		
+<?php endif;?>
 
 </li>
 <?php endif;?>
 <?php if($admindel):?>
 <li>
-	編集モードでログイン中です。
+<?php if($en):?>You are logged in in edit mode.<?php else:?>編集モードでログイン中です。<?php endif;?>
 </li>
 <?php endif;?>
 </ul>
@@ -39,7 +40,7 @@
 <input type="hidden" name="mode" value="logout_admin">
 <input type="hidden" name="postpage" value="<?=h($page)?>">
 <input type="hidden" name="resno" value="<?=h($resno)?>">
-<input type="submit" value="管理者ログアウト">
+<input type="submit" value="<?php if($en):?>Admin log out<?php else:?>管理者ログアウト<?php endif;?>">
 	</form>
 	<?php endif;?>
 
@@ -48,7 +49,9 @@
 	<form action="./" method="post" class="admin">
 		<?php if(!$admindel):?>
 		
-		<label><input type="radio" name="mode" value="admin_del" checked>[管理者編集モード]</label><br>
+		<label><input type="radio" name="mode" value="admin_del" checked>
+		<?php if($en):?>[Admin edit mode]<?php else:?>[管理者編集モード]<?php endif;?></label>
+			<br>
 		<?php endif;?>
 		<?php if(!$adminpost):?>
 		
@@ -57,9 +60,9 @@
 			
 			>
 			<?php if($use_diary):?>
-			[日記モード]
+				<?php if($en):?>[Diary mode]<?php else:?>[日記モード]<?php endif;?>
 			<?php else:?>
-			[管理者投稿モード]
+				<?php if($en):?>[Admin post mode]<?php else:?>[管理者投稿モード]<?php endif;?>
 				<?php endif;?>
 			</label><br>
 			<?php endif;?>
@@ -68,7 +71,7 @@
 		<input type="password" name="adminpass">
 		<input type="hidden" name="postpage" value="<?=h($page)?>">
 		<input type="hidden" name="resno" value="<?=h($resno)?>">
-		<input type="submit" value="管理者ログイン">
+		<input type="submit" value="<?php if($en):?>Admin login<?php else:?>管理者ログイン<?php endif;?>">
 	</form>
 	<?php endif;?>
 

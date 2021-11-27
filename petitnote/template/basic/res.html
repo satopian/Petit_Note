@@ -38,36 +38,37 @@
 <body>
 <div class="container" id="top">
 	<?php if($set_nsfw && !$nsfwc):?>
-	<h2>年齢制限付きのコンテンツを表示してもよろしいでしょうか?</h2>
+	<h2><?php if($en):?>View NSFW images?<?php else:?>年齢制限付きのコンテンツを表示してもよろしいでしょうか?<?php endif;?></h2>
 	<form action="./" method="post">
 	<input type="hidden" name="mode" value="view_nsfw">
 	<input type="hidden" name="view_nsfw" value="on">
 	<input type="hidden" name="resno" value="<?=h($out[0][0]['no'])?>">
-	<input type="submit" value="はい表示します。">
+	<input type="submit" value="<?php if($en):?>Yes<?php else:?>はい表示します。<?php endif;?>">
 	</form>
 	<?php endif;?>
 
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="menu_wrap">
-<span>[<a href="./">掲示板にもどる</a>]</span>
-<span> [<a href="./?mode=paintcom">未投稿画像</a>]</span>
+<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
+<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
 <?php if($userdel || $admindel):?>
-<span>[<a href="./?mode=logout&resno=<?=h($resno)?>">編集モード終了</a>]</span>
+<span>[<a href="./?mode=logout&resno=<?=h($resno)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
 <?php else:?>
-<span>[<a href="./?mode=userdel&resno=<?=h($resno)?>">編集</a>]</span>
+<span>[<a href="./?mode=userdel&resno=<?=h($resno)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
  <?php endif;?>
  <a href="#bottom">▽</a>
  </nav>
 <?php endif;?>
 <?php if(!$aikotoba):?>
-この掲示板の合言葉はなんですか?: 
+	<?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?>
+ 
 <form action="./" method="post" class="aikotoba">
 	<input type="text" name="aikotoba" class="input_txt"> 
 	<input type="hidden" name="mode" value="aikotoba">
 	<input type="hidden" name="resmode" value="true">
 	<input type="hidden" name="resno" value="<?=h($out[0][0]['no'])?>">
-	<input type="submit" value="秘密の答え">
+	<input type="submit" value="<?php if($en):?>Answer<?php else:?>秘密の答え<?php endif;?>">
 </form><br>
 <?php endif;?>
 
@@ -97,12 +98,13 @@
 		<span>TOOL:<?=h($res['tool'])?></span>
 		<?php if($res['painttime']):?>
 		<span>
-			描画時間:<?=h($res['painttime'])?>
+		<?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?>
 		</span>
 		<?php endif;?>
 		<?php if($res['thumbnail']):?>
 		<span>
-		- サムネイル表示中 -
+		<?php if($en):?>- Showing thumbnail -<?php else:?>- サムネイル表示中 -<?php endif;?>	
+		
 		</span>
 		<?php endif;?>
 			
@@ -116,10 +118,10 @@
 		<?php if($res['continue']||($res['anime'])):?>
 		<div class="imginfo_wrap">
 		<?php if($res['continue'] && $aikotoba):?>
-		<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>">続きを描く</a></span>
+		<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>"><?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?></a></span>
 		<?php endif;?>
 		<?php if($res['anime']):?>
-				<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank">動画</a></span>
+				<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
 		<?php endif;?>
 		</div>
 		<?php endif;?>
@@ -153,7 +155,7 @@
 <input type="hidden" name="no" value="<?=h($res['no'])?>">
 <input type="hidden" name="postresno" value="<?=h($resno)?>">
 <?php if($ress[0]['check_elapsed_days']||$admindel):?>
-<input type="submit" value="編集">
+<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
 <?php endif;?>
 </form>
 <form action="./" method="POST" class="aikotoba">
@@ -165,7 +167,7 @@
 <input type="hidden" name="postpage" value="<?=h($page)?>">
 <input type="hidden" name="postresno" value="<?=h($resno)?>">
 
-<input type="submit" value="削除">
+<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
 </form>
 <?php endif;?>	
 		
@@ -181,9 +183,9 @@
 <div class="res_button_wrap">
 	<?php if($resname):?>
 		<script>function add_to_com(){
-		document.getElementById("res_com").value += "<?=h($resname)?>さん";
+		document.getElementById("res_com").value += "<?=h($resname)?><?php if($en):?>-san<?php else:?>さん<?php endif;?>";
 		}</script>
-		<button class="copy_button" onclick="add_to_com()">投稿者名をコピー</button>
+		<button class="copy_button" onclick="add_to_com()"><?php if($en):?>Copy the poster name<?php else:?>投稿者名をコピー<?php endif;?></button>
 	<?php endif;?>
 <span class="share_button">
 	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>tweet</a> <a href="#top">△</a>
@@ -214,7 +216,7 @@
 </select>
 <span class="canvas_size_wrap"> 
 <span class="canvas_size">Size</span>:
-<select name="picw" title="幅" class="canvas_select">
+<select name="picw" title="<?php if($en):?>Width<?php else:?>幅<?php endif;?>" class="canvas_select">
 	<?php
 	//幅 300から、$pmax_w で設定した最大値まで。
 		for($i = 300; $i <=$pmax_w ; $i+=50){//50ずつ増える
@@ -228,7 +230,7 @@
 	?>
 	</select>
 	x
-	<select name="pich" title="高さ" class="canvas_select">
+	<select name="pich" title="<?php if($en):?>Height<?php else:?>高さ<?php endif;?>" class="canvas_select">
 	<?php
 	//高さ 300から、PMAX_H で設定した最大値まで。
 		for($i = 300; $i <=$pmax_h ; $i+=50){//50ずつ増える
@@ -249,7 +251,7 @@
 
 	<table class="resform">
 		<tr>
-			<td>名前</td>
+			<td><?php if($en):?>Name<?php else:?>名前<?php endif;?></td>
 			<td>:</td>
 			<td><input type="text" name="name" value="<?=h($namec)?>" autocomplete="username" class="input_txt"></td>
 		</tr>
@@ -261,7 +263,7 @@
 		</table>
 		<!-- <br> -->
 <textarea name="com" class="post_com" id="res_com"></textarea><br>
-パスワード:<input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password" minlength="6">
+<?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password" minlength="6">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="resto" value="<?=h($res['no'])?>">
 <input type="hidden" name="token" value="<?=h($token)?>">
@@ -273,7 +275,7 @@
 <?php if(!$sage_all):?>
 <label>sage:<input type="checkbox" name="sage" value="on" class="form_button"></label>
 <?php endif;?>
-<input type="submit" value="返信" class="form_button">
+<input type="submit" value="<?php if($en):?>Reply<?php else:?>返信<?php endif;?>" class="form_button">
 
 </form>
 <?php endif;?>
@@ -284,7 +286,7 @@
 <?php endif;?>
 <div class="copy">
 <div class="left_wrap">
-	[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?>">管理</a>]
+	[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 </div>
 <div class="righit_wrap">
 <a href="https://paintbbs.sakura.ne.jp/petit/" target="_blank" rel="noopener noreferrer" title="Petit Note <?=h($petit_ver)?> <?=h($petit_lot)?>">Petit Note <?=h($petit_ver)?></a> <span>Web Style by BASIC</span><br>

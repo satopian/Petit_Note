@@ -31,14 +31,14 @@ function logout_admin(){
 
 //合言葉認証
 function aikotoba(){
-	global $aikotoba;
+	global $aikotoba,$en;
 
 	session_sta();
 	if(!$aikotoba || $aikotoba!==filter_input(INPUT_POST,'aikotoba')){
 		if(isset($_SESSION['aikotoba'])){
 			unset($_SESSION['aikotoba']);
 		} 
-		return 	error('合言葉が違います。');
+		return 	error($en?'The secret words is wrong':'合言葉が違います。');
 	}
 
 	$_SESSION['aikotoba']='aikotoba';
@@ -57,7 +57,7 @@ function aikotoba(){
 }
 function admin_in(){
 
-	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir;
+	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en;
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
@@ -77,20 +77,21 @@ function admin_in(){
 }
 //合言葉を再確認	
 function check_aikotoba(){
+	global $en;
 	if(!aikotoba_valid()){
-		return error('合言葉が違います');
+		return error($en?'The secret words is wrong.':'合言葉が違います。');
 	}
 	return true;
 }
 //管理者投稿モード
 function adminpost(){
-	global $admin_pass,$second_pass;
+	global $admin_pass,$second_pass,$en;
 	session_sta();
 	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['adminpost'])){
 			unset($_SESSION['adminpost']);
 		} 
-		return 	error('パスワードが違います。');
+		return 	error($en?'password is wrong.':'パスワードが違います。');
 	}
 	session_regenerate_id(true);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
@@ -110,13 +111,13 @@ function adminpost(){
 
 //管理者削除モード
 function admin_del(){
-	global $admin_pass,$second_pass;
+	global $admin_pass,$second_pass,$en;
 	session_sta();
 	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['admindel'])){
 			unset($_SESSION['admindel']);
 		} 
-		return 	error('パスワードが違います。');
+		return 	error($en?'password is wrong.':'パスワードが違います。');
 	}
 	session_regenerate_id(true);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
@@ -188,6 +189,8 @@ function view_nsfw(){
 // コンティニュー認証
 function check_cont_pass(){
 
+	global $en;
+
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'time',FILTER_VALIDATE_INT);
 	$pwd = filter_input(INPUT_POST, 'pwd');
@@ -209,12 +212,12 @@ function check_cont_pass(){
 		closeFile ($rp);
 	}
 
-	error('パスワードが違います。');
+	error($en?'password is wrong.':'パスワードが違います。');
 }
 
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line){
-	global $max_w,$max_h,$root_url,$boardname,$do_not_change_posts_time;
+	global $max_w,$max_h,$root_url,$boardname,$do_not_change_posts_time,$en;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 	$res=[];
 
@@ -230,7 +233,7 @@ function create_res($line){
 			$continue = true;
 			break;
 		case 'upload':
-			$tool='アップロード';
+			$tool=$en?'Upload':'アップロード';
 			break;
 		default:
 			'';
@@ -386,7 +389,7 @@ function png2jpg ($src) {
 }
 
 function error($str){
-	global $boardname,$skindir;
+	global $boardname,$skindir,$en;
 	$templete='error.html';
 	include __DIR__.'/'.$skindir.$templete;
 	exit;
@@ -401,11 +404,12 @@ function get_csrf_token(){
 }
 //csrfトークンをチェック	
 function check_csrf_token(){
+	global $en;
 	session_sta();
 	$token=filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
 	if(!$session_token||$token!==$session_token){
-		error('不正な投稿をしないでください。');
+		error($en?'Illegal posts have been detected.':'不正な投稿をしないでください。');
 	}
 }
 //session開始
@@ -451,7 +455,7 @@ function deltemp(){
 
 // NGワードがあれば拒絶
 function Reject_if_NGword_exists_in_the_post(){
-	global $use_japanesefilter,$badstring,$badname,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass;
+	global $use_japanesefilter,$badstring,$badname,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass,$en;
 
 	$adminpost=adminpost_valid();
 
@@ -468,29 +472,29 @@ function Reject_if_NGword_exists_in_the_post(){
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
 		mb_regex_encoding("UTF-8");
-		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) error('日本語で何か書いてください。');
+		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) error($en?'Comment should have at least some Japanese characters.':'日本語で何か書いてください。');
 	}
 
 	//本文へのURLの書き込みを禁止
 	if(!$allow_comments_url && !$adminpost && (!$admin_pass||$pwd !== $admin_pass)){
-		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) error('URLの記入はできません。');
+		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) error($en?'This URL can not be used in text.':'URLの記入はできません。');
 	}
 
 	// 使えない文字チェック
 	if (is_ngword($badstring, [$chk_com, $chk_sub, $chk_name])) {
-		error('不適切な表現があります。');
+		error($en?'There is an inappropriate string.':'不適切な表現があります。');
 	}
 
 	// 使えない名前チェック
 	if (is_ngword($badname, $chk_name)) {
-		error('その名前は使えません。');
+		error($en?'This name cannot be used.':'その名前は使えません。');
 	}
 
 	//指定文字列が2つあると拒絶
 	$bstr_A_find = is_ngword($badstr_A, [$chk_com, $chk_sub, $chk_name]);
 	$bstr_B_find = is_ngword($badstr_B, [$chk_com, $chk_sub, $chk_name]);
 	if($bstr_A_find && $bstr_B_find){
-		error('不適切な表現があります。');
+		error($en?'There is an inappropriate string.':'不適切な表現があります。');
 	}
 
 }
@@ -531,14 +535,15 @@ function init(){
 
 //ディレクトリ作成
 function check_dir ($path) {
+	global $en;
 
 	if (!is_dir($path)) {
 			mkdir($path, 0707);
 			chmod($path, 0707);
 	}
-	if (!is_dir($path)) return "{$path}がありません。<br>";
-	if (!is_readable($path)) return "{$path}を読めません。<br>";
-	if (!is_writable($path)) return "{$path}を書けません。<br>";
+	if (!is_dir($path)) return $path.$en?'does not exist.':'がありません。'.'<br>';
+	if (!is_readable($path)) return $path.$en?'is not readable':'を読めません。'.'<br>';
+	if (!is_writable($path)) return $path.$en?'is not writable':'を書けません。'.'<br>';
 }
 
 // 一括書き込み（上書き）
@@ -578,12 +583,20 @@ function image_reduction_display($w,$h,$max_w,$max_h){
  * @return string
  */
 function calcPtime ($psec) {
+	global $en;
 
 	$D = floor($psec / 86400);
 	$H = floor($psec % 86400 / 3600);
 	$M = floor($psec % 3600 / 60);
 	$S = $psec % 60;
 
+	if($en){
+		return
+		($D ? $D.'day'  : '')
+		. ($H ? $H.'hr' : '')
+		. ($M ? $M.'min' : '')
+		. ($S ? $S.'sec' : '');
+	}
 	return
 		($D ? $D.'日'  : '')
 		. ($H ? $H.'時間' : '')

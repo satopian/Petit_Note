@@ -18,18 +18,18 @@
 <div class="container" id="top">
 
 <?php if($set_nsfw && !$nsfwc):?>
-	<h2>年齢制限付きのコンテンツを表示してもよろしいでしょうか?</h2>
+	<h2><?php if($en):?>View NSFW images?<?php else:?>年齢制限付きのコンテンツを表示してもよろしいでしょうか?<?php endif;?></h2>
 	<form action="./" method="post">
 	<input type="hidden" name="mode" value="view_nsfw">
 	<input type="hidden" name="view_nsfw" value="on">
 	<input type="hidden" name="catalogpage" value="<?=h($page)?>">
-	<input type="submit" value="はい表示します。">
+	<input type="submit" value="<?php if($en):?>Yes<?php else:?>はい表示します。<?php endif;?>">
 </form>
 <?php endif;?>
 
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <nav class="menu_wrap" >
-<span>[<a href="./">掲示板にもどる</a>]</span>
+<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 <a href="#bottom">▽</a>
 </nav>
 <hr>
@@ -50,7 +50,7 @@
 			<?php endif;?>
 			</a>
 			<?php else:?>
-				<a href="./?resno=<?= h($res['no'])?>" target="_blank">画像なし</a>
+				<a href="./?resno=<?= h($res['no'])?>" target="_blank"><?php if($en):?>No image.<?php else:?>画像なし<?php endif;?></a>
 		<?php endif;?>
 	</div>
 	
@@ -125,7 +125,7 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 
 	<div class="copy">
 		<div class="left_wrap">
-		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>">管理</a>]
+		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 	</div>
 <div class="righit_wrap">
 <a href="https://paintbbs.sakura.ne.jp/petit/" target="_blank" rel="noopener noreferrer" title="Petit Note <?=h($petit_ver)?> <?=h($petit_lot)?>">Petit Note <?=h($petit_ver)?></a> <span>Web Style by BASIC</span><br>

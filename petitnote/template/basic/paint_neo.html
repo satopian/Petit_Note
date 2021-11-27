@@ -30,13 +30,37 @@ return;
 <header>
 <nav>
 <div style= "width:calc(<?=h($appw)?>px + 176px)" class="app_toolleft"> 
-<span class="nts_radiowrap">ツールを
-<input type="radio" name="1" id="1" onclick="Neo.setToolSide(true)" class="nts_radio"><label class="ntslabel" for="1">左へ</label>
-<input type="radio" name="1" id="2" onclick="Neo.setToolSide(false)" checked="checked" class="nts_radio"><label class="ntslabel" for="2">右へ</label>
+<span class="nts_radiowrap"><?php if($en):?>TOOL<?php else:?>ツールを<?php endif;?>
+<input type="radio" name="1" id="1" onclick="Neo.setToolSide(true)" class="nts_radio"><label class="ntslabel" for="1"><?php if($en):?>Left<?php else:?>左へ<?php endif;?></label>
+<input type="radio" name="1" id="2" onclick="Neo.setToolSide(false)" checked="checked" class="nts_radio"><label class="ntslabel" for="2"><?php if($en):?>Right<?php else:?>右へ<?php endif;?></label>
 </span>
 </div>
 </nav>
 </header>
+<?php if($en):?>
+<script>
+var DynamicColor = 1;
+var Palettes = new Array();
+<?=($palettes)?>
+function setPalette(){d=document;d.paintbbs.setColors(Palettes[d.Palette.select.selectedIndex]);d.grad.view.checked&&GetPalette()}function PaletteSave(){Palettes[0]=String(document.paintbbs.getColors())}var cutomP=0;
+function PaletteNew(){d=document;p=String(d.paintbbs.getColors());s=d.Palette.select;Palettes[s.length]=p;cutomP++;str=prompt("Palette name","Palette "+cutomP);null==str||""==str?cutomP--:(s.options[s.length]=new Option(str),30>s.length&&(s.size=s.length),PaletteListSetColor())}function PaletteRenew(){d=document;Palettes[d.Palette.select.selectedIndex]=String(d.paintbbs.getColors());PaletteListSetColor()}
+function PaletteDel(){p=Palettes.length;s=document.Palette.select;i=s.selectedIndex;if(-1!=i&&(flag=confirm("Are you sure you want to delete ["+s.options[i].text + "] ?"))){for(s.options[i]=null;p>i;)Palettes[i]=Palettes[i+1],i++;30>s.length&&(s.size=s.length)}}
+function P_Effect(a){a=parseInt(a);x=1;255==a&&(x=-1);d=document.paintbbs;p=String(d.getColors()).split("\n");l=p.length;var f="";for(n=0;l>n;n++)R=a+parseInt("0x"+p[n].substr(1,2))*x,G=a+parseInt("0x"+p[n].substr(3,2))*x,B=a+parseInt("0x"+p[n].substr(5,2))*x,255<R?R=255:0>R&&(R=0),255<G?G=255:0>G&&(G=0),255<B?B=255:0>B&&(B=0),f+="#"+Hex(R)+Hex(G)+Hex(B)+"\n";d.setColors(f);PaletteListSetColor()}
+function PaletteMatrixGet(){d=document.Palette;p=Palettes.length;s=d.select;m=d.m_m.selectedIndex;t=d.setr;switch(m){default:t.value="";for(c=n=0;p>n;)null!=s.options[n]&&(t.value=t.value+"\n!"+s.options[n].text+"\n"+Palettes[n],c++),n++;alert("Number of pallets "+c+"\ngot the palette matrix.");break;case 1:t.value="!Palette\n"+String(document.paintbbs.getColors())
+alert("got the palette information currently used.")}t.value=
+t.value.trim()+"\n!Matrix"}
+function PalleteMatrixSet(){m=document.Palette.m_m.selectedIndex;str="Set the palette matrix.";switch(m){default:flag=confirm(str+"\nAll current palette information will be lost, is that okay ?");break;case 1:flag=confirm(str+"\nAre you sure you want to replace it with the palette you are currently using?");break;
+case 2:flag=confirm(str+"\nAre you sure you want to replace it with the palette you are currently using ?")}flag&&(PaletteSet(),s.size=30>s.length?s.length:30,DynamicColor&&PaletteListSetColor())}
+function PalleteMatrixHelp(){alert("**ABOUT PALETTE MATRIX**\nThe palette matrix allows you to use free palette settings \nby using text that lists palette information.\n\nGet the matrix\n1)Get the palette matrix from the [Get] button.\n2)The retrieved information will appear in the text area below, copy it all.\n3)Let's save this matrix information as text in a file.\n\nto set matrix\n1)Paste the copied matrix into the text area below.\n2)If you have saved it in a file, copy and paste it.\n3)You can use the saved palette by pressing the set button.\n\nPlease note that the palette will not be set correctly if there is unnecessary information.")}
+function PaletteSet(){d=document.Palette;se=d.setr.value;s=d.select;m=d.m_m.selectedIndex;l=se.length;if(1>l)alert("There is no matrix information.");else{e=o=n=0;switch(m){default:for(n=s.length;0<n;)n--,s.options[n]=null;case 2:i=s.options.length;n=se.indexOf("!",0)+1;if(0==n)return;Matrix1=1;for(Matrix2=-1;n<l;){e=se.indexOf("\n#",n);if(-1==e)return;pn=se.substring(n,e+Matrix1);o=se.indexOf("!",e);if(-1==o)return;pa=se.substring(e+1,o+Matrix2);
+"Palette"!=pn?(0<=i&&(s.options[i]=new Option(pn)),Palettes[i]=pa,i++):document.paintbbs.setColors(pa);n=o+1}break;case 1:n=se.indexOf("!",0)+1;if(0==n)return;e=se.indexOf("\n#",n);o=se.indexOf("!",e);0<=e&&(pa=se.substring(e+1,o-1));document.paintbbs.setColors(pa)}PaletteListSetColor()}}function PaletteListSetColor(){var a=document.Palette.select;for(i=1;a.options.length>i;i++){var f=Palettes[i].split("\n");a.options[i].style.background=f[4];a.options[i].style.color=GetBright(f[4])}}
+function GetBright(a){r=parseInt("0x"+a.substr(1,2));g=parseInt("0x"+a.substr(3,2));b=parseInt("0x"+a.substr(5,2));a=r>=g?r>=b?r:b:g>=b?g:b;return 128>a?"#FFFFFF":"#000000"}function Chenge_(){var a=document.grad.pst.value,f=document.grad.ped.value;isNaN(parseInt("0x"+a))||isNaN(parseInt("0x"+f))||GradView("#"+a,"#"+f)}
+function ChengeGrad(){var a=document,f=a.grad.pst.value,h=a.grad.ped.value;Chenge_();var u=parseInt("0x"+f.substr(0,2)),v=parseInt("0x"+f.substr(2,2));f=parseInt("0x"+f.substr(4,2));var k=parseInt((u-parseInt("0x"+h.substr(0,2)))/15),q=parseInt((v-parseInt("0x"+h.substr(2,2)))/15);h=parseInt((f-parseInt("0x"+h.substr(4,2)))/15);isNaN(k)&&(k=1);isNaN(q)&&(q=1);isNaN(h)&&(h=1);var w=new String;cnt=0;m1=u;m2=v;for(m3=f;14>cnt;cnt++,m1-=k,m2-=q,m3-=h){if(255<m1||0>m1)k*=-1,m1-=k;if(255<m2||0>m2)q*=-1,
+m2-=q;if(255<m3||0>m3)h*=-1,m2-=h;w+="#"+Hex(m1)+Hex(m2)+Hex(m3)+"\n"}a.paintbbs.setColors(w)}function Hex(a){a=parseInt(a);0>a&&(a*=-1);for(var f=new String,h;16<a;)h=a,16<a&&(a=parseInt(a/16),h-=16*a),h=Hex_(h),f=h+f;h=Hex_(a);for(f=h+f;2>f.length;)f="0"+f;return f}function Hex_(a){isNaN(a)?a="":10==a?a="A":11==a?a="B":12==a?a="C":13==a?a="D":14==a?a="E":15==a&&(a="F");return a}
+function GetPalette(){d=document;p=String(d.paintbbs.getColors());"null"!=p&&""!=p&&(ps=p.split("\n"),st=d.grad.p_st.selectedIndex,ed=d.grad.p_ed.selectedIndex,d.grad.pst.value=ps[st].substr(1.6),d.grad.ped.value=ps[ed].substr(1.6),GradSelC(),GradView(ps[st],ps[ed]),PaletteListSetColor())}
+function GradSelC(){if(d.grad.view.checked){d=document.grad;l=ps.length;pe="";for(n=0;l>n;n++)R=255+-1*parseInt("0x"+ps[n].substr(1,2)),G=255+-1*parseInt("0x"+ps[n].substr(3,2)),B=255+-1*parseInt("0x"+ps[n].substr(5,2)),255<R?R=255:0>R&&(R=0),255<G?G=255:0>G&&(G=0),255<B?B=255:0>B&&(B=0),pe+="#"+Hex(R)+Hex(G)+Hex(B)+"\n";pe=pe.split("\n");for(n=0;l>n;n++)d.p_st.options[n].style.background=ps[n],d.p_st.options[n].style.color=pe[n],d.p_ed.options[n].style.background=ps[n],d.p_ed.options[n].style.color=pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var a=d.layers?d.layers.psft:d.all("psft").style;d.grad.view.checked||(a.visibility="hidden");d.grad.view.checked&&(a.visibility="visible",GetPalette())};
+</script>
+<?php else:?>
 <script>
 var DynamicColor = 1;	// パレットリストに色表示
 var Palettes = new Array();
@@ -62,7 +86,9 @@ function GetPalette(){d=document;p=String(d.paintbbs.getColors());"null"!=p&&""!
 function GradSelC(){if(d.grad.view.checked){d=document.grad;l=ps.length;pe="";for(n=0;l>n;n++)R=255+-1*parseInt("0x"+ps[n].substr(1,2)),G=255+-1*parseInt("0x"+ps[n].substr(3,2)),B=255+-1*parseInt("0x"+ps[n].substr(5,2)),255<R?R=255:0>R&&(R=0),255<G?G=255:0>G&&(G=0),255<B?B=255:0>B&&(B=0),pe+="#"+Hex(R)+Hex(G)+Hex(B)+"\n";pe=pe.split("\n");for(n=0;l>n;n++)d.p_st.options[n].style.background=ps[n],d.p_st.options[n].style.color=pe[n],d.p_ed.options[n].style.background=ps[n],d.p_ed.options[n].style.color=
 pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var a=d.layers?d.layers.psft:d.all("psft").style;d.grad.view.checked||(a.visibility="hidden");d.grad.view.checked&&(a.visibility="visible",GetPalette())};
 </script>
-<noscript><h3>javascriptが有効でないため正常に動作致しません</h3></noscript>
+<?php endif;?>
+
+<noscript><h3><?php if($en):?>Please enable JavaScript.<?php else:?>javascriptが有効でないため正常に動作致しません<?php endif;?></h3></noscript>
 <div class="appstage"><div class="app">
 <!-- NEOを使う時はアプレットを読み込まないように -->
 <applet-dummy CODE="pbbs.PaintBBS.class" ARCHIVE="./PaintBBS.jar" NAME="paintbbs" WIDTH="<?=h($appw)?>"
@@ -109,26 +135,26 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 </div>
 <div class="palette_wrap">
 <div class="palette"><FORM name="Palette">
-<span class="palette_desc">PALETTE</span> <INPUT type="button" VALUE="一時保存" OnClick="PaletteSave()"><br>
+<span class="palette_desc">PALETTE</span> <INPUT type="button" VALUE="<?php if($en):?>Save<?php else:?>一時保存<?php endif;?>" OnClick="PaletteSave()"><br>
 <select name="select" size="<?=h($palsize)?>" onChange="setPalette()" class="palette_select">
-<option>一時保存パレット</option>
+<option><?php if($en):?>saved palette<?php else:?>一時保存パレット<?php endif;?></option>
 <?php foreach($arr_dynp as $palname):?>
 	<option><?=h($palname)?></option>
 <?php endforeach;?>
-<INPUT type="button" VALUE="作成" OnClick="PaletteNew()">
-<INPUT type="button" VALUE="変更" OnClick="PaletteRenew()">
-<INPUT type="button" VALUE="削除" OnClick="PaletteDel()"><br>
-<INPUT type="button" VALUE="明＋" OnClick="P_Effect(10)">
-<INPUT type="button" VALUE="明－" OnClick="P_Effect(-10)">
-<INPUT type="button" VALUE="反転" OnClick="P_Effect(255)">
+<INPUT type="button" VALUE="<?php if($en):?>New<?php else:?>作成<?php endif;?>" OnClick="PaletteNew()">
+<INPUT type="button" VALUE="<?php if($en):?>Renew<?php else:?>変更<?php endif;?>" OnClick="PaletteRenew()">
+<INPUT type="button" VALUE="<?php if($en):?>Del<?php else:?>削除<?php endif;?>" OnClick="PaletteDel()"><br>
+<INPUT type="button" VALUE="<?php if($en):?>Brighten<?php else:?>明＋<?php endif;?>" OnClick="P_Effect(10)">
+<INPUT type="button" VALUE="<?php if($en):?>Darken<?php else:?>明－<?php endif;?>" OnClick="P_Effect(-10)">
+<INPUT type="button" VALUE="<?php if($en):?>Invert<?php else:?>反転<?php endif;?>" OnClick="P_Effect(255)">
 <hr class="palette_hr"><span class="palette_desc">MATRIX</span>
 <SELECT name="m_m">
-<option value="0">全体</option>
-<option value="1">現在</option>
-<option value="2">追加</option>
+<option value="0"><?php if($en):?>Overall<?php else:?>全体<?php endif;?></option>
+<option value="1"><?php if($en):?>Current<?php else:?>現在<?php endif;?></option>
+<option value="2"><?php if($en):?>Add<?php else:?>追加<?php endif;?></option>
 </SELECT><br>
-<INPUT name="m_g" type="button" VALUE="取得" OnClick="PaletteMatrixGet()">
-<INPUT name="m_s" type="button" VALUE="セット" OnClick="PalleteMatrixSet()">
+<INPUT name="m_g" type="button" VALUE="<?php if($en):?>Get<?php else:?>取得<?php endif;?>" OnClick="PaletteMatrixGet()">
+<INPUT name="m_s" type="button" VALUE="<?php if($en):?>Set<?php else:?>セット<?php endif;?>" OnClick="PalleteMatrixSet()">
 <INPUT name="m_h" type="button" VALUE=" ? " OnClick="PalleteMatrixHelp()"><br>
 <TEXTAREA rows="1" name="setr" cols="13" onMouseOver="this.select()"></TEXTAREA><br>
 </FORM></div>
@@ -174,16 +200,21 @@ if(DynamicColor) PaletteListSetColor();
 </div>
 <div class="centering">
 <div class="applet_painttime">
-<FORM NAME="watch">描画時間
+<FORM NAME="watch"><?php if($en):?>Paint time<?php else:?>描画時間<?php endif;?> 
 <INPUT SIZE="20" NAME="count">
 </FORM>
 <Script>
-timerID=10;stime=new Date;function SetTimeCount(){now=new Date;s=Math.floor((now.getTime()-stime.getTime())/1E3);disp="";86400<=s&&(d=Math.floor(s/86400),disp+=d+"\u65e5",s-=86400*d);3600<=s&&(h=Math.floor(s/3600),disp+=h+"\u6642\u9593",s-=3600*h);60<=s&&(m=Math.floor(s/60),disp+=m+"\u5206",s-=60*m);document.watch.count.value=disp+s+"\u79d2";clearTimeout(timerID);timerID=setTimeout("SetTimeCount()",250)}SetTimeCount();
+timerID=10;stime=new Date;function SetTimeCount(){now=new Date;s=Math.floor((now.getTime()-stime.getTime())/1E3);disp="";86400<=s&&(d=Math.floor(s/86400),disp+=d+"<?php if($en):?>day <?php else:?>\u65e5<?php endif;?>",s-=86400*d);3600<=s&&(h=Math.floor(s/3600),disp+=h+"<?php if($en):?>hr <?php else:?>\u6642\u9593<?php endif;?>",s-=3600*h);60<=s&&(m=Math.floor(s/60),disp+=m+"<?php if($en):?>min <?php else:?>\u5206<?php endif;?>",s-=60*m);document.watch.count.value=disp+s+"<?php if($en):?>sec<?php else:?>\u79d2<?php endif;?>";clearTimeout(timerID);timerID=setTimeout("SetTimeCount()",250)}SetTimeCount();
 </Script>
 </div>
 </div>
 <!--PaintBBS HELP START-->
-<div class="paintbbs_memo"><div>基本の動作(恐らくこれだけは覚えておいた方が良い機能)</div><div> &lt;基本&gt;<br>PaintBBSでは右クリック,ctrl+クリック,alt+クリックは同じ動作をします。<br>基本的に操作は一回のクリックか右クリックで動作が完了します。(ベジエやコピー使用時を除く)<br><br>&lt;ツールバー&gt;<br>ツールバーの殆どのボタンは複数回クリックして機能を切り替える事が出来ます。<br>右クリックで逆周り。パレットの色,マスクの色,一字保存ツールに現在の状態を登録は全て右クリックです。<br>逆にクリックでパレットの色と一時保存ツールに保存しておいた状態を取り出せます。<br><br>&lt;キャンバス部分&gt;<br>右クリックで色をスポイトします<br>ベジエやコピー等の処理の途中で右クリックを押すとリセットします。 </div><br><div>特殊動作(使う必要は無いが慣れれば便利な機能)</div><div> &lt;ツールバー&gt;<br>値を変更するバーはドラッグ時バーの外に出した場合変化が緩やかになりますので<br>それを利用して細かく変更する事が出来ます。<br>パレットはShift+クリックで色をデフォルトの状態に戻します。<br><br>&lt;キーボードのショートカット&gt;<br>+で拡大-で縮小。 <br>Ctrl+ZかCtrl+Uで元に戻す、Ctrl+Alt+ZかCtrl+Yでやり直し。<br>Escでコピーやベジエのリセット。（右クリックでも同じ） <br>スペースキーを押しながらキャンバスをドラッグするとスクロールの自由移動。<br>Ctrl+Alt+ドラッグで線の幅を変更。<br><br>&lt;コピーツールの特殊な利用方法&gt;<br>レイヤー間の移動は現時点ではコピーとレイヤー結合のみです。コピーでの移動方法は、<br>まず移動したいレイヤ上の長方形を選択後、移動させたいレイヤを選択後に通常のコピーの作業を<br>続けます。そうする事によりレイヤ間の移動が可能になります。<br></div><br><div>ツールバーのボタンと特殊な機能の簡単な説明</div><div> <ul> <li>ペン先(通常ペン,水彩ペン,テキスト)<br>メインのフリーライン系のペンとテキスト<br><br></li><li>ペン先2(トーン,ぼかし,他)<br>特殊な効果を出すフリーライン系のペン<br><br></li><li>図形(円や長方形)<br>長方形や円等の図形<br><br></li><li>特殊(コピーやレイヤー結合,反転等)<br>コピーは一度選択後、ドラッグして移動、コピーさせるツールです。<br><br></li><li>マスクモード指定(通常,マスク,逆マスク）<br>マスクで登録されている色を描写不可にします。逆マスクはその逆。<br>通常でマスク無し。また右クリックでマスクカラーの変更が可能。<br><br></li><li>消しゴム(消しペン,消し四角,全消し)<br>透過レイヤー上を白で塗り潰した場合、下のレイヤーが見えなくなりますので<br>上位レイヤーの線を消す時にはこのツールで消す様にして下さい。全消しはすべてを透過ピクセル化させるツールです。<br>全けしを利用する場合はこのツールを選択後キャンバスをクリックでOK。<br>消しゴムは独立した線の幅を持っています。<br><br></li><li>描写方法の指定。(手書き,直線,ベジエ曲線)<br>ペン先,描写機能指定ではありません。<br>また適用されるのはフリーライン系のツールのみです。<br><br></li><li>カラーパレット郡<br>クリックで色取得。右クリックで色の登録。Shift+クリックでデフォルト値。<br><br></li><li>RGBバーとalphaバー<br>細かい色の変更と透過度の変更。Rは赤,Gは緑,Bは青,Aは透過度を指します。<br>トーンはAlphaバーで値を変更する事で密度の変更が可能です。<br><br></li><li>線幅変更ツール<br>水彩ペンを選択時に線幅を変更した時、デフォルトの値がalpha値に代入されます。<br><br></li><li>線一時保存ツール<br>クリックでデータ取得。右クリックでデータの登録。(マスク値は登録しません)<br><br></li><li>レイヤーツール<br>PaintBBSは透明なキャンバスを二枚重ねたような構造になっています。<br>つまり主線を上に書き、色を下に描くと言う事も可能になるツールです。<br>通常レイヤーと言う種類の物ですので鉛筆で描いたような線もキッチリ透過します。<br>クリックでレイヤー入れ替え。右クリックで選択されているレイヤの表示、非表示切り替え。<br><br></li></ul> </div>投稿に関して： <div> 絵が完成したら投稿ボタンで投稿します。<br>絵の投稿が成功した場合は指定されたURLへジャンプします。<br>失敗した場合は失敗したと報告するのみでどこにも飛びません。<br>単に重かっただけである場合、少し間を置いた後、再度投稿を試みて下さい。<br>この際二重で投稿される場合があるかもしれませんがそれは<br>WebサーバーかCGI側の処理ですのであしからず。 </div></div>
+<?php if($en):?>
+<div class = "paintbbs_memo"> <div> Basic behavior (probably this is the only feature you should remember) </div> <div> &lt; Basic &gt; <br> Right click on PaintBBS, ctrl + click, Alt + click works work the same in PaintBBS. <br> Basically, the operation is completed with single click or right click. (Except when using Bezier and copy) <br> <br> &lt; Toolbar &gt; <br> Most buttons on the toolbar can be clicked multiple times to switch functions. <br> Right-click to reverse the order of function switching. Right-click to register the current status in the palette color, mask color, and temporary save tool. <br> Left-click to get the color and state of the palette saved in the temporary save tool. <br> <br> &lt; Canvas part &gt; <br> Right click to pick up the color. <br> You can reset the Bezier and copy operations by right-clicking. </div> <br> <div> Special behavior (not necessary to use, but useful if you get used to it) </div> <div> &lt; Toolbar &gt; <br>As you move away from the bar while dragging, the bar's values change slowly, allowing you to make subtle change
+	s.<br> Hold down the Shift key and click the palette to restore the colors to their default state.  <br> <br> &lt; Keyboard shortcut &gt; <br> + to zoom in-to zoom out. <br> Undo with Ctrl + Z or Ctrl + U, redo with Ctrl + Alt + Z or Ctrl + Y. <br> Copy and Bezier operations can be reset with Esc. (Same for right-clicking) <br> Drag the canvas while holding down the space key to scroll freely. <br> Change the line width by Ctrl + Alt + drag. <br> <br> &lt; Special usage of copy tool &gt; <br> Currently, the only movement between layers is copy and layer combination. To move the copy, first select the rectangle on the layer you want to move, then select the layer you want to move, and then continue the normal copy work. Doing so will allow you to move between layers. <br> </div> <br> <div> A brief description of the buttons and special features on the toolbar </div> <div> <ul> <li> Pen tip (normal pen, watercolor pen, text) <br> Main freeline pen and text <br> <br> </li> <li> Pen tip 2 (tone, blur, etc.) <br> Freeline pen with special effects <br> <br> </li> <li> Figures (circles and rectangles) <br> Figures such as rectangles and circles <br> <br> </li> <li> Special (copy, layer combination, inversion, etc.) <br> Copy is a tool to select once, then drag to move and copy. <br> <br> </li> <li> Mask mode specification (normal, mask, reverse mask) <br>Makes it impossible to draw the colors registered in the color mask. The reverse mask is the opposite. <br> Normally, there is no mask. You can also change the mask color by right-clicking. <br> <br> </li> <li> Eraser (eraser, eraser square, all eraser) <br> If you fill the transparent layer with white, the lower layer will not be visible. <br> Upper layer Please use this tool to erase the line. Erase All is a tool that makes everything transparent pixels. <br> If you want to use all poppies, select this tool and click on the canvas. <br> The eraser has an independent line width. <br> <br> </li> <li> Specify the depiction method. (Handwriting, straight line, Bezier curve) <br> Pen tip, depiction function is not specified. <br> Also, it applies only to freeline tools. <br> <br> </li> <li> Color palette group <br> Click to get colors. Right-click to register the color. Shift + click to default value. <br> <br> </li> <li> RGB bar and alpha bar <br> Fine color changes and transparency changes. R is red, G is green, B is blue, and A is transparency. <br> The density of the Screen tone can be changed by changing the value with the Alpha bar. <br> <br> </li> <li> Line width change tool <br> When the line width is changed when the watercolor pen is selected, the default value is assigned to the alpha value. <br> <br> </li> <li> Temporary pen save tool <br> Get the data by left-clicking. Register data by right-clicking. (Mask value is not registered) <br> <br> </li> <li> Layer tool <br> PaintBBS has a structure like two transparent canvases. <br> In other words, it is a tool that makes it possible to draw the main line on the top and the color on the bottom. <br> Since it is a type of thing called a normal layer, lines like those drawn with a pencil can be transparent. <br> Click to switch layers. Show / hide the selected layer by right-clicking. <br> <br> </li> </ul> </div> Regarding posting: <div> When the picture is completed, post it with the post button. <br> If the picture is posted successfully, it will jump to the specified URL. <br> If it fails, it just reports that it failed and does not fly anywhere. <br> If it was just heavy, please wait a moment and try posting again. <br> In this case, it may be posted twice, but it is <br> a process on the Web server or CGI side, so I'm not sure. </div> </div>
+<?php else:?>
+<div class="paintbbs_memo"><div>基本の動作(恐らくこれだけは覚えておいた方が良い機能)</div><div> &lt;基本&gt;<br>PaintBBSでは右クリック,ctrl+クリック,alt+クリックは同じ動作をします。<br>基本的に操作は一回のクリックか右クリックで動作が完了します。(ベジエやコピー使用時を除く)<br><br>&lt;ツールバー&gt;<br>ツールバーの殆どのボタンは複数回クリックして機能を切り替える事が出来ます。<br>右クリックで逆周り。パレットの色,マスクの色,一時保存ツールに現在の状態を登録は全て右クリックです。<br>逆にクリックでパレットの色と一時保存ツールに保存しておいた状態を取り出せます。<br><br>&lt;キャンバス部分&gt;<br>右クリックで色をスポイトします<br>ベジエやコピー等の処理の途中で右クリックを押すとリセットします。 </div><br><div>特殊動作(使う必要は無いが慣れれば便利な機能)</div><div> &lt;ツールバー&gt;<br>値を変更するバーはドラッグ時バーの外に出した場合変化が緩やかになりますので<br>それを利用して細かく変更する事が出来ます。<br>パレットはShift+クリックで色をデフォルトの状態に戻します。<br><br>&lt;キーボードのショートカット&gt;<br>+で拡大-で縮小。 <br>Ctrl+ZかCtrl+Uで元に戻す、Ctrl+Alt+ZかCtrl+Yでやり直し。<br>Escでコピーやベジエのリセット。（右クリックでも同じ） <br>スペースキーを押しながらキャンバスをドラッグするとスクロールの自由移動。<br>Ctrl+Alt+ドラッグで線の幅を変更。<br><br>&lt;コピーツールの特殊な利用方法&gt;<br>レイヤー間の移動は現時点ではコピーとレイヤー結合のみです。コピーでの移動方法は、<br>まず移動したいレイヤ上の長方形を選択後、移動させたいレイヤを選択後に通常のコピーの作業を<br>続けます。そうする事によりレイヤ間の移動が可能になります。<br></div><br><div>ツールバーのボタンと特殊な機能の簡単な説明</div><div> <ul> <li>ペン先(通常ペン,水彩ペン,テキスト)<br>メインのフリーライン系のペンとテキスト<br><br></li><li>ペン先2(トーン,ぼかし,他)<br>特殊な効果を出すフリーライン系のペン<br><br></li><li>図形(円や長方形)<br>長方形や円等の図形<br><br></li><li>特殊(コピーやレイヤー結合,反転等)<br>コピーは一度選択後、ドラッグして移動、コピーさせるツールです。<br><br></li><li>マスクモード指定(通常,マスク,逆マスク）<br>マスクで登録されている色を描写不可にします。逆マスクはその逆。<br>通常でマスク無し。また右クリックでマスクカラーの変更が可能。<br><br></li><li>消しゴム(消しペン,消し四角,全消し)<br>透過レイヤー上を白で塗り潰した場合、下のレイヤーが見えなくなりますので<br>上位レイヤーの線を消す時にはこのツールで消す様にして下さい。全消しはすべてを透過ピクセル化させるツールです。<br>全けしを利用する場合はこのツールを選択後キャンバスをクリックでOK。<br>消しゴムは独立した線の幅を持っています。<br><br></li><li>描写方法の指定。(手書き,直線,ベジエ曲線)<br>ペン先,描写機能指定ではありません。<br>また適用されるのはフリーライン系のツールのみです。<br><br></li><li>カラーパレット郡<br>クリックで色取得。右クリックで色の登録。Shift+クリックでデフォルト値。<br><br></li><li>RGBバーとalphaバー<br>細かい色の変更と透過度の変更。Rは赤,Gは緑,Bは青,Aは透過度を指します。<br>トーンはAlphaバーで値を変更する事で密度の変更が可能です。<br><br></li><li>線幅変更ツール<br>水彩ペンを選択時に線幅を変更した時、デフォルトの値がalpha値に代入されます。<br><br></li><li>線一時保存ツール<br>クリックでデータ取得。右クリックでデータの登録。(マスク値は登録しません)<br><br></li><li>レイヤーツール<br>PaintBBSは透明なキャンバスを二枚重ねたような構造になっています。<br>つまり主線を上に書き、色を下に描くと言う事も可能になるツールです。<br>通常レイヤーと言う種類の物ですので鉛筆で描いたような線もキッチリ透過します。<br>クリックでレイヤー入れ替え。右クリックで選択されているレイヤの表示、非表示切り替え。<br><br></li></ul> </div>投稿に関して： <div> 絵が完成したら投稿ボタンで投稿します。<br>絵の投稿が成功した場合は指定されたURLへジャンプします。<br>失敗した場合は失敗したと報告するのみでどこにも飛びません。<br>単に重かっただけである場合、少し間を置いた後、再度投稿を試みて下さい。<br>この際二重で投稿される場合があるかもしれませんがそれは<br>WebサーバーかCGI側の処理ですのであしからず。 </div></div>
+<?php endif;?>
 <!--PaintBBS HELP END-->
 </body>
 </html>
