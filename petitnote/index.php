@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.8.28';
-$petit_lot='lot.211125';
+$petit_ver='v0.9.9.0';
+$petit_lot='lot.211128';
 
 if(!$max_log){
 	error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
