@@ -641,7 +641,7 @@ function paint(){
 			$pchext=strtolower($pchext);//すべて小文字に
 			//拡張子チェック
 			if (!in_array($pchext, ['pch','chi'])) {
-				error($en?'This file does not supported by the ability to load uploaded files onto the canvas.Supported formats are pch and chi.':'アップロードペイントで使用できるファイルはpch、chiです',$pchtmp);
+				error($en?'This file does not supported by the ability to load uploaded files onto the canvas.Supported formats are pch and chi.':'アップロードペイントで使用できるファイルはpch、chiです。');
 			}
 			$pchup = TEMP_DIR.'pchup-'.$time.'-tmp.'.$pchext;//アップロードされるファイル名
 
@@ -1113,7 +1113,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	}
 
 	if($edit_mode!=='delmode' && $edit_mode!=='editmode'){
-		error($en?'The operation failed.':'失敗しました。');
+		return error($en?'The operation failed.':'失敗しました。');
 	}
 	$id = t((string)filter_input(INPUT_POST,'id',FILTER_VALIDATE_INT));
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
@@ -1387,7 +1387,7 @@ function del(){
 	}
 	$id_and_no=filter_input(INPUT_POST,'id_and_no');
 	if(!$id_and_no){
-		error($en?'Please select an article.':'記事が選択されていません。');
+		return error($en?'Please select an article.':'記事が選択されていません。');
 	}
 	$id=$no='';
 	if($id_and_no){
