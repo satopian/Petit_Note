@@ -37,7 +37,7 @@ name="pch" code="pch.PCHViewer.class" archive="PCHViewer.jar,PaintBBS.jar" width
 	</div>
 <div class="pch_download">
 <A href="<?=h($pchfile)?>" target="_blank" rel="noopener noreferrer">Download</A><br>
-	<a href="./"><?=h($boardname)?></a> / <a href="javascript:close()">閉じる</a>
+	<a href="./"><?=h($boardname)?></a> / <a href="javascript:close()"><?php if($en):?>Close<?php else:?>閉じる<?php endif;?></a>
 </div>
 </div>
 </body>
