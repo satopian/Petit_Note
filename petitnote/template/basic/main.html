@@ -177,7 +177,7 @@ Size:
 		<?php foreach($ress as $i => $res) : ?>
 			<?php if($skipres && $i===$skipres):?>
 			<hr>
-			レス<?=h($skipres)?>件省略中。
+			<?php if($en):?><?=h($skipres)?> posts omitted.<?php else:?>レス<?=h($skipres)?>件省略中。<?php endif;?>
 			<?php endif;?>	
 
 			<?php if($i===0 || $i>$skipres):?>

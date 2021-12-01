@@ -227,13 +227,13 @@ table.resform {
 }
 span.next {
     display: inline-block;
-    width: 120px;
+    width: 100px;
     text-align: left;
 }
 
 span.prev {
 	display: inline-block;
-    width: 120px;
+    width: 100px;
     text-align: right;
 }
 /* アップロード途中の画像 */
