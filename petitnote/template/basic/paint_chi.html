@@ -20,11 +20,16 @@ li{margin:0 0 0 1em;}
 user-select: none;
 }
 </style>
+
 <script>
-function load() {
-document.addEventListener("dblclick", function(e){ e.preventDefault()}, { passive: false });
-}
-window.onload = load;
+	function fixchicken() {
+		document.addEventListener("dblclick", function(dble){ dble.preventDefault()}, { passive: false });
+		document.querySelector('#chickenpaint-parent').addEventListener('contextmenu', function (conte){
+			conte.preventDefault();
+			conte.stopPropagation();
+		}, { passive: false });
+		}
+	window.addEventListener('DOMContentLoaded',fixchicken,false);
 </script>
 <script src="./app/chickenpaint/js/chickenpaint.min.js?<?=h($parameter_day)?>"></script>
 <link rel="stylesheet" type="text/css" href="./app/chickenpaint/css/chickenpaint.css?<?=h($parameter_day)?>">
@@ -45,7 +50,7 @@ saveUrl: "save.php?usercode=<?=h($usercode)?>&stime=<?=time();?>&tool=<?=h($tool
 postUrl: "index.php?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>",
 exitUrl: "index.php",
 allowDownload: true,
-resourcesRoot: "./chickenpaint/",
+resourcesRoot: "./app/chickenpaint/",
 disableBootstrapAPI: true,
 fullScreenMode: "auto"
 });
