@@ -2,8 +2,11 @@
 /* 全体 */
 body {
 	margin: 10px;
+}
+body,td {
 	color: #555;
 	word-break:break-all;
+	font-family: "Hiragino Sans", meiryo, ヒラギノ角ゴシック, メイリオ, sans-serif;
 }
 .container {
 	max-width: 928px;
