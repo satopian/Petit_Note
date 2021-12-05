@@ -23,6 +23,24 @@
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
+## 2021/12/05 v0.9.9.2
+- 英語対応。ブラウザの言語が日本語以外の時は、UIとエラーメッセージを英語で表示します。
+
+### 変更があったファイル
+- functions.php 
+- index.php 
+- picpost.php 
+
+ template/basic/ ディレクトリのすべてのファイル(含むCSS)
+
+安定版をリリースからダウンロードできます。  
+[Petit Note v0.9.9.2 リリース](https://github.com/satopian/Petit_Note/releases/tag/v0.9.9.2)
+
+### 追加されたファイル
+- palette_en.txt 
+(英語表示の時のためのパレット)
+
+
 ## 2021/11/27 v0.9.8.28
 
 - sageにチェックが入っていなくても、レスでスレッドがあがらないようにする設定項目を追加しました。
