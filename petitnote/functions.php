@@ -38,7 +38,7 @@ function aikotoba(){
 		if(isset($_SESSION['aikotoba'])){
 			unset($_SESSION['aikotoba']);
 		} 
-		return 	error($en?'The secret words is wrong':'合言葉が違います。');
+		return error($en?'The secret words is wrong':'合言葉が違います。');
 	}
 
 	$_SESSION['aikotoba']='aikotoba';
@@ -72,7 +72,7 @@ function admin_in(){
 
 	// HTML出力
 	$templete='admin_in.html';
-	include __DIR__.'/'.$skindir.$templete;
+	return include __DIR__.'/'.$skindir.$templete;
 	
 }
 //合言葉を再確認	
@@ -91,7 +91,7 @@ function adminpost(){
 		if(isset($_SESSION['adminpost'])){
 			unset($_SESSION['adminpost']);
 		} 
-		return 	error($en?'password is wrong.':'パスワードが違います。');
+		return error($en?'password is wrong.':'パスワードが違います。');
 	}
 	session_regenerate_id(true);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
@@ -117,7 +117,7 @@ function admin_del(){
 		if(isset($_SESSION['admindel'])){
 			unset($_SESSION['admindel']);
 		} 
-		return 	error($en?'password is wrong.':'パスワードが違います。');
+		return error($en?'password is wrong.':'パスワードが違います。');
 	}
 	session_regenerate_id(true);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
@@ -212,7 +212,7 @@ function check_cont_pass(){
 		closeFile ($rp);
 	}
 
-	error($en?'password is wrong.':'パスワードが違います。');
+	return error($en?'password is wrong.':'パスワードが違います。');
 }
 
 //ログ出力の前処理 行から情報を取り出す
@@ -391,7 +391,7 @@ function png2jpg ($src) {
 function error($str){
 	global $boardname,$skindir,$en;
 	$templete='error.html';
-	include __DIR__.'/'.$skindir.$templete;
+	return include __DIR__.'/'.$skindir.$templete;
 	exit;
 }
 //csrfトークンを作成
@@ -409,7 +409,7 @@ function check_csrf_token(){
 	$token=filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
 	if(!$session_token||$token!==$session_token){
-		error($en?'Illegal posts have been detected.':'不正な投稿をしないでください。');
+		return error($en?'Illegal posts have been detected.':'不正な投稿をしないでください。');
 	}
 }
 //session開始
@@ -429,7 +429,6 @@ function session_sta(){
 function getId ($userip) {
 	return substr(hash('sha256', $userip, false),-8);
 }
-
 
 // テンポラリ内のゴミ除去 
 function deltemp(){
@@ -472,29 +471,29 @@ function Reject_if_NGword_exists_in_the_post(){
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
 		mb_regex_encoding("UTF-8");
-		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) error($en?'Comment should have at least some Japanese characters.':'日本語で何か書いてください。');
+		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) return error($en?'Comment should have at least some Japanese characters.':'日本語で何か書いてください。');
 	}
 
 	//本文へのURLの書き込みを禁止
 	if(!$allow_comments_url && !$adminpost && (!$admin_pass||$pwd !== $admin_pass)){
-		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) error($en?'This URL can not be used in text.':'URLの記入はできません。');
+		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) return error($en?'This URL can not be used in text.':'URLの記入はできません。');
 	}
 
 	// 使えない文字チェック
 	if (is_ngword($badstring, [$chk_com, $chk_sub, $chk_name])) {
-		error($en?'There is an inappropriate string.':'不適切な表現があります。');
+		return error($en?'There is an inappropriate string.':'不適切な表現があります。');
 	}
 
 	// 使えない名前チェック
 	if (is_ngword($badname, $chk_name)) {
-		error($en?'This name cannot be used.':'その名前は使えません。');
+		return error($en?'This name cannot be used.':'その名前は使えません。');
 	}
 
 	//指定文字列が2つあると拒絶
 	$bstr_A_find = is_ngword($badstr_A, [$chk_com, $chk_sub, $chk_name]);
 	$bstr_B_find = is_ngword($badstr_B, [$chk_com, $chk_sub, $chk_name]);
 	if($bstr_A_find && $bstr_B_find){
-		error($en?'There is an inappropriate string.':'不適切な表現があります。');
+		return error($en?'There is an inappropriate string.':'不適切な表現があります。');
 	}
 
 }

@@ -14,14 +14,14 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.2';
-$petit_lot='lot.211128';
+$petit_ver='v0.9.9.3';
+$petit_lot='lot.211205';
 
 if(!$max_log){
-	error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
+	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<2){
-	error($en?'The version of thumbmail_gd.php is old.':'thumbnail_gd.phpのバージョンが古いため動作しません。');
+	return error($en?'The version of thumbmail_gd.php is old.':'thumbnail_gd.phpのバージョンが古いため動作しません。');
 }
 
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
@@ -135,18 +135,18 @@ function post(){
 	if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
 	if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
 	if(!$url||preg_match("/\A\s*\z/u",$url)) $url="";
-	if(strlen($sub) > 80) error($en? 'Subject is too long.':'題名が長すぎます。');
-	if(strlen($name) > 30) error($en?'Name is too long':'名前が長すぎます。');
-	if(strlen($com) > $max_com) error($en? 'Comment is too long.':'本文が長すぎます。');
-	if(strlen($url) > 100) error($en? 'URL is too long.':'URLが長すぎます。');
-	if(strlen($pwd) > 100) error($en? 'Password is too long.':'パスワードが長すぎます。');
+	if(strlen($sub) > 80) return error($en? 'Subject is too long.':'題名が長すぎます。');
+	if(strlen($name) > 30) return error($en?'Name is too long':'名前が長すぎます。');
+	if(strlen($com) > $max_com) return error($en? 'Comment is too long.':'本文が長すぎます。');
+	if(strlen($url) > 100) return error($en? 'URL is too long.':'URLが長すぎます。');
+	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
 		srand((double)microtime()*1000000);
 		$pwd = substr(md5(uniqid(rand())),2,15);
 		$pwd = strtr($pwd,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
 	}
-	if(strlen($pwd) < 6) error($en? 'The password is too short. At least 6 characters.':'パスワードが短すぎます。最低6文字。');
+	if(strlen($pwd) < 6) return error($en? 'The password is too short. At least 6 characters.':'パスワードが短すぎます。最低6文字。');
 
 	$upfile='';
 	$imgfile='';
@@ -162,23 +162,23 @@ function post(){
 	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
 	if($tempfile && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		error($en? 'The file size is too big.':'ファイルサイズが大きすぎます。');
+		return error($en? 'The file size is too big.':'ファイルサイズが大きすぎます。');
 	} 
 	if($filesize > $max_kb*1024){
-		error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
+		return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 	}
 	if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
 
 		if($resto && $tempfile && !$use_res_upload && !$adminpost){
 			safe_unlink($tempfile);
-			error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
+			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
 		}
 
 		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
 
 		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
 			safe_unlink($tempfile);
-			error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
+			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 		}
 		$upfile=IMG_DIR.$time.'.tmp';
 		move_uploaded_file($tempfile,$upfile);
@@ -193,19 +193,19 @@ function post(){
 
 	if($pictmp===2){//ユーザーデータを調べる
 
-		if(!$picfile) error($en? 'Posting failed.':'投稿に失敗しました。');
+		if(!$picfile) return error($en? 'Posting failed.':'投稿に失敗しました。');
 		$tempfile = TEMP_DIR.$picfile;
 		$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
 		//選択された絵が投稿者の絵か再チェック
 		if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat")) {
-			error($en? 'Posting failed.':'投稿に失敗しました。');
+			return error($en? 'Posting failed.':'投稿に失敗しました。');
 		}
 		//ユーザーデータから情報を取り出す
 		$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
 		$userdata = fread($fp, 1024);
 		fclose($fp);
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");
-		if(($ucode != $usercode) && ($uip != $userip)){error($en? 'Posting failed.':'投稿に失敗しました。');}
+		if(($ucode != $usercode) && ($uip != $userip)){return error($en? 'Posting failed.':'投稿に失敗しました。');}
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
 		//描画時間を$userdataをもとに計算
@@ -213,7 +213,7 @@ function post(){
 			$painttime=(int)$postedtime-(int)$starttime;
 		}
 		if($resto && $picfile && !$use_res_upload && !$adminpost){
-			error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
+			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
 		}
 
 	}
@@ -221,7 +221,7 @@ function post(){
 	if($resto && !is_file(LOG_DIR."{$resto}.log")){//エラー処理
 		if($pictmp!==2){//お絵かきではない時は
 			safe_unlink($upfile);
-			error($en? 'The article does not exist.':'記事がありません。');
+			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		$resto='';//レス先がないお絵かきは新規投稿扱いにする。
 	}
@@ -246,11 +246,11 @@ function post(){
 		//お絵かき以外。
 		if($resto && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
 			safe_unlink($upfile);
-			error($en? 'This thread is too old to post.':'このスレッドには投稿できません。');
+			return error($en? 'This thread is too old to post.':'このスレッドには投稿できません。');
 		}
 		if($resto&&(count(file(LOG_DIR.$resto.'.log'))>$max_res)){//最大レス数超過。
 			safe_unlink($upfile);
-			error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
+			return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
 			}
 
 		$sub='Re: '.$oyasub;
@@ -259,7 +259,7 @@ function post(){
 
 	if(!$resto && $use_diary && !$adminpost){
 			safe_unlink($upfile);
-			error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
+			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
 	}
 
 	//お絵かきアップロード
@@ -282,18 +282,18 @@ function post(){
 
 	if(!$name){
 		if($name_input_required){
-			error($en?'Please enter your name.':'名前がありません。');
+			return error($en?'Please enter your name.':'名前がありません。');
 		}else{
 			$name='anonymous';
 		}
 	}
 
 	if(!$upfile&&!$com){
-	error($en?'Please write something.':'何か書いて下さい。');
+	return error($en?'Please write something.':'何か書いて下さい。');
 	}
 
 	if(!$resto && !$allow_coments_only && !$upfile && !$adminpost){
-	error($en?'Please attach an image.':'画像がありません。');
+	return error($en?'Please attach an image.':'画像がありません。');
 	}
 
 	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
@@ -387,7 +387,7 @@ function post(){
 		$ext=getImgType ($_img_type);
 		if (!$ext) {
 			safe_unlink($upfile);
-			error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
+			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 		}
 
 		$imgfile=$time.$ext;
@@ -597,7 +597,7 @@ function paint(){
 	$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
 	$resto = t(filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
 	if(strlen($resto>1000)){
-		error($en?'Unknown error':'問題が発生しました。');
+		return error($en?'Unknown error':'問題が発生しました。');
 	}
 
 	if($picw < 300) $picw = 300;
@@ -631,7 +631,7 @@ function paint(){
 		$pchtmp=isset($_FILES['pchup']['tmp_name']) ? $_FILES['pchup']['tmp_name'] : '';
 
 		if($pchtmp && in_array($_FILES['pchup']['error'],[1,2])){//容量オーバー
-			error($en? 'The file size is too big.':'ファイルサイズが大きすぎます。');
+			return error($en? 'The file size is too big.':'ファイルサイズが大きすぎます。');
 
 		} 
 
@@ -642,7 +642,7 @@ function paint(){
 			$pchext=strtolower($pchext);//すべて小文字に
 			//拡張子チェック
 			if (!in_array($pchext, ['pch','chi'])) {
-				error($en?'This file does not supported by the ability to load uploaded files onto the canvas.Supported formats are pch and chi.':'アップロードペイントで使用できるファイルはpch、chiです。');
+				return error($en?'This file does not supported by the ability to load uploaded files onto the canvas.Supported formats are pch and chi.':'アップロードペイントで使用できるファイルはpch、chiです。');
 			}
 			$pchup = TEMP_DIR.'pchup-'.$time.'-tmp.'.$pchext;//アップロードされるファイル名
 
@@ -651,7 +651,7 @@ function paint(){
 				$pchup=TEMP_DIR.basename($pchup);//ファイルを開くディレクトリを固定
 				if(!in_array(mime_content_type($pchup),["application/octet-stream","application/gzip"])){
 					safe_unlink($pchup);
-					error($en?'This file does not supported':'ファイル形式が一致しません。');
+					return error($en?'This file does not supported':'ファイル形式が一致しません。');
 				}
 				if($pchext==="pch"){
 					$app='neo';
@@ -695,7 +695,7 @@ function paint(){
 			$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 			$pwd = filter_input(INPUT_POST, 'pwd');
 			$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
-			if(strlen($pwd) > 100) error($en? 'Password is too long.':'パスワードが長すぎます。');
+			if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 			if($pwd){
 				$pwd=openssl_encrypt ($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//暗号化
 				$pwd=bin2hex($pwd);//16進数に
@@ -844,7 +844,7 @@ function to_continue(){
 		closeFile ($rp);
 	}
 	if(!$flag || !$imgfile || !is_file(IMG_DIR.$imgfile)){//画像が無い時は処理しない
-		error($en? 'The article does not exist.':'記事がありません。');
+		return error($en? 'The article does not exist.':'記事がありません。');
 	}
 	$picfile = IMG_DIR.$imgfile;
 	list($picw, $pich) = getimagesize($picfile);
@@ -919,7 +919,7 @@ function img_replace(){
 	}
 	closedir($handle);
 	if(!$find){
-	error($en?'The operation failed.':'失敗しました。');
+	return error($en?'The operation failed.':'失敗しました。');
 	}
 	$tempfile=TEMP_DIR.$file_name.$imgext;
 
@@ -953,7 +953,7 @@ function img_replace(){
 
 	$upfile=IMG_DIR.$time.'.tmp';
 	copy($tempfile, $upfile);
-	if(!is_file($upfile)) error($en?'The operation failed.':'失敗しました。');
+	if(!is_file($upfile)) return error($en?'The operation failed.':'失敗しました。');
 	chmod($upfile,0606);
 
 	$filesize=filesize($upfile);
@@ -975,7 +975,7 @@ function img_replace(){
 
 	if (!$imgext) {
 		safe_unlink($upfile);
-		error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
+		return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 	}
 	list($w, $h) = getimagesize($upfile);
 	$img_md5=md5_file($upfile);
@@ -1075,7 +1075,7 @@ function pchview(){
 	$pch = pathinfo($imagefile, PATHINFO_FILENAME);
 	$pchext = check_pch_ext(IMG_DIR . $pch);
 	if(!$pchext){
-		error('ファイルがありません。');
+		return error('ファイルがありません。');
 	}
 	$pchfile = IMG_DIR.$pch.$pchext;
 
@@ -1143,7 +1143,8 @@ function confirmation_before_deletion ($edit_mode=''){
 
 		}
 		if(!$find){
-			error($en?'The article was not found.':'見つかりませんでした。');
+			closeFile ($rp);
+			return error($en?'The article was not found.':'見つかりませんでした。');
 		}
 
 		closeFile ($rp);
@@ -1165,7 +1166,7 @@ function confirmation_before_deletion ($edit_mode=''){
 		$templete='before_edit.html';
 		return include __DIR__.'/'.$skindir.$templete;
 	}
-	error($en?'The operation failed.':'失敗しました。');
+	return error($en?'The operation failed.':'失敗しました。');
 }
 //編集画面
 function edit_form(){
@@ -1187,8 +1188,6 @@ function edit_form(){
 	if($id_and_no){
 		list($id,$no)=explode(",",trim(filter_input(INPUT_POST,'id_and_no')));
 	}
-	$fp=fopen(LOG_DIR."alllog.log","r");
-	flock($fp, LOCK_EX);
 
 	$flag=false;
 
@@ -1209,6 +1208,7 @@ function edit_form(){
 				if(!$admindel){
 
 					if(!check_elapsed_days($time)||!$pwd||!password_verify($pwd,$hash)){
+						closeFile($rp);
 						return error($en?'The operation failed.':'失敗しました。');
 					}
 				}
@@ -1219,10 +1219,10 @@ function edit_form(){
 			
 	}
 	if(!$flag){
-		error($en?'The article was not found.':'見つかりませんでした。');
+		closeFile($rp);
+		return error($en?'The article was not found.':'見つかりませんでした。');
 	}
-		closeFile ($fp);
-	
+	closeFile($rp);	
 		$_res = create_res($line_);//$lineから、情報を取り出す
 		$out[0][]=$_res;
 
@@ -1280,11 +1280,11 @@ function edit(){
 	if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
 	if(!$url||preg_match("/\A\s*\z/u",$url)) $url="";
 
-	if(strlen($sub) > 80) error($en? 'Subject is too long.':'題名が長すぎます。');
-	if(strlen($name) > 30) error($en?'Name is too long':'名前が長すぎます。');
-	if(strlen($com) > $max_com) error($en? 'Comment is too long.':'本文が長すぎます。');
-	if(strlen($url) > 100) error($en? 'URL is too long.':'URLが長すぎます。');
-	if(strlen($pwd) > 100) error($en? 'Password is too long.':'パスワードが長すぎます。');
+	if(strlen($sub) > 80) return error($en? 'Subject is too long.':'題名が長すぎます。');
+	if(strlen($name) > 30) return error($en?'Name is too long':'名前が長すぎます。');
+	if(strlen($com) > $max_com) return error($en? 'Comment is too long.':'本文が長すぎます。');
+	if(strlen($url) > 100) return error($en? 'URL is too long.':'URLが長すぎます。');
+	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
 	$sub=str_replace(["\r\n","\r","\n",],'',$sub);
 	$name=str_replace(["\r\n","\r","\n",],'',$name);
@@ -1293,14 +1293,14 @@ function edit(){
 	$com=str_replace("\n",'"\n"',$com);
 	if(!$name){
 		if($name_input_required){
-			error($en?'Please enter your name.':'名前がありません。');
+			return error($en?'Please enter your name.':'名前がありません。');
 		}else{
 			$name='anonymous';
 		}
 	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
-		error($en? 'The article does not exist.':'記事がありません。');//該当記事が無い時は新規投稿。
+		return error($en? 'The article does not exist.':'記事がありません。');//該当記事が無い時は新規投稿。
 	}
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
@@ -1328,10 +1328,13 @@ function edit(){
 	}
 	if(!$flag){
 		closeFile($rp);
+		closeFile($fp);
 		return error($en?'The article was not found.':'見つかりませんでした。');
 	}
 	if(!$_imgfile && !$com){
-		error($en?'Please write something.':'何か書いて下さい。');
+		closeFile($rp);
+		closeFile($fp);
+		return error($en?'Please write something.':'何か書いて下さい。');
 	}
 	$time = time().substr(microtime(),2,3);
 
@@ -1367,7 +1370,6 @@ function edit(){
 
 	}
 	closeFile ($fp);
-	
 
 	return header('Location: ./?resno='.$no);
 
@@ -1416,6 +1418,8 @@ function del(){
 			
 				if(!$admindel){
 					if(!$pwd||!password_verify($pwd,$hash)){
+						fclose($rp);
+						fclose($fp);
 						return error($en?'The operation failed.':'失敗しました。');
 					}
 				}
@@ -1427,8 +1431,8 @@ function del(){
 
 					}
 				
-					foreach($alllog_arr as $i =>$val){//全体ログ
-						list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$val);
+					foreach($alllog_arr as $i =>$_val){//全体ログ
+						list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$_val);
 						if($id===$time_ && $no===$no_){
 							unset($alllog_arr[$i]);
 						}
@@ -1452,7 +1456,9 @@ function del(){
 			}
 		}
 			if(!$find){
-				error($en?'The article was not found.':'見つかりませんでした。');
+				fclose($rp);
+				fclose($fp);
+				return error($en?'The article was not found.':'見つかりませんでした。');
 			}
 
 		closeFile ($fp);
@@ -1607,7 +1613,7 @@ function res ($resno){
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');
 	if(!is_file(LOG_DIR."{$resno}.log")){
-		error($en?'Thread does not exist.':'スレッドがありません');	
+		return error($en?'Thread does not exist.':'スレッドがありません');	
 		}
 		$rresname = [];
 		$resname = '';
