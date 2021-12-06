@@ -14,8 +14,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.3';
-$petit_lot='lot.211205';
+$petit_ver='v0.9.9.5';
+$petit_lot='lot.211206';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -1044,7 +1044,7 @@ function img_replace(){
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
 
-			if($id===$time_ && $no===$no_){
+			if($id===$time_ && $no===$no_ && $pwd && password_verify($pwd,$hash_)){
 				$alllog_arr[$i] = $new_line;
 			break;
 			}
@@ -1360,8 +1360,12 @@ function edit(){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
 
 			if($id===$time_ && $no===$no_){
-				$alllog_arr[$i] = $new_line;
-			break;
+
+				if($admindel || ($pwd && password_verify($pwd,$hash_))){
+						$alllog_arr[$i] = $new_line;
+						break;
+				}
+	
 			}
 
 		}
@@ -1434,7 +1438,11 @@ function del(){
 					foreach($alllog_arr as $i =>$_val){//全体ログ
 						list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$_val);
 						if($id===$time_ && $no===$no_){
+							if($admindel || ($pwd && password_verify($pwd,$hash_))){
+
 							unset($alllog_arr[$i]);
+							break;
+							}
 						}
 					}
 					$alllog=implode("",$alllog_arr);
@@ -1511,6 +1519,11 @@ function catalog($page=0,$q=''){
 	//oyaのループ
 
 	foreach($alllog_arr as $oya => $alllog){
+
+		list($no)=explode("\t",$alllog);
+		if(!is_file(LOG_DIR."{$no}.log")){
+		continue;
+		}	
 
 		$_res=[];
 		
