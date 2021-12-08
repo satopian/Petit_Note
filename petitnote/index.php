@@ -14,8 +14,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.5';
-$petit_lot='lot.211206';
+$petit_ver='v0.9.9.6';
+$petit_lot='lot.211208';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -68,7 +68,6 @@ switch($mode){
 		return paint();
 	case 'picrep':
 		return img_replace();
-
 	case 'before_del':
 		return confirmation_before_deletion();
 	case 'edit_form':
@@ -671,8 +670,22 @@ function paint(){
 		$imgfile = filter_input(INPUT_POST,'imgfile');
 		$ctype = filter_input(INPUT_POST, 'ctype');
 		$type = filter_input(INPUT_POST, 'type');
+		$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 		$time = filter_input(INPUT_POST, 'time');
 
+		if(($type!=='rep') && is_file(LOG_DIR."{$no}.log")){
+		
+			$rp=fopen(LOG_DIR."{$no}.log","r");
+			while ($line = fgets($rp)) {
+				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
+				if($time===$time_ && (int)$no==$no_){
+					$resto=(trim($oya_)==='res') ? $no_ : '';
+					break;
+				}
+			}
+			closeFile ($rp);
+		}
+	
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
 		$_pch_ext = check_pch_ext(IMG_DIR.$time);
 
@@ -692,7 +705,6 @@ function paint(){
 		
 		if($type==='rep'){//画像差し換え
 			$rep=true;
-			$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 			$pwd = filter_input(INPUT_POST, 'pwd');
 			$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 			if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
@@ -782,7 +794,7 @@ function paintcom(){
 	}
 	closedir($handle);
 	$tmps = [];
-	if(count($tmplist)!==0){
+	if(!empty($tmplist)){
 		foreach($tmplist as $tmpimg){
 			list($ucode,$uip,$ufilename,$uresto) = explode("\t", $tmpimg);
 			if($ucode == $usercode||$uip == $userip){
