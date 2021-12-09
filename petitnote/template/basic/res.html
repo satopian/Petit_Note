@@ -285,13 +285,13 @@
 <?php endif;?>
 <hr>
 <div class="pagelink">
-	<span class="prev">
+	<span class="res_prev">
 	<?php if(!empty($prev)):?>
 		<a href="./?resno=<?=h($prev['no'])?>">≪<?=h(mb_strcut($prev['sub'],0,20))?></a>
 	<?php endif;?>
 	</span>
 	| <a href="./">top</a> |
-	<span class="next">
+	<span class="res_next">
 	<?php if(!empty($next)):?>
 		<a href="./?resno=<?=h($next['no'])?>"><?=h(mb_strcut($next['sub'],0,20))?>≫</a>
 	<?php endif;?>
