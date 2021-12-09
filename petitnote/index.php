@@ -14,8 +14,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.6';
-$petit_lot='lot.211208';
+$petit_ver='v0.9.9.7';
+$petit_lot='lot.211209';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -1668,20 +1668,19 @@ function res ($resno){
 		$fp=fopen(LOG_DIR."alllog.log","r");
 		$alllog_arr=[];
 		while ($_line = fgets($fp)) {
-			$articles[] = explode("\t",trim($_line));//$_lineから、情報を取り出す
+			$articles[] = $_line;//$_lineから、情報を取り出す
 		}
-		foreach($articles as $i =>$article){
-			list($no,)=$article;
-			if($no==$resno){
+		foreach($articles as $i =>$article){//現在のスレッドのキーを取得
+			if (strpos(trim($article), $resno . "\t") === 0) {
 				break;
 			}
 		}
 		$next=isset($articles[$i+1])? $articles[$i+1] :'';
 		$prev=isset($articles[$i-1])? $articles[$i-1] :'';
-		$next=$next ? (create_res($next)):[];
-		$prev=$prev ? (create_res($prev)):[];
-		$next=($next && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
-		$prev=($prev && is_file(LOG_DIR."{$prev['no']}.log"))?$prev:[];
+		$next=$next ? (create_res(explode("\t",trim($next)))):[];
+		$prev=$prev ? (create_res(explode("\t",trim($prev)))):[];
+		$next=(!empty($next) && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
+		$prev=(!empty($prev) && is_file(LOG_DIR."{$prev['no']}.log"))?$prev:[];
 	
 	//管理者判定処理
 	session_sta();

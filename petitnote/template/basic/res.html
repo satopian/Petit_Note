@@ -281,9 +281,23 @@
 <?php endif;?>
 <?php endif;?>
 
-<hr>
 <?php endforeach;?>
 <?php endif;?>
+<hr>
+<div class="pagelink">
+	<span class="prev">
+	<?php if(!empty($prev)):?>
+		<a href="./?resno=<?=h($prev['no'])?>">≪<?=h(mb_strcut($prev['sub'],0,20))?></a>
+	<?php endif;?>
+	</span>
+	| <a href="./">top</a> |
+	<span class="next">
+	<?php if(!empty($next)):?>
+		<a href="./?resno=<?=h($next['no'])?>"><?=h(mb_strcut($next['sub'],0,20))?>≫</a>
+	<?php endif;?>
+	</span>
+</div>
+
 <div class="copy">
 <div class="left_wrap">
 	[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
