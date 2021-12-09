@@ -1642,8 +1642,8 @@ function res ($resno){
 		}
 		$rresname = [];
 		$resname = '';
-			$fp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
-			while ($line = fgets($fp)) {
+			$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
+			while ($line = fgets($rp)) {
 				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
 
 
@@ -1663,8 +1663,26 @@ function res ($resno){
 
 			$out[0][]=$_res;
 			}	
-		fclose($fp);
+		fclose($rp);
 
+		$fp=fopen(LOG_DIR."alllog.log","r");
+		$alllog_arr=[];
+		while ($_line = fgets($fp)) {
+			$articles[] = explode("\t",trim($_line));//$_lineから、情報を取り出す
+		}
+		foreach($articles as $i =>$article){
+			list($no,)=$article;
+			if($no==$resno){
+				break;
+			}
+		}
+		$next=isset($articles[$i+1])? $articles[$i+1] :'';
+		$prev=isset($articles[$i-1])? $articles[$i-1] :'';
+		$next=$next ? (create_res($next)):[];
+		$prev=$prev ? (create_res($prev)):[];
+		$next=($next && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
+		$prev=($prev && is_file(LOG_DIR."{$prev['no']}.log"))?$prev:[];
+	
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
