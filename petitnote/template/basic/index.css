@@ -230,13 +230,13 @@ table.resform {
 }
 span.next {
     display: inline-block;
-    width: 100px;
+    width: 130px;
     text-align: left;
 }
 
 span.prev {
 	display: inline-block;
-    width: 100px;
+    width: 130px;
     text-align: right;
 }
 /* アップロード途中の画像 */
