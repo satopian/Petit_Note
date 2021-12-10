@@ -255,6 +255,7 @@ function create_res($line){
 	$res=[
 		'no' => $no,
 		'sub' => $sub,
+		'substr_sub' => mb_substr($sub,0,16),
 		'name' => $name,
 		'verified' => $verified,
 		'com' => $com,

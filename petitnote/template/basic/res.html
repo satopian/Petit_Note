@@ -284,18 +284,31 @@
 <?php endforeach;?>
 <?php endif;?>
 <hr>
-<div class="pagelink">
-	<span class="prev">
+<!-- PC用 -->
+<div class="pagelink pcdisp">
+	<span class="res_prev">
 	<?php if(!empty($prev)):?>
-		<a href="./?resno=<?=h($prev['no'])?>">≪<?=h(mb_strcut($prev['sub'],0,20))?></a>
+		<a href="./?resno=<?=h($prev['no'])?>">≪<?=h($prev['substr_sub'])?></a>
 	<?php endif;?>
 	</span>
 	| <a href="./">top</a> |
-	<span class="next">
+	<span class="res_next">
 	<?php if(!empty($next)):?>
-		<a href="./?resno=<?=h($next['no'])?>"><?=h(mb_strcut($next['sub'],0,20))?>≫</a>
+		<a href="./?resno=<?=h($next['no'])?>"><?=h($next['substr_sub'])?>≫</a>
 	<?php endif;?>
 	</span>
+</div>
+<!-- モバイル用 -->
+<div class="mobiledisp">
+	<?php if(!empty($prev)):?>
+	prev: <a href="./?resno=<?=h($prev['no'])?>"><?=h($prev['sub'])?></a>
+	<br>
+	<?php endif;?>
+	<?php if(!empty($next)):?>
+	next: <a href="./?resno=<?=h($next['no'])?>"><?=h($next['sub'])?></a>
+	<br>
+	<?php endif;?>
+	<a href="./">top</a>
 </div>
 
 <div class="copy">

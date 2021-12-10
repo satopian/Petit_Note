@@ -103,7 +103,7 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 	<?php if($page==$i):?>
 			[<?=h($i/$pagedef)?>]
 		<?php else: ?>
-			<?php if($i==0):?>
+			<?php if($i===0):?>
 				[<a href="?mode=catalog&page=0<?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">0</a>]
 			<?php else:?>	
 			<?php if($i === $end_page):?>
