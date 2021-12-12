@@ -251,11 +251,12 @@ function create_res($line){
 	if(!$url||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)) $url="";
 
 	$verified = ($verified==='adminpost') ? true : false;
+	$three_point_sub=(mb_strlen($sub)>15) ? '…' :'';
 
 	$res=[
 		'no' => $no,
 		'sub' => $sub,
-		'substr_sub' => mb_substr($sub,0,16),
+		'substr_sub' => mb_substr($sub,0,15).$three_point_sub,
 		'name' => $name,
 		'verified' => $verified,
 		'com' => $com,
