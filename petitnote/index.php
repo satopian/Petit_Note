@@ -14,8 +14,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.8';
-$petit_lot='lot.211209';
+$petit_ver='v0.9.9.9';
+$petit_lot='lot.211212';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -803,7 +803,7 @@ function paintcom(){
 		}
 	}
 
-	if(count($tmps)!==0){
+	if(!empty($tmps)){
 		$pictmp = 2;
 		sort($tmps);
 		reset($tmps);
@@ -1512,37 +1512,42 @@ function catalog($page=0,$q=''){
 	$encoded_q='';
 	$result=[];
 	if($q){//名前検索の時
-		foreach($alllog_arr as $alllog){
-			$line=explode("\t",trim($alllog));
-			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$_oya)=$line;
-	
-			if($name===$q){//検索結果と一致した投稿を配列に入れる
-				$result[]=$alllog;
+		foreach($alllog_arr as $i => $alllog){
+			list($no,)=explode("\t",trim($alllog));
+
+			if(is_file('log/'."{$no}.log")){
+			$cp=fopen('log/'."{$no}.log","r+");
+				while($_line=fgets($cp)){
+						list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$_line);
+						if ($imgfile&&$name===$q){
+							$result[]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
+						};
+			
+					};
+				fclose($cp);	
+			}
+			if($i>100){
+				break;
 			}
 		}
+		krsort($result);
 		$alllog_arr=$result;
 		$encoded_q=urlencode($q);
 	}
-
 	$count_alllog=count($alllog_arr);
 
 	//ページ番号から1ページ分のスレッド分とりだす
 	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
-
-	foreach($alllog_arr as $oya => $alllog){
-
-		list($no)=explode("\t",$alllog);
-		if(!is_file(LOG_DIR."{$no}.log")){
+	foreach($alllog_arr as $oya => $line){
+		if(!$q){//検索結果は分割ずみ
+			$line=explode("\t",trim($line));
+		}
+		list($_no)=$line;
+		if(!is_file(LOG_DIR."{$_no}.log")){
 		continue;
 		}	
-
-		$_res=[];
-		
-		$line=explode("\t",trim($alllog));
-
-		$_res = create_res($line);//$lineから、情報を取り出す
-		$out[$oya][]=$_res;
+		$out[$oya][] = create_res($line);//$lineから、情報を取り出す
 
 	}
 
@@ -1666,10 +1671,11 @@ function res ($resno){
 		fclose($rp);
 
 		$fp=fopen(LOG_DIR."alllog.log","r");
-		$alllog_arr=[];
+		$articles=[];
 		while ($_line = fgets($fp)) {
 			$articles[] = $_line;//$_lineから、情報を取り出す
 		}
+		fclose($fp);
 		foreach($articles as $i =>$article){//現在のスレッドのキーを取得
 			if (strpos(trim($article), $resno . "\t") === 0) {
 				break;
