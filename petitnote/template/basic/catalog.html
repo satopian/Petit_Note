@@ -40,7 +40,7 @@
 	<?php foreach($ress as  $res):?>
 	<div class="catalog_image">			
 		<?php if($res['img']):?>
-			<a href="./?resno=<?= h($res['no'])?>" target="_blank">
+			<a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
 			<?php if($res['thumbnail']):?>
 				
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
