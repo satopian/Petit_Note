@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.9';
+$petit_ver='v0.9.9.10';
 $petit_lot='lot.211212';
 
 if(!$max_log){
@@ -1520,7 +1520,7 @@ function catalog($page=0,$q=''){
 				while($_line=fgets($cp)){
 						list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$_line);
 						if ($imgfile&&$name===$q){
-							$result[]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
+							$result[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
 						};
 			
 					};
