@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.11';
+$petit_ver='v0.9.9.12';
 $petit_lot='lot.211215';
 
 if(!$max_log){
@@ -1210,12 +1210,12 @@ function edit_form(){
 		while ($r_line = fgets($rp)) {
 			$line[]=$r_line;
 		}
-		foreach($line as $i =>$val){
+		foreach($line as $val){
 			
 			$line_=explode("\t",trim($val));
 
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line_;
-			if($id==$time && $no===$_no){
+			if($id===$time && $no===$_no){
 			
 				if(!$admindel){
 

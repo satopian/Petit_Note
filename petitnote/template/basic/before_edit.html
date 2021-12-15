@@ -61,7 +61,7 @@
 
 <h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
 	<!-- スレッドのループ -->
-<?php foreach($ress as $i => $res) : ?>
+<?php foreach($ress as $res) : ?>
 	<hr>
 	<div class="imginfo_wrap">
 	<input type="hidden" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">

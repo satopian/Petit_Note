@@ -37,12 +37,8 @@
 
 <h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
 	<!-- スレッドのループ -->
-<?php foreach($ress as $i => $res) : ?>
+<?php foreach($ress as $res) : ?>
 	<hr>
-	<?php if($i!==0):?>
-	<div class="res_wrap">	
-	<?php endif;?>
-
 	<div class="imginfo_wrap">
 	<span><?= h($res['name'])?></span>
 	<?php if($res['verified']):?>
