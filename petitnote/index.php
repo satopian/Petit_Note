@@ -14,8 +14,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.10';
-$petit_lot='lot.211212';
+$petit_ver='v0.9.9.11';
+$petit_lot='lot.211215';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -122,7 +122,7 @@ function post(){
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
-	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
+	$pwd=t((string)filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$sage = $sage_all ? true : filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
 	$check_elapsed_days=false;
 
@@ -590,11 +590,11 @@ function paint(){
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$en;
 
-	$app = filter_input(INPUT_POST,'app');
+	$app = (string)filter_input(INPUT_POST,'app');
 	$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 	$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
-	$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
-	$resto = t(filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
+	$usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));
+	$resto = t((string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
 	if(strlen($resto>1000)){
 		return error($en?'Unknown error':'問題が発生しました。');
 	}
@@ -667,11 +667,11 @@ function paint(){
 
 	if($mode==="contpaint"){
 
-		$imgfile = filter_input(INPUT_POST,'imgfile');
-		$ctype = filter_input(INPUT_POST, 'ctype');
-		$type = filter_input(INPUT_POST, 'type');
+		$imgfile = (string)filter_input(INPUT_POST,'imgfile');
+		$ctype = (string)filter_input(INPUT_POST, 'ctype');
+		$type = (string)filter_input(INPUT_POST, 'type');
 		$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
-		$time = filter_input(INPUT_POST, 'time');
+		$time = (string)filter_input(INPUT_POST, 'time');
 
 		if(($type!=='rep') && is_file(LOG_DIR."{$no}.log")){
 		
@@ -1188,17 +1188,17 @@ function edit_form(){
 	$admindel=admindel_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 
-	$pwd=filter_input(INPUT_POST,'pwd');
-	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
+	$pwd=(string)filter_input(INPUT_POST,'pwd');
+	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
 	
 	if(!($admindel||($userdel&&$pwd))){
 		return error($en?'The operation failed.':'失敗しました。');
 	}
-	$id_and_no=filter_input(INPUT_POST,'id_and_no');
+	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
 	$id=$no='';
 	if($id_and_no){
-		list($id,$no)=explode(",",trim(filter_input(INPUT_POST,'id_and_no')));
+		list($id,$no)=explode(",",trim($id_and_no));
 	}
 
 	$flag=false;
@@ -1273,8 +1273,8 @@ function edit(){
 	$id = t((string)filter_input(INPUT_POST,'id',FILTER_VALIDATE_INT));
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 	
-	$pwd=filter_input(INPUT_POST,'pwd');
-	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
+	$pwd=(string)filter_input(INPUT_POST,'pwd');
+	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
 	session_sta();
 	$admindel=admindel_valid();
@@ -1394,8 +1394,8 @@ function edit(){
 //記事削除
 function del(){
 	global $en;
-	$pwd=filter_input(INPUT_POST,'pwd');
-	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
+	$pwd=(string)filter_input(INPUT_POST,'pwd');
+	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
 	check_csrf_token();
 	session_sta();
@@ -1404,13 +1404,13 @@ function del(){
 	if(!($admindel||($userdel_mode&&$pwd))){
 		return error($en?'The operation failed.':'失敗しました。');
 	}
-	$id_and_no=filter_input(INPUT_POST,'id_and_no');
+	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
 	if(!$id_and_no){
 		return error($en?'Please select an article.':'記事が選択されていません。');
 	}
 	$id=$no='';
 	if($id_and_no){
-		list($id,$no)=explode(",",trim(filter_input(INPUT_POST,'id_and_no')));
+		list($id,$no)=explode(",",trim($id_and_no));
 	}
 	$alllog_arr=[];
 	$fp=fopen(LOG_DIR."alllog.log","r+");
@@ -1484,7 +1484,7 @@ function del(){
 		closeFile ($fp);
 
 	}
-	$resno=filter_input(INPUT_POST,'postresno');
+	$resno=(string)filter_input(INPUT_POST,'postresno');
 	//多重送信防止
 	if(filter_input(INPUT_POST,'resmode')==='true'){
 		if(!is_file(LOG_DIR.$resno.'.log')){
@@ -1651,11 +1651,8 @@ function res ($resno){
 			while ($line = fgets($rp)) {
 				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
 
-
 				if($_res['oya']==='oya'){
-
 					$oyaname = $_res['name'];
-
 				} 
 				// 投稿者名を配列にいれる
 					if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
