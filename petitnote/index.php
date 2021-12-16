@@ -706,7 +706,7 @@ function paint(){
 		if($type==='rep'){//画像差し換え
 			$rep=true;
 			$pwd = filter_input(INPUT_POST, 'pwd');
-			$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+			$pwd=$pwd ? $pwd : t((string)filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 			if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 			if($pwd){
 				$pwd=openssl_encrypt ($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//暗号化

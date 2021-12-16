@@ -639,7 +639,7 @@ function gd_check(){
 function get_gd_ver(){
 	if(function_exists("gd_info")){
 	$gdver=gd_info();
-	$phpinfo=$gdver["GD Version"];
+	$phpinfo=(string)$gdver["GD Version"];
 	$end=strpos($phpinfo,".");
 	$phpinfo=substr($phpinfo,0,$end);
 	$length = strlen($phpinfo)-1;
