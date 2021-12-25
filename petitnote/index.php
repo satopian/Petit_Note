@@ -14,8 +14,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.12';
-$petit_lot='lot.211215';
+$petit_ver='v0.9.9.15';
+$petit_lot='lot.211225';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -1508,9 +1508,11 @@ function catalog($page=0,$q=''){
 	while ($_line = fgets($fp)) {
 		$alllog_arr[]=$_line;	
 	}
+	fclose($fp);
 
 	$encoded_q='';
 	$result=[];
+	$j=0;
 	if($q){//名前検索の時
 		foreach($alllog_arr as $i => $alllog){
 			list($no,)=explode("\t",trim($alllog));
@@ -1521,12 +1523,13 @@ function catalog($page=0,$q=''){
 						list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$_line);
 						if ($imgfile&&$name===$q){
 							$result[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
+							++$j;
 						};
 			
-					};
+				};
 				fclose($cp);	
 			}
-			if($i>100){
+			if($i>200||$j>120){
 				break;
 			}
 		}
@@ -1584,6 +1587,7 @@ function view($page=0){
 	while ($_line = fgets($fp)) {
 		$alllog_arr[]=$_line;	
 	}
+	fclose($fp);
 	$count_alllog=count($alllog_arr);
 
 
@@ -1598,13 +1602,13 @@ function view($page=0){
 		continue;	
 		}
 		$_res=[];
-			$fp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
+			$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
 			$s=0;
-			while ($line = fgets($fp)) {
+			while ($line = fgets($rp)) {
 				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
 				$out[$oya][]=$_res;
 			}	
-		fclose($fp);
+		fclose($rp);
 	}
 
 	//管理者判定処理
