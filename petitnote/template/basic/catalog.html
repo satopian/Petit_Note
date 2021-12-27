@@ -61,22 +61,9 @@
 
 
 <hr>
-<nav>
+
 <?php endif;?>
-<?php
-//ページング
-$start_page=$page-$pagedef*8;
-if($page<$pagedef*17){
-	$start_page=0;
-}
-$end_page=$page+($pagedef*8)	;
-if($page<$pagedef*17){
-	$end_page=$pagedef*17;
-}
-//prev next 
-$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
-$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
-?>
+<nav>
 <div class="pagelink">
 		
 	<span class="prev">
