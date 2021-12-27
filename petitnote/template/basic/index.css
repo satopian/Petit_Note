@@ -226,7 +226,7 @@ table.resform {
 /* 改ページ */
 .pagelink {
     text-align: center;
-    margin: 10px 0 8px;
+    margin: 12px 0 15px;
 }
 span.next {
     display: inline-block;
@@ -249,6 +249,22 @@ span.res_prev {
 	display: inline-block;
     width: 305px;
     text-align: right;
+}
+
+/* レス画面に前後のスレッドの画像を配置 */
+.view_other_works div{
+	width: 16.1%;
+	height:auto;margin-right: 0.6%;
+	display: inline-block;
+	max-height: 200px;overflow: hidden;
+	vertical-align: top;
+}
+.view_other_works img{
+	width: 100%;
+	height:auto;
+}
+.view_other_works div:nth-of-type(6n) {
+	margin-right: 0;
 }
 
 /* アップロード途中の画像 */

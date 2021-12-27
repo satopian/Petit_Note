@@ -284,6 +284,7 @@
 <?php endforeach;?>
 <?php endif;?>
 <hr>
+<nav>
 <!-- PC用 -->
 <div class="pagelink pcdisp">
 	<span class="res_prev">
@@ -311,6 +312,12 @@
 	<a href="./">top</a>
 </div>
 
+<?php if($view_other_works):?>
+<div class="view_other_works">
+<?php foreach($view_other_works as $view_other_work):?><div><a href="?resno=<?=h($view_other_work['no'])?>"><img src="<?php if($view_other_work['thumbnail']):?>thumbnail/<?=h($view_other_work['thumbnail'])?><?php else:?>src/<?=h($view_other_work['img'])?><?php endif?>" alt="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" width="<?=h($view_other_work['w'])?>" height="<?=h($view_other_work['h'])?> "loading="lazy"></a></div><?php endforeach;?>
+</div>
+<?php endif;?>
+</nav>
 <div class="copy">
 <div class="left_wrap">
 	[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]

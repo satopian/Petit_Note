@@ -14,8 +14,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.9.15';
-$petit_lot='lot.211225';
+$petit_ver='v0.9.10.0';
+$petit_lot='lot.211227';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -27,6 +27,7 @@ if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<2){
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 $max_com= isset($max_com) ? $max_com : 1000;
 $sage_all= isset($sage_all) ? $sage_all : false;
+$view_other_works= isset($view_other_works) ? $view_other_works : true;
 
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
@@ -1532,6 +1533,7 @@ function catalog($page=0,$q=''){
 			if($i>200||$j>120){
 				break;
 			}
+
 		}
 		krsort($result);
 		$alllog_arr=$result;
@@ -1642,7 +1644,7 @@ function view($page=0){
 //レス画面
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts,$sage_all,$en;
+	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts,$sage_all,$view_other_works,$en;
 	
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');
@@ -1688,7 +1690,21 @@ function res ($resno){
 		$prev=$prev ? (create_res(explode("\t",trim($prev)))):[];
 		$next=(!empty($next) && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
 		$prev=(!empty($prev) && is_file(LOG_DIR."{$prev['no']}.log"))?$prev:[];
-	
+
+		if($view_other_works){
+			$view_other_works=[];
+			$a=[];
+			for($j=($i-7);$j<($i+10);++$j){
+				$b=(isset($articles[$j])&&$articles[$j]) ? (create_res(explode("\t",trim($articles[$j])))):[];
+				// var_dump($b);
+				if(!empty($b)&&$b['img']&&$b['no']!==$resno){
+					$a[]=$b;
+				}
+			}
+			$c=($i<5) ? 0 : (count($a)>9 ? 4 :0);
+			$a=array_slice($a,$c,6,false);
+			$view_other_works=$a;
+		}
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();

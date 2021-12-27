@@ -61,7 +61,7 @@
 
 
 <hr>
-
+<nav>
 <?php endif;?>
 <?php
 //ページング
@@ -122,7 +122,7 @@ $prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時は
 		| <a href="?mode=catalog&page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?><?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">end</a>
 		<?php endif;?>
 
-
+</nav>
 	<div class="copy">
 		<div class="left_wrap">
 		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]

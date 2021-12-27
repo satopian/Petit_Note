@@ -182,6 +182,11 @@ $sage_all = false;
 $verified_adminpost = true; 
 // $verified_adminpost = false; 
 
+//レス画面に前後のスレッドの画像を表示する する:1 しない:0
+// する: true しない: false
+
+$view_other_works = true;
+// $view_other_works = false;
 
 /*表示件数*/
 
