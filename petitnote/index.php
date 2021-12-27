@@ -14,8 +14,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.10.0';
-$petit_lot='lot.211227';
+$petit_ver='v0.9.10.1';
+$petit_lot='lot.211228';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -1572,6 +1572,18 @@ function catalog($page=0,$q=''){
 	//token
 	$token=get_csrf_token();
 
+	//ページング
+	$start_page=$page-$pagedef*8;
+	if($page<$pagedef*17){
+		$start_page=0;
+	}
+	$end_page=$page+($pagedef*8)	;
+	if($page<$pagedef*17){
+		$end_page=$pagedef*17;
+	}
+	//prev next 
+	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
+	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 
 	// HTML出力
 	$templete='catalog.html';
@@ -1635,6 +1647,19 @@ function view($page=0){
 
 	//token
 	$token=get_csrf_token();
+
+	//ページング
+	$start_page=$page-$pagedef*8;
+	if($page<$pagedef*17){
+		$start_page=0;
+	}
+	$end_page=$page+($pagedef*8)	;
+	if($page<$pagedef*17){
+		$end_page=$pagedef*17;
+	}
+	//prev next 
+	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
+	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 
 	// HTML出力
 	$templete='main.html';
