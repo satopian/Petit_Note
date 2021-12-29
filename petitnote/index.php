@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.10.1';
+$petit_ver='v0.9.10.5';
 $petit_lot='lot.211228';
 
 if(!$max_log){
@@ -28,6 +28,7 @@ $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 $max_com= isset($max_com) ? $max_com : 1000;
 $sage_all= isset($sage_all) ? $sage_all : false;
 $view_other_works= isset($view_other_works) ? $view_other_works : true;
+$deny_all_posts= isset($deny_all_posts) ? $deny_all_posts : (isset($denny_all_posts) ? $denny_all_posts : false);
 
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
@@ -51,7 +52,7 @@ deltemp();//テンポラリ自動削除
 
 switch($mode){
 	case 'regist':
-		if($denny_all_posts){
+		if($deny_all_posts){
 			return view();	
 		}
 		return post();
@@ -1594,7 +1595,9 @@ function catalog($page=0,$q=''){
 //通常表示
 function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts,$en; 
+	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en; 
+
+	$denny_all_posts=$deny_all_posts;//互換性
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
 	$alllog_arr=[];
@@ -1669,8 +1672,9 @@ function view($page=0){
 //レス画面
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$denny_all_posts,$sage_all,$view_other_works,$en;
+	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
 	
+	$denny_all_posts=$deny_all_posts;
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');
 	if(!is_file(LOG_DIR."{$resno}.log")){

@@ -254,8 +254,8 @@ $elapsed_days=180;
 //する: trueで、すべての投稿ができなくなります。 初期値 false。
 // する: true しない: false
 
-// $denny_all_posts = true;
-$denny_all_posts = false;
+// $deny_all_posts = true;
+$deny_all_posts = false;
 
 
 //タイムゾーン 日本時間で良ければ初期値 'asia/tokyo'
