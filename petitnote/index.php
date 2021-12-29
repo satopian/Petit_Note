@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.10.5';
+$petit_ver='v0.9.10.6';
 $petit_lot='lot.211228';
 
 if(!$max_log){
@@ -219,6 +219,11 @@ function post(){
 
 	}
 
+	if(!$resto && $use_diary && !$adminpost){
+		safe_unlink($upfile);
+		return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
+	}
+
 	if($resto && !is_file(LOG_DIR."{$resto}.log")){//エラー処理
 		if($pictmp!==2){//お絵かきではない時は
 			safe_unlink($upfile);
@@ -258,10 +263,6 @@ function post(){
 
 	}
 
-	if(!$resto && $use_diary && !$adminpost){
-			safe_unlink($upfile);
-			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
-	}
 
 	//お絵かきアップロード
 	if($pictmp===2 && is_file($tempfile)){
