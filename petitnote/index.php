@@ -14,8 +14,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.10.6';
-$petit_lot='lot.211228';
+$petit_ver='v0.9.11.0';
+$petit_lot='lot.211230';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -1078,7 +1078,7 @@ function img_replace(){
 	safe_unlink($tempfile);
 	safe_unlink(TEMP_DIR.$file_name.".dat");
 
-	return header('Location: ./?resno='.$no);
+	return header('Location: ./?resno='.$no.'#'.$time);
 
 }
 
