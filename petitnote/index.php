@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.11.1';
+$petit_ver='v0.9.11.2';
 $petit_lot='lot.220105';
 
 if(!$max_log){
@@ -335,7 +335,7 @@ function post(){
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
 			while($line=fgets($cp)){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
-				if(($time-$time_)<1000){//投稿時刻の重複回避が主目的
+				if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
 					safe_unlink($upfile);
 
 					return error($en? 'Please wait a little.':'少し待ってください。');
@@ -347,7 +347,6 @@ function post(){
 			fclose($cp);
 		}
 	}
-
 	foreach($chk_com as $line){
 		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",$line);
 		if($com && ($com === $_com_)){
