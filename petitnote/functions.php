@@ -217,7 +217,7 @@ function check_cont_pass(){
 
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line){
-	global $max_w,$max_h,$root_url,$boardname,$do_not_change_posts_time,$en;
+	global $root_url,$boardname,$do_not_change_posts_time,$en;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 	$res=[];
 
@@ -243,7 +243,6 @@ function create_res($line){
 	$thumbnail = ($thumbnail==='thumbnail') ? $time.'s.jpg' : false; 
 	$painttime = is_numeric($painttime) ? calcPtime($painttime) : false;  
 
-	// list($w,$h) = image_reduction_display($w,$h,$max_w,$max_h);
 	$datetime = $do_not_change_posts_time ? (int)substr($first_posted_time,0,-3) : (int)substr($time,0,-3);
 	$date=date('y/m/d',$datetime);
 
@@ -265,8 +264,8 @@ function create_res($line){
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail,
 		'painttime' => $painttime,
-		'w' => $w,
-		'h' => $h,
+		'w' => is_numeric($w) ? $w :'',
+		'h' => is_numeric($h) ? $h :'',
 		'tool' => $tool,
 		'pchext' => $pchext,
 		'anime' => $anime,
