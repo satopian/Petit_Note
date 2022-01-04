@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.11.2';
+$petit_ver='v0.9.11.6';
 $petit_lot='lot.220105';
 
 if(!$max_log){
@@ -318,9 +318,11 @@ function post(){
 		$alllog_arr[]=$_line;	
 	}
 	$img_md5='';
-
-	$chk_log_arr=array_slice($alllog_arr,0,5,false);
+	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
+	$n= $upfile ? 15 : 5;
+	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
 	$chk_com=[];
+	$chk_images=[];
 	$chk_resnos=[];
 	foreach($chk_log_arr as $chk_log){
 		list($chk_resno)=explode("\t",$chk_log);
@@ -332,23 +334,31 @@ function post(){
 	foreach($chk_resnos as $chk_resno){
 		if(is_file(LOG_DIR."{$chk_resno}.log")){
 
-			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-			while($line=fgets($cp)){
-				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
-				if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
-					safe_unlink($upfile);
+		$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
+		while($line=fgets($cp)){
+			$chk_ex_line=explode("\t",$line);
+			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
+			if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
+				safe_unlink($upfile);
 
-					return error($en? 'Please wait a little.':'少し待ってください。');
-				}
-				if($host === $host_){
-					$chk_com[]=$line;
-				};
+				return error($en? 'Please wait a little.':'少し待ってください。');
 			}
+			if($host === $host_){
+				$chk_com[$time_]=$chk_ex_line;//コメント
+			}
+			if($upfile && $imgfile_){
+				$chk_images[$time_]=$chk_ex_line;//画像
+			}
+		}
 			fclose($cp);
 		}
 	}
+	krsort($chk_com);
+	$chk_com=array_slice($chk_com,0,20,false);
+
 	foreach($chk_com as $line){
-		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",$line);
+		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
+
 		if($com && ($com === $_com_)){
 			safe_unlink($upfile);
 			return error($en?'Post once by this comment.':'同じコメントがありました。');
@@ -395,38 +405,18 @@ function post(){
 
 		rename($upfile,IMG_DIR.$imgfile);
 	}
-
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
-	$_chk_resnos=[];
 	if($pictmp!=2 && $imgfile && is_file(IMG_DIR.$imgfile)){
+
 		$img_md5=md5_file(IMG_DIR.$imgfile);
-		$chk_log_arr=array_slice($alllog_arr,0,20,false);
-		foreach($chk_log_arr as $chk_log){
-			list($_chk_resno)=explode("\t",$chk_log);
-			$_chk_resnos[]=$_chk_resno;
-		}
-		if($resto){
-			$_chk_resnos=array_merge($_chk_resnos,[$resto]);
-		} 
-		foreach($_chk_resnos as $_chk_resno){
-	
-			if(is_file(LOG_DIR."{$_chk_resno}.log")){
-			$cp=fopen(LOG_DIR."{$_chk_resno}.log","r");
-				while($line=fgets($cp)){
-					list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
+		
+		foreach($chk_images as $line){
 
-					if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
-						safe_unlink(IMG_DIR.$imgfile);
+			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
 
-						return error($en? 'Please wait a little.':'少し待ってください。');
-					}
-				
-					if($log_md5 && ($log_md5 === $img_md5)){
-						safe_unlink(IMG_DIR.$imgfile);
-						return error($en?'Image already exists.':'同じ画像がありました。');
-					};
-				}
-				fclose($cp);
+			if($log_md5 && ($log_md5 === $img_md5)){
+				safe_unlink(IMG_DIR.$imgfile);
+				return error($en?'Image already exists.':'同じ画像がありました。');
 			}
 		}
 	}
