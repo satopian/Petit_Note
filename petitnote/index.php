@@ -415,7 +415,7 @@ function post(){
 				while($line=fgets($cp)){
 					list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
 
-					if(($time-$time_)<1000){//投稿時刻の重複回避が主目的
+					if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
 						safe_unlink(IMG_DIR.$imgfile);
 
 						return error($en? 'Please wait a little.':'少し待ってください。');
