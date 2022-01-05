@@ -5,7 +5,6 @@ $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0) ? true : false;
 
-
 require_once(__DIR__.'/config.php');	
 require_once(__DIR__.'/functions.php');
 require_once(__DIR__.'/thumbnail_gd.php');
@@ -14,7 +13,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.11.6';
+$petit_ver='v0.9.12.0';
 $petit_lot='lot.220105';
 
 if(!$max_log){
@@ -875,7 +874,7 @@ function to_continue(){
 	$aikotoba=true;
 	}
 	// nsfw
-	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	// HTML出力
 	$templete='continue.html';
@@ -1160,7 +1159,7 @@ function confirmation_before_deletion ($edit_mode=''){
 		$aikotoba=true;
 	}
 	// nsfw
-	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+	$nsfwc=	filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	if($edit_mode==='delmode'){
 		$templete='before_del.html';
@@ -1200,13 +1199,13 @@ function edit_form(){
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
-			$line[]=$r_line;
+			$lines[]=$r_line;
 		}
-		foreach($line as $val){
+		foreach($lines as $val){
 			
-			$line_=explode("\t",trim($val));
+			$line=explode("\t",trim($val));
 
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line_;
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 			if($id===$time && $no===$_no){
 			
 				if(!$admindel){
@@ -1227,19 +1226,24 @@ function edit_form(){
 		return error($en?'The article was not found.':'見つかりませんでした。');
 	}
 	closeFile($rp);	
-		$_res = create_res($line_);//$lineから、情報を取り出す
+		$_res = create_res($line);//$lineから、情報を取り出す
 		$out[0][]=$_res;
 
 
 	$resno=filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
+	foreach($line as $i => $val){
+		$line[$i]=h($val);
+	}
+	list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+
 	$com=str_replace('"\n"',"\n",$com);
 
 
 	$page = ($page||$page===0) ? $page : false; 
 	$resno = $resno ? $resno : false;
-	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 // HTML出力
 	$templete='edit_form.html';
@@ -1559,7 +1563,7 @@ function catalog($page=0,$q=''){
 	}
 
 	//Cookie
-	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	//token
 	$token=get_csrf_token();
 
@@ -1630,13 +1634,13 @@ function view($page=0){
 	}
 
 	//Cookie
-	$namec=(string)filter_input(INPUT_COOKIE,'namec');
-	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
-	$urlc=(string)filter_input(INPUT_COOKIE,'urlc');
-	$appc=(string)filter_input(INPUT_COOKIE,'appc');
-	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
-	$pichc=(string)filter_input(INPUT_COOKIE,'pichc');
-	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+	$namec=h((string)filter_input(INPUT_COOKIE,'namec'));
+	$pwdc=h((string)filter_input(INPUT_COOKIE,'pwdc'));
+	$urlc=h((string)filter_input(INPUT_COOKIE,'urlc'));
+	$appc=h((string)filter_input(INPUT_COOKIE,'appc'));
+	$picwc=h((string)filter_input(INPUT_COOKIE,'picwc'));
+	$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
+	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	//token
 	$token=get_csrf_token();
@@ -1721,8 +1725,7 @@ function res ($resno){
 				}
 			}
 			$c=($i<5) ? 0 : (count($a)>9 ? 4 :0);
-			$a=array_slice($a,$c,6,false);
-			$view_other_works=$a;
+			$view_other_works=array_slice($a,$c,6,false);
 		}
 	//管理者判定処理
 	session_sta();
@@ -1735,13 +1738,13 @@ function res ($resno){
 	}
 
 	//Cookie
-	$namec=(string)filter_input(INPUT_COOKIE,'namec');
-	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
-	$urlc=(string)filter_input(INPUT_COOKIE,'urlc');
-	$appc=(string)filter_input(INPUT_COOKIE,'appc');
-	$picwc=(string)filter_input(INPUT_COOKIE,'picwc');
-	$pichc=(string)filter_input(INPUT_COOKIE,'pichc');
-	$nsfwc=(string)filter_input(INPUT_COOKIE,'nsfwc');
+	$namec=h((string)filter_input(INPUT_COOKIE,'namec'));
+	$pwdc=h((string)filter_input(INPUT_COOKIE,'pwdc'));
+	$urlc=h((string)filter_input(INPUT_COOKIE,'urlc'));
+	$appc=h((string)filter_input(INPUT_COOKIE,'appc'));
+	$picwc=h((string)filter_input(INPUT_COOKIE,'picwc'));
+	$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
+	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	//token
 	$token=get_csrf_token();
