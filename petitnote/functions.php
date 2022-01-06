@@ -511,9 +511,11 @@ function is_ngword ($ngwords, $strs) {
 	if (!is_array($strs)) {
 		$strs = [$strs];
 	}
+	foreach($ngwords as $i => $ngword){//拒絶する文字列
+		$ngwords[$i]  = str_replace([" ", "　"], "", $ngword);
+	}
 	foreach ($strs as $str) {
 		foreach($ngwords as $ngword){//拒絶する文字列
-			$ngword  = str_replace([" ", "　"], "", $ngword);
 			if ($ngword !== '' && preg_match("/{$ngword}/ui", $str)){
 				return true;
 			}
