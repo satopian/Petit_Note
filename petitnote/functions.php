@@ -513,6 +513,7 @@ function is_ngword ($ngwords, $strs) {
 	}
 	foreach ($strs as $str) {
 		foreach($ngwords as $ngword){//拒絶する文字列
+			$ngword  = str_replace([" ", "　"], "", $ngword);
 			if ($ngword !== '' && preg_match("/{$ngword}/ui", $str)){
 				return true;
 			}
