@@ -91,7 +91,7 @@
 	</div>
 		<?php if($res['img']):?>
 
-			<div class="posted_image">
+			<div class="posted_image" <?php if($res['w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
 				<?php if($res['thumbnail']):?>
 					<a href="src/<?=h($res['img'])?>" target="_blank">
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
