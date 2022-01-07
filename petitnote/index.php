@@ -13,7 +13,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.12.3';
+$petit_ver='v0.9.12.5';
 $petit_lot='lot.220106';
 
 if(!$max_log){
@@ -495,10 +495,10 @@ function post(){
 
 	//保存件数超過処理
 	$countlog=count($alllog_arr);
-	if($max_log<=$countlog){
+	if($max_log && $countlog && ($max_log<=$countlog)){
 		for($i=$max_log-1; $i<$countlog;++$i){
 
-		if(isset($alllog_arr[$i]) && $alllog_arr[$i]===''){
+		if(!isset($alllog_arr[$i]) || $alllog_arr[$i]===''){
 			continue;
 		}
 		list($d_no,)=explode("\t",$alllog_arr[$i]);
@@ -513,9 +513,9 @@ function post(){
 			delete_files ($d_imgfile, $d_time);//一連のファイルを削除
 
 			}
+		safe_unlink(LOG_DIR.$d_no.'.log');//スレッド個別ログファイル削除
 		closeFile($dp);
 		}	
-		safe_unlink(LOG_DIR.$d_no.'.log');//スレッド個別ログファイル削除
 		unset($alllog_arr[$i]);//全体ログ記事削除
 		}
 	}
@@ -1684,14 +1684,19 @@ function res ($resno){
 					if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
 						$rresname[] = $_res['name'];
 					}
-			
-				if($rresname){//レスがある時
-					$resname = $rresname ? implode(($en?'-san':'さん').' ',$rresname) : false; // レス投稿者一覧
-				}
-
 			$out[0][]=$_res;
 			}	
 		fclose($rp);
+		//投稿者名の特殊文字を全角に
+		foreach($rresname as $key => $val){
+			$rep=str_replace('&quot;','”',$val);
+			$rep=str_replace('&#039;','’',$rep);
+			$rep=str_replace('&lt;','＜',$rep);
+			$rep=str_replace('&gt;','＞',$rep);
+			$rresname[$key]=str_replace('&amp;','＆',$rep);
+		}			
+	
+		$resname = !empty($rresname) ? implode(($en?'-san':'さん').' ',$rresname) : false; // レス投稿者一覧
 
 		$fp=fopen(LOG_DIR."alllog.log","r");
 		$articles=[];
