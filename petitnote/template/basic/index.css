@@ -136,7 +136,7 @@ span.info_name a {
 }
 .comment {
     display: table;
-    min-width: 200px;
+    min-width: 350px;
 }
 .clear {
 	clear: both;
@@ -390,6 +390,10 @@ span.continue_menu {
 		float:none;
 		margin-right:0;
 	}
+	.comment {
+		min-width: initial;
+	}
+	
 	.mobiledisp {
 			display: block;
 			margin: 10px 0;
