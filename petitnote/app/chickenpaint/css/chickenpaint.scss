@@ -326,6 +326,10 @@
     background-size:256px 160px;
     background-repeat:no-repeat;
 }
+.chickenpaint-toolbar-style-old .chickenpaint-toolbar-button-icon {
+    background-image:url(../gfx/icons-old.png);
+    background-size:32px 1024px;
+}
 
 .chickenpaint .chickenpaint-small-toolbar-button {
     display:inline-block;
@@ -364,48 +368,6 @@
 .chickenpaint-palette-stroke .chickenpaint-palette-body {
     padding:1px;
 }
-/*
-Gradient.svg \
-Airbrush.svg \
-Bezier_Curve.svg \
-Blend.svg \
-Blur.svg \
-Brush.svg \
-Bucket_Fill.svg \
-Burn.svg \
-Circle_Draw.svg \
-Circular_Selection.svg \
-10 Colour_Picker.svg \
-Dodge.svg \
-Eraser_Hard.svg \
-Eraser_Soft.svg \
-Free-hand_Stroke.svg \
-Free_Selection.svg \
-Grabbing_Hand_1.svg \
-Grabbing_Hand_2.svg \
-Hand.svg \
-Magic_Wand_1.svg \
-20 Magic_Wand_2.svg \
-Move.svg \
-Pen.svg \
-Pencil.svg \
-Post_Pic.svg \
-Rectangle_Draw.svg \
-Rectangular_Selection.svg \
-Redo.svg \
-Rotate.svg \
-Rotate_Canvas.svg \
-30 Save.svg \
-Select.svg \
-Smudge.svg \
-Straight_Line.svg \
-Undo.svg \
-Watercolour.svg \
-Zoom.svg \
-Zoom_100.svg \
-Zoom_In.svg \
-Zoom_Out.svg
-*/
 
 @function icon($index) {
     $gridWidth: 8;
@@ -494,6 +456,11 @@ Zoom_Out.svg
 .chickenpaint-tool-send-and-end .chickenpaint-toolbar-button-icon {
     background-position: icon(30);
 }
+.chickenpaint-unsaved { 
+    .chickenpaint-tool-send, .chickenpaint-tool-send-and-end {
+        outline: 1px solid #aaa;
+    }
+} 
 
 .chickenpaint-tool-freehand .chickenpaint-toolbar-button-icon {
     background-position: icon(14);
@@ -503,6 +470,101 @@ Zoom_Out.svg
 }
 .chickenpaint-tool-bezier .chickenpaint-toolbar-button-icon {
     background-position: icon(2);
+}
+
+.chickenpaint-toolbar-style-old {
+    .chickenpaint-tool-rect-selection .chickenpaint-toolbar-button-icon {
+        background-position:0 0;
+    }
+    .chickenpaint-tool-move .chickenpaint-toolbar-button-icon {
+        background-position:0 -32px;
+    }
+    .chickenpaint-tool-flood-fill .chickenpaint-toolbar-button-icon {
+        background-position:0 -64px;
+    }
+    .chickenpaint-tool-gradient-fill .chickenpaint-toolbar-button-icon {
+        background-position:0 -96px;
+    }
+    .chickenpaint-tool-rotate-canvas .chickenpaint-toolbar-button-icon {
+        background-position:0 -928px;
+    }
+    .chickenpaint-tool-pan-canvas .chickenpaint-toolbar-button-icon {
+        background-position:0 -672px;
+    }
+    .chickenpaint-tool-pencil .chickenpaint-toolbar-button-icon {
+        background-position:0 -160px;
+    }
+    .chickenpaint-tool-pen .chickenpaint-toolbar-button-icon {
+        background-position:0 -192px;
+    }
+    .chickenpaint-tool-airbrush .chickenpaint-toolbar-button-icon {
+        background-position:0 -224px;
+    }
+    .chickenpaint-tool-water .chickenpaint-toolbar-button-icon {
+        background-position:0 -576px;
+    }
+    .chickenpaint-tool-eraser .chickenpaint-toolbar-button-icon {
+        background-position:0 -256px;
+    }
+    .chickenpaint-tool-soft-eraser .chickenpaint-toolbar-button-icon {
+        background-position:0 -288px;
+    }
+    .chickenpaint-tool-smudge .chickenpaint-toolbar-button-icon {
+        background-position:0 -768px;
+    }
+    .chickenpaint-tool-blender .chickenpaint-toolbar-button-icon {
+        background-position:0 -896px;
+    }
+    .chickenpaint-tool-dodge .chickenpaint-toolbar-button-icon {
+        background-position:0 -512px;
+    }
+    .chickenpaint-tool-burn .chickenpaint-toolbar-button-icon {
+        background-position:0 -544px;
+    }
+    .chickenpaint-tool-blur .chickenpaint-toolbar-button-icon {
+        background-position:0 -736px;
+    }
+    .chickenpaint-tool-color-picker .chickenpaint-toolbar-button-icon {
+        background-position:0 -960px;
+    }
+
+    .chickenpaint-tool-zoom-in .chickenpaint-toolbar-button-icon {
+        background-position:0 -416px;
+    }
+    .chickenpaint-tool-zoom-out .chickenpaint-toolbar-button-icon {
+        background-position:0 -448px;
+    }
+    .chickenpaint-tool-zoom-100 .chickenpaint-toolbar-button-icon {
+        background-position:0 -480px;
+    }
+    .chickenpaint-tool-undo{
+        margin-left:8px;
+    }
+    .chickenpaint-tool-undo .chickenpaint-toolbar-button-icon {
+        background-position:0 -320px;
+    }
+    .chickenpaint-tool-redo {
+        margin-right:8px;
+    }
+    .chickenpaint-tool-redo .chickenpaint-toolbar-button-icon {
+        background-position:0 -352px;
+    }
+    .chickenpaint-tool-send .chickenpaint-toolbar-button-icon {
+        background-position:0 -384px;
+    }
+    .chickenpaint-tool-send-and-end .chickenpaint-toolbar-button-icon {
+        background-position:0 -992px;
+    }
+
+    .chickenpaint-tool-freehand .chickenpaint-toolbar-button-icon {
+        background-position:0 -608px;
+    }
+    .chickenpaint-tool-line .chickenpaint-toolbar-button-icon {
+        background-position:0 -640px;
+    }
+    .chickenpaint-tool-bezier .chickenpaint-toolbar-button-icon {
+        background-position:0 -704px;
+    }
 }
 
 .chickenpaint-colorpicker-show {
@@ -1151,6 +1213,16 @@ only screen and (min-resolution: 120dpi) {
     .chickenpaint-layer-thumbnail {
         background-image: url(../gfx/trans-grid-4px.png);
         background-size: 4px 4px;
+    }
+    
+    .chickenpaint-toolbar-style-old {
+        .chickenpaint-toolbar-button-icon {
+            background-image: url(../gfx/icons-old-2x.png);
+        }
+
+        &.chickenpaint-lang-ja .chickenpaint-toolbar-button-icon {
+            background-image: url(../gfx/icons-old-ja-2x.png);
+        }
     }
 }
 
