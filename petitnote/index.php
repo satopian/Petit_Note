@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.12.5';
-$petit_lot='lot.220106';
+$petit_ver='v0.9.15.0';
+$petit_lot='lot.220129';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -1513,16 +1513,19 @@ function catalog($page=0,$q=''){
 			if(is_file('log/'."{$no}.log")){
 			$cp=fopen('log/'."{$no}.log","r+");
 				while($_line=fgets($cp)){
-						list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$_line);
-						if ($imgfile&&$name===$q){
-							$result[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
-							++$j;
-						};
+					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$_line);
+					if ($imgfile&&$name===$q){
+						$result[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
+						++$j;
+						if($j>120){
+							break 2;
+						}
 			
-				};
+					}
+				}
 				fclose($cp);	
 			}
-			if($i>200||$j>120){
+			if($i>300){
 				break;
 			}
 
