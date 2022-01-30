@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.15.0';
-$petit_lot='lot.220129';
+$petit_ver='v0.9.16.1';
+$petit_lot='lot.220130';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -946,6 +946,11 @@ function img_replace(){
 			break;
 		}
 	}
+	if(!check_elapsed_days($_time)){//指定日数より古い画像差し換えは新規投稿にする
+		closeFile($fp);
+		return paintcom();
+	}
+
 	if(!$flag){
 		closeFile($rp);
 		return error($en?'The article was not found.':'見つかりませんでした。');
@@ -1707,6 +1712,7 @@ function res ($resno){
 			$articles[] = $_line;//$_lineから、情報を取り出す
 		}
 		fclose($fp);
+		$i=0;
 		foreach($articles as $i =>$article){//現在のスレッドのキーを取得
 			if (strpos(trim($article), $resno . "\t") === 0) {
 				break;

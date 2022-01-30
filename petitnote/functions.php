@@ -269,7 +269,7 @@ function create_res($line){
 		'tool' => $tool,
 		'pchext' => $pchext,
 		'anime' => $anime,
-		'continue' => $continue,
+		'continue' => $check_elapsed_days ? $continue :'',
 		'time' => $time,
 		'date' => $date,
 		'host' => $host,
