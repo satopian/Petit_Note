@@ -1045,7 +1045,6 @@ function img_replace(){
 
 	writeFile($rp, implode("", $r_arr));
 
-
 	if($_oya ==='oya'){
 
 		while ($_line = fgets($fp)) {
@@ -1363,7 +1362,6 @@ function edit(){
 
 	writeFile($rp, implode("", $r_arr));
 
-
 	if($_oya==='oya'){
 
 		while ($_line = fgets($fp)) {
@@ -1469,7 +1467,6 @@ function del(){
 					delete_files ($imgfile, $time);//一連のファイルを削除
 					$line=implode("",$line);
 					writeFile ($rp, $line);
-
 				}
 				$find=true;
 				break;
@@ -1527,7 +1524,6 @@ function catalog($page=0,$q=''){
 						if($j>120){
 							break 2;
 						}
-			
 					}
 				}
 				fclose($cp);	
