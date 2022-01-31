@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.16.1';
-$petit_lot='lot.220130';
+$petit_ver='v0.9.18.0';
+$petit_lot='lot.220131';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -696,7 +696,7 @@ function paint(){
 		
 		if($type==='rep'){//画像差し換え
 			$rep=true;
-			$pwd = filter_input(INPUT_POST, 'pwd');
+			$pwd = t((string)filter_input(INPUT_POST, 'pwd'));
 			$pwd=$pwd ? $pwd : t((string)filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 			if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 			if($pwd){
@@ -935,7 +935,8 @@ function img_replace(){
 
 	$r_arr=[];
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
-		while ($line = fgets($rp)) {
+	flock($rp, LOCK_EX);
+	while ($line = fgets($rp)) {
 			$r_arr[]=$line;
 		}
 	$flag=false;
@@ -947,12 +948,14 @@ function img_replace(){
 		}
 	}
 	if(!check_elapsed_days($_time)){//指定日数より古い画像差し換えは新規投稿にする
+		closeFile($rp);
 		closeFile($fp);
 		return paintcom();
 	}
 
 	if(!$flag){
 		closeFile($rp);
+		closeFile ($fp);
 		return error($en?'The article was not found.':'見つかりませんでした。');
 	}
 	
@@ -1041,7 +1044,6 @@ function img_replace(){
 	$r_arr[$i] = $new_line;
 
 	writeFile($rp, implode("", $r_arr));
-	closeFile($rp);
 
 
 	if($_oya ==='oya'){
@@ -1062,6 +1064,7 @@ function img_replace(){
 		writeFile($fp,$alllog);
 
 	}
+	closeFile($rp);
 	closeFile ($fp);
 	
 	//旧ファイル削除
@@ -1317,7 +1320,8 @@ function edit(){
 
 	$r_arr=[];
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
-		while ($line = fgets($rp)) {
+	flock($rp, LOCK_EX);
+	while ($line = fgets($rp)) {
 			$r_arr[]=$line;
 		}
 	$flag=false;
@@ -1358,7 +1362,6 @@ function edit(){
 
 
 	writeFile($rp, implode("", $r_arr));
-	closeFile($rp);
 
 
 	if($_oya==='oya'){
@@ -1383,6 +1386,7 @@ function edit(){
 		writeFile($fp,$alllog);
 
 	}
+	closeFile($rp);
 	closeFile ($fp);
 
 	return header('Location: ./?resno='.$no);
@@ -1432,8 +1436,8 @@ function del(){
 			
 				if(!$admindel){
 					if(!$pwd||!password_verify($pwd,$hash)){
-						fclose($rp);
-						fclose($fp);
+						closeFile ($rp);
+						closeFile ($fp);
 						return error($en?'The operation failed.':'失敗しました。');
 					}
 				}
@@ -1458,7 +1462,6 @@ function del(){
 					$alllog=implode("",$alllog_arr);
 					writeFile($fp,$alllog);
 					safe_unlink(LOG_DIR.$no.'.log');
-					closeFile ($rp);
 			
 				}else{
 
@@ -1466,7 +1469,6 @@ function del(){
 					delete_files ($imgfile, $time);//一連のファイルを削除
 					$line=implode("",$line);
 					writeFile ($rp, $line);
-					closeFile ($rp);
 
 				}
 				$find=true;
@@ -1474,11 +1476,11 @@ function del(){
 			}
 		}
 			if(!$find){
-				fclose($rp);
-				fclose($fp);
+				closeFile ($rp);
+				closeFile ($fp);
 				return error($en?'The article was not found.':'見つかりませんでした。');
 			}
-
+		closeFile ($rp);
 		closeFile ($fp);
 
 	}
@@ -1516,7 +1518,7 @@ function catalog($page=0,$q=''){
 			list($no,)=explode("\t",trim($alllog));
 
 			if(is_file('log/'."{$no}.log")){
-			$cp=fopen('log/'."{$no}.log","r+");
+			$cp=fopen('log/'."{$no}.log","r");
 				while($_line=fgets($cp)){
 					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$_line);
 					if ($imgfile&&$name===$q){
