@@ -18,7 +18,7 @@
 
 ## ダウンロード
 
-- [リリース](https://github.com/satopian/Petit_Note/releases)から安定版をダウンロードできます。
+- [リリース](https://github.com/satopian/Petit_Note/releases/latest)から安定版をダウンロードできます。
 
 ## DEMO
 - [Petit Note](https://paintbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
