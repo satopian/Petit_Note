@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.18.0';
-$petit_lot='lot.220131';
+$petit_ver='v0.9.18.1';
+$petit_lot='lot.220220';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -235,7 +235,7 @@ function post(){
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
 		$line = fgets($rp);
-			list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=explode("\t",$line);
+			list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=explode("\t",trim($line));
 			$check_elapsed_days = check_elapsed_days($postedtime);
 		closeFile ($rp);
 
@@ -335,7 +335,7 @@ function post(){
 
 		$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
 		while($line=fgets($cp)){
-			$chk_ex_line=explode("\t",$line);
+			$chk_ex_line=explode("\t",trim($line));
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
 			if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
@@ -508,7 +508,7 @@ function post(){
 			flock($dp, LOCK_EX);
 
 			while ($line = fgets($dp)) {
-				list($d_no,$_sub,$_name,$_verified,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",$line);
+				list($d_no,$_sub,$_name,$_verified,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 
 			delete_files ($d_imgfile, $d_time);//一連のファイルを削除
 
@@ -668,7 +668,7 @@ function paint(){
 		
 			$rp=fopen(LOG_DIR."{$no}.log","r");
 			while ($line = fgets($rp)) {
-				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$line);
+				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($line));
 				if($time===$time_ && (int)$no==$no_){
 					$resto=(trim($oya_)==='res') ? $no_ : '';
 					break;
@@ -838,7 +838,7 @@ function to_continue(){
 		
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		while ($line = fgets($rp)) {
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id===$time && $no===$_no){
 				$flag=true;
 				break;
@@ -1051,7 +1051,7 @@ function img_replace(){
 			$alllog_arr[]=$_line;	
 		}
 		foreach($alllog_arr as $i => $val){
-			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
+			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 
 			if($id===$time_ && $no===$no_ && $pwd && password_verify($pwd,$hash_)){
 				$alllog_arr[$i] = $new_line;
@@ -1368,7 +1368,7 @@ function edit(){
 			$alllog_arr[]=$_line;	
 		}
 		foreach($alllog_arr as $i => $val){
-			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",$val);
+			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 
 			if($id===$time_ && $no===$no_){
 
@@ -1448,7 +1448,7 @@ function del(){
 					}
 				
 					foreach($alllog_arr as $i =>$_val){//全体ログ
-						list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",$_val);
+						list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
 						if($id===$time_ && $no===$no_){
 							if($admindel || ($pwd && password_verify($pwd,$hash_))){
 
@@ -1517,7 +1517,7 @@ function catalog($page=0,$q=''){
 			if(is_file('log/'."{$no}.log")){
 			$cp=fopen('log/'."{$no}.log","r");
 				while($_line=fgets($cp)){
-					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$_line);
+					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($_line));
 					if ($imgfile&&$name===$q){
 						$result[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
 						++$j;
@@ -1716,8 +1716,8 @@ function res ($resno){
 				break;
 			}
 		}
-		$next=isset($articles[$i+1])? $articles[$i+1] :'';
-		$prev=isset($articles[$i-1])? $articles[$i-1] :'';
+		$next=isset($articles[$i+1])? rtrim($articles[$i+1]) :'';
+		$prev=isset($articles[$i-1])? rtrim($articles[$i-1]) :'';
 		$next=$next ? (create_res(explode("\t",trim($next)))):[];
 		$prev=$prev ? (create_res(explode("\t",trim($prev)))):[];
 		$next=(!empty($next) && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
@@ -1727,7 +1727,7 @@ function res ($resno){
 			$view_other_works=[];
 			$a=[];
 			for($j=($i-7);$j<($i+10);++$j){
-				$b=(isset($articles[$j])&&$articles[$j]) ? (create_res(explode("\t",trim($articles[$j])))):[];
+				$b=(isset($articles[$j])&&rtrim($articles[$j])) ? (create_res(explode("\t",trim($articles[$j])))):[];
 				// var_dump($b);
 				if(!empty($b)&&$b['img']&&$b['no']!==$resno){
 					$a[]=$b;
