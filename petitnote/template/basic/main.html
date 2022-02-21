@@ -166,9 +166,8 @@ Size:
 	<h2 class="article_title"><a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a></h2>
 	<?php $resform=true; ?>
 	<?php
-	$dispres=$dispres+1;
 	$countres=count($ress);
-	$skipres=$countres-$dispres;
+	$skipres=$countres-($dispres+1);
 	if($userdel || $admindel){
 		$skipres=0;	//削除モードの時はレスを省略しない
 	}
