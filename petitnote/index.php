@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.18.1';
-$petit_lot='lot.220220';
+$petit_ver='v0.9.18.2';
+$petit_lot='lot.220221';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -235,9 +235,11 @@ function post(){
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
 		$line = fgets($rp);
+		if(trim($line)){
 			list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=explode("\t",trim($line));
 			$check_elapsed_days = check_elapsed_days($postedtime);
 		closeFile ($rp);
+		}
 
 		if($pictmp===2){//お絵かきの時は新規投稿にする
 
@@ -335,7 +337,10 @@ function post(){
 
 		$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
 		while($line=fgets($cp)){
-			$chk_ex_line=explode("\t",trim($line));
+			if(!trim($line)){
+				continue;
+			}
+		$chk_ex_line=explode("\t",trim($line));
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
 			if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
@@ -498,7 +503,7 @@ function post(){
 	if($max_log && $countlog && ($max_log<=$countlog)){
 		for($i=$max_log-1; $i<$countlog;++$i){
 
-		if(!isset($alllog_arr[$i]) || $alllog_arr[$i]===''){
+		if(!isset($alllog_arr[$i]) || !trim($alllog_arr[$i])){
 			continue;
 		}
 		list($d_no,)=explode("\t",$alllog_arr[$i]);
@@ -1139,7 +1144,9 @@ function confirmation_before_deletion ($edit_mode=''){
 		$res=[];
 		$find=false;
 		foreach($line as $i =>$val){
-
+			if(!trim($val)){
+				continue;
+			}
 			$_line=explode("\t",trim($val));
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
 			if($id===$time && $no===$_no){
@@ -1209,6 +1216,10 @@ function edit_form(){
 		}
 		foreach($lines as $val){
 			
+			if(!trim($val)){
+				continue;
+			}
+
 			$line=explode("\t",trim($val));
 
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
@@ -1326,6 +1337,10 @@ function edit(){
 	$flag=false;
 	$_res=[];
 	foreach($r_arr as $i => $line){
+		if(!trim($line)){
+			continue;
+		}
+
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id===$_time && $no===$_no){
 
@@ -1428,7 +1443,9 @@ function del(){
 		}
 		$find=false;
 		foreach($line as $i =>$val){
-
+			if(!trim($val)){
+				continue;
+			}
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
 			if($id===$time && $no===$_no){
 			
@@ -1512,11 +1529,20 @@ function catalog($page=0,$q=''){
 	$j=0;
 	if($q){//名前検索の時
 		foreach($alllog_arr as $i => $alllog){
+			if(!trim($alllog)){
+				continue;
+			}
 			list($no,)=explode("\t",trim($alllog));
 
-			if(is_file('log/'."{$no}.log")){
+			//個別スレッドのループ
+			if(!is_file(LOG_DIR."{$no}.log")){
+				continue;	
+			}
 			$cp=fopen('log/'."{$no}.log","r");
 				while($_line=fgets($cp)){
+					if(!trim($_line)){
+						continue;
+					}
 					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($_line));
 					if ($imgfile&&$name===$q){
 						$result[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
@@ -1527,11 +1553,9 @@ function catalog($page=0,$q=''){
 					}
 				}
 				fclose($cp);	
-			}
 			if($i>300){
 				break;
 			}
-
 		}
 		krsort($result);
 		$alllog_arr=$result;
@@ -1610,15 +1634,22 @@ function view($page=0){
 	//oyaのループ
 	foreach($alllog_arr as $oya => $alllog){
 
-		list($no)=explode("\t",$alllog);
+		if(!trim($alllog)){
+			continue;
+		}
+		list($no)=explode("\t",trim($alllog));
 		//個別スレッドのループ
 		if(!is_file(LOG_DIR."{$no}.log")){
-		continue;	
+			continue;	
 		}
 		$_res=[];
 			$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
 			$s=0;
 			while ($line = fgets($rp)) {
+
+				if(!trim($line)){
+					continue;
+				}
 				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
 				$out[$oya][]=$_res;
 			}	
@@ -1681,6 +1712,9 @@ function res ($resno){
 		$resname = '';
 			$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 			while ($line = fgets($rp)) {
+				if(!trim($line)){
+					continue;
+				}
 				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
 
 				if($_res['oya']==='oya'){
