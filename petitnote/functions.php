@@ -232,6 +232,10 @@ function create_res($line){
 			$tool='ChickenPaint';
 			$continue = true;
 			break;
+		case 'klecks';
+			$tool='Klecks';
+			$continue = true;
+			break;
 		case 'upload':
 			$tool=$en?'Upload':'アップロード';
 			break;
@@ -372,6 +376,7 @@ function delete_files ($imgfile, $time) {
 	safe_unlink(IMG_DIR.$time.'.pch');
 	safe_unlink(IMG_DIR.$time.'.spch');
 	safe_unlink(IMG_DIR.$time.'.chi');
+	safe_unlink(IMG_DIR.$time.'.psd');
 }
 
 //png2jpg

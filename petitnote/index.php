@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.9.18.2';
-$petit_lot='lot.220221';
+$petit_ver='v0.10.0.0';
+$petit_lot='lot.220226';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -609,6 +609,7 @@ function paint(){
 	$imgfile='';
 	$pchfile='';
 	$img_chi='';
+	$img_klecks='';
 	$anime=true;
 	$rep=false;
 	$paintmode='paintcom';
@@ -697,6 +698,9 @@ function paint(){
 			if(is_file(IMG_DIR.$time.'.chi')){
 			$img_chi =IMG_DIR.$time.'.chi';
 			}
+			if(is_file(IMG_DIR.$time.'.psd')){
+			$img_klecks =IMG_DIR.$time.'.psd';
+			}
 		}
 		
 		if($type==='rep'){//画像差し換え
@@ -726,6 +730,12 @@ function paint(){
 			// HTML出力
 			$templete='paint_chi.html';
 			return include __DIR__.'/'.$skindir.$templete;
+
+		case 'klecks':
+
+				$tool ='klecks';
+				$templete='paint_klecks.html';
+				return include __DIR__.'/'.$skindir.$templete;
 
 		case 'neo'://PaintBBS NEO
 
@@ -869,6 +879,9 @@ function to_continue(){
 	}elseif(($pchext==='.chi')&&is_file(IMG_DIR.$time.'.chi')){
 		$select_app = false;
 		$app_to_use = 'chi';
+	}elseif(($pchext==='.psd')&&is_file(IMG_DIR.$time.'.psd')){
+		$select_app = false;
+		$app_to_use = 'klecks';
 	}
 	//日記判定処理
 	session_sta();
@@ -1323,7 +1336,7 @@ function edit(){
 	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
-		return error($en? 'The article does not exist.':'記事がありません。');//該当記事が無い時は新規投稿。
+		return error($en? 'The article does not exist.':'記事がありません。');
 	}
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
@@ -1335,7 +1348,6 @@ function edit(){
 			$r_arr[]=$line;
 		}
 	$flag=false;
-	$_res=[];
 	foreach($r_arr as $i => $line){
 		if(!trim($line)){
 			continue;
@@ -1684,7 +1696,7 @@ function view($page=0){
 	if($page<$pagedef*17){
 		$start_page=0;
 	}
-	$end_page=$page+($pagedef*8)	;
+	$end_page=$page+($pagedef*8);
 	if($page<$pagedef*17){
 		$end_page=$pagedef*17;
 	}
