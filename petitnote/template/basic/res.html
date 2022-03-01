@@ -213,7 +213,12 @@
 	selected
 	<?php endif;?>
 	>ChickenPaint</option>
-</select>
+	<option value="klecks"
+	<?php if($appc==='klecks'):?>
+	selected
+	<?php endif;?>
+	>Klecks</option>
+	</select>
 <span class="canvas_size_wrap"> 
 <span class="canvas_size">Size</span>:
 <select name="picw" title="<?php if($en):?>Width<?php else:?>幅<?php endif;?>" class="canvas_select">

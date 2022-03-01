@@ -82,7 +82,9 @@
             setTimeout(() => {
                 onSuccess();
 
-		//2022 (c)satopian https://paintbbs.sakura.ne.jp/ MIT LICENCE 
+		//2022 (c)satopian MIT LICENCE
+		//この箇所はさとぴあが作成したMIT LICENCEのコードです。
+
 		klecks.getPSD().then((psd)=>{
 			var formData = new FormData();
 			formData.append("picture", klecks.getPNG(),'blob');
@@ -113,7 +115,8 @@
 				}
 			}
 		});
-		//2022 (c)satopian MIT LICENCE END
+		//2022 (c)satopian MIT LICENCE ここまで
+
 		// location.reload();
 	}, 500);
 	}
@@ -145,6 +148,14 @@
                 canvas.width = <?=h($picw)?>;
                 canvas.height = <?=h($pich)?>;
 				const ctx = canvas.getContext('2d');
+ 				//PSDがなく画像だけの時はcanvasに読み込む
+				 <?php if($imgfile):?>
+					var img = new Image();
+					img.src = "<?=h($imgfile)?>";
+					img.onload = function(){
+						ctx.drawImage(img, 0, 0);
+					}
+				<?php endif;?>
                     ctx.save();
                     ctx.fillStyle = '#fff';
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
