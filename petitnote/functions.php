@@ -622,6 +622,10 @@ function check_pch_ext ($filepath) {
 		return ".pch";
 	} elseif (is_file($filepath . ".spch")) {
 		return ".spch";
+	} elseif (is_file($filepath . ".chi")) {
+		return ".chi";
+	} elseif (is_file($filepath . ".psd")) {
+		return ".psd";
 	}
 	return '';
 }

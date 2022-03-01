@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.0.0';
-$petit_lot='lot.220226';
+$petit_ver='v0.10.0.1';
+$petit_lot='lot.220301';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -427,8 +427,9 @@ function post(){
 	$src='';
 	$pchext = '';
 	if($pictmp===2 && $imgfile){
-		//PCHファイルアップロード
-		if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
+	//PCHファイルアップロード
+	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
+	if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
 
 			$src = TEMP_DIR.$picfile.$pchext;
 			$dst = IMG_DIR.$time.$pchext;
@@ -437,15 +438,6 @@ function post(){
 			}
 		}
 
-		//chiファイルアップロード
-		if(is_file(TEMP_DIR.$picfile.'.chi')){
-			$pchext = '.chi';
-			$src = TEMP_DIR.$picfile.'.chi';
-			$dst = IMG_DIR.$time.'.chi';
-			if(copy($src, $dst)){
-				chmod($dst,0606);
-			}
-		}
 	}
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
@@ -556,9 +548,6 @@ function post(){
 		$data['option'][] = NOTICE_MAIL_TITLE.','.$sub;
 		if($imgfile) $data['option'][] = NOTICE_MAIL_IMG.','.$root_url.IMG_DIR.$imgfile;//拡張子があったら
 		if(is_file(THUMB_DIR.$time.'s.jpg')) $data['option'][] = NOTICE_MAIL_THUMBNAIL.','.$root_url.THUMB_DIR.$time.'s.jpg';
-		if ($_pch_ext = check_pch_ext(__DIR__.'/'.IMG_DIR.$time)) {
-			$data['option'][] = NOTICE_MAIL_ANIME.','.$root_url.IMG_DIR.$time.$_pch_ext;
-		}
 		if($resto){
 			$data['subject'] = '['.$boardname.'] No.'.$resto.NOTICE_MAIL_REPLY;
 			$data['option'][] = "\n".NOTICE_MAIL_URL.','.$root_url.'?res='.$resto;
@@ -685,8 +674,9 @@ function paint(){
 	
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
 		$_pch_ext = check_pch_ext(IMG_DIR.$time);
+		$continue_from_pch = in_array($_pch_ext,['.pch','.spch']) ? true : false;
 
-		if($ctype=='pch'&& $_pch_ext){//動画から続き
+		if($ctype=='pch'&& $continue_from_pch){//動画から続き
 			$pchfile = IMG_DIR.$time.$_pch_ext;
 		}
 
@@ -695,10 +685,10 @@ function paint(){
 			$animeform = false;
 			$anime= false;
 			$imgfile = IMG_DIR.$imgfile;
-			if(is_file(IMG_DIR.$time.'.chi')){
+			if($_pch_ext==='.chi'){
 			$img_chi =IMG_DIR.$time.'.chi';
 			}
-			if(is_file(IMG_DIR.$time.'.psd')){
+			if($_pch_ext==='.psd'){
 			$img_klecks =IMG_DIR.$time.'.psd';
 			}
 		}
@@ -1016,21 +1006,12 @@ function img_replace(){
 
 	$src='';
 	//PCHファイルアップロード
-	// .pch, .spch, ブランク どれかが返ってくる
+	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
 	if ($pchext = check_pch_ext(TEMP_DIR . $file_name)) {
 		$src = TEMP_DIR . $file_name . $pchext;
 		$dst = IMG_DIR . $time . $pchext;
 		if(copy($src, $dst)){
 			chmod($dst, 0606);
-		}
-	}
-	//chiファイルアップロード
-	if(is_file(TEMP_DIR.$file_name.'.chi')){
-		$pchext = '.chi';
-		$src = TEMP_DIR.$file_name.'.chi';
-		$dst = IMG_DIR.$time.'.chi';
-		if(copy($src, $dst)){
-			chmod($dst,0606);
 		}
 	}
 	list($w,$h)=getimagesize(IMG_DIR.$imgfile);
@@ -1102,7 +1083,7 @@ function pchview(){
 	$imagefile = filter_input(INPUT_GET, 'imagefile');
 	$pch = pathinfo($imagefile, PATHINFO_FILENAME);
 	$pchext = check_pch_ext(IMG_DIR . $pch);
-	if(!$pchext){
+	if(!in_array($pchext,['.pch','.spch']) ){
 		return error('ファイルがありません。');
 	}
 	$pchfile = IMG_DIR.$pch.$pchext;

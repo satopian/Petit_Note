@@ -8,8 +8,6 @@ include(__DIR__.'/config.php');
 define('SIZE_CHECK', '1');
 //PNG画像データ投稿容量制限KB(chiは含まない)
 define('PICTURE_MAX_KB', '5120');//5MBまで
-define('CHIBI_MAX_KB', '10240');//10MBまで。ただしサーバのPHPの設定によって2MB以下に制限される可能性があります。
-
 defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
@@ -23,10 +21,6 @@ if (!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK)
  {
 	die("Your picture upload failed! Please try again!");
 }
-if (!isset ($_FILES["psd"]) || $_FILES['psd']['error'] != UPLOAD_ERR_OK)
- {
-	die("Your picture upload failed! Please try again!");
-}
 
 $usercode = (string)filter_input(INPUT_POST, 'usercode');
 //csrf
@@ -36,12 +30,7 @@ if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
 }
 $rotation = isset($_POST['rotation']) && ((int) $_POST['rotation']) > 0 ? ((int) $_POST['rotation']) : 0;
 
-
 if(SIZE_CHECK && ($_FILES['picture']['size'] > (PICTURE_MAX_KB * 1024))){
-
-	die("Your picture upload failed! Please try again!");
-}
-if(isset($_FILES['chibifile']) && ($_FILES['chibifile']['size'] > CHIBI_MAX_KB * 1024)){
 
 	die("Your picture upload failed! Please try again!");
 }
@@ -65,7 +54,10 @@ $success = $success && move_uploaded_file($_FILES['psd']['tmp_name'], TEMP_DIR.$
 if (!$success) {
     die("Couldn't move uploaded files");
 }
-
+if (isset ($_FILES["psd"]) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
+	//PSDファイルのアップロードができなかった場合はエラーメッセージはださず、画像のみ投稿する。 
+	move_uploaded_file($_FILES['psd']['tmp_name'], TEMP_DIR.$imgfile.'.psd');
+}
 
 $u_ip = getenv("HTTP_CLIENT_IP");
 if(!$u_ip) $u_ip = getenv("HTTP_X_FORWARDED_FOR");
@@ -96,8 +88,5 @@ if(!$fp){
 	fclose($fp);
 	chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 
-
 die("ok");
-
-
 
