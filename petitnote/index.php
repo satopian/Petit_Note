@@ -13,7 +13,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.0.2';
+$petit_ver='v0.10.0.3';
 $petit_lot='lot.220303';
 
 if(!$max_log){
@@ -409,8 +409,8 @@ function post(){
 
 		rename($upfile,IMG_DIR.$imgfile);
 	}
-	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
-	if($pictmp!=2 && $imgfile && is_file(IMG_DIR.$imgfile)){
+	//同じ画像チェック
+	if($imgfile && is_file(IMG_DIR.$imgfile)){
 
 		$img_md5=md5_file(IMG_DIR.$imgfile);
 		
@@ -673,7 +673,6 @@ function paint(){
 		}
 	
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
-		if($picw > $pmax_w || $pich > $pmax_h) error($en ? 'Image is too large.':'画像の幅と高さが大きすぎるため続行できません。');
 
 		$_pch_ext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
 

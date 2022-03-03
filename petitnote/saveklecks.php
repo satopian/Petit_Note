@@ -8,6 +8,7 @@ include(__DIR__.'/config.php');
 define('SIZE_CHECK', '1');
 //PNG画像データ投稿容量制限KB(chiは含まない)
 define('PICTURE_MAX_KB', '5120');//5MBまで
+define('PSD_MAX_KB', '10240');//10MBまで。ただしサーバのPHPの設定によって2MB以下に制限される可能性があります。
 defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
@@ -39,14 +40,6 @@ if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
 	die("Your picture upload failed! Please try again!");
 }
 
-list($w,$h)=getimagesize($_FILES['picture']['tmp_name']);
-
-if($w > $pmax_w || $h > $pmax_h){//幅と高さ
-	//規定サイズ違反を検出しました。画像は保存されません。
-    die("Your picture upload failed! Please try again!");
-}
-
-
 $success = TRUE;
 $success = $success && move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
 $success = $success && move_uploaded_file($_FILES['psd']['tmp_name'], TEMP_DIR.$imgfile.'.psd');
@@ -55,9 +48,12 @@ if (!$success) {
     die("Couldn't move uploaded files");
 }
 if (isset ($_FILES["psd"]) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
+	if(!SIZE_CHECK || ($_FILES['psd']['size'] < (PSD_MAX_KB * 1024))){
 	//PSDファイルのアップロードができなかった場合はエラーメッセージはださず、画像のみ投稿する。 
 	move_uploaded_file($_FILES['psd']['tmp_name'], TEMP_DIR.$imgfile.'.psd');
+	}
 }
+
 
 $u_ip = getenv("HTTP_CLIENT_IP");
 if(!$u_ip) $u_ip = getenv("HTTP_X_FORWARDED_FOR");
