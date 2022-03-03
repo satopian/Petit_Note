@@ -13,7 +13,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.0.1';
+$petit_ver='v0.10.0.2';
 $petit_lot='lot.220303';
 
 if(!$max_log){
@@ -429,7 +429,7 @@ function post(){
 	if($pictmp===2 && $imgfile){
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-	if ($pchext = check_pch_ext(TEMP_DIR.$picfile,['upload'=>true])) {
+		if ($pchext = check_pch_ext(TEMP_DIR.$picfile,['upload'=>true])) {
 
 			$src = TEMP_DIR.$picfile.$pchext;
 			$dst = IMG_DIR.$time.$pchext;
@@ -605,7 +605,6 @@ function paint(){
 
 	session_sta();
 
-
 	$adminpost=adminpost_valid();
 
 	//pchファイルアップロードペイント
@@ -626,15 +625,15 @@ function paint(){
 			$pchext=pathinfo($pchfilename, PATHINFO_EXTENSION);
 			$pchext=strtolower($pchext);//すべて小文字に
 			//拡張子チェック
-			if (!in_array($pchext, ['pch','chi'])) {
-				return error($en?'This file does not supported by the ability to load uploaded files onto the canvas.Supported formats are pch and chi.':'アップロードペイントで使用できるファイルはpch、chiです。');
+			if (!in_array($pchext, ['pch','chi','psd'])) {
+				return error($en?'This file does not supported by the ability to load uploaded files onto the canvas.Supported formats are pch and chi.':'アップロードペイントで使用できるファイルはpch、chi、psdです。');
 			}
 			$pchup = TEMP_DIR.'pchup-'.$time.'-tmp.'.$pchext;//アップロードされるファイル名
 
 			if(move_uploaded_file($pchtmp, $pchup)){//アップロード成功なら続行
 
 				$pchup=TEMP_DIR.basename($pchup);//ファイルを開くディレクトリを固定
-				if(!in_array(mime_content_type($pchup),["application/octet-stream","application/gzip"])){
+				if(!in_array(mime_content_type($pchup),["application/octet-stream","application/gzip","image/vnd.adobe.photoshop"])){
 					safe_unlink($pchup);
 					return error($en?'This file does not supported':'ファイル形式が一致しません。');
 				}
@@ -644,12 +643,13 @@ function paint(){
 				} elseif($pchext==="chi"){
 					$app='chi';
 					$img_chi = $pchup;
+				} elseif($pchext==="psd"){
+					$app='klecks';
+					$img_klecks = $pchup;
 				}
 			}
 		}
 	}
-
-
 
 	if($mode==="contpaint"){
 
@@ -673,6 +673,8 @@ function paint(){
 		}
 	
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
+		if($picw > $pmax_w || $pich > $pmax_h) error($en ? 'Image is too large.':'画像の幅と高さが大きすぎるため続行できません。');
+
 		$_pch_ext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
 
 		if($ctype=='pch'&& $_pch_ext){//動画から続き
