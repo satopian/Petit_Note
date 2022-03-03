@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 $skindir='template/'.$skindir;
 
 $petit_ver='v0.10.0.1';
-$petit_lot='lot.220301';
+$petit_lot='lot.220303';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -429,7 +429,7 @@ function post(){
 	if($pictmp===2 && $imgfile){
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-	if ($pchext = check_pch_ext(TEMP_DIR.$picfile)) {
+	if ($pchext = check_pch_ext(TEMP_DIR.$picfile,['upload'=>true])) {
 
 			$src = TEMP_DIR.$picfile.$pchext;
 			$dst = IMG_DIR.$time.$pchext;
@@ -673,10 +673,9 @@ function paint(){
 		}
 	
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
-		$_pch_ext = check_pch_ext(IMG_DIR.$time);
-		$continue_from_pch = in_array($_pch_ext,['.pch','.spch']) ? true : false;
+		$_pch_ext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
 
-		if($ctype=='pch'&& $continue_from_pch){//動画から続き
+		if($ctype=='pch'&& $_pch_ext){//動画から続き
 			$pchfile = IMG_DIR.$time.$_pch_ext;
 		}
 
@@ -1007,7 +1006,7 @@ function img_replace(){
 	$src='';
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-	if ($pchext = check_pch_ext(TEMP_DIR . $file_name)) {
+	if ($pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true])) {
 		$src = TEMP_DIR . $file_name . $pchext;
 		$dst = IMG_DIR . $time . $pchext;
 		if(copy($src, $dst)){
@@ -1083,7 +1082,7 @@ function pchview(){
 	$imagefile = filter_input(INPUT_GET, 'imagefile');
 	$pch = pathinfo($imagefile, PATHINFO_FILENAME);
 	$pchext = check_pch_ext(IMG_DIR . $pch);
-	if(!in_array($pchext,['.pch','.spch']) ){
+	if(!$pchext){
 		return error('ファイルがありません。');
 	}
 	$pchfile = IMG_DIR.$pch.$pchext;

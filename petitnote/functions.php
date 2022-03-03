@@ -617,11 +617,13 @@ function calcPtime ($psec) {
  * @param $filepath
  * @return string
  */
-function check_pch_ext ($filepath) {
+function check_pch_ext ($filepath,$option=[]) {
 	if (is_file($filepath . ".pch")) {
 		return ".pch";
 	} elseif (is_file($filepath . ".spch")) {
 		return ".spch";
+	} elseif (!isset($option['upload'])) {
+		return "";
 	} elseif (is_file($filepath . ".chi")) {
 		return ".chi";
 	} elseif (is_file($filepath . ".psd")) {
