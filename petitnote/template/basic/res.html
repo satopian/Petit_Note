@@ -197,7 +197,14 @@
 
 <?php if($use_res_upload || $adminpost):?>
 
-<form action="./" method="post" class="res_form">
+<form action="./" method="post" enctype="multipart/form-data" class="res_form">
+	<?php if($adminpost):?>
+	<span>
+	<input type="file" name="pchup" size="35" accept="image/*,.pch,.chi,.psd" class="pchup_button">
+	</span>
+	<br>
+	<?php endif;?>
+
 <input type="hidden" name="mode" value="paint">
 <input type="hidden" name="resto" value="<?=h($res['no'])?>">
 <input type="submit" value="PAINT" class="paint_button">
@@ -249,6 +256,8 @@
 	?>
 	</select>
 </span>
+
+
 </form>
 <?php endif;?>
 

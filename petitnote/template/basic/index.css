@@ -87,6 +87,9 @@ form.resform {
 input.form_button {
     margin: 8px 0 0;
 }
+input.pchup_button {
+    margin: 0 0 8px;
+}
 
 /* 投稿者名から検索文字列にリンク */
 
