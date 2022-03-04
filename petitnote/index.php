@@ -609,7 +609,7 @@ function paint(){
 
 	//pchファイルアップロードペイント
 	if($adminpost){
-		
+
 		$pchfilename = isset($_FILES['pchup']['name']) ? basename($_FILES['pchup']['name']) : '';
 		
 		$pchtmp=isset($_FILES['pchup']['tmp_name']) ? $_FILES['pchup']['tmp_name'] : '';
