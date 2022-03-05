@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.1';
-$petit_lot='lot.220305';
+$petit_ver='v0.10.2';
+$petit_lot='lot.220306';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -163,7 +163,7 @@ function post(){
 
 	//ファイルアップロード
 	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
-	if(in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
+	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
 		return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 	} 
 	$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
