@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.0.3';
-$petit_lot='lot.220303';
+$petit_ver='v0.10.0.5';
+$petit_lot='lot.220305';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -190,7 +190,7 @@ function post(){
 	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
 	list($picfile,) = explode(",",filter_input(INPUT_POST, 'picfile'));
 	$painttime ='';
-
+	$pictmp2=false;
 	if($pictmp===2){//ユーザーデータを調べる
 
 		if(!$picfile) return error($en? 'Posting failed.':'投稿に失敗しました。');
@@ -215,6 +215,7 @@ function post(){
 		if($resto && $picfile && !$use_res_upload && !$adminpost){
 			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
 		}
+		$pictmp2=true;//お絵かきでエラーがなかった時にtrue;
 
 	}
 
@@ -224,7 +225,7 @@ function post(){
 	}
 
 	if($resto && !is_file(LOG_DIR."{$resto}.log")){//エラー処理
-		if($pictmp!==2){//お絵かきではない時は
+		if(!$pictmp2){//お絵かきではない時は
 			safe_unlink($upfile);
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
@@ -241,7 +242,7 @@ function post(){
 		closeFile ($rp);
 		}
 
-		if($pictmp===2){//お絵かきの時は新規投稿にする
+		if($pictmp2){//お絵かきの時は新規投稿にする
 
 			if($resto && !$check_elapsed_days){//お絵かきの時に日数を経過していたら新規投稿。
 				$resto='';
@@ -266,7 +267,7 @@ function post(){
 
 
 	//お絵かきアップロード
-	if($pictmp===2 && is_file($tempfile)){
+	if($pictmp2 && is_file($tempfile)){
 
 		$upfile=IMG_DIR.$time.'.tmp';
 			copy($tempfile, $upfile);
@@ -410,7 +411,7 @@ function post(){
 		rename($upfile,IMG_DIR.$imgfile);
 	}
 	//同じ画像チェック
-	if($imgfile && is_file(IMG_DIR.$imgfile)){
+	if(!$pictmp2 && $imgfile && is_file(IMG_DIR.$imgfile)){
 
 		$img_md5=md5_file(IMG_DIR.$imgfile);
 		
