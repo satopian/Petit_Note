@@ -144,13 +144,6 @@ if(!$fp){
 	flock($fp, LOCK_UN);
 	fclose($fp);
 }
-	$size = getimagesize($full_imgfile);
-	if($size[0] > $pmax_w || $size[1] > $pmax_h){
-		unlink($full_imgfile);
-		//規定サイズ違反を検出しました。画像は保存されません。
-		die("error\n{$errormsg_4}");
-	}
-
 
 // PCHファイルの長さを取り出す
 $pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);

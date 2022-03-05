@@ -13,14 +13,17 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.0.5';
+$petit_ver='v0.10.1';
 $petit_lot='lot.220305';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<2){
-	return error($en?'The version of thumbmail_gd.php is old.':'thumbnail_gd.phpのバージョンが古いため動作しません。');
+	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
+}
+if(!isset($functions_ver)||$functions_ver<2){
+	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
@@ -160,10 +163,10 @@ function post(){
 
 	//ファイルアップロード
 	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
-	$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
-	if($tempfile && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		return error($en? 'The file size is too big.':'ファイルサイズが大きすぎます。');
+	if(in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
+		return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 	} 
+	$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
 	if($filesize > $max_kb*1024){
 		return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
 	}
@@ -1609,9 +1612,9 @@ function catalog($page=0,$q=''){
 
 //通常表示
 function view($page=0){
-	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions;
+	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en; 
-
+	$max_kb = $max_kb * 1024;
 	$denny_all_posts=$deny_all_posts;//互換性
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
@@ -1693,9 +1696,10 @@ function view($page=0){
 }
 //レス画面
 function res ($resno){
-	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload;
+	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
-	
+	$max_kb = $max_kb * 1024;
+
 	$denny_all_posts=$deny_all_posts;
 	$page='';
 	$resno=filter_input(INPUT_GET,'resno');

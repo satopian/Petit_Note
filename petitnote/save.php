@@ -22,25 +22,18 @@ function chibi_die($message) {
 
 header('Content-type: text/plain');
 
-if (!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK
-		|| isset($_FILES['chibifile']) && $_FILES['chibifile']['error'] != UPLOAD_ERR_OK) {
+if (!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK) {
 	chibi_die("Your picture upload failed! Please try again!");
 }
 
 $usercode = (string)filter_input(INPUT_GET, 'usercode');
 //csrf
 if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
-
 	chibi_die("Your picture upload failed! Please try again!");
 }
 $rotation = isset($_POST['rotation']) && ((int) $_POST['rotation']) > 0 ? ((int) $_POST['rotation']) : 0;
 
-
 if(SIZE_CHECK && ($_FILES['picture']['size'] > (PICTURE_MAX_KB * 1024))){
-
-	chibi_die("Your picture upload failed! Please try again!");
-}
-if(isset($_FILES['chibifile']) && ($_FILES['chibifile']['size'] > CHIBI_MAX_KB * 1024)){
 
 	chibi_die("Your picture upload failed! Please try again!");
 }
@@ -49,26 +42,17 @@ if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
 	chibi_die("Your picture upload failed! Please try again!");
 }
 
-list($w,$h)=getimagesize($_FILES['picture']['tmp_name']);
-
-if($w > $pmax_w || $h > $pmax_h){//幅と高さ
-	//規定サイズ違反を検出しました。画像は保存されません。
-    chibi_die("Your picture upload failed! Please try again!");
-}
-
 $success = TRUE;
 $success = $success && move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
 
-if (isset($_FILES["chibifile"])) {
-	$success = $success && move_uploaded_file($_FILES['chibifile']['tmp_name'], TEMP_DIR.$imgfile.'.chi');
-}
-
-// if (isset($_FILES['swatches'])) {
-//     $success = $success && move_uploaded_file($_FILES['swatches']['tmp_name'], TEMP_DIR.$imgfile.'.aco');
-// }
-
 if (!$success) {
     chibi_die("Couldn't move uploaded files");
+}
+if (isset($_FILES['chibifile']) && ($$_FILES['chibifile']['error'] == UPLOAD_ERR_OK)){
+	if(!SIZE_CHECK || ($_FILES['chibifile']['size'] < (CHIBI_MAX_KB * 1024))){
+	//chiファイルのアップロードができなかった場合はエラーメッセージはださず、画像のみ投稿する。 
+	move_uploaded_file($_FILES['chibifile']['tmp_name'], TEMP_DIR.$imgfile.'.chi');
+	}
 }
 
 $u_ip = getenv("HTTP_CLIENT_IP");

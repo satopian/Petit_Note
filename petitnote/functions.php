@@ -1,5 +1,6 @@
 <?php
 //編集モードログアウト
+$functions_ver=2;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
