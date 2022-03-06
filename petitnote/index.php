@@ -413,7 +413,7 @@ function post(){
 
 		rename($upfile,IMG_DIR.$imgfile);
 	}
-	//同じ画像チェック
+	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 	if(!$pictmp2 && $imgfile && is_file(IMG_DIR.$imgfile)){
 
 		$img_md5=md5_file(IMG_DIR.$imgfile);
