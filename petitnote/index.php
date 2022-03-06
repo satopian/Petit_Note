@@ -13,7 +13,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.2';
+$petit_ver='v0.10.3';
 $petit_lot='lot.220306';
 
 if(!$max_log){
@@ -618,9 +618,8 @@ function paint(){
 		
 		$pchtmp=isset($_FILES['pchup']['tmp_name']) ? $_FILES['pchup']['tmp_name'] : '';
 
-		if($pchtmp && in_array($_FILES['pchup']['error'],[1,2])){//容量オーバー
+		if(isset($_FILES['pchup']['error']) && in_array($_FILES['pchup']['error'],[1,2])){//容量オーバー
 			return error($en? 'The file size is too big.':'ファイルサイズが大きすぎます。');
-
 		} 
 
 		if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK){
@@ -1614,7 +1613,7 @@ function catalog($page=0,$q=''){
 function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en; 
-	$max_kb = $max_kb * 1024;
+	$max_byte = $max_kb * 1024;
 	$denny_all_posts=$deny_all_posts;//互換性
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
@@ -1698,7 +1697,7 @@ function view($page=0){
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
-	$max_kb = $max_kb * 1024;
+	$max_byte = $max_kb * 1024;
 
 	$denny_all_posts=$deny_all_posts;
 	$page='';
