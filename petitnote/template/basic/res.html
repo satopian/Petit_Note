@@ -181,7 +181,7 @@
 <?php if($aikotoba && (!$userdel && !$admindel)):?>
 <?php if($use_sns_button):?>
 <div class="res_button_wrap">
-	<?php if($resname):?>
+	<?php if($resform && $resname):?>
 		<script>function add_to_com(){
 		document.getElementById("res_com").value += "<?=h($resname)?><?php if($en):?>-san<?php else:?>さん<?php endif;?>";
 		}</script>
@@ -204,7 +204,6 @@
 	</span>
 	<br>
 	<?php endif;?>
-
 <input type="hidden" name="mode" value="paint">
 <input type="hidden" name="resto" value="<?=h($res['no'])?>">
 <input type="submit" value="PAINT" class="paint_button">
@@ -256,8 +255,6 @@
 	?>
 	</select>
 </span>
-
-
 </form>
 <?php endif;?>
 
@@ -326,10 +323,9 @@
 	<?php endif;?>
 	<a href="./">top</a>
 </div>
-
 <?php if($view_other_works):?>
 <div class="view_other_works">
-<?php foreach($view_other_works as $view_other_work):?><div><a href="?resno=<?=h($view_other_work['no'])?>"><img src="<?php if($view_other_work['thumbnail']):?>thumbnail/<?=h($view_other_work['thumbnail'])?><?php else:?>src/<?=h($view_other_work['img'])?><?php endif?>" alt="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" width="<?=h($view_other_work['w'])?>" height="<?=h($view_other_work['h'])?>" loading="lazy"></a></div><?php endforeach;?>
+<?php foreach($view_other_works as $view_other_work):?><div><a href="?resno=<?=h($view_other_work['no'])?>"><img src="<?php if($view_other_work['thumbnail']):?>thumbnail/<?=h($view_other_work['thumbnail'])?><?php else:?>src/<?=h($view_other_work['img'])?><?php endif?>" alt="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" title="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" width="<?=h($view_other_work['w'])?>" height="<?=h($view_other_work['h'])?>" loading="lazy"></a></div><?php endforeach;?>
 </div>
 <?php endif;?>
 </nav>

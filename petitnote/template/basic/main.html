@@ -59,15 +59,12 @@
 
 <!-- ペイントフォーム -->
 <form action="./" method="post" enctype="multipart/form-data" class="paint_form">
-
-<?php if($adminpost):?>
-<span>
-<input type="file" name="pchup" size="35" accept="image/*,.pch,.chi,.psd" class="pchup_button">
-</span>
-<br>
-<?php endif;?>
-<!-- フォーム入力欄 -->
-	
+	<?php if($adminpost):?>
+	<span>
+	<input type="file" name="pchup" size="35" accept="image/*,.pch,.chi,.psd" class="pchup_button">
+	</span>
+	<br>
+	<?php endif;?>
 <input type="hidden" name="mode" value="paint">
 <input type="submit" value="PAINT" class="paint_button">
 <span>TOOL:
@@ -120,6 +117,7 @@ Size:
 	</select>
 </span>
 </form>
+<!-- フォーム入力欄 -->
 	<?php if($use_top_form && ($use_upload||$allow_coments_only||$adminpost)):?>	
 	<form action="./" method="POST" enctype="multipart/form-data" class="postform">
 	<table>
