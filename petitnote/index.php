@@ -726,9 +726,9 @@ function paint(){
 
 		case 'klecks':
 
-				$tool ='klecks';
-				$templete='paint_klecks.html';
-				return include __DIR__.'/'.$skindir.$templete;
+			$tool ='klecks';
+			$templete='paint_klecks.html';
+			return include __DIR__.'/'.$skindir.$templete;
 
 		case 'neo'://PaintBBS NEO
 
