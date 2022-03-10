@@ -61,6 +61,7 @@ $skindir='basic/';
 // $descriptions = ['iPadやスマートフォンでも描けるお絵かき掲示板です。'];	
 $descriptions = ['iPadやスマートフォンでも描けるお絵かき掲示板です。','楽しくお絵かき。'];	
 
+
 /*メール通知*/
 
 // 投稿をメールで通知する
@@ -187,6 +188,13 @@ $verified_adminpost = true;
 
 $view_other_works = true;
 // $view_other_works = false;
+
+
+//管理者ページに最新のリリースのバージョンとリンクを表示する
+// する: true しない: false
+
+$latest_var = true;
+// $latest_var = false;
 
 /*表示件数*/
 

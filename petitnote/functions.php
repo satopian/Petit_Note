@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=2;
+$functions_ver=20220310;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -58,7 +58,7 @@ function aikotoba(){
 }
 function admin_in(){
 
-	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en;
+	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 

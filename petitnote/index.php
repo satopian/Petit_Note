@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.3';
-$petit_lot='lot.220306';
+$petit_ver='v0.10.5';
+$petit_lot='lot.220310';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -22,7 +22,7 @@ if(!$max_log){
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<2){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
-if(!isset($functions_ver)||$functions_ver<2){
+if(!isset($functions_ver)||$functions_ver<20220310){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -31,7 +31,7 @@ $max_com= isset($max_com) ? $max_com : 1000;
 $sage_all= isset($sage_all) ? $sage_all : false;
 $view_other_works= isset($view_other_works) ? $view_other_works : true;
 $deny_all_posts= isset($deny_all_posts) ? $deny_all_posts : (isset($denny_all_posts) ? $denny_all_posts : false);
-
+$latest_var=isset($latest_var) ? $latest_var : true;
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
