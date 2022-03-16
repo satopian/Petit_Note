@@ -32,7 +32,7 @@
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
-##  22/02/12 v0.10.5.1 
+##  22/03/14 v0.10.5.1 
 ### バグ修正
 - iPad+Apple Pencilでアプリのメニューが操作できなくなっていたのを修正しました。  
 ペイント画面から問題の発生の原因になっていたJavascriptを削除しました。  
@@ -42,7 +42,7 @@
 安定版をリリースからダウンロードできます。  
 [Petit Note v0.10.5.1 リリース](https://github.com/satopian/Petit_Note/releases/latest)
 
-##  22/02/12 v0.10.5
+##  22/03/10 v0.10.5
 
 ![image](https://user-images.githubusercontent.com/44894014/157668975-fff6786b-c9dd-43cf-9dba-732829f47912.png)
 
@@ -51,7 +51,7 @@
 
 config.phpに新規設定項目を追加しました。
 
-##  22/02/12 v0.10.3
+##  22/03/09 v0.10.3
 ### 新しいペイントアプリ｢Klecks｣が使えるようになりました。
 ![image](https://user-images.githubusercontent.com/44894014/157258620-01f053e9-1bd1-47d0-a573-5c8aae432cce.png)
 
