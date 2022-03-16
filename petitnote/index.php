@@ -13,7 +13,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.6';
+$petit_ver='v0.10.8';
 $petit_lot='lot.220316';
 
 if(!$max_log){
@@ -905,7 +905,7 @@ function download_app_dat(){
 	$pwd=filter_input(INPUT_POST,'pwd');
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT);
-	
+
 	if(is_file(LOG_DIR."{$no}.log")){
 
 		$flag=false;
@@ -924,7 +924,7 @@ function download_app_dat(){
 		}
 		closeFile ($rp);
 	}
-	$filepath= $flag ? IMG_DIR.$time.$pchext : '';
+	$filepath= ($flag && $pchext) ? IMG_DIR.$time.$pchext : '';
 	if(!$filepath){
 		return error($en?'The operation failed.':'失敗しました。');
 	}
