@@ -924,7 +924,7 @@ function download_app_dat(){
 		}
 		closeFile ($rp);
 	}
-	$filepath= ($flag && $pchext) ? IMG_DIR.$time.$pchext : '';
+	$filepath= ($flag && is_file(IMG_DIR.$time.$pchext)) ? IMG_DIR.$time.$pchext : '';
 	if(!$filepath){
 		return error($en?'The operation failed.':'失敗しました。');
 	}
