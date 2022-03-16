@@ -26,6 +26,17 @@
 <div class="continue_img">
 	<img src="<?=h($picfile)?>" width="<?=h($w)?>" height="<?=h($h)?>" alt="<?=h($sub)?> by <?=h($name)?> <?=h($picw)?>x<?=h($pich)?>" title="<?=h($sub)?> by <?=h($name)?> <?=h($picw)?>x<?=h($pich)?>">
 </div>
+<div class="continue_post_form">
+<?php if($download_app_dat):?>
+<form action="./" method="post">
+		<input type="hidden" name="mode" value="download">
+		<input type="hidden" name="id" value="<?=h($time)?>">
+		<input type="hidden" name="no" value="<?=h($no)?>">
+		<?php if($en):?>Password<?php else:?>パスワード<?php endif;?><input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>		
+		<input type="submit" value="<?php if($en):?>Download <?=h($pchext)?> file.<?php else:?><?=h($pchext)?>ファイルをダウンロード<?php endif;?>">
+		</form>
+<?php endif;?>
+
 <!-- コンティニューフォーム欄 -->
 <form action="./" method="post">
  <input type="hidden" name="mode" value="contpaint">
@@ -77,9 +88,8 @@ selected
 <span class="non"><input type="text" value="" autocomplete="username"></span>
 <span class="continue_menu"><?php if($en):?>Password<?php else:?>パスワード<?php endif;?> <input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
 <input type="submit" value="<?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?>">
-
 </form>
-
+</div>
 <!--  コンティニュー説明  -->
 <?php if(!$use_diary || $adminpost):?>
 <div class="howtocontinue">

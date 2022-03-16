@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.5';
-$petit_lot='lot.220310';
+$petit_ver='v0.10.6';
+$petit_lot='lot.220316';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -98,6 +98,8 @@ switch($mode){
 		return logout();
 	case 'catalog':
 		return catalog($page);
+	case 'download':
+		return download_app_dat($page);
 	default:
 		if($resno){
 			return res($resno);
@@ -863,7 +865,7 @@ function to_continue(){
 	$select_app = true;
 	$app_to_use = "";
 	$ctype_pch = false;
-
+	$download_app_dat=true;
 	if(($pchext==='.pch')&&is_file(IMG_DIR.$time.'.pch')){
 		$ctype_pch = true;
 		$select_app = false;
@@ -875,6 +877,8 @@ function to_continue(){
 	}elseif(($pchext==='.psd')&&is_file(IMG_DIR.$time.'.psd')){
 		$select_app = false;
 		$app_to_use = 'klecks';
+	}else{
+		$download_app_dat=false;
 	}
 	//日記判定処理
 	session_sta();
@@ -891,6 +895,45 @@ function to_continue(){
 	$templete='continue.html';
 	return include __DIR__.'/'.$skindir.$templete;
 	
+}
+
+//アプリ固有ファイルのダウンロード
+function download_app_dat(){
+
+	global $en;
+
+	$pwd=filter_input(INPUT_POST,'pwd');
+	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
+	$id = (string)filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT);
+	
+	if(is_file(LOG_DIR."{$no}.log")){
+
+		$flag=false;
+	
+		$rp=fopen(LOG_DIR."{$no}.log","r");
+		while ($line = fgets($rp)) {
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+			if($id==$time && $no===$_no){
+				if(!$pwd || !password_verify($pwd,$hash)){
+					return error($en?'Password is incorrect.':'パスワードが違います。');
+				}
+				$flag=true;
+				break;
+
+			} 
+		}
+		closeFile ($rp);
+	}
+	$filepath= $flag ? IMG_DIR.$time.$pchext : '';
+	if(!$filepath){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
+	$mime_type = mime_content_type($filepath);
+	header('Content-Type: '.$mime_type);
+	header('Content-Length: '.filesize($filepath));
+	header('Content-Disposition: attachment; filename="'.h(basename($filepath)).'"');
+
+	readfile($filepath);
 }
 
 // 画像差し換え

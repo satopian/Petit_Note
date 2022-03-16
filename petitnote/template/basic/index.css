@@ -305,6 +305,10 @@ select {
 span.continue_menu {
     display: inline-block;
 }
+.continue_post_form {
+    line-height: 2.2;
+}
+
 /* エラー画面 */
 .error{font-size: 18px;
 	line-height: 2;
