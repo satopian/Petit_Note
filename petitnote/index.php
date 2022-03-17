@@ -883,6 +883,7 @@ function to_continue(){
 	//日記判定処理
 	session_sta();
 	$adminpost=adminpost_valid();
+	$adminmode = ($adminpost||admindel_valid());
 	$aikotoba=aikotoba_valid();
 
 	if(!$use_aikotoba){
