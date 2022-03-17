@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 $skindir='template/'.$skindir;
 
 $petit_ver='v0.10.8';
-$petit_lot='lot.220316';
+$petit_lot='lot.220317';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -914,7 +914,7 @@ function download_app_dat(){
 		while ($line = fgets($rp)) {
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id==$time && $no===$_no){
-				if(!$pwd || !password_verify($pwd,$hash)){
+				if(!adminpost_valid()&&(!$pwd || !password_verify($pwd,$hash))){
 					return error($en?'Password is incorrect.':'パスワードが違います。');
 				}
 				$flag=true;
