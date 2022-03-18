@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220310;
+$functions_ver=20220318;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -411,12 +411,20 @@ function get_csrf_token(){
 }
 //csrfトークンをチェック	
 function check_csrf_token(){
-	global $en;
+	global $en,$mode;
+	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
 	session_sta();
 	$token=filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
 	if(!$session_token||$token!==$session_token){
-		return error($en?'Illegal posts have been detected.':'不正な投稿をしないでください。');
+		if($mode==='paintcom'){
+			return header('Location: ./?mode=paintcom');
+
+		}
+		if($resto){
+			return header('Location: ./?resno='.$resto);
+		}
+		return header('Location: ./');//トークンが一致しない時
 	}
 }
 //session開始

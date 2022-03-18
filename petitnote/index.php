@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 $skindir='template/'.$skindir;
 
 $petit_ver='v0.10.8';
-$petit_lot='lot.220317';
+$petit_lot='lot.220318';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -22,7 +22,7 @@ if(!$max_log){
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<2){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
-if(!isset($functions_ver)||$functions_ver<20220310){
+if(!isset($functions_ver)||$functions_ver<20220318){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
