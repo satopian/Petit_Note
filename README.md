@@ -32,6 +32,24 @@
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
+##  22/03/17 v0.10.8 
+### 改善
+### アプリ固有ファイルのダウンロードボタンができました。
+![image](https://user-images.githubusercontent.com/44894014/158780127-5f6fb530-0043-4132-8ea4-f662b2a710fd.png)
+
+#### アプリ固有形式一覧
+- `.pch`ファイル(PaintBBS)
+- `.chi`ファイル(ChickenPaint)
+- `.psd`ファイル(Klecks)
+
+Klecksのレイヤー情報を含むファイルはPhotoshop形式の`.psd`ファイルです。 
+ダウンロードした`.psd`ファイルはクリスタやSAIそのほか多くのアプリで開く事ができます。  
+`.pch`と、`.chi`は、それぞれNEOとChickenPaintで開く事ができます。    
+管理者投稿モードでログイン時に`.pch`、`.chi`、`.psd`を添付してペイントボタンを押せば、キャンバスに読み込んで投稿できます。  
+
+安定版をリリースからダウンロードできます。  
+[Petit Note v0.10.8リリース](https://github.com/satopian/Petit_Note/releases/latest)
+
 ##  22/03/14 v0.10.5.1 
 ### バグ修正
 - iPad+Apple Pencilでアプリのメニューが操作できなくなっていたのを修正しました。  
@@ -39,8 +57,6 @@
 ### Klecks更新
 - 新しいブラシが追加されました。左右対称、上下対象のミラーペインティングができるようになりました。  
 
-安定版をリリースからダウンロードできます。  
-[Petit Note v0.10.5.1 リリース](https://github.com/satopian/Petit_Note/releases/latest)
 
 ##  22/03/10 v0.10.5
 
