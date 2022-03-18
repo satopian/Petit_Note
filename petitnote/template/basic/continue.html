@@ -35,7 +35,7 @@
 		<input type="hidden" name="no" value="<?=h($no)?>">
 		<?php if(!$adminmode):?>
 		<span class="non"><input type="text" value="" autocomplete="username"></span>
-		<?php if($en):?>Password<?php else:?>パスワード<?php endif;?><input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>		
+		<?php if($en):?>Password<?php else:?>パスワード<?php endif;?>:<input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>		
 		<?php endif;?>
 		<input type="submit" value="<?php if($en):?>Download <?=h($pchext)?> file.<?php else:?><?=h($pchext)?>ファイルをダウンロード<?php endif;?>">
 		</form>
@@ -90,7 +90,7 @@ selected
 <?php endif;?>
 
 <span class="non"><input type="text" value="" autocomplete="username"></span>
-<span class="continue_menu"><?php if($en):?>Password<?php else:?>パスワード<?php endif;?> <input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
+<span class="continue_menu"><?php if($en):?>Password<?php else:?>パスワード<?php endif;?>:<input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
 <input type="submit" value="<?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?>">
 </form>
 </div>

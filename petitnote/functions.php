@@ -411,20 +411,12 @@ function get_csrf_token(){
 }
 //csrfトークンをチェック	
 function check_csrf_token(){
-	global $en,$mode;
-	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
+	global $en;
 	session_sta();
 	$token=filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
 	if(!$session_token||$token!==$session_token){
-		if($mode==='paintcom'){
-			return header('Location: ./?mode=paintcom');
-
-		}
-		if($resto){
-			return header('Location: ./?resno='.$resto);
-		}
-		return header('Location: ./');//トークンが一致しない時
+		return error($en?'CSRF token mismatch.':'CSRFトークンが一致しません。');
 	}
 }
 //session開始
