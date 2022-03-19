@@ -14,7 +14,7 @@ require_once(__DIR__.'/noticemail.inc');
 $skindir='template/'.$skindir;
 
 $petit_ver='v0.10.8';
-$petit_lot='lot.220318';
+$petit_lot='lot.220319';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -862,22 +862,20 @@ function to_continue(){
 	$picfile = IMG_DIR.$imgfile;
 	list($picw, $pich) = getimagesize($picfile);
 
-	$select_app = true;
-	$app_to_use = "";
+	$select_app = false;
+	$app_to_use = false;
 	$ctype_pch = false;
 	$download_app_dat=true;
 	if(($pchext==='.pch')&&is_file(IMG_DIR.$time.'.pch')){
 		$ctype_pch = true;
-		$select_app = false;
 		$app_to_use = "neo";
 		
 	}elseif(($pchext==='.chi')&&is_file(IMG_DIR.$time.'.chi')){
-		$select_app = false;
 		$app_to_use = 'chi';
 	}elseif(($pchext==='.psd')&&is_file(IMG_DIR.$time.'.psd')){
-		$select_app = false;
 		$app_to_use = 'klecks';
 	}else{
+		$select_app = true;
 		$download_app_dat=false;
 	}
 	//日記判定処理

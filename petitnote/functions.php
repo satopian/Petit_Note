@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220318;
+$functions_ver=20220319;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -222,26 +222,26 @@ function create_res($line){
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 	$res=[];
 
-	$continue = false;
+	$continue = true;
 
 	switch($tool){
 		case 'neo':
 			$tool='PaintBBS NEO';
-			$continue = true;
 			break;
 		case 'chi':
 			$tool='ChickenPaint';
-			$continue = true;
 			break;
 		case 'klecks';
 			$tool='Klecks';
-			$continue = true;
 			break;
 		case 'upload':
 			$tool=$en?'Upload':'アップロード';
+			$continue = false;
 			break;
 		default:
-			'';
+			$tool='???';
+			$continue = false;
+			break;
 	}
 
 	$anime = ($pchext==='.pch') ? true : false; 
