@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.8';
-$petit_lot='lot.220319';
+$petit_ver='v0.10.11';
+$petit_lot='lot.220320';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -166,12 +166,9 @@ function post(){
 	//ファイルアップロード
 	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
+		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
 	} 
-	$filesize = isset($_FILES['imgfile']['size']) ? $_FILES['imgfile']['size'] :'';
-	if($filesize > $max_kb*1024){
-		return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを越えています。");
-	}
+
 	if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
 
 		if($resto && $tempfile && !$use_res_upload && !$adminpost){
@@ -277,7 +274,6 @@ function post(){
 		$upfile=IMG_DIR.$time.'.tmp';
 			copy($tempfile, $upfile);
 			chmod($upfile,0606);
-			$filesize=filesize($upfile);
 	}
 
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
@@ -388,10 +384,12 @@ function post(){
 	}
 	if($upfile && is_file($upfile)){
 
-		if($pictmp!==2){//実態データの縮小
-		$max_px=isset($max_px) ? $max_px : 1024;
-		thumb(IMG_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
+		if(!$pictmp2){//実態データの縮小
+			$max_px=isset($max_px) ? $max_px : 1024;
+			thumb(IMG_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
 		}	
+		clearstatcache();
+		$filesize=filesize($upfile);
 		if($filesize > 512 * 1024){//指定サイズを超えていたら
 			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 
@@ -403,7 +401,15 @@ function post(){
 				}
 			}
 		}
-		list($w,$h)=getimagesize($upfile);
+		if(!$pictmp2){
+			clearstatcache();
+			if(filesize($upfile) > $max_kb*1024){
+				safe_unlink($upfile);
+			return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを超えています。");
+			}
+		}
+
+	list($w,$h)=getimagesize($upfile);
 		$_img_type=mime_content_type($upfile);
 		$ext=getImgType ($_img_type);
 		if (!$ext) {
@@ -412,7 +418,6 @@ function post(){
 		}
 
 		$imgfile=$time.$ext;
-
 		rename($upfile,IMG_DIR.$imgfile);
 	}
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
@@ -432,8 +437,8 @@ function post(){
 	}
 	$src='';
 	$pchext = '';
-	if($pictmp===2 && $imgfile){
-	//PCHファイルアップロード
+	if($pictmp2 && $imgfile){
+		//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
 		if ($pchext = check_pch_ext(TEMP_DIR.$picfile,['upload'=>true])) {
 
@@ -1655,7 +1660,7 @@ function catalog($page=0,$q=''){
 function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en; 
-	$max_byte = $max_kb * 1024;
+	$max_byte = $max_kb * 1024*2;
 	$denny_all_posts=$deny_all_posts;//互換性
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
@@ -1739,7 +1744,7 @@ function view($page=0){
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
-	$max_byte = $max_kb * 1024;
+	$max_byte = $max_kb * 1024*2;
 
 	$denny_all_posts=$deny_all_posts;
 	$page='';
@@ -1801,7 +1806,6 @@ function res ($resno){
 			$a=[];
 			for($j=($i-7);$j<($i+10);++$j){
 				$b=(isset($articles[$j])&&rtrim($articles[$j])) ? (create_res(explode("\t",trim($articles[$j])))):[];
-				// var_dump($b);
 				if(!empty($b)&&$b['img']&&$b['no']!==$resno){
 					$a[]=$b;
 				}
