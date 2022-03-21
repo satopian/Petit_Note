@@ -13,16 +13,16 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.10.11';
-$petit_lot='lot.220320';
+$petit_ver='v0.11.02';
+$petit_lot='lot.220321';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
 }
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<2){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220321){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
-if(!isset($functions_ver)||$functions_ver<20220318){
+if(!isset($functions_ver)||$functions_ver<20220321){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -383,8 +383,10 @@ function post(){
 		}
 	}
 	if($upfile && is_file($upfile)){
+		$upfile2=IMG_DIR.$time.'.tmp2';
+		copy($upfile,$upfile2);//JPEGで保存
 
-		if(!$pictmp2){//実態データの縮小
+		if(!$pictmp2){//実体データの縮小
 			$max_px=isset($max_px) ? $max_px : 1024;
 			thumb(IMG_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
 		}	
@@ -459,7 +461,7 @@ function post(){
 		list($w,$h)=image_reduction_display($w,$h,$max_w,$max_h);
 		//サムネイル
 		if($use_thumb){
-			if(thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
+			if(thumb(IMG_DIR,$time.'.tmp2',$time,$max_w,$max_h)){
 				$thumbnail='thumbnail';
 			}
 		}
@@ -536,6 +538,7 @@ function post(){
 	chmod(LOG_DIR.'alllog.log',0600);
 
 	//ワークファイル削除
+	safe_unlink($upfile2);
 	safe_unlink($src);
 	safe_unlink($tempfile);
 	safe_unlink(TEMP_DIR.$picfile.".dat");

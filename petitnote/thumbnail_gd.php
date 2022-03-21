@@ -7,7 +7,7 @@
 //210920 PetitNote用にコードを修正
 //210203 コード整理
 //201218 webp形式対応
-$thumbnail_gd_ver=2;
+$thumbnail_gd_ver=20220321;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$fname=$path.$fname;
@@ -30,7 +30,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$out_w = $w_h_size_over ? ceil($size[0] * $keys):$size[0];//端数の切り上げ
 	$out_h = $w_h_size_over ? ceil($size[1] * $keys):$size[1];
 
-	switch (mime_content_type($fname)) {
+	switch ($mime_type = mime_content_type($fname)) {
 		case "image/gif";
 			if(!function_exists("ImageCreateFromGIF")){//gif
 				return;
@@ -64,6 +64,13 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$nottrue = 0;
 	if(function_exists("ImageCreateTrueColor")&&get_gd_ver()=="2"){
 		$im_out = ImageCreateTrueColor($out_w, $out_h);
+		if(isset($options['toolarge'])&&($mime_type==="image/png" || $mime_type==="image/gif")){
+			imagealphablending($im_out, false);
+			imagesavealpha($im_out, true);
+		}else{
+			$background = imagecolorallocate($im_out, 0xFF, 0xFF, 0xFF);//背景色を白に
+			imagefill($im_out, 0, 0, $background);
+		}
 		// コピー＆再サンプリング＆縮小
 		if(function_exists("ImageCopyResampled")){
 			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $size[0], $size[1]);
@@ -73,13 +80,36 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	if($nottrue) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $size[0], $size[1]);
 	if(isset($options['toolarge'])){
 		$outfile=$fname;
-	//本体画像を縮小	
-		ImageJPEG($im_out, $outfile,98);
+	//本体画像を縮小
+
+	switch ($mime_type) {
+		case "image/gif";
+			if(!function_exists("ImagePNG")){
+				return;
+			}
+			ImagePNG($im_out, $outfile,3);
+			break;
+		case "image/jpeg";
+			ImageJPEG($im_out, $outfile,98);
+			break;
+		case "image/png";
+			if(!function_exists("ImagePNG")){
+				return;
+			}
+			ImagePNG($im_out, $outfile,3);
+			break;
+		case "image/webp";
+			ImageJPEG($im_out, $outfile,98);
+		break;
+
+		default : return;
+	}
+
 
 	}else{
 		$outfile=THUMB_DIR.$time.'s.jpg';
 	// サムネイル画像を保存
-		ImageJPEG($im_out, THUMB_DIR.$time.'s.jpg',90);
+		Imagejpeg($im_out, THUMB_DIR.$time.'s.jpg',90);
 
 	}
 	// 作成したイメージを破棄

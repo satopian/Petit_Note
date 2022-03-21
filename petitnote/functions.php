@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220319;
+$functions_ver=20220321;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -383,14 +383,26 @@ function delete_files ($imgfile, $time) {
 //png2jpg
 function png2jpg ($src) {
 	global $path;
-	if(mime_content_type($src)==="image/png" && function_exists("ImageCreateFromPNG")){//pngならJPEGに変換
-		if($im_in=ImageCreateFromPNG($src)){
-			$dst = $path.pathinfo($src, PATHINFO_FILENAME ).'.jpg.tmp';
-			ImageJPEG($im_in,$dst,98);
-			ImageDestroy($im_in);// 作成したイメージを破棄
-			chmod($dst,0606);
-			return $dst;
+	if(mime_content_type($src)!=="image/png" || !function_exists("ImageCreateFromPNG")){
+		return;
+	}
+	//pngならJPEGに変換
+	if($im_in=ImageCreateFromPNG($src)){
+		if(function_exists("ImageCreateTrueColor")&&function_exists("ImageCopyResampled")){
+			list($out_w, $out_h)=getimagesize($src);
+			$im_out = ImageCreateTrueColor($out_w, $out_h);
+			$background = imagecolorallocate($im_out, 0xFF, 0xFF, 0xFF);//背景色を白に
+			imagefill($im_out, 0, 0, $background);
+			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $out_w, $out_h);
+		}else{
+			$im_out=$im_in;
 		}
+		$dst = $path.pathinfo($src, PATHINFO_FILENAME ).'.jpg.tmp';
+		ImageJPEG($im_out,$dst,98);
+		ImageDestroy($im_in);// 作成したイメージを破棄
+		ImageDestroy($im_out);// 作成したイメージを破棄
+		chmod($dst,0606);
+		return $dst;
 	}
 	return false;
 }
