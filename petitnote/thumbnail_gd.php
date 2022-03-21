@@ -81,36 +81,35 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	if(isset($options['toolarge'])){
 		$outfile=$fname;
 	//本体画像を縮小
-
-	switch ($mime_type) {
-		case "image/gif";
-			if(!function_exists("ImagePNG")){
-				return;
-			}
-			ImagePNG($im_out, $outfile,3);
+		switch ($mime_type) {
+			case "image/gif";
+				if(function_exists("ImagePNG")){
+					ImagePNG($im_out, $outfile,3);
+				}else{
+					ImageJPEG($im_out, $outfile,98);
+				}
+				break;
+			case "image/jpeg";
+				ImageJPEG($im_out, $outfile,98);
+				break;
+			case "image/png";
+				if(function_exists("ImagePNG")){
+					ImagePNG($im_out, $outfile,3);
+				}else{
+					ImageJPEG($im_out, $outfile,98);
+				}
+				break;
+			case "image/webp";
+				ImageJPEG($im_out, $outfile,98);
 			break;
-		case "image/jpeg";
-			ImageJPEG($im_out, $outfile,98);
-			break;
-		case "image/png";
-			if(!function_exists("ImagePNG")){
-				return;
-			}
-			ImagePNG($im_out, $outfile,3);
-			break;
-		case "image/webp";
-			ImageJPEG($im_out, $outfile,98);
-		break;
 
-		default : return;
-	}
-
+			default : return;
+		}
 
 	}else{
 		$outfile=THUMB_DIR.$time.'s.jpg';
-	// サムネイル画像を保存
-		Imagejpeg($im_out, THUMB_DIR.$time.'s.jpg',90);
-
+		// サムネイル画像を保存
+		ImageJPEG($im_out, THUMB_DIR.$time.'s.jpg',90);
 	}
 	// 作成したイメージを破棄
 	ImageDestroy($im_in);
