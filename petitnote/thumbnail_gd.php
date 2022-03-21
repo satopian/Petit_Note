@@ -1,12 +1,10 @@
 <?php
-// thumbnail_gd.php for PetitNote by さとぴあ 2021   
-// thumbnail_gd.php by POTI改 >> https://paintbbs.sakura.ne.jp/poti/ 
-// originalscript (c)SakaQ 2005 >> http://www.punyu.net/php/
+// thumbnail_gd.php for PetitNote (C)さとぴあ 2021 - 2022   
+// originalscript (C)SakaQ 2005 >> http://www.punyu.net/php/
 
-//サムネイル作成
-//210920 PetitNote用にコードを修正
-//210203 コード整理
-//201218 webp形式対応
+//220321 透過GIF、透過PNGの時は透明を出力、または透明色を白に変換。
+//220320 本体画像のリサイズにPNG→PNG、GIF→PNG、WEBP→JPEGの各処理を追加。
+//210920 PetitNote版。
 $thumbnail_gd_ver=20220321;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
