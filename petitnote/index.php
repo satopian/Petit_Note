@@ -13,7 +13,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.11.02';
+$petit_ver='v0.11.03';
 $petit_lot='lot.220321';
 
 if(!$max_log){
@@ -1025,6 +1025,9 @@ function img_replace(){
 
 	$upfile=IMG_DIR.$time.'.tmp';
 	copy($tempfile, $upfile);
+	$upfile2=IMG_DIR.$time.'.tmp2';
+	copy($tempfile,$upfile2);
+
 	if(!is_file($upfile)) return error($en?'The operation failed.':'失敗しました。');
 	chmod($upfile,0606);
 
@@ -1078,7 +1081,7 @@ function img_replace(){
 	//サムネイル
 	$thumbnail='';
 	if($use_thumb){
-		if(thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
+		if(thumb(IMG_DIR,$time.'.tmp2',$time,$max_w,$max_h)){
 			$thumbnail='thumbnail';
 		}
 	}
@@ -1121,6 +1124,7 @@ function img_replace(){
 	//旧ファイル削除
 	delete_files($_imgfile, $_time);
 	//ワークファイル削除
+	safe_unlink($upfile2);
 	safe_unlink($src);
 	safe_unlink($tempfile);
 	safe_unlink(TEMP_DIR.$file_name.".dat");
