@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220321;
+$functions_ver=20220322;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -388,7 +388,8 @@ function png2jpg ($src) {
 	}
 	//pngならJPEGに変換
 	if($im_in=ImageCreateFromPNG($src)){
-		if(function_exists("ImageCreateTrueColor")&&function_exists("ImageCopyResampled")){
+		if(function_exists("ImageCreateTrueColor") && function_exists("ImageColorAlLocate") &&
+		function_exists("imagefill") && function_exists("ImageCopyResampled")){
 			list($out_w, $out_h)=getimagesize($src);
 			$im_out = ImageCreateTrueColor($out_w, $out_h);
 			$background = imagecolorallocate($im_out, 0xFF, 0xFF, 0xFF);//背景色を白に
