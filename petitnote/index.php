@@ -13,8 +13,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.11.8';
-$petit_lot='lot.220325';
+$petit_ver='v0.11.9';
+$petit_lot='lot.220405';
 
 if(!$max_log){
 	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
@@ -660,7 +660,7 @@ function paint(){
 			}
 		}
 	}
-
+	$repcode='';
 	if($mode==="contpaint"){
 
 		$imgfile = (string)filter_input(INPUT_POST,'imgfile');
@@ -702,7 +702,6 @@ function paint(){
 			$img_klecks =IMG_DIR.$time.'.psd';
 			}
 		}
-		
 		if($type==='rep'){//画像差し換え
 			$rep=true;
 			$pwd = t((string)filter_input(INPUT_POST, 'pwd'));
