@@ -41,16 +41,8 @@ include(__DIR__.'/config.php');
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
-if(stripos($lang,'ja')===0){//ブラウザの言語が日本語の時
-
-	$errormsg_1 = "データの取得に失敗しました。時間を置いて再度投稿してみて下さい。";
-	$errormsg_2 = "規定容量オーバー。お絵かき画像は保存されません。";
-	$errormsg_3 = "画像ファイルの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
-	$errormsg_4 = "規定サイズ違反を検出しました。お絵かき画像は保存されません。";
-	$errormsg_5 = "不正な画像を検出しました。お絵かき画像は保存されません。";
-	$errormsg_6 = "PCHファイルの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
-	$errormsg_7 = "ユーザーデータの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
-}else{//それ以外
+$en= (stripos($lang,'ja')!==0) ? true : false;
+if($en){//ブラウザの言語が日本語以外の時
 	$errormsg_1 = "Failed to get data. Please try posting again after a while.";
 	$errormsg_2 = "The size of the picture is too big. The drawing image is not saved.";
 	$errormsg_3 = "Failed to create the image file. Please try posting again after a while.";
@@ -58,6 +50,14 @@ if(stripos($lang,'ja')===0){//ブラウザの言語が日本語の時
 	$errormsg_5 = "There was an illegal image. The drawng image is not saved.";
 	$errormsg_6 = "Failed to open PCH file. Please try posting again after a while.";
 	$errormsg_7 = "Failed to create user data. Please try posting again after a while.";
+}else{//日本語
+	$errormsg_1 = "データの取得に失敗しました。時間を置いて再度投稿してみて下さい。";
+	$errormsg_2 = "規定容量オーバー。お絵かき画像は保存されません。";
+	$errormsg_3 = "画像ファイルの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
+	$errormsg_4 = "規定サイズ違反を検出しました。お絵かき画像は保存されません。";
+	$errormsg_5 = "不正な画像を検出しました。お絵かき画像は保存されません。";
+	$errormsg_6 = "PCHファイルの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
+	$errormsg_7 = "ユーザーデータの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
 }
 
 /* ---------- picpost.php用設定 ---------- */
