@@ -26,6 +26,14 @@
   
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
+## BBSNoteやPOTI-boardのログをPetitNoteで使うためのログコンバータ
+
+- [Petit Note プラグイン](https://github.com/satopian/PetitNote_plugin)  
+
+BBSNoteとPOTI-boardのログファイルをPetitNote用に変換できます。  
+ただし新しく設置したPetit Noteで変換したログを使う事しかできません。   
+変換して新しくできたログファイルで上書きすると既存の投稿は消えてしまいますのでご注意ください。
+
 ## 履歴
 
 ## PitNoteとは
