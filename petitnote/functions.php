@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220325;
+$functions_ver=20220411;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -557,15 +557,31 @@ function init(){
 
 //ディレクトリ作成
 function check_dir ($path) {
-	global $en;
+
+	$msg=initial_error_message();
 
 	if (!is_dir($path)) {
 			mkdir($path, 0707);
 			chmod($path, 0707);
 	}
-	if (!is_dir($path)) return $path.$en?'does not exist.':'がありません。'.'<br>';
-	if (!is_readable($path)) return $path.$en?'is not readable':'を読めません。'.'<br>';
-	if (!is_writable($path)) return $path.$en?'is not writable':'を書けません。'.'<br>';
+	if (!is_dir($path)) return h($path) . $msg['001'];
+	if (!is_readable($path)) return h($path) . $msg['002'];
+	if (!is_writable($path)) return h($path) . $msg['003'];
+}
+
+// ファイル存在チェック
+function check_file ($path) {
+	$msg=initial_error_message();
+
+	if (!is_file($path)) return h($path) . $msg['001'];
+	if (!is_readable($path)) return h($path) . $msg['002'];
+}
+function initial_error_message(){
+	global $en;
+	$msg['001']=$en ? ' does not exist.':'がありません。'; 
+	$msg['002']=$en ? ' is not readable.':'を読めません。'; 
+	$msg['003']=$en ? ' is not writable.':'を書けません。'; 
+return $msg;	
 }
 
 // 一括書き込み（上書き）

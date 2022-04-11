@@ -5,27 +5,44 @@ $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0) ? true : false;
 
-require_once(__DIR__.'/config.php');	
+if(!is_file(__DIR__.'/functions.php')){
+	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
+}
 require_once(__DIR__.'/functions.php');
+
+if (function_exists('check_file') && $err = check_file(__DIR__.'/config.php')) {
+	return die($err);
+}
+if (function_exists('check_file') && $err = check_file(__DIR__.'/thumbnail_gd.php')) {
+	return die($err);
+}
+if (function_exists('check_file') && $err = check_file(__DIR__.'/noticemail.inc')) {
+	return die($err);
+}
+
+require_once(__DIR__.'/config.php');	
 require_once(__DIR__.'/thumbnail_gd.php');
 require_once(__DIR__.'/noticemail.inc');
 
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.11.9';
-$petit_lot='lot.220405';
+$petit_ver='v0.11.10';
+$petit_lot='lot.220411';
 
-if(!$max_log){
-	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
+if(!isset($functions_ver)||$functions_ver<20220411){
+	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
-if(!isset($functions_ver)||$functions_ver<20220325){
-	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
-}
 
+if(!$max_log){
+	return error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
+}
+if(!isset($admin_pass)||!$admin_pass){
+	return error($en?'The administrator password has not been set.':'管理者パスワードが設定されていません。');
+}
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 $max_com= isset($max_com) ? $max_com : 1000;
 $sage_all= isset($sage_all) ? $sage_all : false;
