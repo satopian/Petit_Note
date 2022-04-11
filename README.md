@@ -26,6 +26,14 @@
   
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
+## BBSNoteやPOTI-boardのログをPetit Noteで使うためのログコンバータ
+
+- [Petit Note プラグイン](https://github.com/satopian/PetitNote_plugin)  
+
+BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できます。  
+ただし新しく設置したPetit Noteで変換したログを使う事しかできません。   
+変換して新しくできたログファイルで上書きすると既存の投稿は消えてしまいますのでご注意ください。
+
 ## 履歴
 
 ## PitNoteとは
@@ -99,7 +107,7 @@ config.phpに新規設定項目を追加しました。
 ![image](https://user-images.githubusercontent.com/44894014/157258620-01f053e9-1bd1-47d0-a573-5c8aae432cce.png)
 
 わかりやすいUIと強力なブラシが使えるアプリです。
-レイヤーは8枚使えます。
+レイヤーの最大数は16枚です。
 数多くのフィルタが使えます。輝度を透明に変換、明るさ/コントラスト、色調補正など。
 
 このアプリの追加にともない、管理者投稿モードのときにアップロードできるファイル形式に｢PSD｣が追加されました。  
