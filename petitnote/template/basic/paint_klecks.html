@@ -63,46 +63,51 @@
                 saveData(blob, 'drawing.psd');
             });*/
 
-            setTimeout(() => {
+		setTimeout(() => {
                 onSuccess();
-
 		//2022 (c)satopian MIT LICENCE
 		//この箇所はさとぴあが作成したMIT LICENCEのコードです。
 
-		klecks.getPSD().then((psd)=>{
-			var formData = new FormData();
-			formData.append("picture", klecks.getPNG(),'blob');
-			formData.append("psd", psd,'blob');
-			formData.append("usercode", "<?=h($usercode)?>");
-			<?php if($rep):?>formData.append("repcode", "<?=h($repcode)?>");<?php endif;?>
-			formData.append("tool", "<?=h($tool)?>");
-			formData.append("stime", <?=time();?>);
-			formData.append("resto", "<?=h($resto)?>");
+			klecks.getPSD().then((psd)=>{
+				var formData = new FormData();
+				formData.append("picture", klecks.getPNG(),'blob');
+				formData.append("psd", psd,'blob');
+				formData.append("usercode", "<?=h($usercode)?>");
+				<?php if($rep):?>formData.append("repcode", "<?=h($repcode)?>");<?php endif;?>
+				formData.append("tool", "<?=h($tool)?>");
+				formData.append("stime", <?=time();?>);
+				formData.append("resto", "<?=h($resto)?>");
 
-			var request = new XMLHttpRequest();
-			request.open("POST", "saveklecks.php");
-			request.send(formData);
-			request.onreadystatechange = function() {
+				var request = new XMLHttpRequest();
+				request.open("POST", "saveklecks.php");
+				request.send(formData);
+				request.onreadystatechange = function() {
 
-				console.log(request.readyState);
-				console.log(request.responseText);
+					console.log(request.readyState);
+					console.log(request.status);
+					console.log(request.responseText);
 
-				if ( request.readyState === 4 && request.status ===200) {
+					if(request.readyState === 4 && request.status>400){
+							let req_status=request.status;
+							alert(<?php if($en):?>'Error '<?php else:?>'エラー '<?php endif;?> + req_status);
+							return;
+						}
+					if ( request.readyState === 4 && request.status ===200) {
 
-					if(request.responseText === 'ok'){
-					//PHPからOKが返って来た時は画面を推移。OKが返って来ない時は、alertを出す。
-					return window.location.href="index.php?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>";
-					
+						if(request.responseText === 'ok'){
+						//PHPからOKが返って来た時は画面を推移。OKが返って来ない時は、alertを出す。
+						return window.location.href="index.php?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>";
+						
+					}
+					alert('<?php if($en):?>Your picture upload failed! Please try again!<?php else:?>投稿に失敗。時間をおいて再度投稿してみてください。<?php endif;?>');
+					return;
+					}
 				}
-				alert('<?php if($en):?>Your picture upload failed! Please try again!<?php else:?>投稿に失敗。時間をおいて再度投稿してみてください。<?php endif;?>');
-				return;
-				}
-			}
-		});
+			});
 		//2022 (c)satopian MIT LICENCE ここまで
 
 		// location.reload();
-	}, 500);
+		}, 500);
 	}
     });
     if (psdURL) {
