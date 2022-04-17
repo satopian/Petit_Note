@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220411;
+$functions_ver=20220417;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -382,7 +382,7 @@ function delete_files ($imgfile, $time) {
 
 //png2jpg
 function png2jpg ($src) {
-	global $path;
+
 	if(mime_content_type($src)!=="image/png" || !function_exists("ImageCreateFromPNG")){
 		return;
 	}
@@ -398,7 +398,7 @@ function png2jpg ($src) {
 		}else{
 			$im_out=$im_in;
 		}
-		$dst = $path.pathinfo($src, PATHINFO_FILENAME ).'.jpg.tmp';
+		$dst = TEMP_DIR.pathinfo($src, PATHINFO_FILENAME ).'.jpg.tmp';
 		ImageJPEG($im_out,$dst,98);
 		ImageDestroy($im_in);// 作成したイメージを破棄
 		ImageDestroy($im_out);// 作成したイメージを破棄
