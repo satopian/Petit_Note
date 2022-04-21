@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.12.0';
-$petit_lot='lot.220417';
+$petit_ver='v0.12.1';
+$petit_lot='lot.220421';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -1108,26 +1108,30 @@ function img_replace(){
 
 	$r_arr[$i] = $new_line;
 
-	writeFile($rp, implode("", $r_arr));
-
+	
 	if($_oya ==='oya'){
-
+		
 		while ($_line = fgets($fp)) {
 			$alllog_arr[]=$_line;	
 		}
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
-
+			
 			if($id===$time_ && $no===$no_ && $pwd && password_verify($pwd,$hash_)){
 				$alllog_arr[$i] = $new_line;
-			break;
+				break;
+			}else{
+				closeFile($rp);
+				closeFile ($fp);
+				return error($en?'The operation failed.':'失敗しました。');
 			}
-
+			
 		}
 		$alllog=implode("",$alllog_arr);
 		writeFile($fp,$alllog);
-
+		
 	}
+	writeFile($rp, implode("", $r_arr));
 	closeFile($rp);
 	closeFile ($fp);
 	
@@ -1434,30 +1438,34 @@ function edit(){
 	$r_arr[$i] = $new_line;
 
 
-	writeFile($rp, implode("", $r_arr));
-
+	
 	if($_oya==='oya'){
-
+		
 		while ($_line = fgets($fp)) {
 			$alllog_arr[]=$_line;	
 		}
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
-
+			
 			if($id===$time_ && $no===$no_){
-
+				
 				if($admindel || ($pwd && password_verify($pwd,$hash_))){
-						$alllog_arr[$i] = $new_line;
-						break;
+					$alllog_arr[$i] = $new_line;
+					break;
+				}else{
+					closeFile($rp);
+					closeFile ($fp);
+					return error($en?'The operation failed.':'失敗しました。');
 				}
-	
+				
 			}
-
+			
 		}
 		$alllog=implode("",$alllog_arr);
 		writeFile($fp,$alllog);
-
 	}
+	writeFile($rp, implode("", $r_arr));
+
 	closeFile($rp);
 	closeFile ($fp);
 
@@ -1516,12 +1524,6 @@ function del(){
 					}
 				}
 				if($oya==='oya'){//スレッド削除
-					foreach($line as $r_line) {//レスファイル
-						list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
-
-						delete_files ($_imgfile, $_time);//一連のファイルを削除
-
-					}
 				
 					foreach($alllog_arr as $i =>$_val){//全体ログ
 						list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
@@ -1530,10 +1532,21 @@ function del(){
 
 							unset($alllog_arr[$i]);
 							break;
+							}else{
+								closeFile ($rp);
+								closeFile ($fp);
+								return error($en?'The operation failed.':'失敗しました。');
 							}
 						}
 					}
 					$alllog=implode("",$alllog_arr);
+
+					foreach($line as $r_line) {//レスファイル
+						list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
+						
+						delete_files ($_imgfile, $_time);//一連のファイルを削除
+						
+					}
 					writeFile($fp,$alllog);
 					safe_unlink(LOG_DIR.$no.'.log');
 			
@@ -1548,13 +1561,12 @@ function del(){
 				break;
 			}
 		}
-			if(!$find){
-				closeFile ($rp);
-				closeFile ($fp);
-				return error($en?'The article was not found.':'見つかりませんでした。');
-			}
 		closeFile ($rp);
 		closeFile ($fp);
+
+		if(!$find){
+			return error($en?'The article was not found.':'見つかりませんでした。');
+		}
 
 	}
 	$resno=(string)filter_input(INPUT_POST,'postresno');
