@@ -154,7 +154,7 @@
 <input type="hidden" name="id" value="<?=h($res['time'])?>">
 <input type="hidden" name="no" value="<?=h($res['no'])?>">
 <input type="hidden" name="postresno" value="<?=h($resno)?>">
-<?php if($ress[0]['check_elapsed_days']||$admindel):?>
+<?php if($res['check_elapsed_days']||$admindel):?>
 <input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
 <?php endif;?>
 </form>
