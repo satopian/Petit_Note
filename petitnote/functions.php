@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220421;
+$functions_ver=20220430;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -455,14 +455,15 @@ function deltemp(){
 	$handle = opendir(TEMP_DIR);
 	while ($file = readdir($handle)) {
 		if(!is_dir($file)) {
-			$lapse = time() - filemtime(TEMP_DIR.$file);
-			if($lapse > (3*24*3600)){//3日
-				safe_unlink(TEMP_DIR.$file);
-			}
 			//pchアップロードペイントファイル削除
-			if(preg_match("/\A(pchup-.*-tmp\.(s?pch|chi))\z/i",$file)) {
+			if(preg_match("/\A(pchup-.*-tmp\.(s?pch|chi|psd))\z/i",$file)) {
 				$lapse = time() - filemtime(TEMP_DIR.$file);
 				if($lapse > (300)){//5分
+					safe_unlink(TEMP_DIR.$file);
+				}
+			}else{
+				$lapse = time() - filemtime(TEMP_DIR.$file);
+				if($lapse > (3*24*3600)){//3日
 					safe_unlink(TEMP_DIR.$file);
 				}
 			}

@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.12.1';
-$petit_lot='lot.220421';
+$petit_ver='v0.12.2';
+$petit_lot='lot.220430';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -407,7 +407,7 @@ function post(){
 		}	
 		clearstatcache();
 		$filesize=filesize($upfile);
-		if($filesize > 512 * 1024){//指定サイズを超えていたら
+		if($filesize > 800 * 1024){//指定サイズを超えていたら
 			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 
 				if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
@@ -1042,7 +1042,7 @@ function img_replace(){
 	chmod($upfile,0606);
 
 	$filesize=filesize($upfile);
-	if($filesize > 512 * 1024){//指定サイズを超えていたら
+	if($filesize > 800 * 1024){//指定サイズを超えていたら
 		if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 
 			if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
