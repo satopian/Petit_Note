@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.12.2';
-$petit_lot='lot.220430';
+$petit_ver='v0.15.0';
+$petit_lot='lot.220501';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -332,6 +332,9 @@ function post(){
 
 	//全体ログを開く
 	$fp=fopen(LOG_DIR."alllog.log","r+");
+	if(!$fp){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
 	flock($fp, LOCK_EX);
 	$alllog_arr=[];
 	while ($_line = fgets($fp)) {
@@ -1005,10 +1008,16 @@ function img_replace(){
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
 	$fp=fopen(LOG_DIR."alllog.log","r+");
+	if(!$fp){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
 	flock($fp, LOCK_EX);
 
 	$r_arr=[];
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
+	if(!$rp){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
 	flock($rp, LOCK_EX);
 	while ($line = fgets($rp)) {
 			$r_arr[]=$line;
@@ -1390,10 +1399,16 @@ function edit(){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
 	$fp=fopen(LOG_DIR."alllog.log","r+");
+	if(!$fp){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
 	flock($fp, LOCK_EX);
 
 	$r_arr=[];
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
+	if(!$rp){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
 	flock($rp, LOCK_EX);
 	while ($line = fgets($rp)) {
 			$r_arr[]=$line;
@@ -1496,6 +1511,9 @@ function del(){
 	}
 	$alllog_arr=[];
 	$fp=fopen(LOG_DIR."alllog.log","r+");
+	if(!$fp){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
 	flock($fp, LOCK_EX);
 	while ($_line = fgets($fp)) {
 		$alllog_arr[]=$_line;	
@@ -1504,6 +1522,9 @@ function del(){
 	if(is_file(LOG_DIR."{$no}.log")){
 		
 		$rp=fopen(LOG_DIR."{$no}.log","r+");
+		if(!$rp){
+			return error($en?'The operation failed.':'失敗しました。');
+		}
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
 			$line[]=$r_line;
