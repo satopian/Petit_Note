@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.15.1';
+$petit_ver='v0.15.2';
 $petit_lot='lot.220501';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
@@ -804,6 +804,7 @@ function paintcom(){
 	$tmplist = [];
 	$uresto = '';
 	$handle = opendir(TEMP_DIR);
+	$tmps = [];
 	while ($file = readdir($handle)) {
 		if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
 			$fp = fopen(TEMP_DIR.$file, "r");
@@ -813,20 +814,13 @@ function paintcom(){
 			$file_name = pathinfo($file, PATHINFO_FILENAME);
 			$uresto = $uresto ? 'res' :''; 
 			if(is_file(TEMP_DIR.$file_name.$imgext)){ //画像があればリストに追加
-				$tmplist[] = [$ucode,$uip,$file_name.$imgext,$uresto];
+				if($ucode === $usercode||$uip === $userip){
+					$tmps[] = [$file_name.$imgext,$uresto];
+				}
 			}
 		}
 	}
 	closedir($handle);
-	$tmps = [];
-	if(!empty($tmplist)){
-		foreach($tmplist as $tmpimg){
-			list($ucode,$uip,$ufilename,$uresto) = $tmpimg;
-			if($ucode == $usercode||$uip == $userip){
-				$tmps[] = [$ufilename,$uresto];
-			}
-		}
-	}
 
 	if(!empty($tmps)){
 		$pictmp = 2;
