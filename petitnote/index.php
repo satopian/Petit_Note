@@ -1129,7 +1129,6 @@ function img_replace(){
 				$flag=true;
 				break;
 			}
-			
 		}
 		if(!$flag){
 			closeFile($rp);
@@ -1472,7 +1471,6 @@ function edit(){
 				$alllog_arr[$i] = $new_line;
 				$flag=true;
 				break;
-			
 			}
 		}
 		if(!$flag){
