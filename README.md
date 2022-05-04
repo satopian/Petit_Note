@@ -40,6 +40,15 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEOとChickenPaintが使えるお絵かき掲示板です。
 
+##  22/05/04 v0.15.3
+## 重大なバグを修正
+- ｢続きを描く｣ができなくなる大きなバグがv0.12で発生していました。
+v0.12は使用しないようにしてください。
+index.phpの上書きアップデートをお願いします。
+
+安定版をリリースからダウンロードできます。  
+[Petit Note v0.15.3リリース](https://github.com/satopian/Petit_Note/releases/latest)
+
 ##  22/04/28 v0.12.1
 ### Klecks更新
 - iPadOSで発生するいくつかの問題が修正されました。
@@ -66,8 +75,6 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 に設定した時に、返信ボタンに｢返信｣と表示されていたのを｢表示｣に修正しました。
 古いスレッドを閉じた時、1スレッドあたりの最大投稿数を超過した時と同じ動作になるように調整しました。
 
-安定版をリリースからダウンロードできます。  
-[Petit Note v0.12.1リリース](https://github.com/satopian/Petit_Note/releases/latest)
 
 ##  22/03/17 v0.11.8 
 ### 改善
