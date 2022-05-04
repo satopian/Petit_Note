@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.15.2';
-$petit_lot='lot.220501';
+$petit_ver='v0.15.3';
+$petit_lot='lot.220505';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -1009,13 +1009,14 @@ function img_replace(){
 
 	$r_arr=[];
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
-	if(!$rp){
-		return error($en?'The operation failed.':'失敗しました。');
-	}
 	flock($rp, LOCK_EX);
 	while ($line = fgets($rp)) {
 			$r_arr[]=$line;
 		}
+	if(empty($r_arr)){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
+	
 	$flag=false;
 	foreach($r_arr as $i => $line){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
@@ -1113,25 +1114,30 @@ function img_replace(){
 
 	
 	if($_oya ==='oya'){
-		
 		while ($_line = fgets($fp)) {
 			$alllog_arr[]=$_line;	
 		}
+		if(empty($alllog_arr)){
+			return error($en?'The operation failed.':'失敗しました。');
+		}
+		$flag=false;
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 			
 			if($id===$time_ && $no===$no_ && $pwd && password_verify($pwd,$hash_)){
 				$alllog_arr[$i] = $new_line;
+				$flag=true;
 				break;
-			}else{
-				closeFile($rp);
-				closeFile ($fp);
-				return error($en?'The operation failed.':'失敗しました。');
 			}
 			
 		}
-		$alllog=implode("",$alllog_arr);
-		writeFile($fp,$alllog);
+		if(!$flag){
+			closeFile($rp);
+			closeFile ($fp);
+			return error($en?'The operation failed.':'失敗しました。');
+		}
+
+		writeFile($fp,implode("",$alllog_arr));
 		
 	}
 	writeFile($rp, implode("", $r_arr));
@@ -1207,6 +1213,9 @@ function confirmation_before_deletion ($edit_mode=''){
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
 			$line[]=$r_line;
+		}
+		if(empty($line)){
+			return error($en?'The operation failed.':'失敗しました。');
 		}
 		$res=[];
 		$find=false;
@@ -1393,20 +1402,18 @@ function edit(){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
 	$fp=fopen(LOG_DIR."alllog.log","r+");
-	if(!$fp){
-		return error($en?'The operation failed.':'失敗しました。');
-	}
 	flock($fp, LOCK_EX);
 
 	$r_arr=[];
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
-	if(!$rp){
-		return error($en?'The operation failed.':'失敗しました。');
-	}
 	flock($rp, LOCK_EX);
 	while ($line = fgets($rp)) {
 			$r_arr[]=$line;
 		}
+	if(empty($r_arr)){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
+	
 	$flag=false;
 	foreach($r_arr as $i => $line){
 		if(!trim($line)){
@@ -1453,25 +1460,28 @@ function edit(){
 		while ($_line = fgets($fp)) {
 			$alllog_arr[]=$_line;	
 		}
+		if(empty($alllog_arr)){
+			return error($en?'The operation failed.':'失敗しました。');
+		}
+		$flag=false;
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
+			if(($id===$time_ && $no===$no_) &&
+			($admindel || ($pwd && password_verify($pwd,$hash_)))){
+				
+				$alllog_arr[$i] = $new_line;
+				$flag=true;
+				break;
 			
-			if($id===$time_ && $no===$no_){
-				
-				if($admindel || ($pwd && password_verify($pwd,$hash_))){
-					$alllog_arr[$i] = $new_line;
-					break;
-				}else{
-					closeFile($rp);
-					closeFile ($fp);
-					return error($en?'The operation failed.':'失敗しました。');
-				}
-				
 			}
-			
 		}
-		$alllog=implode("",$alllog_arr);
-		writeFile($fp,$alllog);
+		if(!$flag){
+			closeFile($rp);
+			closeFile ($fp);
+			return error($en?'The operation failed.':'失敗しました。');
+		}
+
+		writeFile($fp,implode("",$alllog_arr));
 	}
 	writeFile($rp, implode("", $r_arr));
 
@@ -1505,24 +1515,25 @@ function del(){
 	}
 	$alllog_arr=[];
 	$fp=fopen(LOG_DIR."alllog.log","r+");
-	if(!$fp){
-		return error($en?'The operation failed.':'失敗しました。');
-	}
 	flock($fp, LOCK_EX);
 	while ($_line = fgets($fp)) {
 		$alllog_arr[]=$_line;	
+	}
+	if(empty($alllog_arr)){
+		return error($en?'The operation failed.':'失敗しました。');
 	}
 
 	if(is_file(LOG_DIR."{$no}.log")){
 		
 		$rp=fopen(LOG_DIR."{$no}.log","r+");
-		if(!$rp){
-			return error($en?'The operation failed.':'失敗しました。');
-		}
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
 			$line[]=$r_line;
 		}
+		if(empty($line)){
+			return error($en?'The operation failed.':'失敗しました。');
+		}
+	
 		$find=false;
 		foreach($line as $i =>$val){
 			if(!trim($val)){
@@ -1539,22 +1550,22 @@ function del(){
 					}
 				}
 				if($oya==='oya'){//スレッド削除
-				
+				$flag=false;
 					foreach($alllog_arr as $i =>$_val){//全体ログ
 						list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
-						if($id===$time_ && $no===$no_){
-							if($admindel || ($pwd && password_verify($pwd,$hash_))){
+						if(($id===$time_ && $no===$no_) &&
+						($admindel || ($pwd && password_verify($pwd,$hash_)))){
 
 							unset($alllog_arr[$i]);
+							$flag=true;
 							break;
-							}else{
-								closeFile ($rp);
-								closeFile ($fp);
-								return error($en?'The operation failed.':'失敗しました。');
-							}
 						}
 					}
-					$alllog=implode("",$alllog_arr);
+					if(!$flag){
+						closeFile ($rp);
+						closeFile ($fp);
+						return error($en?'The operation failed.':'失敗しました。');
+					}
 
 					foreach($line as $r_line) {//レスファイル
 						list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
@@ -1562,7 +1573,7 @@ function del(){
 						delete_files ($_imgfile, $_time);//一連のファイルを削除
 						
 					}
-					writeFile($fp,$alllog);
+					writeFile($fp,implode("",$alllog_arr));
 					safe_unlink(LOG_DIR.$no.'.log');
 			
 				}else{
