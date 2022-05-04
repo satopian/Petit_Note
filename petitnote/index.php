@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.15.3';
+$petit_ver='v0.15.5';
 $petit_lot='lot.220505';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
@@ -1002,9 +1002,6 @@ function img_replace(){
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
 	$fp=fopen(LOG_DIR."alllog.log","r+");
-	if(!$fp){
-		return error($en?'The operation failed.':'失敗しました。');
-	}
 	flock($fp, LOCK_EX);
 
 	$r_arr=[];
@@ -1578,8 +1575,7 @@ function del(){
 
 					unset($line[$i]);
 					delete_files ($imgfile, $time);//一連のファイルを削除
-					$line=implode("",$line);
-					writeFile ($rp, $line);
+					writeFile ($rp,implode("",$line));
 				}
 				$find=true;
 				break;
