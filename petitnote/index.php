@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.15.5';
+$petit_ver='v0.15.6';
 $petit_lot='lot.220505';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
@@ -1508,15 +1508,8 @@ function del(){
 	if($id_and_no){
 		list($id,$no)=explode(",",trim($id_and_no));
 	}
-	$alllog_arr=[];
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
-	while ($_line = fgets($fp)) {
-		$alllog_arr[]=$_line;	
-	}
-	if(empty($alllog_arr)){
-		return error($en?'The operation failed.':'失敗しました。');
-	}
 
 	if(is_file(LOG_DIR."{$no}.log")){
 		
@@ -1545,7 +1538,14 @@ function del(){
 					}
 				}
 				if($oya==='oya'){//スレッド削除
-				$flag=false;
+					$alllog_arr=[];
+					while ($_line = fgets($fp)) {
+						$alllog_arr[]=$_line;	
+					}
+					if(empty($alllog_arr)){
+						return error($en?'The operation failed.':'失敗しました。');
+					}
+					$flag=false;
 					foreach($alllog_arr as $i =>$_val){//全体ログ
 						list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
 						if(($id===$time_ && $no===$no_) &&
