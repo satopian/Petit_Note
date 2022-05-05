@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.15.6';
+$petit_ver='v0.15.8';
 $petit_lot='lot.220505';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
@@ -1011,6 +1011,8 @@ function img_replace(){
 			$r_arr[]=$line;
 		}
 	if(empty($r_arr)){
+		closeFile($rp);
+		closeFile($fp);
 		return error($en?'The operation failed.':'失敗しました。');
 	}
 	
@@ -1030,7 +1032,7 @@ function img_replace(){
 
 	if(!$flag){
 		closeFile($rp);
-		closeFile ($fp);
+		closeFile($fp);
 		return error($en?'The article was not found.':'見つかりませんでした。');
 	}
 	
@@ -1115,6 +1117,8 @@ function img_replace(){
 			$alllog_arr[]=$_line;	
 		}
 		if(empty($alllog_arr)){
+			closeFile($rp);
+			closeFile($fp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 		$flag=false;
@@ -1129,7 +1133,7 @@ function img_replace(){
 		}
 		if(!$flag){
 			closeFile($rp);
-			closeFile ($fp);
+			closeFile($fp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 
@@ -1138,7 +1142,7 @@ function img_replace(){
 	}
 	writeFile($rp, implode("", $r_arr));
 	closeFile($rp);
-	closeFile ($fp);
+	closeFile($fp);
 	
 	//旧ファイル削除
 	delete_files($_imgfile, $_time);
@@ -1211,6 +1215,7 @@ function confirmation_before_deletion ($edit_mode=''){
 			$line[]=$r_line;
 		}
 		if(empty($line)){
+			closeFile($rp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 		$res=[];
@@ -1407,6 +1412,8 @@ function edit(){
 			$r_arr[]=$line;
 		}
 	if(empty($r_arr)){
+		closeFile($rp);
+		closeFile($fp);
 		return error($en?'The operation failed.':'失敗しました。');
 	}
 	
@@ -1457,6 +1464,8 @@ function edit(){
 			$alllog_arr[]=$_line;	
 		}
 		if(empty($alllog_arr)){
+			closeFile($rp);
+			closeFile($fp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 		$flag=false;
@@ -1472,7 +1481,7 @@ function edit(){
 		}
 		if(!$flag){
 			closeFile($rp);
-			closeFile ($fp);
+			closeFile($fp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 
@@ -1481,7 +1490,7 @@ function edit(){
 	writeFile($rp, implode("", $r_arr));
 
 	closeFile($rp);
-	closeFile ($fp);
+	closeFile($fp);
 
 	return header('Location: ./?resno='.$no);
 
@@ -1519,6 +1528,8 @@ function del(){
 			$line[]=$r_line;
 		}
 		if(empty($line)){
+			closeFile ($rp);
+			closeFile($fp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 	
@@ -1533,7 +1544,7 @@ function del(){
 				if(!$admindel){
 					if(!$pwd||!password_verify($pwd,$hash)){
 						closeFile ($rp);
-						closeFile ($fp);
+						closeFile($fp);
 						return error($en?'The operation failed.':'失敗しました。');
 					}
 				}
@@ -1543,6 +1554,8 @@ function del(){
 						$alllog_arr[]=$_line;	
 					}
 					if(empty($alllog_arr)){
+						closeFile ($rp);
+						closeFile($fp);
 						return error($en?'The operation failed.':'失敗しました。');
 					}
 					$flag=false;
@@ -1558,7 +1571,7 @@ function del(){
 					}
 					if(!$flag){
 						closeFile ($rp);
-						closeFile ($fp);
+						closeFile($fp);
 						return error($en?'The operation failed.':'失敗しました。');
 					}
 
@@ -1582,7 +1595,7 @@ function del(){
 			}
 		}
 		closeFile ($rp);
-		closeFile ($fp);
+		closeFile($fp);
 
 		if(!$find){
 			return error($en?'The article was not found.':'見つかりませんでした。');
