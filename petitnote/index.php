@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.16.3';
+$petit_ver='v0.16.5';
 $petit_lot='lot.220506';
 
 if(!isset($functions_ver)||$functions_ver<20220506){
@@ -283,7 +283,7 @@ function post(){
 		if($resto && $count_r_arr>$max_res){//最大レス数超過。
 			safe_unlink($upfile);
 			return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
-		}
+			}
 
 		$sub='Re: '.$oyasub;
 
