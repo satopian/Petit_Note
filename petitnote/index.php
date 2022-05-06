@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.16.1';
+$petit_ver='v0.16.2';
 $petit_lot='lot.220506';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
@@ -1231,18 +1231,17 @@ function confirmation_before_deletion ($edit_mode=''){
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
-			$line[]=$r_line;
+			if(!trim($r_line)){
+				continue;
+			}
+			$r_arr[]=$r_line;
 		}
-		if(empty($line)){
+		if(empty($r_arr)){
 			closeFile($rp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
-		$res=[];
 		$find=false;
-		foreach($line as $i =>$val){
-			if(!trim($val)){
-				continue;
-			}
+		foreach($r_arr as $i =>$val){
 			$_line=explode("\t",trim($val));
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
 			if($id===$time && $no===$_no){
@@ -1308,13 +1307,16 @@ function edit_form(){
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
-			$lines[]=$r_line;
-		}
-		foreach($lines as $val){
-			
-			if(!trim($val)){
+			if(!trim($r_line)){
 				continue;
 			}
+			$r_arr[]=$r_line;
+		}
+		if(empty($r_arr)){
+			closeFile($rp);
+			return error($en?'The operation failed.':'失敗しました。');
+		}
+		foreach($r_arr as $val){
 
 			$line=explode("\t",trim($val));
 
@@ -1441,9 +1443,6 @@ function edit(){
 	
 	$flag=false;
 	foreach($r_arr as $i => $line){
-		if(!trim($line)){
-			continue;
-		}
 
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id===$_time && $no===$_no){
@@ -1483,6 +1482,9 @@ function edit(){
 	if($_oya==='oya'){
 		
 		while ($_line = fgets($fp)) {
+			if(!trim($_line)){
+				continue;
+			}
 			$alllog_arr[]=$_line;	
 		}
 		if(empty($alllog_arr)){
@@ -1547,19 +1549,19 @@ function del(){
 		$rp=fopen(LOG_DIR."{$no}.log","r+");
 		flock($rp, LOCK_EX);
 		while ($r_line = fgets($rp)) {
-			$line[]=$r_line;
+			if(!trim($r_line)){
+				continue;
+			}
+			$r_arr[]=$r_line;
 		}
-		if(empty($line)){
+		if(empty($r_arr)){
 			closeFile ($rp);
 			closeFile($fp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 	
 		$find=false;
-		foreach($line as $i =>$val){
-			if(!trim($val)){
-				continue;
-			}
+		foreach($r_arr as $i =>$val){
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
 			if($id===$time && $no===$_no){
 			
@@ -1573,6 +1575,9 @@ function del(){
 				if($oya==='oya'){//スレッド削除
 					$alllog_arr=[];
 					while ($_line = fgets($fp)) {
+						if(!trim($_line)){
+							continue;
+						}
 						$alllog_arr[]=$_line;	
 					}
 					if(empty($alllog_arr)){
@@ -1597,7 +1602,7 @@ function del(){
 						return error($en?'The operation failed.':'失敗しました。');
 					}
 
-					foreach($line as $r_line) {//レスファイル
+					foreach($r_arr as $r_line) {//レスファイル
 						list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
 						
 						delete_files ($_imgfile, $_time);//一連のファイルを削除
@@ -1608,9 +1613,9 @@ function del(){
 			
 				}else{
 
-					unset($line[$i]);
+					unset($r_arr[$i]);
 					delete_files ($imgfile, $time);//一連のファイルを削除
-					writeFile ($rp,implode("",$line));
+					writeFile ($rp,implode("",$r_arr));
 				}
 				$find=true;
 				break;
@@ -1646,6 +1651,9 @@ function catalog($page=0,$q=''){
 	$fp=fopen(LOG_DIR."alllog.log","r");
 	$alllog_arr=[];
 	while ($_line = fgets($fp)) {
+		if(!trim($_line)){
+			continue;
+		}
 		$alllog_arr[]=$_line;	
 	}
 	fclose($fp);
@@ -1665,11 +1673,11 @@ function catalog($page=0,$q=''){
 				continue;	
 			}
 			$cp=fopen('log/'."{$no}.log","r");
-				while($_line=fgets($cp)){
-					if(!trim($_line)){
+				while($r_line=fgets($cp)){
+					if(!trim($r_line)){
 						continue;
 					}
-					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($_line));
+					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($r_line));
 					if ($imgfile&&$name===$q){
 						$result[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
 						++$j;
@@ -1749,6 +1757,9 @@ function view($page=0){
 	$fp=fopen(LOG_DIR."alllog.log","r");
 	$alllog_arr=[];
 	while ($_line = fgets($fp)) {
+		if(!trim($_line)){
+			continue;
+		}
 		$alllog_arr[]=$_line;	
 	}
 	fclose($fp);
@@ -1760,9 +1771,6 @@ function view($page=0){
 	//oyaのループ
 	foreach($alllog_arr as $oya => $alllog){
 
-		if(!trim($alllog)){
-			continue;
-		}
 		list($no)=explode("\t",trim($alllog));
 		//個別スレッドのループ
 		if(!is_file(LOG_DIR."{$no}.log")){
