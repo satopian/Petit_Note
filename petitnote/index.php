@@ -30,7 +30,7 @@ $skindir='template/'.$skindir;
 $petit_ver='v0.16.3';
 $petit_lot='lot.220506';
 
-if(!isset($functions_ver)||$functions_ver<20220417){
+if(!isset($functions_ver)||$functions_ver<20220506){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
