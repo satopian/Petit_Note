@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.16.0';
+$petit_ver='v0.16.1';
 $petit_lot='lot.220506';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
@@ -254,7 +254,6 @@ function post(){
 	if($resto && is_file(LOG_DIR."{$resto}.log")){//エラー処理
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
-		$line = fgets($rp);
 		$r_arr=[];
 		while($line = fgets($rp)){
 			if(!trim($line)){
