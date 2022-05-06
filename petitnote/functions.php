@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220430;
+$functions_ver=20220506;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -204,6 +204,9 @@ function check_cont_pass(){
 		
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgets($rp)) {
+			if(!trim($line)){
+				continue;
+			}
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id===$time && $no===$_no && $pwd && password_verify($pwd,$hash)){
 				closeFile ($rp);
