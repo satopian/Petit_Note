@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.16.2';
+$petit_ver='v0.16.3';
 $petit_lot='lot.220506';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
@@ -811,7 +811,6 @@ function paintcom(){
 	$userip = get_uip();
 	$usercode = filter_input(INPUT_COOKIE,'usercode');
 	//テンポラリ画像リスト作成
-	$tmplist = [];
 	$uresto = '';
 	$handle = opendir(TEMP_DIR);
 	$tmps = [];
@@ -1021,9 +1020,9 @@ function img_replace(){
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
-	$r_arr=[];
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
+	$r_arr=[];
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
@@ -1132,6 +1131,7 @@ function img_replace(){
 
 	
 	if($_oya ==='oya'){
+		$alllog_arr=[];
 		while ($_line = fgets($fp)) {
 			$alllog_arr[]=$_line;	
 		}
@@ -1230,6 +1230,7 @@ function confirmation_before_deletion ($edit_mode=''){
 				
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
+		$r_arr=[];
 		while ($r_line = fgets($rp)) {
 			if(!trim($r_line)){
 				continue;
@@ -1306,6 +1307,7 @@ function edit_form(){
 		
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
+		$r_arr=[];
 		while ($r_line = fgets($rp)) {
 			if(!trim($r_line)){
 				continue;
@@ -1480,7 +1482,7 @@ function edit(){
 
 	
 	if($_oya==='oya'){
-		
+		$alllog_arr=[];
 		while ($_line = fgets($fp)) {
 			if(!trim($_line)){
 				continue;
@@ -1548,6 +1550,7 @@ function del(){
 		
 		$rp=fopen(LOG_DIR."{$no}.log","r+");
 		flock($rp, LOCK_EX);
+		$r_arr=[];
 		while ($r_line = fgets($rp)) {
 			if(!trim($r_line)){
 				continue;
@@ -1700,6 +1703,7 @@ function catalog($page=0,$q=''){
 	//ページ番号から1ページ分のスレッド分とりだす
 	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
+	$out[$oya]=[];
 	foreach($alllog_arr as $oya => $line){
 		if(!$q){//検索結果は分割ずみ
 			$line=explode("\t",trim($line));
@@ -1777,6 +1781,7 @@ function view($page=0){
 			continue;	
 		}
 		$_res=[];
+		$out[$oya]=[];
 			$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
 			$s=0;
 			while ($line = fgets($rp)) {
@@ -1845,6 +1850,7 @@ function res ($resno){
 		$rresname = [];
 		$resname = '';
 			$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
+			$out[0]=[];
 			while ($line = fgets($rp)) {
 				if(!trim($line)){
 					continue;
