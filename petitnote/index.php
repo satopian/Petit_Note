@@ -283,7 +283,7 @@ function post(){
 		if($resto && $count_r_arr>$max_res){//最大レス数超過。
 			safe_unlink($upfile);
 			return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
-			}
+		}
 
 		$sub='Re: '.$oyasub;
 
@@ -1703,8 +1703,8 @@ function catalog($page=0,$q=''){
 	//ページ番号から1ページ分のスレッド分とりだす
 	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
-	$out[$oya]=[];
 	foreach($alllog_arr as $oya => $line){
+		$out[$oya]=[];
 		if(!$q){//検索結果は分割ずみ
 			$line=explode("\t",trim($line));
 		}
