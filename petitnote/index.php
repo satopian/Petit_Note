@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.15.8';
-$petit_lot='lot.220505';
+$petit_ver='v0.16.0';
+$petit_lot='lot.220506';
 
 if(!isset($functions_ver)||$functions_ver<20220417){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -250,23 +250,29 @@ function post(){
 		}
 		$resto='';//レス先がないお絵かきは新規投稿扱いにする。
 	}
-
+	$count_r_arr=0;
 	if($resto && is_file(LOG_DIR."{$resto}.log")){//エラー処理
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
 		$line = fgets($rp);
-		if(trim($line)){
-			list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=explode("\t",trim($line));
-			$check_elapsed_days = check_elapsed_days($postedtime);
-		closeFile ($rp);
+		$r_arr=[];
+		while($line = fgets($rp)){
+			if(!trim($line)){
+				continue;
+			}
+			$r_arr[]=$line;
 		}
+		closeFile ($rp);
+
+		list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=explode("\t",trim($r_arr[0]));
+		$check_elapsed_days = check_elapsed_days($postedtime);
+		$count_r_arr=count($r_arr);
 
 		if($pictmp2){//お絵かきの時は新規投稿にする
 
-			if($resto && !$check_elapsed_days){//お絵かきの時に日数を経過していたら新規投稿。
-				$resto='';
-			}
-			if($resto&&(count(file(LOG_DIR.$resto.'.log'))>$max_res)){//お絵かきの時に最大レス数を超過していたら新規投稿。
+		//お絵かきの時に日数を経過していたら新規投稿。
+		//お絵かきの時に最大レス数を超過していたら新規投稿。
+			if($resto && (!$check_elapsed_days || $count_r_arr>$max_res)){
 				$resto='';
 			}
 		}
@@ -275,7 +281,7 @@ function post(){
 			safe_unlink($upfile);
 			return error($en? 'This thread is too old to post.':'このスレッドには投稿できません。');
 		}
-		if($resto&&(count(file(LOG_DIR.$resto.'.log'))>$max_res)){//最大レス数超過。
+		if($resto && $count_r_arr>$max_res){//最大レス数超過。
 			safe_unlink($upfile);
 			return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
 			}
@@ -283,7 +289,6 @@ function post(){
 		$sub='Re: '.$oyasub;
 
 	}
-
 
 	//お絵かきアップロード
 	if($pictmp2 && is_file($tempfile)){
@@ -536,6 +541,9 @@ function post(){
 			flock($dp, LOCK_EX);
 
 			while ($line = fgets($dp)) {
+				if(!trim($line)){
+					continue;
+				}
 				list($d_no,$_sub,$_name,$_verified,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 
 			delete_files ($d_imgfile, $d_time);//一連のファイルを削除
@@ -693,6 +701,9 @@ function paint(){
 		
 			$rp=fopen(LOG_DIR."{$no}.log","r");
 			while ($line = fgets($rp)) {
+				if(!trim($line)){
+					continue;
+				}
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($line));
 				if($time===$time_ && (int)$no==$no_){
 					$resto=(trim($oya_)==='res') ? $no_ : '';
@@ -866,6 +877,9 @@ function to_continue(){
 		
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		while ($line = fgets($rp)) {
+			if(!trim($line)){
+				continue;
+			}
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id===$time && $no===$_no){
 				$flag=true;
@@ -929,6 +943,9 @@ function download_app_dat(){
 	
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		while ($line = fgets($rp)) {
+			if(!trim($line)){
+				continue;
+			}
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id==$time && $no===$_no){
 				if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
@@ -986,7 +1003,8 @@ function img_replace(){
 			//画像があり、認識コードがhitすれば抜ける
 		
 			if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $urepcode === $repcode){
-				$find=true;break;
+				$find=true;
+				break;
 			}
 
 		}
@@ -1008,8 +1026,11 @@ function img_replace(){
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 	while ($line = fgets($rp)) {
-			$r_arr[]=$line;
+		if(!trim($line)){
+			continue;
 		}
+		$r_arr[]=$line;
+	}
 	if(empty($r_arr)){
 		closeFile($rp);
 		closeFile($fp);
@@ -1035,7 +1056,6 @@ function img_replace(){
 		closeFile($fp);
 		return error($en?'The article was not found.':'見つかりませんでした。');
 	}
-	
 
 	$time = time().substr(microtime(),2,3);
 
@@ -1409,8 +1429,11 @@ function edit(){
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 	while ($line = fgets($rp)) {
-			$r_arr[]=$line;
+		if(!trim($line)){
+			continue;
 		}
+		$r_arr[]=$line;
+	}
 	if(empty($r_arr)){
 		closeFile($rp);
 		closeFile($fp);
@@ -1750,7 +1773,6 @@ function view($page=0){
 			$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
 			$s=0;
 			while ($line = fgets($rp)) {
-
 				if(!trim($line)){
 					continue;
 				}
