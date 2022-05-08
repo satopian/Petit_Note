@@ -1701,9 +1701,9 @@ function catalog($page=0,$q=''){
 	$count_alllog=count($alllog_arr);
 
 	//ページ番号から1ページ分のスレッド分とりだす
-	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
+	$articles=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
-	foreach($alllog_arr as $oya => $line){
+	foreach($articles as $oya => $line){
 		$out[$oya]=[];
 		if(!$q){//検索結果は分割ずみ
 			$line=explode("\t",trim($line));
@@ -1771,9 +1771,9 @@ function view($page=0){
 
 
 	//ページ番号から1ページ分のスレッドをとりだす
-	$alllog_arr=array_slice($alllog_arr,(int)$page,$pagedef,false);
+	$articles=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
-	foreach($alllog_arr as $oya => $alllog){
+	foreach($articles as $oya => $alllog){
 
 		list($no)=explode("\t",trim($alllog));
 		//個別スレッドのループ
