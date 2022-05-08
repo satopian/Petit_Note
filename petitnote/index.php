@@ -342,6 +342,9 @@ function post(){
 	flock($fp, LOCK_EX);
 	$alllog_arr=[];
 	while ($_line = fgets($fp)) {
+		if(!trim($_line)){
+			continue;
+		}
 		$alllog_arr[]=$_line;	
 	}
 	$img_md5='';
@@ -1133,6 +1136,9 @@ function img_replace(){
 	if($_oya ==='oya'){
 		$alllog_arr=[];
 		while ($_line = fgets($fp)) {
+			if(!trim($_line)){
+				continue;
+			}
 			$alllog_arr[]=$_line;	
 		}
 		if(empty($alllog_arr)){
@@ -1880,11 +1886,11 @@ function res ($resno){
 
 		$fp=fopen(LOG_DIR."alllog.log","r");
 		$articles=[];
-		while ($_line = fgets($fp)) {
+		while ($line = fgets($fp)) {
 			if(!trim($line)){
 				continue;
 			}
-			$articles[] = $_line;//$_lineから、情報を取り出す
+			$articles[] = $line;//$_lineから、情報を取り出す
 		}
 		fclose($fp);
 		$i=0;
