@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.16.5';
-$petit_lot='lot.220506';
+$petit_ver='v0.16.6';
+$petit_lot='lot.220508';
 
 if(!isset($functions_ver)||$functions_ver<20220506){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -1881,6 +1881,9 @@ function res ($resno){
 		$fp=fopen(LOG_DIR."alllog.log","r");
 		$articles=[];
 		while ($_line = fgets($fp)) {
+			if(!trim($line)){
+				continue;
+			}
 			$articles[] = $_line;//$_lineから、情報を取り出す
 		}
 		fclose($fp);
@@ -1900,8 +1903,10 @@ function res ($resno){
 		if($view_other_works){
 			$view_other_works=[];
 			$a=[];
-			for($j=($i-7);$j<($i+10);++$j){
-				$b=(isset($articles[$j])&&rtrim($articles[$j])) ? (create_res(explode("\t",trim($articles[$j])))):[];
+			$start_view=(($i-7)>=0) ? ($i-7) : 0;
+			$other_articles=array_slice($articles,$start_view,17,false);
+			foreach($other_articles as $val){
+				$b=create_res(explode("\t",trim($val)));
 				if(!empty($b)&&$b['img']&&$b['no']!==$resno){
 					$a[]=$b;
 				}
