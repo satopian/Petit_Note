@@ -369,7 +369,7 @@ function post(){
 			if(!trim($line)){
 				continue;
 			}
-		$chk_ex_line=explode("\t",trim($line));
+			$chk_ex_line=explode("\t",trim($line));
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
 			if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
@@ -548,7 +548,7 @@ function post(){
 				}
 				list($d_no,$_sub,$_name,$_verified,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 
-			delete_files ($d_imgfile, $d_time);//一連のファイルを削除
+				delete_files ($d_imgfile, $d_time);//一連のファイルを削除
 
 			}
 		safe_unlink(LOG_DIR.$d_no.'.log');//スレッド個別ログファイル削除
