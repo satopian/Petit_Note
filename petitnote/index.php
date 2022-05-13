@@ -20,14 +20,14 @@ if (function_exists('check_file') && $err = check_file(__DIR__.'/noticemail.inc'
 	return die($err);
 }
 
-require_once(__DIR__.'/config.php');	
+require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/thumbnail_gd.php');
 require_once(__DIR__.'/noticemail.inc');
 
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.16.6';
+$petit_ver='v0.16.8';
 $petit_lot='lot.220508';
 
 if(!isset($functions_ver)||$functions_ver<20220506){
@@ -228,7 +228,7 @@ function post(){
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
 		//描画時間を$userdataをもとに計算
-		if($starttime && is_numeric($starttime)){
+		if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
 			$painttime=(int)$postedtime-(int)$starttime;
 		}
 		if($resto && $picfile && !$use_res_upload && !$adminpost){
@@ -301,7 +301,7 @@ function post(){
 	$sub=str_replace(["\r\n","\r","\n","\t"],'',$sub);
 	$name=str_replace(["\r\n","\r","\n","\t"],'',$name);
 	$url=str_replace(["\r\n","\r","\n","\t"],'',$url);
-	$com=str_replace(["\r\n","\r","\n"],"\n",$com);
+	$com=str_replace(["\r\n","\r"],"\n",$com);
 	$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
 	$com=str_replace("\n",'"\n"',$com);
 	$com=str_replace("\t",'',$com);
@@ -938,27 +938,27 @@ function download_app_dat(){
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT);
 
-	if(is_file(LOG_DIR."{$no}.log")){
-
-		$flag=false;
-	
-		$rp=fopen(LOG_DIR."{$no}.log","r");
-		while ($line = fgets($rp)) {
-			if(!trim($line)){
-				continue;
-			}
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-			if($id==$time && $no===$_no){
-				if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
-					return error($en?'Password is incorrect.':'パスワードが違います。');
-				}
-				$flag=true;
-				break;
-
-			} 
-		}
-		closeFile ($rp);
+	if(!is_file(LOG_DIR."{$no}.log")){
+		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+
+	$rp=fopen(LOG_DIR."{$no}.log","r");
+	$flag=false;
+	while ($line = fgets($rp)) {
+		if(!trim($line)){
+			continue;
+		}
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+		if($id==$time && $no===$_no){
+			if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
+				return error($en?'Password is incorrect.':'パスワードが違います。');
+			}
+			$flag=true;
+			break;
+
+		} 
+	}
+	closeFile ($rp);
 	$filepath= ($flag && is_file(IMG_DIR.$time.$pchext)) ? IMG_DIR.$time.$pchext : '';
 	if(!$filepath){
 		return error($en?'The operation failed.':'失敗しました。');
@@ -1123,7 +1123,7 @@ function img_replace(){
 	//描画時間追加
 
 	$painttime = '';
-	if($starttime && is_numeric($starttime) && is_numeric($_painttime)){
+	if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
 		$psec=(int)$postedtime-(int)$starttime;
 		$painttime=(int)$_painttime+(int)$psec;
 	}
@@ -1232,41 +1232,42 @@ function confirmation_before_deletion ($edit_mode=''){
 	$id = t((string)filter_input(INPUT_POST,'id',FILTER_VALIDATE_INT));
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 
-	if(is_file(LOG_DIR."{$no}.log")){
-				
-		$rp=fopen(LOG_DIR."{$no}.log","r");
-		flock($rp, LOCK_EX);
-		$r_arr=[];
-		while ($r_line = fgets($rp)) {
-			if(!trim($r_line)){
-				continue;
-			}
-			$r_arr[]=$r_line;
-		}
-		if(empty($r_arr)){
-			closeFile($rp);
-			return error($en?'The operation failed.':'失敗しました。');
-		}
-		$find=false;
-		foreach($r_arr as $i =>$val){
-			$_line=explode("\t",trim($val));
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
-			if($id===$time && $no===$_no){
-
-				$out[0][]=create_res($_line);
-				$find=true;
-				break;
-				
-			}
-
-		}
-		if(!$find){
-			closeFile ($rp);
-			return error($en?'The article was not found.':'見つかりませんでした。');
-		}
-
-		closeFile ($rp);
+	if(!is_file(LOG_DIR."{$no}.log")){
+		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+
+	$rp=fopen(LOG_DIR."{$no}.log","r");
+	flock($rp, LOCK_EX);
+	$r_arr=[];
+	while ($r_line = fgets($rp)) {
+		if(!trim($r_line)){
+			continue;
+		}
+		$r_arr[]=$r_line;
+	}
+	if(empty($r_arr)){
+		closeFile($rp);
+		return error($en?'The operation failed.':'失敗しました。');
+	}
+	$find=false;
+	foreach($r_arr as $i =>$val){
+		$_line=explode("\t",trim($val));
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
+		if($id===$time && $no===$_no){
+
+			$out[0][]=create_res($_line);
+			$find=true;
+			break;
+			
+		}
+
+	}
+	if(!$find){
+		closeFile ($rp);
+		return error($en?'The article was not found.':'見つかりませんでした。');
+	}
+
+	closeFile ($rp);
 
 	$token=get_csrf_token();
 
@@ -1307,43 +1308,44 @@ function edit_form(){
 		list($id,$no)=explode(",",trim($id_and_no));
 	}
 
-	$flag=false;
-
-	if(is_file(LOG_DIR."{$no}.log")){
-		
-		$rp=fopen(LOG_DIR."{$no}.log","r");
-		flock($rp, LOCK_EX);
-		$r_arr=[];
-		while ($r_line = fgets($rp)) {
-			if(!trim($r_line)){
-				continue;
-			}
-			$r_arr[]=$r_line;
-		}
-		if(empty($r_arr)){
-			closeFile($rp);
-			return error($en?'The operation failed.':'失敗しました。');
-		}
-		foreach($r_arr as $val){
-
-			$line=explode("\t",trim($val));
-
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
-			if($id===$time && $no===$_no){
-			
-				if(!$admindel){
-
-					if(!check_elapsed_days($time)||!$pwd||!password_verify($pwd,$hash)){
-						closeFile($rp);
-						return error($en?'The operation failed.':'失敗しました。');
-					}
-				}
-				$flag=true;
-				break;
-			}
-		}
-			
+	if(!is_file(LOG_DIR."{$no}.log")){
+		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+		
+	$rp=fopen(LOG_DIR."{$no}.log","r");
+	flock($rp, LOCK_EX);
+	$r_arr=[];
+	while ($r_line = fgets($rp)) {
+		if(!trim($r_line)){
+			continue;
+		}
+		$r_arr[]=$r_line;
+	}
+	if(empty($r_arr)){
+		closeFile($rp);
+		return error($en?'The operation failed.':'失敗しました。');
+	}
+
+	$flag=false;
+	foreach($r_arr as $val){
+
+		$line=explode("\t",trim($val));
+
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+		if($id===$time && $no===$_no){
+		
+			if(!$admindel){
+
+				if(!check_elapsed_days($time)||!$pwd||!password_verify($pwd,$hash)){
+					closeFile($rp);
+					return error($en?'The operation failed.':'失敗しました。');
+				}
+			}
+			$flag=true;
+			break;
+		}
+	}
+
 	if(!$flag){
 		closeFile($rp);
 		return error($en?'The article was not found.':'見つかりませんでした。');
@@ -1415,11 +1417,14 @@ function edit(){
 	if(strlen($url) > 100) return error($en? 'URL is too long.':'URLが長すぎます。');
 	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
-	$sub=str_replace(["\r\n","\r","\n",],'',$sub);
-	$name=str_replace(["\r\n","\r","\n",],'',$name);
-	$com=str_replace(["\r\n","\r","\n",],"\n",$com);
+	$sub=str_replace(["\r\n","\r","\n","\t"],'',$sub);
+	$name=str_replace(["\r\n","\r","\n","\t"],'',$name);
+	$url=str_replace(["\r\n","\r","\n","\t"],'',$url);
+	$com=str_replace(["\r\n","\r"],"\n",$com);
 	$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
 	$com=str_replace("\n",'"\n"',$com);
+	$com=str_replace("\t",'',$com);
+
 	if(!$name){
 		if($name_input_required){
 			return error($en?'Please enter your name.':'名前がありません。');
@@ -1456,8 +1461,9 @@ function edit(){
 		if($id===$_time && $no===$_no){
 
 			if(!$admindel){
-
 				if(!check_elapsed_days($_time)||!$pwd||!password_verify($pwd,$_hash)){
+					closeFile($rp);
+					closeFile($fp);
 					return error($en?'The operation failed.':'失敗しました。');
 				}
 			}
@@ -1552,92 +1558,92 @@ function del(){
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
-	if(is_file(LOG_DIR."{$no}.log")){
-		
-		$rp=fopen(LOG_DIR."{$no}.log","r+");
-		flock($rp, LOCK_EX);
-		$r_arr=[];
-		while ($r_line = fgets($rp)) {
-			if(!trim($r_line)){
-				continue;
-			}
-			$r_arr[]=$r_line;
+	if(!is_file(LOG_DIR."{$no}.log")){
+		return error($en? 'The article does not exist.':'記事がありません。');
+	}
+	$rp=fopen(LOG_DIR."{$no}.log","r+");
+	flock($rp, LOCK_EX);
+	$r_arr=[];
+	while ($r_line = fgets($rp)) {
+		if(!trim($r_line)){
+			continue;
 		}
-		if(empty($r_arr)){
-			closeFile ($rp);
-			closeFile($fp);
-			return error($en?'The operation failed.':'失敗しました。');
-		}
-	
-		$find=false;
-		foreach($r_arr as $i =>$val){
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
-			if($id===$time && $no===$_no){
-			
-				if(!$admindel){
-					if(!$pwd||!password_verify($pwd,$hash)){
-						closeFile ($rp);
-						closeFile($fp);
-						return error($en?'The operation failed.':'失敗しました。');
-					}
-				}
-				if($oya==='oya'){//スレッド削除
-					$alllog_arr=[];
-					while ($_line = fgets($fp)) {
-						if(!trim($_line)){
-							continue;
-						}
-						$alllog_arr[]=$_line;	
-					}
-					if(empty($alllog_arr)){
-						closeFile ($rp);
-						closeFile($fp);
-						return error($en?'The operation failed.':'失敗しました。');
-					}
-					$flag=false;
-					foreach($alllog_arr as $i =>$_val){//全体ログ
-						list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
-						if(($id===$time_ && $no===$no_) &&
-						($admindel || ($pwd && password_verify($pwd,$hash_)))){
-
-							unset($alllog_arr[$i]);
-							$flag=true;
-							break;
-						}
-					}
-					if(!$flag){
-						closeFile ($rp);
-						closeFile($fp);
-						return error($en?'The operation failed.':'失敗しました。');
-					}
-
-					foreach($r_arr as $r_line) {//レスファイル
-						list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
-						
-						delete_files ($_imgfile, $_time);//一連のファイルを削除
-						
-					}
-					writeFile($fp,implode("",$alllog_arr));
-					safe_unlink(LOG_DIR.$no.'.log');
-			
-				}else{
-
-					unset($r_arr[$i]);
-					delete_files ($imgfile, $time);//一連のファイルを削除
-					writeFile ($rp,implode("",$r_arr));
-				}
-				$find=true;
-				break;
-			}
-		}
+		$r_arr[]=$r_line;
+	}
+	if(empty($r_arr)){
 		closeFile ($rp);
 		closeFile($fp);
-
-		if(!$find){
-			return error($en?'The article was not found.':'見つかりませんでした。');
-		}
-
+		return error($en?'The operation failed.':'失敗しました。');
 	}
+
+	$find=false;
+	foreach($r_arr as $i =>$val){
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
+		if($id===$time && $no===$_no){
+		
+			if(!$admindel){
+				if(!$pwd||!password_verify($pwd,$hash)){
+					closeFile ($rp);
+					closeFile($fp);
+					return error($en?'The operation failed.':'失敗しました。');
+				}
+			}
+			if($oya==='oya'){//スレッド削除
+				$alllog_arr=[];
+				while ($_line = fgets($fp)) {
+					if(!trim($_line)){
+						continue;
+					}
+					$alllog_arr[]=$_line;	
+				}
+				if(empty($alllog_arr)){
+					closeFile ($rp);
+					closeFile($fp);
+					return error($en?'The operation failed.':'失敗しました。');
+				}
+				$flag=false;
+				foreach($alllog_arr as $i =>$_val){//全体ログ
+					list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
+					if(($id===$time_ && $no===$no_) &&
+					($admindel || ($pwd && password_verify($pwd,$hash_)))){
+
+						unset($alllog_arr[$i]);
+						$flag=true;
+						break;
+					}
+				}
+				if(!$flag){
+					closeFile ($rp);
+					closeFile($fp);
+					return error($en?'The operation failed.':'失敗しました。');
+				}
+
+				foreach($r_arr as $r_line) {//レスファイル
+					list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
+					
+					delete_files ($_imgfile, $_time);//一連のファイルを削除
+					
+				}
+				writeFile($fp,implode("",$alllog_arr));
+				safe_unlink(LOG_DIR.$no.'.log');
+		
+			}else{
+
+				unset($r_arr[$i]);
+				delete_files ($imgfile, $time);//一連のファイルを削除
+				writeFile ($rp,implode("",$r_arr));
+			}
+			$find=true;
+			break;
+		}
+	}
+	closeFile ($rp);
+	closeFile($fp);
+
+	if(!$find){
+		return error($en?'The article was not found.':'見つかりませんでした。');
+	}
+
 	$resno=(string)filter_input(INPUT_POST,'postresno');
 	//多重送信防止
 	if(filter_input(INPUT_POST,'resmode')==='true'){
