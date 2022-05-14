@@ -27,10 +27,10 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.16.8';
-$petit_lot='lot.220508';
+$petit_ver='v0.17.0';
+$petit_lot='lot.220514';
 
-if(!isset($functions_ver)||$functions_ver<20220506){
+if(!isset($functions_ver)||$functions_ver<20220514){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
@@ -68,7 +68,6 @@ setcookie("usercode", $usercode, time()+(86400*365),"","",false,true);//1年間
 //初期化
 init();
 deltemp();//テンポラリ自動削除
-
 switch($mode){
 	case 'regist':
 		if($deny_all_posts){
@@ -283,7 +282,7 @@ function post(){
 		if($resto && $count_r_arr>$max_res){//最大レス数超過。
 			safe_unlink($upfile);
 			return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
-			}
+		}
 
 		$sub='Re: '.$oyasub;
 
@@ -974,52 +973,88 @@ function download_app_dat(){
 // 画像差し換え
 function img_replace(){
 
-	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$en;
+	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$en,$use_upload;
 
-	$no = t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
-	$id = t((string)filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
-	$pwd = filter_input(INPUT_GET, 'pwd');
-	$repcode = filter_input(INPUT_GET, 'repcode');
+	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
+	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
+	$id = t((string)filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT));
+	$id = $id ? $id :t((string)filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
+
+	$getpwd = t((string)filter_input(INPUT_GET, 'pwd'));
+	$postpwd = t((string)filter_input(INPUT_POST, 'pwd'));
+	$repcode = t((string)filter_input(INPUT_GET, 'repcode'));
 	$userip = t(get_uip());
 	//ホスト取得
 	$host = t(gethostbyaddr($userip));
 	//ユーザーid
 	$userid = t(getId($userip));
+	$getpwd = $getpwd ? hex2bin($getpwd): '';//バイナリに
+	$pwd = $getpwd ? 
+	openssl_decrypt($getpwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV):$postpwd;//復号化
 
+	$admindel=admindel_valid();
 
-	$pwd=hex2bin($pwd);//バイナリに
-	$pwd=openssl_decrypt($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//復号化
+	//アップロード画像の差し換え
+	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
+	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
+		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
+	} 
+	$tool='';
+	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $admindel)){
 
+		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
 
-	/*--- テンポラリ捜査 ---*/
-	$find=false;
-	$handle = opendir(TEMP_DIR);
-	while ($file = readdir($handle)) {
-		if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
-			$fp = fopen(TEMP_DIR.$file, "r");
-			$userdata = fread($fp, 1024);
-			fclose($fp);
-			list($uip,$uhost,$uagent,$imgext,$ucode,$urepcode,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");//区切りの"\t"を行末に
-			$file_name = pathinfo($file, PATHINFO_FILENAME );//拡張子除去
-			//画像があり、認識コードがhitすれば抜ける
-		
-			if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $urepcode === $repcode){
-				$find=true;
-				break;
-			}
-
+		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+			safe_unlink($up_tempfile);
+			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 		}
-	}
-	closedir($handle);
-	if(!$find){
-	return error($en?'The operation failed.':'失敗しました。');
-	}
-	$tempfile=TEMP_DIR.$file_name.$imgext;
 
+		check_csrf_token();
+		$tool = 'upload'; 
+		
+	}
+	$tempfile='';
+	$file_name='';
+	$starttime='';
+	$postedtime='';
+	if(!$up_tempfile && ($tool!=='upload')){
+		/*--- テンポラリ捜査 ---*/
+		$find=false;
+		$handle = opendir(TEMP_DIR);
+		while ($file = readdir($handle)) {
+			if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
+				$fp = fopen(TEMP_DIR.$file, "r");
+				$userdata = fread($fp, 1024);
+				fclose($fp);
+				list($uip,$uhost,$uagent,$imgext,$ucode,$urepcode,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");//区切りの"\t"を行末に
+				$file_name = pathinfo($file, PATHINFO_FILENAME );//拡張子除去
+				//画像があり、認識コードがhitすれば抜ける
+			
+				if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $urepcode === $repcode){
+					$find=true;
+					break;
+				}
+
+			}
+		}
+		closedir($handle);
+		if(!$find){
+		return error($en?'The operation failed.':'失敗しました。');
+		}
+		$tempfile=TEMP_DIR.$file_name.$imgext;
+	}
+	if(!is_file($up_tempfile) && !is_file($tempfile)){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
+
+		if($tool==='upload'){//該当記事が無い時はエラー
+			return error($en?'The operation failed.':'失敗しました。');
+		} 
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
+
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
@@ -1041,12 +1076,27 @@ function img_replace(){
 	$flag=false;
 	foreach($r_arr as $i => $line){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
-		if($id===$_time && $no===$_no && $pwd && password_verify($pwd,$_hash)){
+		if($id===$_time && $no===$_no){
+
+			if(($tool==='upload') && ($_tool!=='upload')) {
+
+				closeFile($rp);
+				closeFile($fp);
+				return error($en?'The operation failed.':'失敗しました。');
+			}
+
+			if(!$admindel){
+				if(!$pwd || !password_verify($pwd,$_hash)){
+					closeFile($rp);
+					closeFile($fp);
+					return error($en?'The operation failed.':'失敗しました。');
+				}
+			}
 			$flag=true;
 			break;
 		}
 	}
-	if(!check_elapsed_days($_time)){//指定日数より古い画像差し換えは新規投稿にする
+	if(!check_elapsed_days($_time)&&!$admindel){//指定日数より古い画像差し換えは新規投稿にする
 		closeFile($rp);
 		closeFile($fp);
 		return paintcom();
@@ -1057,12 +1107,21 @@ function img_replace(){
 		closeFile($fp);
 		return error($en?'The article was not found.':'見つかりませんでした。');
 	}
-
 	$time = time().substr(microtime(),2,3);
 
 	$upfile=IMG_DIR.$time.'.tmp';
-	copy($tempfile, $upfile);
-	if(!is_file($upfile)) return error($en?'The operation failed.':'失敗しました。');
+	if(($tool==='upload')&&($_tool==='upload')){
+		if(is_file($up_tempfile)){
+			move_uploaded_file($up_tempfile,$upfile);
+		}
+	}else{
+		if(is_file($tempfile)){
+			copy($tempfile, $upfile);
+		}
+	}
+	if(!is_file($upfile)){
+		return error($en?'The operation failed.':'失敗しました。');
+	} 
 	chmod($upfile,0606);
 
 	$filesize=filesize($upfile);
@@ -1289,7 +1348,9 @@ function confirmation_before_deletion ($edit_mode=''){
 }
 //編集画面
 function edit_form(){
-	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en;
+	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb;
+	$max_byte = $max_kb * 1024*2;
+
 
 	$token=get_csrf_token();
 	$admindel=admindel_valid();

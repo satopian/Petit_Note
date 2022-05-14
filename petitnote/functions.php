@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220506;
+$functions_ver=20220517;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -226,6 +226,7 @@ function create_res($line){
 	$res=[];
 
 	$continue = true;
+	$upload_image = false;
 
 	switch($tool){
 		case 'neo':
@@ -240,6 +241,7 @@ function create_res($line){
 		case 'upload':
 			$tool=$en?'Upload':'アップロード';
 			$continue = false;
+			$upload_image = true;
 			break;
 		default:
 			$tool='???';
@@ -275,6 +277,7 @@ function create_res($line){
 		'w' => is_numeric($w) ? $w :'',
 		'h' => is_numeric($h) ? $h :'',
 		'tool' => $tool,
+		'upload_image' => $upload_image,
 		'pchext' => $pchext,
 		'anime' => $anime,
 		'continue' => $check_elapsed_days ? $continue :'',

@@ -51,8 +51,20 @@
 	<span>TOOL:<?=h($res['tool'])?></span>
 	<?php if($res['painttime']):?>
 		<span><?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?></span>
-		
-		<?php endif;?>
+	<?php endif;?>
+
+	<?php if($res['upload_image']):?>
+		<form action="./" method="POST" enctype="multipart/form-data" class="postform">
+		<input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
+		<input type="hidden" name="pwd" value="<?=h($pwd)?>">
+		<input type="hidden" name="id" value="<?=h($time)?>">
+		<input type="hidden" name="no" value="<?=h($no)?>">
+		<input type="hidden" name="mode" value="picrep">
+		<input type="hidden" name="token" value="<?=h($token)?>">
+		<input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
+		<input type="submit" Value="<?php if($en):?>Replace<?php else:?>差し換え<?php endif;?>" class="form_button">
+		</form>
+	<?php endif;?>
 <?php endif;?>
 	<?php if($admindel):?>
 		<br>
