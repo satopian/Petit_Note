@@ -28,9 +28,9 @@ require_once(__DIR__.'/noticemail.inc');
 $skindir='template/'.$skindir;
 
 $petit_ver='v0.17.0';
-$petit_lot='lot.220514';
+$petit_lot='lot.220515';
 
-if(!isset($functions_ver)||$functions_ver<20220514){
+if(!isset($functions_ver)||$functions_ver<20220515){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
@@ -382,7 +382,7 @@ function post(){
 				$chk_images[$time_]=$chk_ex_line;//画像
 			}
 		}
-			fclose($cp);
+		fclose($cp);
 		}
 	}
 	krsort($chk_com);
@@ -435,7 +435,7 @@ function post(){
 			}
 		}
 
-	list($w,$h)=getimagesize($upfile);
+		list($w,$h)=getimagesize($upfile);
 		$_img_type=mime_content_type($upfile);
 		$ext=getImgType ($_img_type);
 		if (!$ext) {
@@ -450,7 +450,7 @@ function post(){
 	if(!$pictmp2 && $imgfile && is_file(IMG_DIR.$imgfile)){
 
 		$img_md5=md5_file(IMG_DIR.$imgfile);
-		
+
 		foreach($chk_images as $line){
 
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
@@ -713,7 +713,7 @@ function paint(){
 			}
 			closeFile ($rp);
 		}
-	
+
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
 
 		$_pch_ext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
@@ -728,10 +728,10 @@ function paint(){
 			$anime= false;
 			$imgfile = IMG_DIR.$imgfile;
 			if($_pch_ext==='.chi'){
-			$img_chi =IMG_DIR.$time.'.chi';
+				$img_chi =IMG_DIR.$time.'.chi';
 			}
 			if($_pch_ext==='.psd'){
-			$img_klecks =IMG_DIR.$time.'.psd';
+				$img_klecks =IMG_DIR.$time.'.psd';
 			}
 		}
 		if($type==='rep'){//画像差し換え
@@ -1072,7 +1072,7 @@ function img_replace(){
 		closeFile($fp);
 		return error($en?'The operation failed.':'失敗しました。');
 	}
-	
+
 	$flag=false;
 	foreach($r_arr as $i => $line){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
@@ -1191,7 +1191,6 @@ function img_replace(){
 
 	$r_arr[$i] = $new_line;
 
-	
 	if($_oya ==='oya'){
 		$alllog_arr=[];
 		while ($_line = fgets($fp)) {
@@ -1208,7 +1207,7 @@ function img_replace(){
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
-			
+
 			if($id===$time_ && $no===$no_ && $pwd && password_verify($pwd,$hash_)){
 				$alllog_arr[$i] = $new_line;
 				$flag=true;
@@ -1222,7 +1221,7 @@ function img_replace(){
 		}
 
 		writeFile($fp,implode("",$alllog_arr));
-		
+
 	}
 	writeFile($rp, implode("", $r_arr));
 	closeFile($rp);
@@ -1234,6 +1233,8 @@ function img_replace(){
 	safe_unlink($src);
 	safe_unlink($tempfile);
 	safe_unlink(TEMP_DIR.$file_name.".dat");
+
+	unset($_SESSION['userdel']);
 
 	return header('Location: ./?resno='.$no.'#'.$time);
 
@@ -1351,7 +1352,6 @@ function edit_form(){
 	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb;
 	$max_byte = $max_kb * 1024*2;
 
-
 	$token=get_csrf_token();
 	$admindel=admindel_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
@@ -1411,7 +1411,7 @@ function edit_form(){
 		closeFile($rp);
 		return error($en?'The article was not found.':'見つかりませんでした。');
 	}
-	closeFile($rp);	
+	closeFile($rp);
 
 	$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
@@ -1429,7 +1429,7 @@ function edit_form(){
 	$resno = $resno ? $resno : false;
 	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
-// HTML出力
+	// HTML出力
 	$templete='edit_form.html';
 	return include __DIR__.'/'.$skindir.$templete;
 
@@ -1514,7 +1514,7 @@ function edit(){
 		closeFile($fp);
 		return error($en?'The operation failed.':'失敗しました。');
 	}
-	
+
 	$flag=false;
 	foreach($r_arr as $i => $line){
 
@@ -1522,6 +1522,7 @@ function edit(){
 		if($id===$_time && $no===$_no){
 
 			if(!$admindel){
+
 				if(!check_elapsed_days($_time)||!$pwd||!password_verify($pwd,$_hash)){
 					closeFile($rp);
 					closeFile($fp);
@@ -1552,8 +1553,6 @@ function edit(){
 
 	$r_arr[$i] = $new_line;
 
-
-	
 	if($_oya==='oya'){
 		$alllog_arr=[];
 		while ($_line = fgets($fp)) {
@@ -1572,7 +1571,7 @@ function edit(){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 			if(($id===$time_ && $no===$no_) &&
 			($admindel || ($pwd && password_verify($pwd,$hash_)))){
-				
+
 				$alllog_arr[$i] = $new_line;
 				$flag=true;
 				break;
@@ -1591,7 +1590,9 @@ function edit(){
 	closeFile($rp);
 	closeFile($fp);
 
-	return header('Location: ./?resno='.$no);
+	unset($_SESSION['userdel']);
+
+	return header('Location: ./?resno='.$no.'#'.$_time);
 
 }
 
@@ -1705,6 +1706,7 @@ function del(){
 		return error($en?'The article was not found.':'見つかりませんでした。');
 	}
 
+	unset($_SESSION['userdel']);
 	$resno=(string)filter_input(INPUT_POST,'postresno');
 	//多重送信防止
 	if(filter_input(INPUT_POST,'resmode')==='true'){
@@ -1749,20 +1751,20 @@ function catalog($page=0,$q=''){
 				continue;	
 			}
 			$cp=fopen('log/'."{$no}.log","r");
-				while($r_line=fgets($cp)){
-					if(!trim($r_line)){
-						continue;
-					}
-					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($r_line));
-					if ($imgfile&&$name===$q){
-						$result[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
-						++$j;
-						if($j>120){
-							break 2;
-						}
+			while($r_line=fgets($cp)){
+				if(!trim($r_line)){
+					continue;
+				}
+				list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($r_line));
+				if ($imgfile&&$name===$q){
+					$result[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
+					++$j;
+					if($j>120){
+						break 2;
 					}
 				}
-				fclose($cp);	
+			}
+			fclose($cp);	
 			if($i>300){
 				break;
 			}
