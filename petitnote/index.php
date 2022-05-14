@@ -995,7 +995,11 @@ function img_replace(){
 	$admindel=admindel_valid();
 
 	//アップロード画像の差し換え
+	
 	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
+	if (isset($_FILES['imgfile']['error']) && $_FILES['imgfile']['error'] === UPLOAD_ERR_NO_FILE){
+		return error($en?'Please attach an image.':'画像がありません。');
+	} 
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
 		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
 	} 
@@ -1034,7 +1038,6 @@ function img_replace(){
 					$find=true;
 					break;
 				}
-
 			}
 		}
 		closedir($handle);
@@ -1043,14 +1046,14 @@ function img_replace(){
 		}
 		$tempfile=TEMP_DIR.$file_name.$imgext;
 	}
-	if(!is_file($up_tempfile) && !is_file($tempfile)){
-		return error($en?'The operation failed.':'失敗しました。');
+	if($up_tempfile && ($tool==='upload') && !is_file($up_tempfile)){
+		return error($en?'Please attach an image.':'画像がありません。');
 	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
 
 		if($tool==='upload'){//該当記事が無い時はエラー
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en? 'The article does not exist.':'記事がありません。');
 		} 
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
