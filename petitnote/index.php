@@ -604,7 +604,7 @@ function post(){
 
 	//多重送信防止
 	if($resto){
-		return header('Location: ./?resno='.$resto);
+		return header('Location: ./?resno='.$resto.'#'.$time);
 	}
 	
 return header('Location: ./');
