@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.17.0';
+$petit_ver='v0.17.2';
 $petit_lot='lot.220515';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -448,13 +448,10 @@ function post(){
 	}
 	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 	if(!$pictmp2 && $imgfile && is_file(IMG_DIR.$imgfile)){
-
+		
 		$img_md5=md5_file(IMG_DIR.$imgfile);
-
 		foreach($chk_images as $line){
-
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
-
 			if($log_md5 && ($log_md5 === $img_md5)){
 				safe_unlink(IMG_DIR.$imgfile);
 				return error($en?'Image already exists.':'同じ画像がありました。');
@@ -1059,6 +1056,17 @@ function img_replace(){
 
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
+	$alllog_arr=[];
+	while ($_line = fgets($fp)) {
+		if(!trim($_line)){
+			continue;
+		}
+		$alllog_arr[]=$_line;	
+	}
+	if(empty($alllog_arr)){
+		closeFile($fp);
+		return error($en?'The operation failed.':'失敗しました。');
+	}
 
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
@@ -1155,6 +1163,57 @@ function img_replace(){
 	rename($upfile,IMG_DIR.$imgfile);
 	chmod(IMG_DIR.$imgfile,0606);
 
+	if($tool==='upload'){
+
+		//チェックするスレッド数。 
+		$n= 15;
+		$chk_log_arr=array_slice($alllog_arr,0,$n,false);
+		$chk_resnos=[];
+		foreach($chk_log_arr as $chk_log){
+			list($chk_resno)=explode("\t",$chk_log);
+			$chk_resnos[]=$chk_resno;
+		}
+
+		
+		foreach($r_arr as $chkimage){
+
+			$chk_ex_line=explode("\t",trim($chkimage));
+			list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=$chk_ex_line;
+
+			if(((int)$time-(int)$chk_time)<1000){//投稿時刻の重複回避が主目的
+				safe_unlink($upfile);
+				return error($en? 'Please wait a little.':'少し待ってください。');
+			}
+			if($chk_log_md5 && ($chk_log_md5 === $img_md5)){
+				safe_unlink(IMG_DIR.$imgfile);
+				return error($en?'Image already exists.':'同じ画像がありました。');
+			}
+		}
+
+
+		foreach($chk_resnos as $chk_resno){
+			if(($chk_resno!==$no)&&is_file(LOG_DIR."{$chk_resno}.log")){
+				$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
+				while($line=fgets($cp)){
+					if(!trim($line)){
+						continue;
+					}
+					$chk_ex_line=explode("\t",trim($line));
+					list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=$chk_ex_line;
+					if(((int)$time-(int)$chk_time)<1000){//投稿時刻の重複回避が主目的
+						safe_unlink($upfile);
+						return error($en? 'Please wait a little.':'少し待ってください。');
+					}
+					if($chk_log_md5 && ($chk_log_md5 === $img_md5)){
+
+						safe_unlink(IMG_DIR.$imgfile);
+						return error($en?'Image already exists.':'同じ画像がありました。');
+					}
+				}
+				fclose($cp);
+			}
+		}
+	}
 	$src='';
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
@@ -1194,18 +1253,6 @@ function img_replace(){
 	$r_arr[$i] = $new_line;
 
 	if($_oya ==='oya'){
-		$alllog_arr=[];
-		while ($_line = fgets($fp)) {
-			if(!trim($_line)){
-				continue;
-			}
-			$alllog_arr[]=$_line;	
-		}
-		if(empty($alllog_arr)){
-			closeFile($rp);
-			closeFile($fp);
-			return error($en?'The operation failed.':'失敗しました。');
-		}
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
