@@ -995,7 +995,6 @@ function img_replace(){
 	$admindel=admindel_valid();
 
 	//アップロード画像の差し換え
-	
 	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	if (isset($_FILES['imgfile']['error']) && $_FILES['imgfile']['error'] === UPLOAD_ERR_NO_FILE){
 		return error($en?'Please attach an image.':'画像がありません。');
