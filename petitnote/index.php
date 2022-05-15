@@ -1265,10 +1265,12 @@ function img_replace(){
 	safe_unlink($src);
 	safe_unlink($tempfile);
 	safe_unlink(TEMP_DIR.$file_name.".dat");
+
 	if($tool==='upload'){
 		return edit_form($time,$no);//編集画面にもどる
 	}
 	unset($_SESSION['userdel']);
+
 	return header('Location: ./?resno='.$no.'#'.$time);
 
 }
