@@ -318,7 +318,7 @@ function post(){
 	}
 
 	if(!$resto && !$allow_coments_only && !$upfile && !$adminpost){
-	return error($en?'Please attach an image.':'画像がありません。');
+	return error($en?'Please attach an image.':'画像を添付してください。');
 	}
 
 	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
@@ -994,7 +994,7 @@ function img_replace(){
 	//アップロード画像の差し換え
 	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	if (isset($_FILES['imgfile']['error']) && $_FILES['imgfile']['error'] === UPLOAD_ERR_NO_FILE){
-		return error($en?'Please attach an image.':'画像がありません。');
+		return error($en?'Please attach an image.':'画像を添付してください。');
 	} 
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
 		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
@@ -1043,7 +1043,7 @@ function img_replace(){
 		$tempfile=TEMP_DIR.$file_name.$imgext;
 	}
 	if($up_tempfile && ($tool==='upload') && !is_file($up_tempfile)){
-		return error($en?'Please attach an image.':'画像がありません。');
+		return error($en?'Please attach an image.':'画像を添付してください。');
 	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
@@ -1149,7 +1149,7 @@ function img_replace(){
 		
 	$img_type=mime_content_type($upfile);
 
-	$imgext = getImgType($img_type, $upfile);
+	$imgext = getImgType($img_type);
 
 	if (!$imgext) {
 		safe_unlink($upfile);
