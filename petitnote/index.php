@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.17.5';
+$petit_ver='v0.18.0';
 $petit_lot='lot.220515';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -1265,9 +1265,10 @@ function img_replace(){
 	safe_unlink($src);
 	safe_unlink($tempfile);
 	safe_unlink(TEMP_DIR.$file_name.".dat");
-
+	if($tool==='upload'){
+		return edit_form($time,$no);//編集画面にもどる
+	}
 	unset($_SESSION['userdel']);
-
 	return header('Location: ./?resno='.$no.'#'.$time);
 
 }
@@ -1380,7 +1381,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	return error($en?'The operation failed.':'失敗しました。');
 }
 //編集画面
-function edit_form(){
+function edit_form($id='',$no=''){
 	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb;
 	$max_byte = $max_kb * 1024*2;
 
@@ -1396,7 +1397,7 @@ function edit_form(){
 		return error($en?'The operation failed.':'失敗しました。');
 	}
 	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
-	$id=$no='';
+
 	if($id_and_no){
 		list($id,$no)=explode(",",trim($id_and_no));
 	}
