@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="<?=h($skindir)?>index.css">
+	<title><?=h($boardname)?></title> 
+
+
+</head>
+<body>
+	<div class="container">
+		<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+		<nav class="menu_wrap" >
+			<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
+			<a href="#bottom">▽</a>
+			</nav>
+<h2 class="article_title"><?php if($en):?>Image replace<?php else:?>画像差し換え<?php endif;?></h2>
+	<hr>
+<?php session_sta();?>
+<div class="posted_img_form">
+<img src="<?=h($_SESSION['before_img_rep'][$id])?>" alt="">
+</div>
+
+<form action="./" method="POST" enctype="multipart/form-data" class="aikotoba">
+<input type="hidden" name="rep_up_img" value="true"> 
+<input type="hidden" name="pwd" value="<?=h($pwd)?>"> 
+<input type="hidden" name="id" value="<?=h($id)?>"> 
+<input type="hidden" name="no" value="<?=h($no)?>"> 
+<input type="hidden" name="mode" value="picrep"> 
+<input type="hidden" name="token" value="<?=($token)?>"> 
+<input type="submit" value="<?php if($en):?>Replace<?php else:?>この画像に差し換える<?php endif;?>">
+</form>
+<form action="./" method="POST" enctype="multipart/form-data" class="aikotoba">
+<input type="hidden" name="mode" value="edit_form"> 
+<input type="hidden" name="pwd" value="<?=h($pwd)?>"> 
+<input type="hidden" name="id_and_no" value="<?=h($id)?>,<?=h($no)?>"> 
+<input type="submit" value="<?php if($en):?>Cancel<?php else:?>キャンセル<?php endif;?>">
+</form>
+
+<div id="bottom"></div>
+	</div>
+<script src="<?=h($skindir)?>jquery-3.5.1.min.js"></script>
+<script>
+	window.onpageshow = function(){
+		var $btn = $('[type="submit"]');
+		//disbledを解除
+		$btn.prop("disabled", false);
+		$btn.click(function(){//送信ボタン2度押し対策
+			$(this).prop('disabled',true);
+			$(this).closest('form').submit();
+		});
+	}
+</script>
+</body>
+</html>

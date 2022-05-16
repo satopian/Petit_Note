@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.0';
-$petit_lot='lot.220515';
+$petit_ver='v0.18.1';
+$petit_lot='lot.220516';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -88,6 +88,8 @@ switch($mode){
 		return paint();
 	case 'picrep':
 		return img_replace();
+	case 'before_img_rep':
+		return before_img_rep();
 	case 'before_del':
 		return confirmation_before_deletion();
 	case 'edit_form':
@@ -967,6 +969,60 @@ function download_app_dat(){
 	readfile($filepath);
 }
 
+
+
+// 画像差し換え前
+function before_img_rep(){
+	global $en,$use_upload,$skindir,$boardname;
+
+	session_sta();
+
+	$admindel=admindel_valid();
+
+	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
+	$id = t((string)filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT));
+	$pwd = t((string)filter_input(INPUT_POST, 'pwd'));
+
+	$time = time().substr(microtime(),2,3);
+
+	//アップロード画像の差し換え
+	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
+	if (isset($_FILES['imgfile']['error']) && $_FILES['imgfile']['error'] === UPLOAD_ERR_NO_FILE){
+		return error($en?'Please attach an image.':'画像を添付してください。');
+	} 
+	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
+		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
+	} 
+	$tool='';
+	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $admindel)){
+
+		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
+		$imgext = getImgType($img_type);
+
+		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+			safe_unlink($up_tempfile);
+			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
+		}
+
+		check_csrf_token();
+		$token=get_csrf_token();
+
+		$tool = 'upload'; 
+		
+	}
+	$upfile=TEMP_DIR.'repimg_'.$time.$imgext;
+
+	if($tool==='upload'){
+		if(is_file($up_tempfile)){
+			move_uploaded_file($up_tempfile,$upfile);
+		}
+	$_SESSION['before_img_rep'][$id]=$upfile;
+	}
+
+	$templete='before_img_rep.html';
+	return include __DIR__.'/'.$skindir.$templete;
+
+}
 // 画像差し換え
 function img_replace(){
 
@@ -992,17 +1048,15 @@ function img_replace(){
 	$admindel=admindel_valid();
 
 	//アップロード画像の差し換え
-	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
-	if (isset($_FILES['imgfile']['error']) && $_FILES['imgfile']['error'] === UPLOAD_ERR_NO_FILE){
-		return error($en?'Please attach an image.':'画像を添付してください。');
-	} 
-	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
-	} 
-	$tool='';
-	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $admindel)){
 
-		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
+	$rep_up_img = filter_input(INPUT_POST, 'rep_up_img',FILTER_VALIDATE_BOOLEAN);
+	$tool='';
+
+	$up_tempfile=isset($_SESSION['before_img_rep'][$id]) ? $_SESSION['before_img_rep'][$id] : '';
+
+	if ($rep_up_img && $up_tempfile && ($use_upload || $admindel)){
+
+		$img_type=mime_content_type($_SESSION['before_img_rep'][$id]);
 
 		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
 			safe_unlink($up_tempfile);
@@ -1122,7 +1176,7 @@ function img_replace(){
 	$upfile=IMG_DIR.$time.'.tmp';
 	if(($tool==='upload')&&($_tool==='upload')){
 		if(is_file($up_tempfile)){
-			move_uploaded_file($up_tempfile,$upfile);
+			copy($up_tempfile,$upfile);
 		}
 	}else{
 		if(is_file($tempfile)){
@@ -1264,13 +1318,21 @@ function img_replace(){
 	//ワークファイル削除
 	safe_unlink($src);
 	safe_unlink($tempfile);
+	safe_unlink($up_tempfile);
 	safe_unlink(TEMP_DIR.$file_name.".dat");
 
+	if(isset($_SESSION['before_img_rep'])){
+		foreach($_SESSION['before_img_rep'] as $tempimage){
+			if(strpos($tempimage,'repimg_')!==false){
+			safe_unlink($tempimage);
+			}
+		}
+		unset($_SESSION['before_img_rep']);
+	}
 	if($tool==='upload'){
 		return edit_form($time,$no);//編集画面にもどる
 	}
 	unset($_SESSION['userdel']);
-
 	return header('Location: ./?resno='.$no.'#'.$time);
 
 }
@@ -1300,7 +1362,7 @@ function pchview(){
 function confirmation_before_deletion ($edit_mode=''){
 
 	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en;
-		//管理者判定処理
+	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba=aikotoba_valid();
@@ -1386,10 +1448,11 @@ function confirmation_before_deletion ($edit_mode=''){
 function edit_form($id='',$no=''){
 	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb;
 	$max_byte = $max_kb * 1024*2;
-
+	session_sta();
 	$token=get_csrf_token();
 	$admindel=admindel_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+
 
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
@@ -1402,6 +1465,14 @@ function edit_form($id='',$no=''){
 
 	if($id_and_no){
 		list($id,$no)=explode(",",trim($id_and_no));
+	}
+	if(isset($_SESSION['before_img_rep'])){
+		foreach($_SESSION['before_img_rep'] as $tempimage){
+			if(strpos($tempimage,'repimg_')!==false){
+			safe_unlink($tempimage);
+			}
+		}
+		unset($_SESSION['before_img_rep']);
 	}
 
 	if(!is_file(LOG_DIR."{$no}.log")){
