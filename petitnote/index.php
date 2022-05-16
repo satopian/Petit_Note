@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.1';
+$petit_ver='v0.18.2';
 $petit_lot='lot.220516';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -976,7 +976,8 @@ function before_img_rep(){
 	global $en,$use_upload,$skindir,$boardname;
 
 	session_sta();
-
+	check_csrf_token();
+	$token=get_csrf_token();
 	$admindel=admindel_valid();
 
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
@@ -1003,14 +1004,10 @@ function before_img_rep(){
 			safe_unlink($up_tempfile);
 			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 		}
-
-		check_csrf_token();
-		$token=get_csrf_token();
-
 		$tool = 'upload'; 
 		
 	}
-	$upfile=TEMP_DIR.'repimg_'.$time.$imgext;
+	$upfile=TEMP_DIR.'repimg-'.$time.$imgext;
 
 	if($tool==='upload'){
 		if(is_file($up_tempfile)){
@@ -1097,7 +1094,7 @@ function img_replace(){
 		$tempfile=TEMP_DIR.$file_name.$imgext;
 	}
 	if($up_tempfile && ($tool==='upload') && !is_file($up_tempfile)){
-		return error($en?'Please attach an image.':'画像を添付してください。');
+		return error($en?'The operation failed.':'失敗しました。');
 	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
@@ -1323,7 +1320,7 @@ function img_replace(){
 
 	if(isset($_SESSION['before_img_rep'])){
 		foreach($_SESSION['before_img_rep'] as $tempimage){
-			if(strpos($tempimage,'repimg_')!==false){
+			if(strpos($tempimage,'repimg-')!==false){
 			safe_unlink($tempimage);
 			}
 		}
@@ -1468,7 +1465,7 @@ function edit_form($id='',$no=''){
 	}
 	if(isset($_SESSION['before_img_rep'])){
 		foreach($_SESSION['before_img_rep'] as $tempimage){
-			if(strpos($tempimage,'repimg_')!==false){
+			if(strpos($tempimage,'repimg-')!==false){
 			safe_unlink($tempimage);
 			}
 		}
