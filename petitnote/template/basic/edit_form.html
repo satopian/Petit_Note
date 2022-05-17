@@ -19,10 +19,7 @@
 <nav class="menu_wrap">
 <span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 <?php if($userdel || $admindel):?>
-	<?php
-	$page= ($page !==false) ? '&page='.$page : ($resno!==false ? '&resno='.$resno :'');
-	?>
-	<span>[<a href="./?mode=logout<?=h($page)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
+	<span>[<a href="./?mode=logout&resno=<?=h($no)?>#<?=h($time)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
 <?php else:?>
 	<span>[<a href="./?mode=userdel&page=<?=h($page)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
 <?php endif;?>
@@ -64,6 +61,11 @@
 		<input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
 		<input type="submit" Value="<?php if($en):?>Replace<?php else:?>差し換え<?php endif;?>" class="form_button">
 		</form>
+		<?php if($err_msg):?>
+			<div class="error">
+			<?=h($err_msg)?>
+			</div>
+		<?php endif;?>
 	<?php endif;?>
 <?php endif;?>
 	<?php if($admindel):?>
@@ -71,6 +73,7 @@
 		HOST:<?=h($res['host'])?>
 		<?php endif;?> 
 	</div>
+
 		<?php if($res['img']):?>
 
 			<div class="posted_image" <?php if($res['w']>747):?>style="float:none;margin-right:0"<?php endif;?>>

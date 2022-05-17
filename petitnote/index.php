@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.2';
+$petit_ver='v0.18.5';
 $petit_lot='lot.220516';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -374,7 +374,7 @@ function post(){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
 			if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
-
+				closeFile($fp);
 				return error($en? 'Please wait a little.':'少し待ってください。');
 			}
 			if($host === $host_){
@@ -394,18 +394,21 @@ function post(){
 		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
 
 		if($com && ($com === $_com_)){
+			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en?'Post once by this comment.':'同じコメントがありました。');
 		}
 
 		// 画像アップロードの場合
 		if($upfile && (time()-substr($_time_,0,-3))<30){
+			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 
 		}
 		//コメントの場合
 		if((time()-substr($_time_,0,-3))<15){
+			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
@@ -432,6 +435,7 @@ function post(){
 		if(!$pictmp2){
 			clearstatcache();
 			if(filesize($upfile) > $max_kb*1024){
+				closeFile($fp);
 				safe_unlink($upfile);
 			return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを超えています。");
 			}
@@ -441,6 +445,7 @@ function post(){
 		$_img_type=mime_content_type($upfile);
 		$ext=getImgType ($_img_type);
 		if (!$ext) {
+			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 		}
@@ -455,6 +460,7 @@ function post(){
 		foreach($chk_images as $line){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
 			if($log_md5 && ($log_md5 === $img_md5)){
+				closeFile($fp);
 				safe_unlink(IMG_DIR.$imgfile);
 				return error($en?'Image already exists.':'同じ画像がありました。');
 			}
@@ -1181,6 +1187,8 @@ function img_replace(){
 		}
 	}
 	if(!is_file($upfile)){
+		closeFile($rp);
+		closeFile($fp);
 		return error($en?'The operation failed.':'失敗しました。');
 	} 
 	chmod($upfile,0606);
@@ -1203,6 +1211,8 @@ function img_replace(){
 	$imgext = getImgType($img_type);
 
 	if (!$imgext) {
+		closeFile($fp);
+		closeFile($rp);
 		safe_unlink($upfile);
 		return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 	}
@@ -1245,7 +1255,9 @@ function img_replace(){
 		}
 		if(($tool==='upload') && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
 			safe_unlink(IMG_DIR.$imgfile);
-			return error($en?'Image already exists.':'同じ画像がありました。');
+			closeFile($fp);//削除不可
+			closeFile($rp);
+			return edit_form($id,$no,$en?'Image already exists.':'同じ画像がありました。');//ファイルのロックを解除してから別処理へ
 		}
 	}
 	$src='';
@@ -1442,14 +1454,14 @@ function confirmation_before_deletion ($edit_mode=''){
 	return error($en?'The operation failed.':'失敗しました。');
 }
 //編集画面
-function edit_form($id='',$no=''){
+function edit_form($id='',$no='',$err_msg=''){
+
 	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb;
 	$max_byte = $max_kb * 1024*2;
 	session_sta();
 	$token=get_csrf_token();
 	$admindel=admindel_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-
 
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
@@ -1537,6 +1549,7 @@ function edit_form($id='',$no=''){
 	return include __DIR__.'/'.$skindir.$templete;
 
 }
+
 //編集
 function edit(){
 	global $name_input_required,$max_com,$en;
