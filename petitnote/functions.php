@@ -465,7 +465,7 @@ function deltemp(){
 			//仮差し換えアップロードファイル削除
 			$lapse = time() - filemtime(TEMP_DIR.$file);
 			if(strpos($file,'repimg-')!==false||strpos($file,'pchup-')!==false) {
-					if($lapse > (300)){//5分
+					if($lapse > (1800)){//30分
 					safe_unlink(TEMP_DIR.$file);
 				}
 			}else{
