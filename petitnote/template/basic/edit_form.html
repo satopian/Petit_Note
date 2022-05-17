@@ -56,16 +56,11 @@
 		<input type="hidden" name="pwd" value="<?=h($pwd)?>">
 		<input type="hidden" name="id" value="<?=h($time)?>">
 		<input type="hidden" name="no" value="<?=h($no)?>">
-		<input type="hidden" name="mode" value="before_img_rep">
+		<input type="hidden" name="mode" value="picrep">
 		<input type="hidden" name="token" value="<?=h($token)?>">
 		<input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
 		<input type="submit" Value="<?php if($en):?>Replace<?php else:?>差し換え<?php endif;?>" class="form_button">
 		</form>
-		<?php if($err_msg):?>
-			<div class="error">
-			<?=h($err_msg)?>
-			</div>
-		<?php endif;?>
 	<?php endif;?>
 <?php endif;?>
 	<?php if($admindel):?>
@@ -73,7 +68,6 @@
 		HOST:<?=h($res['host'])?>
 		<?php endif;?> 
 	</div>
-
 		<?php if($res['img']):?>
 
 			<div class="posted_image" <?php if($res['w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
@@ -134,7 +128,6 @@
 <br>
 <span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
 <!--http://wondercatstudio.com/-->
-</div>
 </div>
 </div>
 </div>
