@@ -464,7 +464,7 @@ function deltemp(){
 			//pchアップロードペイントファイル削除
 			//仮差し換えアップロードファイル削除
 			$lapse = time() - filemtime(TEMP_DIR.$file);
-			if(strpos($file,'pchup-')!==false) {
+			if(strpos($file,'pchup-')===0) {
 				if($lapse > (300)){//5分
 					safe_unlink(TEMP_DIR.$file);
 				}
