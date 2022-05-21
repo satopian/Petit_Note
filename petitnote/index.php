@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.9';
+$petit_ver='v0.18.10';
 $petit_lot='lot.220522';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -251,8 +251,11 @@ function post(){
 	}
 	$count_r_arr=0;
 	$r_oya='';
-	if($resto && is_file(LOG_DIR."{$resto}.log")){//エラー処理
-			
+	if($resto){//エラー処理
+		
+		if(!is_file(LOG_DIR."{$resto}.log")){
+			return error($en? 'The article does not exist.':'記事がありません。');
+		}
 		$rp=fopen(LOG_DIR."$resto.log","r");
 		$r_arr=[];
 		while($line = fgets($rp)){
@@ -275,6 +278,12 @@ function post(){
 			if($resto && (!$check_elapsed_days || $count_r_arr>$max_res)){
 				$resto='';
 			}
+			if($resto && ($r_oya!=='oya')){
+				$resto='';
+			}
+		}
+		if($resto && ($r_oya!=='oya')){
+			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		//お絵かき以外。
 		if($resto && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
@@ -511,7 +520,7 @@ function post(){
 	$newline='';
 	if($resto){//レスの時はスレッド別ログに追記
 		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
-		if(($r_oya==='oya')&&is_file(LOG_DIR."{$resto}.log")){
+		if(is_file(LOG_DIR."{$resto}.log")){
 			file_put_contents(LOG_DIR.$resto.'.log',$r_line,FILE_APPEND | LOCK_EX);
 		}else{
 			return error($en? 'The article does not exist.':'記事がありません。');
@@ -1842,6 +1851,9 @@ function catalog($page=0,$q=''){
 		continue;
 		}	
 		$out[$oya][] = create_res($line);//$lineから、情報を取り出す
+		if(empty($out[$oya])||$out[$oya][0]['oya']!=='oya'){
+			unset($out[$oya]);
+		}
 
 	}
 
