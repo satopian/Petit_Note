@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.8';
-$petit_lot='lot.220521';
+$petit_ver='v0.18.9';
+$petit_lot='lot.220522';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -250,6 +250,7 @@ function post(){
 		$resto='';//レス先がないお絵かきは新規投稿扱いにする。
 	}
 	$count_r_arr=0;
+	$r_oya='';
 	if($resto && is_file(LOG_DIR."{$resto}.log")){//エラー処理
 			
 		$rp=fopen(LOG_DIR."$resto.log","r");
@@ -262,7 +263,8 @@ function post(){
 		}
 		closeFile ($rp);
 
-		list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$_)=explode("\t",trim($r_arr[0]));
+		list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$r_oya)=explode("\t",trim($r_arr[0]));
+		//レスファイルの1行目のチェック。経過日数、ログの1行目が'oya'かどうか確認。
 		$check_elapsed_days = check_elapsed_days($postedtime);
 		$count_r_arr=count($r_arr);
 
@@ -509,7 +511,7 @@ function post(){
 	$newline='';
 	if($resto){//レスの時はスレッド別ログに追記
 		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
-		if(is_file("LOG_DIR{$resto}.log")){
+		if(($r_oya==='oya')&&is_file(LOG_DIR."{$resto}.log")){
 			file_put_contents(LOG_DIR.$resto.'.log',$r_line,FILE_APPEND | LOCK_EX);
 		}else{
 			return error($en? 'The article does not exist.':'記事がありません。');
