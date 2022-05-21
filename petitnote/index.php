@@ -519,9 +519,11 @@ function post(){
 	$line='';
 	$newline='';
 	if($resto){//レスの時はスレッド別ログに追記
-		if(is_file(LOG_DIR."{$resto}.log")){
 		//ファイルロックした状態で再度開く
 		$rp=fopen(LOG_DIR."{$resto}.log","r+");
+		if(!$rp){
+			return error($en?'The operation failed.':'失敗しました。');
+		}
 		flock($rp, LOCK_EX);
 		$r_arr=[];
 		while ($line = fgets($rp)) {
@@ -534,9 +536,6 @@ function post(){
 			closeFile($rp);
 			closeFile($fp);
 			return error($en?'The operation failed.':'失敗しました。');
-		}
-		}else{
-			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
 		$new_rline=	implode("",$r_arr).$r_line;
