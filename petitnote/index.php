@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.10';
+$petit_ver='v0.18.11';
 $petit_lot='lot.220522';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -519,12 +519,31 @@ function post(){
 	$line='';
 	$newline='';
 	if($resto){//レスの時はスレッド別ログに追記
-		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
 		if(is_file(LOG_DIR."{$resto}.log")){
-			file_put_contents(LOG_DIR.$resto.'.log',$r_line,FILE_APPEND | LOCK_EX);
+		//ファイルロックした状態で再度開く
+		$rp=fopen(LOG_DIR."{$resto}.log","r+");
+		flock($rp, LOCK_EX);
+		$r_arr=[];
+		while ($line = fgets($rp)) {
+			if(!trim($line)){
+				continue;
+			}
+			$r_arr[]=$line;
+		}
+		if(empty($r_arr)){
+			closeFile($rp);
+			closeFile($fp);
+			return error($en?'The operation failed.':'失敗しました。');
+		}
 		}else{
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
+		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
+		$new_rline=	implode("",$r_arr).$r_line;
+
+		writeFile($rp,$new_rline);
+		closeFile($rp);
+
 		chmod(LOG_DIR.$resto.'.log',0600);
 		if(!$sage){
 			foreach($alllog_arr as $i =>$val){
