@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.11';
+$petit_ver='v0.18.12';
 $petit_lot='lot.220522';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
