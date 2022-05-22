@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.15';
+$petit_ver='v0.18.16';
 $petit_lot='lot.220522';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -226,6 +226,7 @@ function post(){
 		if(($ucode != $usercode) && ($uip != $userip)){return error($en? 'Posting failed.':'投稿に失敗しました。');}
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
+		$resto=(string)$resto;//(string)厳密な型
 		//描画時間を$userdataをもとに計算
 		if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
 			$painttime=(int)$postedtime-(int)$starttime;
