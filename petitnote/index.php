@@ -2023,6 +2023,7 @@ function res ($resno){
 		}
 		$rresname = [];
 		$resname = '';
+		$oyaname='';
 			$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 			$out[0]=[];
 			while ($line = fgets($rp)) {
@@ -2042,7 +2043,7 @@ function res ($resno){
 			}	
 		fclose($rp);
 		if(empty($out[0])||$out[0][0]['oya']!=='oya'){
-			unset($out[0]);
+			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		//投稿者名の特殊文字を全角に
 		foreach($rresname as $key => $val){
