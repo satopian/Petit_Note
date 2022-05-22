@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.16';
+$petit_ver='v0.18.18';
 $petit_lot='lot.220522';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -524,6 +524,7 @@ function post(){
 		//ファイルロックした状態で再度開く
 		$rp=fopen(LOG_DIR."{$resto}.log","r+");
 		if(!$rp){
+			closeFile($fp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 		flock($rp, LOCK_EX);
@@ -1527,7 +1528,6 @@ function edit_form($id='',$no=''){
 	return include __DIR__.'/'.$skindir.$templete;
 
 }
-
 //編集
 function edit(){
 	global $name_input_required,$max_com,$en;
