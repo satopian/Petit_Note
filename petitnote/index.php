@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.12';
+$petit_ver='v0.18.15';
 $petit_lot='lot.220522';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -251,6 +251,7 @@ function post(){
 	}
 	$count_r_arr=0;
 	$r_oya='';
+	$r_no='';
 	if($resto){//エラー処理
 		
 		if(!is_file(LOG_DIR."{$resto}.log")){
@@ -266,7 +267,7 @@ function post(){
 		}
 		closeFile ($rp);
 
-		list($n_,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$r_oya)=explode("\t",trim($r_arr[0]));
+		list($r_no,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$r_oya)=explode("\t",trim($r_arr[0]));
 		//レスファイルの1行目のチェック。経過日数、ログの1行目が'oya'かどうか確認。
 		$check_elapsed_days = check_elapsed_days($postedtime);
 		$count_r_arr=count($r_arr);
@@ -278,7 +279,7 @@ function post(){
 			if($resto && (!$check_elapsed_days || $count_r_arr>$max_res)){
 				$resto='';
 			}
-			if($resto && ($r_oya!=='oya')){
+			if($resto && ($r_no!==$resto||$r_oya!=='oya')){
 				$resto='';
 			}
 		}
@@ -526,6 +527,8 @@ function post(){
 		}
 		flock($rp, LOCK_EX);
 		$r_arr=[];
+		$r_oya='';
+		$r_no='';
 		while ($line = fgets($rp)) {
 			if(!trim($line)){
 				continue;
@@ -537,6 +540,15 @@ function post(){
 			closeFile($fp);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
+		//ファイルロックがかかった状態で再確認。
+		//レス先はoya?
+		list($r_no,,,,,,,,,,,,,,,,,,,$r_oya)=explode("\t",trim($r_arr[0]));
+		if($r_no!==$resto||$r_oya!=='oya'){
+			closeFile($rp);
+			closeFile($fp);
+			return error($en? 'The article does not exist.':'記事がありません。');
+		}
+
 		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
 		$new_rline=	implode("",$r_arr).$r_line;
 
@@ -2029,6 +2041,9 @@ function res ($resno){
 			$out[0][]=$_res;
 			}	
 		fclose($rp);
+		if(empty($out[0])||$out[0][0]['oya']!=='oya'){
+			unset($out[0]);
+		}
 		//投稿者名の特殊文字を全角に
 		foreach($rresname as $key => $val){
 			$rep=str_replace('&quot;','”',$val);
