@@ -411,7 +411,7 @@ function post(){
 		}
 
 		// 画像アップロードと画像なしそれぞれの待機時間
-		if(($upfile && (time()-substr($_time_,0,-3))<30)||(!$upfile && (time()-substr($_time_,0,-3)<15))){
+		if(($upfile && (time()-substr($_time_,0,-3))<30)||(!$upfile && (time()-substr($_time_,0,-3))<15)){
 			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
