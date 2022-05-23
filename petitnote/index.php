@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.19';
-$petit_lot='lot.220522';
+$petit_ver='v0.18.20';
+$petit_lot='lot.220523';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -411,7 +411,7 @@ function post(){
 		}
 
 		// 画像アップロードと画像なしそれぞれの待機時間
-		if(($upfile && (time()-substr($_time_,0,-3))<30)||((!$upfile && time()-substr($_time_,0,-3))<15)){
+		if(($upfile && (time()-substr($_time_,0,-3))<30)||(!$upfile && (time()-substr($_time_,0,-3)<15))){
 			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
