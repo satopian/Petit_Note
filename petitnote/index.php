@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.21';
+$petit_ver='v0.18.23';
 $petit_lot='lot.220523';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -179,30 +179,7 @@ function post(){
 
 	$adminpost=adminpost_valid();
 
-	//ファイルアップロード
-	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
-	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
-	} 
 
-	if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
-
-		if($resto && $tempfile && !$use_res_upload && !$adminpost){
-			safe_unlink($tempfile);
-			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
-		}
-
-		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
-
-		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
-			safe_unlink($tempfile);
-			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
-		}
-		$upfile=IMG_DIR.$time.'.tmp';
-		move_uploaded_file($tempfile,$upfile);
-		$tool = 'upload'; 
-		
-	}
 
 	//お絵かきアップロード
 	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
@@ -239,13 +216,11 @@ function post(){
 	}
 
 	if(!$resto && $use_diary && !$adminpost){
-		safe_unlink($upfile);
 		return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
 	}
 
 	if($resto && !is_file(LOG_DIR."{$resto}.log")){//エラー処理
 		if(!$pictmp2){//お絵かきではない時は
-			safe_unlink($upfile);
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		$resto='';//レス先がないお絵かきは新規投稿扱いにする。
@@ -275,8 +250,8 @@ function post(){
 
 		if($pictmp2){//お絵かきの時は新規投稿にする
 
-		//お絵かきの時に日数を経過していたら新規投稿。
-		//お絵かきの時に最大レス数を超過していたら新規投稿。
+			//お絵かきの時に日数を経過していたら新規投稿。
+			//お絵かきの時に最大レス数を超過していたら新規投稿。
 			if($resto && (!$check_elapsed_days || $count_r_arr>$max_res || $r_no!==$resto || $r_oya!=='oya')){
 				$resto='';
 			}
@@ -286,22 +261,43 @@ function post(){
 		}
 		//お絵かき以外。
 		if($resto && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
-			safe_unlink($upfile);
 			return error($en? 'This thread is too old to post.':'このスレッドには投稿できません。');
 		}
 		if($resto && $count_r_arr>$max_res){//最大レス数超過。
-			safe_unlink($upfile);
 			return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
 		}
 
 		$sub='Re: '.$oyasub;
 
 	}
+	//ファイルアップロード
+	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
+	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
+		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
+	} 
+	if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
+
+		if($resto && $tempfile && !$use_res_upload && !$adminpost){
+			safe_unlink($tempfile);
+			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
+		}
+
+		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
+
+		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+			safe_unlink($tempfile);
+			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
+		}
+		$upfile=TEMP_DIR.$time.'.tmp';
+		move_uploaded_file($tempfile,$upfile);
+		$tool = 'upload'; 
+		
+	}
 
 	//お絵かきアップロード
 	if($pictmp2 && is_file($tempfile)){
 
-		$upfile=IMG_DIR.$time.'.tmp';
+		$upfile=TEMP_DIR.$time.'.tmp';
 			copy($tempfile, $upfile);
 			chmod($upfile,0606);
 	}
@@ -317,6 +313,7 @@ function post(){
 
 	if(!$name){
 		if($name_input_required){
+			safe_unlink($upfile);
 			return error($en?'Please enter your name.':'名前がありません。');
 		}else{
 			$name='anonymous';
@@ -324,11 +321,11 @@ function post(){
 	}
 
 	if(!$upfile&&!$com){
-	return error($en?'Please write something.':'何か書いて下さい。');
+		return error($en?'Please write something.':'何か書いて下さい。');
 	}
 
 	if(!$resto && !$allow_coments_only && !$upfile && !$adminpost){
-	return error($en?'Please attach an image.':'画像を添付してください。');
+		return error($en?'Please attach an image.':'画像を添付してください。');
 	}
 
 	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
@@ -346,6 +343,7 @@ function post(){
 	//全体ログを開く
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	if(!$fp){
+		safe_unlink($upfile);
 		return error($en?'The operation failed.':'失敗しました。');
 	}
 	flock($fp, LOCK_EX);
@@ -383,6 +381,7 @@ function post(){
 			if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
 				closeFile($fp);
+				safe_unlink($upfile);
 				return error($en? 'Please wait a little.':'少し待ってください。');
 			}
 			if($host === $host_){
@@ -451,21 +450,21 @@ function post(){
 			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 		}
 
-		$imgfile=$time.$ext;
-		rename($upfile,IMG_DIR.$imgfile);
-	}
-	//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
-	if(!$pictmp2 && $imgfile && is_file(IMG_DIR.$imgfile)){
-		
-		$img_md5=md5_file(IMG_DIR.$imgfile);
-		foreach($chk_images as $line){
-			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
-			if($log_md5 && ($log_md5 === $img_md5)){
-				closeFile($fp);
-				safe_unlink(IMG_DIR.$imgfile);
-				return error($en?'Image already exists.':'同じ画像がありました。');
+		//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
+		if(!$pictmp2){
+			
+			$img_md5=md5_file($upfile);
+			foreach($chk_images as $line){
+				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
+				if($log_md5 && ($log_md5 === $img_md5)){
+					closeFile($fp);
+					safe_unlink($upfile);
+					return error($en?'Image already exists.':'同じ画像がありました。');
+				}
 			}
 		}
+		$imgfile=$time.$ext;	
+		rename($upfile,IMG_DIR.$imgfile);
 	}
 	$src='';
 	$pchext = '';
@@ -515,6 +514,7 @@ function post(){
 		$rp=fopen(LOG_DIR."{$resto}.log","r+");
 		if(!$rp){
 			closeFile($fp);
+			safe_unlink(IMG_DIR.$imgfile);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 		flock($rp, LOCK_EX);
@@ -530,6 +530,7 @@ function post(){
 		if(empty($r_arr)){
 			closeFile($rp);
 			closeFile($fp);
+			safe_unlink(IMG_DIR.$imgfile);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 		//ファイルロックがかかった状態で再確認。
@@ -538,6 +539,7 @@ function post(){
 		if($r_no!==$resto||$r_oya!=='oya'){
 			closeFile($rp);
 			closeFile($fp);
+			safe_unlink(IMG_DIR.$imgfile);
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 
