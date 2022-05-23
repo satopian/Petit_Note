@@ -1246,9 +1246,9 @@ function img_replace(){
 			return error($en?'Image already exists.':'同じ画像がありました。');
 		}
 	}
-	$src='';
 	rename($upfile,IMG_DIR.$imgfile);
 	chmod(IMG_DIR.$imgfile,0606);
+	$src='';
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
 	if ($pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true])) {
