@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.18';
+$petit_ver='v0.18.19';
 $petit_lot='lot.220522';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -410,15 +410,8 @@ function post(){
 			return error($en?'Post once by this comment.':'同じコメントがありました。');
 		}
 
-		// 画像アップロードの場合
-		if($upfile && (time()-substr($_time_,0,-3))<30){
-			closeFile($fp);
-			safe_unlink($upfile);
-			return error($en? 'Please wait a little.':'少し待ってください。');
-
-		}
-		//コメントの場合
-		if((time()-substr($_time_,0,-3))<15){
+		// 画像アップロードと画像なしで待機時間が変わる
+		if(($upfile && (time()-substr($_time_,0,-3))<30)||((time()-substr($_time_,0,-3))<15)){
 			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
@@ -1251,7 +1244,7 @@ function img_replace(){
 		}
 		if(($tool==='upload') && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
 			safe_unlink(IMG_DIR.$imgfile);
-			closeFile($fp);//削除不可
+			closeFile($fp);
 			closeFile($rp);
 			return error($en?'Image already exists.':'同じ画像がありました。');
 		}
@@ -1528,6 +1521,7 @@ function edit_form($id='',$no=''){
 	return include __DIR__.'/'.$skindir.$templete;
 
 }
+
 //編集
 function edit(){
 	global $name_input_required,$max_com,$en;
