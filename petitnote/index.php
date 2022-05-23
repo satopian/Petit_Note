@@ -410,8 +410,8 @@ function post(){
 			return error($en?'Post once by this comment.':'同じコメントがありました。');
 		}
 
-		// 画像アップロードと画像なしで待機時間が変わる
-		if(($upfile && (time()-substr($_time_,0,-3))<30)||((time()-substr($_time_,0,-3))<15)){
+		// 画像アップロードと画像なしそれぞれの待機時間
+		if(($upfile && (time()-substr($_time_,0,-3))<30)||((!$upfile && time()-substr($_time_,0,-3))<15)){
 			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
@@ -499,7 +499,7 @@ function post(){
 			}
 		}
 	}
-
+	//ログの番号の最大値
 	$no_arr = [];
 	foreach($alllog_arr as $i => $_alllog){
 		list($log_no,)=explode("\t",$_alllog);
@@ -507,7 +507,7 @@ function post(){
 	}
 
 	$max_no=0;
-	if($no_arr){
+	if(!empty($no_arr)){
 		$max_no=max($no_arr);
 	}
 	//書き込むログの書式
@@ -562,7 +562,7 @@ function post(){
 			}
 		}
 
-	} else{
+	}else{
 		//最後の記事ナンバーに+1
 		$no=$max_no+1;
 		$newline = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
@@ -2112,4 +2112,3 @@ function res ($resno){
 	return include __DIR__.'/'.$skindir.$templete;
 	
 }
-
