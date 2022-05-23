@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.23';
+$petit_ver='v0.18.25';
 $petit_lot='lot.220523';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -271,25 +271,25 @@ function post(){
 
 	}
 	//ファイルアップロード
-	$tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
+	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
 		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
 	} 
-	if ($tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
+	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
 
-		if($resto && $tempfile && !$use_res_upload && !$adminpost){
-			safe_unlink($tempfile);
+		if($resto && $up_tempfile && !$use_res_upload && !$adminpost){
+			safe_unlink($up_tempfile);
 			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
 		}
 
 		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
 
 		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
-			safe_unlink($tempfile);
+			safe_unlink($up_tempfile);
 			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 		}
 		$upfile=TEMP_DIR.$time.'.tmp';
-		move_uploaded_file($tempfile,$upfile);
+		move_uploaded_file($up_tempfile,$upfile);
 		$tool = 'upload'; 
 		
 	}
@@ -1164,7 +1164,7 @@ function img_replace(){
 	}
 	$time = time().substr(microtime(),2,3);
 
-	$upfile=IMG_DIR.$time.'.tmp';
+	$upfile=TEMP_DIR.$time.'.tmp';
 	if(($tool==='upload')&&($_tool==='upload')){
 		if(is_file($up_tempfile)){
 			move_uploaded_file($up_tempfile,$upfile);
@@ -1209,8 +1209,6 @@ function img_replace(){
 	
 	$imgfile = $time.$imgext;
 
-	rename($upfile,IMG_DIR.$imgfile);
-	chmod(IMG_DIR.$imgfile,0606);
 
 	//チェックするスレッド数。 
 	$n= 15;
@@ -1242,13 +1240,15 @@ function img_replace(){
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
 		if(($tool==='upload') && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
-			safe_unlink(IMG_DIR.$imgfile);
+			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
 			return error($en?'Image already exists.':'同じ画像がありました。');
 		}
 	}
 	$src='';
+	rename($upfile,IMG_DIR.$imgfile);
+	chmod(IMG_DIR.$imgfile,0606);
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
 	if ($pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true])) {
@@ -1300,6 +1300,7 @@ function img_replace(){
 		if(!$flag){
 			closeFile($rp);
 			closeFile($fp);
+			safe_unlink(IMG_DIR.$imgfile);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 
