@@ -179,13 +179,12 @@ function post(){
 
 	$adminpost=adminpost_valid();
 
-
-
 	//お絵かきアップロード
 	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
 	list($picfile,) = explode(",",filter_input(INPUT_POST, 'picfile'));
 	$painttime ='';
 	$pictmp2=false;
+	$tempfile='';
 	if($pictmp===2){//ユーザーデータを調べる
 
 		if(!$picfile) return error($en? 'Posting failed.':'投稿に失敗しました。');
@@ -609,6 +608,7 @@ function post(){
 	//ワークファイル削除
 	safe_unlink($src);
 	safe_unlink($tempfile);
+	safe_unlink($up_tempfile);
 	safe_unlink(TEMP_DIR.$picfile.".dat");
 
 	global $send_email,$to_mail,$root_url,$boardname;
@@ -1208,7 +1208,6 @@ function img_replace(){
 	$img_md5=md5_file($upfile);
 	
 	$imgfile = $time.$imgext;
-
 
 	//チェックするスレッド数。 
 	$n= 15;
