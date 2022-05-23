@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.20';
+$petit_ver='v0.18.21';
 $petit_lot='lot.220523';
 
 if(!isset($functions_ver)||$functions_ver<20220515){
@@ -277,14 +277,11 @@ function post(){
 
 		//お絵かきの時に日数を経過していたら新規投稿。
 		//お絵かきの時に最大レス数を超過していたら新規投稿。
-			if($resto && (!$check_elapsed_days || $count_r_arr>$max_res)){
-				$resto='';
-			}
-			if($resto && ($r_no!==$resto||$r_oya!=='oya')){
+			if($resto && (!$check_elapsed_days || $count_r_arr>$max_res || $r_no!==$resto || $r_oya!=='oya')){
 				$resto='';
 			}
 		}
-		if($resto && ($r_oya!=='oya')){
+		if($resto && ($r_no!==$resto || $r_oya!=='oya')){
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		//お絵かき以外。
