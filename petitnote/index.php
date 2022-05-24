@@ -596,6 +596,7 @@ function post(){
 	safe_unlink($src);
 	safe_unlink($tempfile);
 	safe_unlink($up_tempfile);
+	safe_unlink($upfile);
 	safe_unlink(TEMP_DIR.$picfile.".dat");
 
 	global $send_email,$to_mail,$root_url,$boardname;
@@ -1305,6 +1306,7 @@ function img_replace(){
 	safe_unlink($src);
 	safe_unlink($tempfile);
 	safe_unlink($up_tempfile);
+	safe_unlink($upfile);
 	safe_unlink(TEMP_DIR.$file_name.".dat");
 
 	if($tool==='upload'){
