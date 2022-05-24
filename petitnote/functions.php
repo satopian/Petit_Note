@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220515;
+$functions_ver=20220524;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -481,19 +481,27 @@ function deltemp(){
 
 // NGワードがあれば拒絶
 function Reject_if_NGword_exists_in_the_post(){
-	global $use_japanesefilter,$badstring,$badname,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass,$en;
+	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass,$max_com,$en;
 
 	$adminpost=adminpost_valid();
 
-	$sub = t((string)filter_input(INPUT_POST,'sub'));
 	$name = t((string)filter_input(INPUT_POST,'name'));
+	$sub = t((string)filter_input(INPUT_POST,'sub'));
+	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$pwd = t((string)filter_input(INPUT_POST,'pwd'));
 
+	if(strlen($name) > 30) return error($en?'Name is too long':'名前が長すぎます。');
+	if(strlen($sub) > 80) return error($en? 'Subject is too long.':'題名が長すぎます。');
+	if(strlen($url) > 100) return error($en? 'URL is too long.':'URLが長すぎます。');
+	if(strlen($com) > $max_com) return error($en? 'Comment is too long.':'本文が長すぎます。');
+	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
+
 	//チェックする項目から改行・スペース・タブを消す
-	$chk_com  = preg_replace("/\s/u", "", $com );
 	$chk_name = preg_replace("/\s/u", "", $name );
 	$chk_sub = preg_replace("/\s/u", "", $sub );
+	$chk_url = preg_replace("/\s/u", "", $url );
+	$chk_com  = preg_replace("/\s/u", "", $com );
 
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
@@ -514,6 +522,10 @@ function Reject_if_NGword_exists_in_the_post(){
 	// 使えない名前チェック
 	if (is_ngword($badname, $chk_name)) {
 		return error($en?'This name cannot be used.':'その名前は使えません。');
+	}
+	// 使えないurlチェック
+	if (is_ngword($badurl, $chk_url)) {
+		return error($en?'There is an inappropriate url.':'不適切なurlがあります。');
 	}
 
 	//指定文字列が2つあると拒絶
@@ -705,5 +717,28 @@ function check_elapsed_days ($postedtime) {
 		? ((time() - (int)(substr($postedtime, 0, -3))) <= ((int)$elapsed_days * 86400)) // 指定日数以内なら許可
 		: true; // フォームを閉じる日数が未設定なら許可
 }
+//POSTされた値をログファイルに格納する書式にフォーマット
+function create_formatted_text_from_post($name,$sub,$url,$com){
+global $en;
+// 変数取得
+if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
+if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
+if(!$url||preg_match("/\A\s*\z/u",$url)) $url="";
+if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
+$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
+$com=str_replace(["\r\n","\r"],"\n",$com);
+$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
+$com=str_replace("\n",'"\n"',$com);
+$com=str_replace("\t",'',$com);
+$formatted_post=[
+	'name'=>$name,
+	'sub'=>$sub,
+	'url'=>$url,
+	'com'=>$com,
+];
+foreach($formatted_post as $key => $val){
+	$formatted_post[$key]=str_replace(["\r\n","\n","\r","\t"],"",$val);//改行コード一括除去
+}
+return $formatted_post;
 
-
+}

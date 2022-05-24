@@ -27,10 +27,10 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.26';
-$petit_lot='lot.220523';
+$petit_ver='v0.18.27';
+$petit_lot='lot.220524';
 
-if(!isset($functions_ver)||$functions_ver<20220515){
+if(!isset($functions_ver)||$functions_ver<20220524){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
@@ -151,16 +151,6 @@ function post(){
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
 
-	//制限
-	if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
-	if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
-	if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
-	if(!$url||preg_match("/\A\s*\z/u",$url)) $url="";
-	if(strlen($sub) > 80) return error($en? 'Subject is too long.':'題名が長すぎます。');
-	if(strlen($name) > 30) return error($en?'Name is too long':'名前が長すぎます。');
-	if(strlen($com) > $max_com) return error($en? 'Comment is too long.':'本文が長すぎます。');
-	if(strlen($url) > 100) return error($en? 'URL is too long.':'URLが長すぎます。');
-	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
 		srand((double)microtime()*1000000);
@@ -300,15 +290,12 @@ function post(){
 			copy($tempfile, $upfile);
 			chmod($upfile,0606);
 	}
-
-	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
-	$sub=str_replace(["\r\n","\r","\n","\t"],'',$sub);
-	$name=str_replace(["\r\n","\r","\n","\t"],'',$name);
-	$url=str_replace(["\r\n","\r","\n","\t"],'',$url);
-	$com=str_replace(["\r\n","\r"],"\n",$com);
-	$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
-	$com=str_replace("\n",'"\n"',$com);
-	$com=str_replace("\t",'',$com);
+	//テキスト整形
+	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
+	$name = $formatted_post['name'];
+	$sub = $formatted_post['sub'];
+	$url = $formatted_post['url'];
+	$com = $formatted_post['com'];
 
 	if(!$name){
 		if($name_input_required){
@@ -1034,6 +1021,8 @@ function img_replace(){
 	$pwd = $getpwd ? 
 	openssl_decrypt($getpwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV):$postpwd;//復号化
 
+	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
+
 	$admindel=admindel_valid();
 
 	//アップロード画像の差し換え
@@ -1553,25 +1542,13 @@ function edit(){
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
 
-	//制限
-	if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
-	if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
-	if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
-	if(!$url||preg_match("/\A\s*\z/u",$url)) $url="";
+	//テキスト整形
+	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
+	$name = $formatted_post['name'];
+	$sub = $formatted_post['sub'];
+	$url = $formatted_post['url'];
+	$com = $formatted_post['com'];
 
-	if(strlen($sub) > 80) return error($en? 'Subject is too long.':'題名が長すぎます。');
-	if(strlen($name) > 30) return error($en?'Name is too long':'名前が長すぎます。');
-	if(strlen($com) > $max_com) return error($en? 'Comment is too long.':'本文が長すぎます。');
-	if(strlen($url) > 100) return error($en? 'URL is too long.':'URLが長すぎます。');
-	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
-
-	$sub=str_replace(["\r\n","\r","\n","\t"],'',$sub);
-	$name=str_replace(["\r\n","\r","\n","\t"],'',$name);
-	$url=str_replace(["\r\n","\r","\n","\t"],'',$url);
-	$com=str_replace(["\r\n","\r"],"\n",$com);
-	$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
-	$com=str_replace("\n",'"\n"',$com);
-	$com=str_replace("\t",'',$com);
 
 	if(!$name){
 		if($name_input_required){
