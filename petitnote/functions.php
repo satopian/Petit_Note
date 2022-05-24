@@ -729,7 +729,6 @@ $sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 $com=str_replace(["\r\n","\r"],"\n",$com);
 $com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
 $com=str_replace("\n",'"\n"',$com);
-$com=str_replace("\t",'',$com);
 $formatted_post=[
 	'name'=>$name,
 	'sub'=>$sub,

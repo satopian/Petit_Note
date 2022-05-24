@@ -290,7 +290,7 @@ function post(){
 			copy($tempfile, $upfile);
 			chmod($upfile,0606);
 	}
-	//テキスト整形
+	//POSTされた値をログファイルに格納する書式にフォーマット
 	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
 	$name = $formatted_post['name'];
 	$sub = $formatted_post['sub'];
@@ -1542,13 +1542,12 @@ function edit(){
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
 
-	//テキスト整形
+	//POSTされた値をログファイルに格納する書式にフォーマット
 	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
 	$name = $formatted_post['name'];
 	$sub = $formatted_post['sub'];
 	$url = $formatted_post['url'];
 	$com = $formatted_post['com'];
-
 
 	if(!$name){
 		if($name_input_required){
