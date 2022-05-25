@@ -503,6 +503,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	$chk_url = preg_replace("/\s/u", "", $url );
 	$chk_com  = preg_replace("/\s/u", "", $com );
 
+
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
 		mb_regex_encoding("UTF-8");
@@ -551,7 +552,9 @@ function is_ngword ($ngwords, $strs) {
 	}
 	foreach($ngwords as $i => $ngword){//拒絶する文字列
 		$ngwords[$i]  = str_replace([" ", "　"], "", $ngword);
+		$ngwords[$i]  = str_replace("/", "\/", $ngwords[$i]);
 	}
+
 	foreach ($strs as $str) {
 		foreach($ngwords as $ngword){//拒絶する文字列
 			if ($ngword !== '' && preg_match("/{$ngword}/ui", $str)){
