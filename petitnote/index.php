@@ -27,10 +27,10 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.27';
-$petit_lot='lot.220524';
+$petit_ver='v0.18.28';
+$petit_lot='lot.220525';
 
-if(!isset($functions_ver)||$functions_ver<20220524){
+if(!isset($functions_ver)||$functions_ver<20220525){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){

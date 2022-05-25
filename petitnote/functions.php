@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220524;
+$functions_ver=20220525;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -515,7 +515,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	}
 
 	// 使えない文字チェック
-	if (is_ngword($badstring, [$chk_com, $chk_sub, $chk_name])) {
+	if (is_ngword($badstring, [$chk_name,$chk_sub,$chk_url,$chk_com])) {
 		return error($en?'There is an inappropriate string.':'不適切な表現があります。');
 	}
 
