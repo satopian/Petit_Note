@@ -83,7 +83,7 @@ $use_japanesefilter = true;
 $badstring = ['example.example.com','未承諾広告'];
 
 //拒絶するurl
-$badurl = array("example.com","www.example.com");
+$badurl = ["example.com","www.example.com"];
 
 //使用できない名前 正規表現
 $badname = ['ブランド','通販','販売','口コミ'];
