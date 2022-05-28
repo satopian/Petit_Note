@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.18.28';
-$petit_lot='lot.220525';
+$petit_ver='v0.19.0';
+$petit_lot='lot.220528';
 
 if(!isset($functions_ver)||$functions_ver<20220525){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');

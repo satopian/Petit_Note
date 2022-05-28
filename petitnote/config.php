@@ -82,13 +82,15 @@ $use_japanesefilter = true;
 // 設定しないなら[]で。
 $badstring = ['example.example.com','未承諾広告'];
 
+//拒絶するurl
+$badurl = array("example.com","www.example.com");
+
 //使用できない名前 正規表現
 $badname = ['ブランド','通販','販売','口コミ'];
 
 //AとBが両方あったら拒絶 正規表現
 $badstr_A = ['激安','低価','コピー','品質を?重視','大量入荷'];
 $badstr_B = ['シャネル','シュプリーム','バレンシアガ','ブランド'];
-
 
 /*使用目的別設定*/
 
