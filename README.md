@@ -1,3 +1,4 @@
+![220528_petitnote](https://user-images.githubusercontent.com/44894014/170832344-52d5efbb-802b-48f1-9ac5-4ee106b6232e.gif)
 # お絵かき掲示板PHPスクリプト Petit Note
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEO,ChickenPaint,Klecksが使えるお絵かき掲示板です。
