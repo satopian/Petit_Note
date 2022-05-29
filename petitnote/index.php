@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.19.2';
-$petit_lot='lot.220528';
+$petit_ver='v0.19.3';
+$petit_lot='lot.220529';
 
 if(!isset($functions_ver)||$functions_ver<20220525){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -403,7 +403,7 @@ function post(){
 
 		if(!$pictmp2){//実体データの縮小
 			$max_px=isset($max_px) ? $max_px : 1024;
-			thumb(IMG_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
+			thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
 		}	
 		clearstatcache();
 		$filesize=filesize($upfile);
