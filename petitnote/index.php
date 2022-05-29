@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.19.3';
+$petit_ver='v0.19.5';
 $petit_lot='lot.220529';
 
 if(!isset($functions_ver)||$functions_ver<20220525){
@@ -1003,7 +1003,7 @@ function download_app_dat(){
 // 画像差し換え
 function img_replace(){
 
-	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$en,$use_upload;
+	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload;
 
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
@@ -1170,6 +1170,10 @@ function img_replace(){
 		return error($en?'The operation failed.':'失敗しました。');
 	} 
 	chmod($upfile,0606);
+	if(($tool==='upload')&&($_tool==='upload')){//実体データの縮小
+		$max_px=isset($max_px) ? $max_px : 1024;
+		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
+	}	
 
 	$filesize=filesize($upfile);
 	if($filesize > 800 * 1024){//指定サイズを超えていたら
