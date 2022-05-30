@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.19.5';
-$petit_lot='lot.220529';
+$petit_ver='v0.19.6';
+$petit_lot='lot.220531';
 
 if(!isset($functions_ver)||$functions_ver<20220525){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -650,7 +650,7 @@ function paint(){
 	$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
 	$usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));
 	$resto = t((string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
-	if(strlen($resto>1000)){
+	if(strlen($resto)>1000){
 		return error($en?'Unknown error':'問題が発生しました。');
 	}
 
