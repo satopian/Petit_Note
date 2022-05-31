@@ -115,7 +115,7 @@ switch($mode){
 	case 'catalog':
 		return catalog($page);
 	case 'download':
-		return download_app_dat($page);
+		return download_app_dat();
 	default:
 		if($resno){
 			return res($resno);
