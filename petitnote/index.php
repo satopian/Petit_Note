@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.19.6';
-$petit_lot='lot.220531';
+$petit_ver='v0.20.0';
+$petit_lot='lot.220602';
 
 if(!isset($functions_ver)||$functions_ver<20220525){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -1326,6 +1326,7 @@ function pchview(){
 	global $boardname,$skindir,$en;
 
 	$imagefile = filter_input(INPUT_GET, 'imagefile');
+	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$pch = pathinfo($imagefile, PATHINFO_FILENAME);
 	$pchext = check_pch_ext(IMG_DIR . $pch);
 	if(!$pchext){
