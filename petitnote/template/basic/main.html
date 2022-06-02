@@ -118,7 +118,7 @@ Size:
 </span>
 </form>
 <!-- フォーム入力欄 -->
-	<?php if($use_top_form && ($use_upload||$allow_coments_only||$adminpost)):?>	
+	<?php if(($use_top_form && ($use_upload||$allow_coments_only))||$adminpost):?>
 	<form action="./" method="POST" enctype="multipart/form-data" class="postform">
 	<table>
 	<tr>
@@ -227,7 +227,7 @@ Size:
 			<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>"><?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?></a></span>
 			<?php endif;?>
 			<?php if($res['anime']):?>
-					<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
+					<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>&no=<?=h($res['no'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
 			<?php endif;?>
 			</div>
 			<?php endif;?>
