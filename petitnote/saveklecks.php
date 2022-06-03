@@ -41,7 +41,7 @@ if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
 }
 
 $success = TRUE;
-$success = $success && move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
+$success = move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
 $success = $success && move_uploaded_file($_FILES['psd']['tmp_name'], TEMP_DIR.$imgfile.'.psd');
 
 if (!$success) {
