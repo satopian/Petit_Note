@@ -21,9 +21,9 @@
 - [リリース](https://github.com/satopian/Petit_Note/releases/latest)から安定版をダウンロードできます。
 
 ## Peti tNoteを使った交流サイト
-- [イラスト投稿サイトPetit Note](https://paintbbs.sakura.ne.jp/petit/)
+- [イラスト投稿サイトPetit Note](https://paintbbs.sakura.ne.jp/petit/)  
 お絵かきとアップロード。
-- [お絵かき掲示板交流サイトPetit Note](https://paintbbs.sakura.ne.jp/)
+- [お絵かき掲示板交流サイトPetit Note](https://paintbbs.sakura.ne.jp/)  
 お絵かきのみ。
 ## DEMO
 - [Petit Note サンプル掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
