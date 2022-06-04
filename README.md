@@ -20,7 +20,7 @@
 
 - [リリース](https://github.com/satopian/Petit_Note/releases/latest)から安定版をダウンロードできます。
 
-## PetitNoteを使った交流サイト
+## Peti tNoteを使った交流サイト
 - [イラスト投稿サイトPetit Note](https://paintbbs.sakura.ne.jp/petit/)
 お絵かきとアップロード。
 - [お絵かき掲示板交流サイトPetit Note](https://paintbbs.sakura.ne.jp/)
