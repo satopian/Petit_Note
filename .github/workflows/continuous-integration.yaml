@@ -1,0 +1,26 @@
+name: Continuous Integration
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch: { }
+env:
+  PHP_VERSION: 8.1
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    env:
+      PHP_EXTENSIONS: none, curl, dom, json, libxml, mbstring, openssl, phar, soap, tokenizer, xml, xmlwriter
+      PHP_INI_VALUES: memory_limit=-1, assert.exception=1, zend.assertions=1, error_reporting=-1, log_errors_max_len=0, display_errors=On
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install PHP with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          ini-values: ${{ env.PHP_INI_VALUES }}
+          tools: composer:v2
+      - run: composer install
+      - name: Run tests with phpunit
+        run: ./vendor/bin/phpunit tests --coverage-text
