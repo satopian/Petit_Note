@@ -447,3 +447,8 @@ span.continue_menu {
 	margin: auto;
 	text-align: center
 }
+/* ページネーションと著作表示の改行処理 */
+.pagination,.copy{
+	word-break: normal;
+	overflow-wrap: break-word;
+}

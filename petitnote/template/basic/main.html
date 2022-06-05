@@ -315,6 +315,7 @@ Size:
 	<?php endif;?>
 	</span>
 </div>
+<div class="pagination">
 <?php if($prev!==false):?>
 <a href="?page=0">start</a> |
 <?php endif;?>
@@ -343,6 +344,7 @@ Size:
 		<?php if($next):?>
 		| <a href="?page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?>">end</a>
 		<?php endif;?>
+	</div>
 </nav>
 
 	<div class="copy">
