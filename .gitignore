@@ -22,4 +22,4 @@ cache/
 # PHPUnit
 .phpunit.result.cache
 /.phpunit.cache
-/code-coverate-report
+/code-coverage-report
