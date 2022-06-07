@@ -198,10 +198,10 @@ final class CommonFunctionTest extends TestCase
      * @dataProvider calculatePaintTimeProvider
      * @covers       calcPtime
      */
-    public function testCalcPtime(bool $isEn, $psec, string $expected): void
+    public function testCalcPtime(bool $globalEn, $psec, string $expected): void
     {
         global $en;
-        $en = $isEn;
+        $en = $globalEn;
 
         $actual = calcPtime($psec);
 
@@ -229,6 +229,60 @@ final class CommonFunctionTest extends TestCase
             [true, 86400, '1day '],
             [true, 86461, '1day 1min 1sec'],
             [true, 172861, '2day 1min 1sec']
+        ];
+    }
+
+    /**
+     * @dataProvider createFormattedTextFromPostProvider
+     * @covers       create_formatted_text_from_post
+     */
+    public function testCreateFormattedTextFromPost(bool $globalEn, $name, $subject, $url, $comment, array $expected): void
+    {
+        global $en;
+        $en = $globalEn;
+
+        $actual = create_formatted_text_from_post($name, $subject, $url, $comment);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function createFormattedTextFromPostProvider(): array
+    {
+        return [
+            [false, '', '', '', '', ['name' => '', 'sub' => '無題', 'url' => '', 'com' => '']],
+            [
+                false,
+                'foo',
+                'bar',
+                'baz',
+                'qux',
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'baz', 'com' => 'qux']
+            ],
+            [
+                false,
+                "f\no\no",
+                "b\nar",
+                "ba\nz",
+                "q\nux",
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'baz', 'com' => 'q"\n"ux']
+            ],
+            [
+                false,
+                'foo',
+                'bar',
+                'baz',
+                "qux\nquux\ncorge",
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'baz', 'com' => 'qux"\n"quux"\n"corge']
+            ],
+            [
+                false,
+                'foo',
+                'bar',
+                'baz',
+                "qux\r\nquux\r\ncorge",
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'baz', 'com' => 'qux"\n"quux"\n"corge']
+            ],
+            [true, '', '', '', '', ['name' => '', 'sub' => 'No subject', 'url' => '', 'com' => '']],
         ];
     }
 }
