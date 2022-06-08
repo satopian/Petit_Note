@@ -1,0 +1,10 @@
+{
+    "autoload-dev": {
+        "files": [
+            "petitnote/functions.php"
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
+    }
+}

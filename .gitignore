@@ -14,3 +14,12 @@ thumbnail/
 temp/
 tmp/
 cache/
+
+# Composer
+/vendor
+/composer.lock
+
+# PHPUnit
+.phpunit.result.cache
+/.phpunit.cache
+/code-coverage-report
