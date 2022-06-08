@@ -624,17 +624,16 @@ function image_reduction_display($w,$h,$max_w,$max_h){
 	if(!is_numeric($w)||!is_numeric($h)){
 		return;
 	}
-	$reduced_size=[];
 
-	if($w > $max_w || $h > $max_h){
-		$key_w = $max_w / $w;
-		$key_h = $max_h / $h;
-		($key_w < $key_h) ? ($keys = $key_w) : ($keys = $key_h);
-		$w=ceil($w * $keys);
-		$h=ceil($h * $keys);
-	}
-	$reduced_size = [$w,$h];
-	return $reduced_size;
+    if ($w > $max_w || $h > $max_h) {
+        $w_ratio = $max_w / $w;
+        $h_ratio = $max_h / $h;
+        $ratio = min($w_ratio, $h_ratio);
+        $w = ceil($w * $ratio);
+        $h = ceil($h * $ratio);
+    }
+    $reduced_size = [$w, $h];
+    return $reduced_size;
 }
 /**
  * 描画時間を計算
