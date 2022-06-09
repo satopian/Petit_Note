@@ -622,7 +622,7 @@ function closeFile ($fp) {
 //縮小表示
 function image_reduction_display($w,$h,$max_w,$max_h){
 	if(!is_numeric($w)||!is_numeric($h)){
-		return;
+		return [];
 	}
 
     if ($w > $max_w || $h > $max_h) {
