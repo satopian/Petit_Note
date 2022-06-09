@@ -180,9 +180,10 @@ final class CommonFunctionTest extends TestCase
     public function imageReductionDisplayProvider(): array
     {
         return [
-            ['', 0, 0, 0, []],
-            [0, '', 0, 0, []],
-            ['', '', 0, 0, []],
+            ['', 0, 0, 0, ['','']],
+            [0, '', 0, 0, ['','']],
+            ['', '', 0, 0, ['','']],
+            [500, '', 400, 400,  ['','']],
             [0, 0, 0, 0, [0, 0]],
             [400, 400, 0, 0, [0, 0]],
             [400, 400, 400, 400, [400, 400]],
