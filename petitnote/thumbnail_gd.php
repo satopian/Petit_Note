@@ -5,7 +5,7 @@
 //220321 透過GIF、透過PNGの時は透明を出力、または透明色を白に変換。
 //220320 本体画像のリサイズにPNG→PNG、GIF→PNG、WEBP→JPEGの各処理を追加。
 //210920 PetitNote版。
-$thumbnail_gd_ver=20220322;
+$thumbnail_gd_ver=20220609;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$fname=$path.$fname;
@@ -16,19 +16,19 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 		return;
 	}
 	$fsize = filesize($fname);    // ファイルサイズを取得
-	$size = GetImageSize($fname); // 画像の幅と高さとタイプを取得
-	$w_h_size_over=($size[0] > $max_w || $size[1] > $max_h);
+	list($w,$h) = GetImageSize($fname); // 画像の幅と高さとタイプを取得
+	$w_h_size_over=($w > $max_w || $h > $max_h);
 	$f_size_over=!isset($options['toolarge']) ? ($fsize>1024*1024) : false;
 
 	if(!$w_h_size_over && !$f_size_over){
 		return;
 	}
 	// リサイズ
-	$key_w = $max_w / $size[0];
-	$key_h = $max_h / $size[1];
-	$keys = ($key_w < $key_h) ? $key_w : $key_h;
-	$out_w = $w_h_size_over ? ceil($size[0] * $keys):$size[0];//端数の切り上げ
-	$out_h = $w_h_size_over ? ceil($size[1] * $keys):$size[1];
+	$w_ratio = $max_w / $w;
+	$h_ratio = $max_h / $h;
+	$ratio = min($w_ratio, $h_ratio);
+	$out_w = $w_h_size_over ? ceil($w * $ratio):$w;//端数の切り上げ
+	$out_h = $w_h_size_over ? ceil($h * $ratio):$h;
 
 	switch ($mime_type = mime_content_type($fname)) {
 		case "image/gif";
@@ -77,11 +77,11 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 		}
 		// コピー＆再サンプリング＆縮小
 		if(function_exists("ImageCopyResampled")){
-			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $size[0], $size[1]);
+			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
 		}else{$nottrue = 1;}
 	}else{$im_out = ImageCreate($out_w, $out_h);$nottrue = 1;}
 	// コピー＆縮小
-	if($nottrue) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $size[0], $size[1]);
+	if($nottrue) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
 	if(isset($options['toolarge'])){
 		$outfile=$fname;
 	//本体画像を縮小
