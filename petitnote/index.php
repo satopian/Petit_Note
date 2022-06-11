@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.20.0';
-$petit_lot='lot.220602';
+$petit_ver='v0.20.1';
+$petit_lot='lot.220611';
 
 if(!isset($functions_ver)||$functions_ver<20220525){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -153,8 +153,10 @@ function post(){
 
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
-		srand((double)microtime()*1000000);
-		$pwd = substr(md5(uniqid(rand())),2,15);
+
+		list($usec,) = explode(' ', microtime());
+		srand($usec * 1000000);
+		$pwd = substr(md5(uniqid(rand(),true)),2,15);
 		$pwd = strtr($pwd,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
 	}
 	if(strlen($pwd) < 6) return error($en? 'The password is too short. At least 6 characters.':'パスワードが短すぎます。最低6文字。');
