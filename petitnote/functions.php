@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220525;
+$functions_ver=20220611;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -724,7 +724,7 @@ global $en;
 // 変数取得
 if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
 if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
-if(!$url||preg_match("/\A\s*\z/u",$url)) $url="";
+if(!$url||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)||preg_match("/\A\s*\z/u",$url)) $url="";
 if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
 $sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 $com=str_replace(["\r\n","\r"],"\n",$com);

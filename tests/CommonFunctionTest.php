@@ -257,31 +257,55 @@ final class CommonFunctionTest extends TestCase
                 'bar',
                 'baz',
                 'qux',
-                ['name' => 'foo', 'sub' => 'bar', 'url' => 'baz', 'com' => 'qux']
+                ['name' => 'foo', 'sub' => 'bar', 'url' => '', 'com' => 'qux']
+            ],
+            [
+                false,
+                'foo',
+                'bar',
+                'https://example.com/baz',
+                'qux',
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'https://example.com/baz', 'com' => 'qux']
+            ],
+            [
+                false,
+                'foo',
+                'bar',
+                'https;//example.com/baz',
+                'qux',
+                ['name' => 'foo', 'sub' => 'bar', 'url' => '', 'com' => 'qux']
             ],
             [
                 false,
                 "f\no\no",
                 "b\nar",
-                "ba\nz",
+                "https://example.com/ba\nz",
                 "q\nux",
-                ['name' => 'foo', 'sub' => 'bar', 'url' => 'baz', 'com' => 'q"\n"ux']
+                ['name' => 'foo', 'sub' => 'bar', 'url' => '', 'com' => 'q"\n"ux']
             ],
             [
                 false,
                 'foo',
                 'bar',
-                'baz',
+                'https://example.com/baz',
                 "qux\nquux\ncorge",
-                ['name' => 'foo', 'sub' => 'bar', 'url' => 'baz', 'com' => 'qux"\n"quux"\n"corge']
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'https://example.com/baz', 'com' => 'qux"\n"quux"\n"corge']
             ],
             [
                 false,
                 'foo',
                 'bar',
-                'baz',
+                'https://example.com/baz',
                 "qux\r\nquux\r\ncorge",
-                ['name' => 'foo', 'sub' => 'bar', 'url' => 'baz', 'com' => 'qux"\n"quux"\n"corge']
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'https://example.com/baz', 'com' => 'qux"\n"quux"\n"corge']
+            ],
+            [
+                false,
+                "fo\to",
+                "ba\tr",
+				"https://example.com/ba\tz",
+                "qux\tquuxcorge",
+                ['name' => 'foo', 'sub' => 'bar', 'url' => '', 'com' => 'quxquuxcorge']
             ],
             [true, '', '', '', '', ['name' => '', 'sub' => 'No subject', 'url' => '', 'com' => '']],
         ];
