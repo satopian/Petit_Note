@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.20.1';
+$petit_ver='v0.20.2';
 $petit_lot='lot.220611';
 
 if(!isset($functions_ver)||$functions_ver<20220611){
@@ -154,8 +154,7 @@ function post(){
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
 
-		list($usec,) = explode(' ', microtime());
-		srand($usec * 1000000);
+		srand();
 		$pwd = substr(md5(uniqid(rand(),true)),2,15);
 		$pwd = strtr($pwd,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
 	}
