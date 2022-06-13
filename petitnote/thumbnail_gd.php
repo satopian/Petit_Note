@@ -5,7 +5,7 @@
 //220321 透過GIF、透過PNGの時は透明を出力、または透明色を白に変換。
 //220320 本体画像のリサイズにPNG→PNG、GIF→PNG、WEBP→JPEGの各処理を追加。
 //210920 PetitNote版。
-$thumbnail_gd_ver=20220609;
+$thumbnail_gd_ver=20220613;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$fname=$path.$fname;
@@ -61,7 +61,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 		default : return;
 	}
 	// 出力画像（サムネイル）のイメージを作成
-	$nottrue = 0;
+	$exists_ImageCopyResampled = false;
 	if(function_exists("ImageCreateTrueColor")&&get_gd_ver()=="2"){
 		$im_out = ImageCreateTrueColor($out_w, $out_h);
 		if(isset($options['toolarge'])&&($mime_type==="image/png" || $mime_type==="image/gif")){
@@ -78,10 +78,11 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 		// コピー＆再サンプリング＆縮小
 		if(function_exists("ImageCopyResampled")){
 			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
-		}else{$nottrue = 1;}
+			$exists_ImageCopyResampled = true;
+		}
 	}else{$im_out = ImageCreate($out_w, $out_h);$nottrue = 1;}
 	// コピー＆縮小
-	if($nottrue) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
+	if(!$exists_ImageCopyResampled) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
 	if(isset($options['toolarge'])){
 		$outfile=$fname;
 	//本体画像を縮小
