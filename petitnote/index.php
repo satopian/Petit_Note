@@ -27,11 +27,11 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.20.6';
+$petit_ver='v0.21.0';
 
-$petit_lot='lot.220614';
+$petit_lot='lot.220615';
 
-if(!isset($functions_ver)||$functions_ver<20220611){
+if(!isset($functions_ver)||$functions_ver<20220615){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
@@ -1026,6 +1026,7 @@ function img_replace(){
 
 	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
+	$adminpost=adminpost_valid();
 	$admindel=admindel_valid();
 
 	//アップロード画像の差し換え
@@ -1144,9 +1145,13 @@ function img_replace(){
 			break;
 		}
 	}
-	if(!check_elapsed_days($_time)&&!$admindel){//指定日数より古い画像差し換えは新規投稿にする
+	if(!check_elapsed_days($_time)&&(!$adminpost && !$admindel)){//指定日数より古い画像差し換えは新規投稿にする
+
 		closeFile($rp);
 		closeFile($fp);
+		if($is_upload){
+			return error($en?'The operation failed.':'失敗しました。');
+		} 
 		return paintcom();
 	}
 

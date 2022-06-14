@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220614;
+$functions_ver=20220615;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -280,7 +280,7 @@ function create_res($line){
 		'upload_image' => $upload_image,
 		'pchext' => $pchext,
 		'anime' => $anime,
-		'continue' => $check_elapsed_days ? $continue :'',
+		'continue' => $check_elapsed_days ? $continue : ((adminpost_valid()||admindel_valid()) ? $continue :''),
 		'time' => $time,
 		'date' => $date,
 		'host' => $host,
