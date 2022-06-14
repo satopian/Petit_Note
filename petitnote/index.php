@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.20.2';
-$petit_lot='lot.220611';
+$petit_ver='v0.20.5';
+$petit_lot='lot.220614';
 
 if(!isset($functions_ver)||$functions_ver<20220611){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -1131,7 +1131,7 @@ function img_replace(){
 				return error($en?'The operation failed.':'失敗しました。');
 			}
 
-			if(!$admindel){
+			if(!$admindel&&($tool!=='upload')){
 				if(!$pwd || !password_verify($pwd,$_hash)){
 					closeFile($rp);
 					closeFile($fp);
@@ -1284,8 +1284,10 @@ function img_replace(){
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
-
-			if($id===$time_ && $no===$no_ && $pwd && password_verify($pwd,$hash_)){
+			
+			if(($id===$time_ && $no===$no_) &&
+			(($admindel && ($tool==='upload') ||
+			($pwd && password_verify($pwd,$hash_))))){
 				$alllog_arr[$i] = $new_line;
 				$flag=true;
 				break;
