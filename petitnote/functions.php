@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220611;
+$functions_ver=20220614;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -154,12 +154,12 @@ function userdel_mode(){
 function adminpost_valid(){
 	global $second_pass;
 	session_sta();
-	return isset($_SESSION['adminpost'])&&($_SESSION['adminpost']===$second_pass);
+	return isset($_SESSION['adminpost'])&&($second_pass && $_SESSION['adminpost']===$second_pass);
 }
 function admindel_valid(){
 	global $second_pass;
 	session_sta();
-	return isset($_SESSION['admindel'])&&($_SESSION['admindel']===$second_pass);
+	return isset($_SESSION['admindel'])&&($second_pass && $_SESSION['admindel']===$second_pass);
 }
 function aikotoba_valid(){
 	session_sta();
