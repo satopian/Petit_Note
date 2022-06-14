@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.20.5';
+$petit_ver='v0.20.6';
 
 $petit_lot='lot.220614';
 
@@ -1037,6 +1037,7 @@ function img_replace(){
 		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
 	} 
 	$is_upload=false;
+	$tool = '';
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $admindel)){
 
 		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
@@ -1048,6 +1049,7 @@ function img_replace(){
 
 		check_csrf_token();
 		$is_upload = true;
+		$tool = 'upload';
 	}
 	$tempfile='';
 	$file_name='';
