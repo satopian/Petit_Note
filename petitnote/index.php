@@ -28,6 +28,7 @@ require_once(__DIR__.'/noticemail.inc');
 $skindir='template/'.$skindir;
 
 $petit_ver='v0.20.5';
+
 $petit_lot='lot.220614';
 
 if(!isset($functions_ver)||$functions_ver<20220611){
@@ -1035,7 +1036,7 @@ function img_replace(){
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
 		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
 	} 
-	$tool='';
+	$is_upload=false;
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $admindel)){
 
 		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
@@ -1046,14 +1047,13 @@ function img_replace(){
 		}
 
 		check_csrf_token();
-		$tool = 'upload'; 
-		
+		$is_upload = true;
 	}
 	$tempfile='';
 	$file_name='';
 	$starttime='';
 	$postedtime='';
-	if(!$up_tempfile && ($tool!=='upload')){
+	if(!$up_tempfile && (!$is_upload)){
 		/*--- テンポラリ捜査 ---*/
 		$find=false;
 		$handle = opendir(TEMP_DIR);
@@ -1078,13 +1078,13 @@ function img_replace(){
 		}
 		$tempfile=TEMP_DIR.$file_name.$imgext;
 	}
-	if($up_tempfile && ($tool==='upload') && !is_file($up_tempfile)){
+	if($up_tempfile && $is_upload && !is_file($up_tempfile)){
 		return error($en?'Please attach an image.':'画像を添付してください。');
 	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
 
-		if($tool==='upload'){//該当記事が無い時はエラー
+		if($is_upload){//該当記事が無い時はエラー
 			return error($en? 'The article does not exist.':'記事がありません。');
 		} 
 		return paintcom();//該当記事が無い時は新規投稿。
@@ -1124,14 +1124,14 @@ function img_replace(){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id===$_time && $no===$_no){
 
-			if(($tool==='upload') && ($_tool!=='upload')) {
+			if(($is_upload) && ($_tool!=='upload')) {
 
 				closeFile($rp);
 				closeFile($fp);
 				return error($en?'The operation failed.':'失敗しました。');
 			}
 
-			if(!$admindel&&($tool!=='upload')){
+			if(!$admindel || !$is_upload){
 				if(!$pwd || !password_verify($pwd,$_hash)){
 					closeFile($rp);
 					closeFile($fp);
@@ -1156,7 +1156,7 @@ function img_replace(){
 	$time = time().substr(microtime(),2,3);
 
 	$upfile=TEMP_DIR.$time.'.tmp';
-	if(($tool==='upload')&&($_tool==='upload')){
+	if($is_upload&&($_tool==='upload')){
 		if(is_file($up_tempfile)){
 			move_uploaded_file($up_tempfile,$upfile);
 		}
@@ -1171,7 +1171,7 @@ function img_replace(){
 		return error($en?'The operation failed.':'失敗しました。');
 	} 
 	chmod($upfile,0606);
-	if(($tool==='upload')&&($_tool==='upload')){//実体データの縮小
+	if($is_upload&&($_tool==='upload')){//実体データの縮小
 		$max_px=isset($max_px) ? $max_px : 1024;
 		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
 	}	
@@ -1233,7 +1233,7 @@ function img_replace(){
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
-		if(($tool==='upload') && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
+		if($is_upload && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
@@ -1286,7 +1286,7 @@ function img_replace(){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 			
 			if(($id===$time_ && $no===$no_) &&
-			(($admindel && ($tool==='upload') ||
+			(($admindel && $is_upload ||
 			($pwd && password_verify($pwd,$hash_))))){
 				$alllog_arr[$i] = $new_line;
 				$flag=true;
@@ -1316,10 +1316,9 @@ function img_replace(){
 	safe_unlink($upfile);
 	safe_unlink(TEMP_DIR.$file_name.".dat");
 
-	if($tool==='upload'){
+	if($is_upload){
 		return edit_form($time,$no);//編集画面にもどる
 	}
-	unset($_SESSION['userdel']);
 	return header('Location: ./?resno='.$no.'#'.$time);
 
 }
