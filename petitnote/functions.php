@@ -503,7 +503,6 @@ function Reject_if_NGword_exists_in_the_post(){
 	$chk_url = preg_replace("/\s/u", "", $url );
 	$chk_com  = preg_replace("/\s/u", "", $com );
 
-
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
 		mb_regex_encoding("UTF-8");
@@ -632,7 +631,7 @@ function image_reduction_display($w,$h,$max_w,$max_h){
         $w = ceil($w * $ratio);
         $h = ceil($h * $ratio);
     }
-    $reduced_size = [$w, $h];
+    $reduced_size = [$w,$h];
     return $reduced_size;
 }
 /**
