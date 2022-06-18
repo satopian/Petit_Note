@@ -28,7 +28,6 @@ require_once(__DIR__.'/noticemail.inc');
 $skindir='template/'.$skindir;
 
 $petit_ver='v0.21.6';
-
 $petit_lot='lot.220618';
 
 if(!isset($functions_ver)||$functions_ver<20220615){
@@ -1599,7 +1598,6 @@ function edit(){
 		closeFile($rp);
 		closeFile($fp);
 		return error($en?'The operation failed.':'失敗しました。');
-
 	}
 	if(!$_imgfile && !$com){
 		closeFile($rp);
