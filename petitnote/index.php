@@ -27,9 +27,9 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.21.1';
+$petit_ver='v0.21.2';
 
-$petit_lot='lot.220617';
+$petit_lot='lot.220618';
 
 if(!isset($functions_ver)||$functions_ver<20220615){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -1133,15 +1133,10 @@ function img_replace(){
 				return error($en?'The operation failed.':'失敗しました。');
 			}
 
-			if(!$admindel || !$is_upload){
-				if(!$pwd || !password_verify($pwd,$_hash)){
-					closeFile($rp);
-					closeFile($fp);
-					return error($en?'The operation failed.':'失敗しました。');
-				}
+			if(($is_upload && $admindel) || ($pwd && password_verify($pwd,$_hash))){
+				$flag=true;
+				break;
 			}
-			$flag=true;
-			break;
 		}
 	}
 	if(!check_elapsed_days($_time)&&(!$adminpost && !$admindel)){//指定日数より古い画像差し換えは新規投稿にする
