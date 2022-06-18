@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.21.3';
+$petit_ver='v0.21.6';
 
 $petit_lot='lot.220618';
 
@@ -1152,7 +1152,7 @@ function img_replace(){
 	if(!$flag){
 		closeFile($rp);
 		closeFile($fp);
-		return error($en?'The article was not found.':'見つかりませんでした。');
+		return error($en?'The operation failed.':'失敗しました。');
 	}
 	$time = time().substr(microtime(),2,3);
 
@@ -1409,7 +1409,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	}
 	if(!$find){
 		closeFile ($rp);
-		return error($en?'The article was not found.':'見つかりませんでした。');
+		return error($en?'The article was not found.':'記事が見つかりません。');
 	}
 
 	closeFile ($rp);
@@ -1480,21 +1480,16 @@ function edit_form($id='',$no=''){
 		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 		if($id===$time && $no===$_no){
 		
-			if(!$admindel){
-
-				if(!check_elapsed_days($time)||!$pwd||!password_verify($pwd,$hash)){
-					closeFile($rp);
-					return error($en?'The operation failed.':'失敗しました。');
-				}
+			if($admindel||(check_elapsed_days($time)&&$pwd&&password_verify($pwd,$hash))){
+				$flag=true;
+				break;
 			}
-			$flag=true;
-			break;
 		}
 	}
 
 	if(!$flag){
 		closeFile($rp);
-		return error($en?'The article was not found.':'見つかりませんでした。');
+		return error($en?'The operation failed.':'失敗しました。');
 	}
 	closeFile($rp);
 
@@ -1594,17 +1589,17 @@ function edit(){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id===$_time && $no===$_no){
 
-			if($admindel||check_elapsed_days($_time)&&$pwd&&password_verify($pwd,$_hash)){
+			if($admindel||(check_elapsed_days($_time)&&$pwd&&password_verify($pwd,$_hash))){
 				$flag=true;
 				break;
 			}
 		}
-		break;
 	}
 	if(!$flag){
 		closeFile($rp);
 		closeFile($fp);
-		return error($en?'The article was not found.':'見つかりませんでした。');
+		return error($en?'The operation failed.':'失敗しました。');
+
 	}
 	if(!$_imgfile && !$com){
 		closeFile($rp);
@@ -1771,7 +1766,7 @@ function del(){
 	closeFile($fp);
 
 	if(!$find){
-		return error($en?'The article was not found.':'見つかりませんでした。');
+		return error($en?'The article was not found.':'記事が見つかりません。');
 	}
 
 	unset($_SESSION['userdel']);
