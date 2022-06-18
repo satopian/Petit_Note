@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.21.2';
+$petit_ver='v0.21.3';
 
 $petit_lot='lot.220618';
 
@@ -1594,17 +1594,12 @@ function edit(){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id===$_time && $no===$_no){
 
-			if(!$admindel){
-
-				if(!check_elapsed_days($_time)||!$pwd||!password_verify($pwd,$_hash)){
-					closeFile($rp);
-					closeFile($fp);
-					return error($en?'The operation failed.':'失敗しました。');
-				}
+			if($admindel||check_elapsed_days($_time)&&$pwd&&password_verify($pwd,$_hash)){
+				$flag=true;
+				break;
 			}
-			$flag=true;
-			break;
 		}
+		break;
 	}
 	if(!$flag){
 		closeFile($rp);
