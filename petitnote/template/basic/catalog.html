@@ -89,7 +89,7 @@
 <?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
 <?php if(($i>=$start_page)&&($i<=$end_page)):?>
 	<?php if($page==$i):?>
-			[<?=h($i/$pagedef)?>]
+			[<strong><?=h($i/$pagedef)?></strong>]
 		<?php else: ?>
 			<?php if($i===0):?>
 				[<a href="?mode=catalog&page=0<?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">0</a>]
