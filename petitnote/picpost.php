@@ -1,13 +1,14 @@
 <?php
 //----------------------------------------------------------------------
-// picpost.php lot.211108  for PetitNote
-// by さとぴあ & POTI改 >> https://paintbbs.sakura.ne.jp/poti/ 
+// picpost.php lot.220627  for PetitNote
+// by さとぴあ & POTI-board redevelopment team >> https://paintbbs.sakura.ne.jp/poti/ 
 // originalscript (c)SakaQ 2005 >> http://www.punyu.net/php/
 // しぃからPOSTされたお絵かき画像をTEMPに保存
 //
 // このスクリプトはPaintBBS（藍珠CGI）のPNG保存ルーチンを参考に
 // PHP用に作成したものです。
 //----------------------------------------------------------------------
+// 2022/06/27 画像とユーザーデータが存在しない時は画面を推移せずエラーのアラートを出す。
 // 2021/11/08 CSRF対策にusercodeを使用。cookieが確認できない場合は画像を保存しない。
 // 2021/10/31 エラー発生時は、ユーザーのキャンバスにエラー内容が表示されるためシステムログへのエラーログの保存処理を削除した。
 // 2021/05/17 エラーが発生した時はお絵かき画面から移動せず、エラーの内容を表示する。
@@ -144,6 +145,9 @@ if(!$fp){
 	flock($fp, LOCK_UN);
 	fclose($fp);
 }
+if(!is_file(TEMP_DIR.$imgfile.$imgext)){
+	die("error\n{$errormsg_3}");
+}
 
 // PCHファイルの長さを取り出す
 $pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);
@@ -187,5 +191,7 @@ if(!$fp){
 	fclose($fp);
 	chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 }
-
+if(!is_file(TEMP_DIR.$imgfile.".dat")){
+	die("error\n{$errormsg_7}");
+}
 die("ok");
