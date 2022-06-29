@@ -1,6 +1,9 @@
 # お絵かき掲示板PHPスクリプト Petit Note
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - PaintBBS NEO,ChickenPaint,Klecksが使えるお絵かき掲示板です。
+##  動作環境
+- PHP5.6以上の環境が必要です。  
+PHP5.6、PHP7.4、PHP8.0、PHP8.1で動作確認しています。
 
 ##  v0.9.16.x以前のPetit Noteをご利用の方へのお願い
 
