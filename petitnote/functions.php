@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220615;
+$functions_ver=20220630;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -193,7 +193,7 @@ function check_cont_pass(){
 	global $en;
 
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
-	$id = (string)filter_input(INPUT_POST, 'time',FILTER_VALIDATE_INT);
+	$id = (string)filter_input(INPUT_POST, 'time');//intの範囲外
 	$pwd = filter_input(INPUT_POST, 'pwd');
 
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得

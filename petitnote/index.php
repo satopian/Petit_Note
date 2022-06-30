@@ -30,7 +30,7 @@ $skindir='template/'.$skindir;
 $petit_ver='v0.21.8';
 $petit_lot='lot.220630';
 
-if(!isset($functions_ver)||$functions_ver<20220615){
+if(!isset($functions_ver)||$functions_ver<20220630){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
@@ -899,7 +899,7 @@ function to_continue(){
 
 
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
-	$id = (string)filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT);
+	$id = (string)filter_input(INPUT_GET, 'id');//intの範囲外
 
 	$flag = false;
 
@@ -965,7 +965,7 @@ function download_app_dat(){
 
 	$pwd=filter_input(INPUT_POST,'pwd');
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
-	$id = (string)filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT);
+	$id = (string)filter_input(INPUT_POST, 'id');//intの範囲外
 
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
@@ -1054,9 +1054,9 @@ function img_replace(){
 	$file_name='';
 	$starttime='';
 	$postedtime='';
-	if(!$up_tempfile && (!$is_upload)){
+	$repfind=false;
+	if(!$up_tempfile && !$is_upload){
 		/*--- テンポラリ捜査 ---*/
-		$find=false;
 		$handle = opendir(TEMP_DIR);
 		while ($file = readdir($handle)) {
 			if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
@@ -1068,13 +1068,13 @@ function img_replace(){
 				//画像があり、認識コードがhitすれば抜ける
 			
 				if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $urepcode === $repcode){
-					$find=true;
+					$repfind=true;
 					break;
 				}
 			}
 		}
 		closedir($handle);
-		if(!$find){
+		if(!$repfind){
 		return error($en?'The operation failed.':'失敗しました。');
 		}
 		$tempfile=TEMP_DIR.$file_name.$imgext;
@@ -1229,7 +1229,7 @@ function img_replace(){
 	$chk_images=array_merge($chk_lines,$r_arr);
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
-		if((int)time()-(int)substr($chk_time,0,-3)<2){//投稿時刻の重複回避が主目的
+		if($time===$chk_time){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
