@@ -364,7 +364,7 @@ function post(){
 			}
 			$chk_ex_line=explode("\t",trim($line));
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
-			if((int)time()-(int)substr($time_,0,-3)<2){//投稿時刻の重複回避が主目的
+			if((int)time()-(int)substr($time_,0,-3)<1){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
 				closeFile($fp);
 				safe_unlink($upfile);
@@ -1304,7 +1304,7 @@ function img_replace(){
 
 	}
 	writeFile($rp, implode("", $r_arr));
-	closeFile($rp);
+		closeFile($rp);
 	closeFile($fp);
 	
 	//旧ファイル削除
