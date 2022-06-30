@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.21.6';
-$petit_lot='lot.220618';
+$petit_ver='v0.21.8';
+$petit_lot='lot.220630';
 
 if(!isset($functions_ver)||$functions_ver<20220615){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -364,7 +364,7 @@ function post(){
 			}
 			$chk_ex_line=explode("\t",trim($line));
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
-			if(((int)$time-(int)$time_)<1000){//投稿時刻の重複回避が主目的
+			if((int)time()-(int)substr($time_,0,-3)<2){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
 				closeFile($fp);
 				safe_unlink($upfile);
@@ -393,7 +393,7 @@ function post(){
 		}
 
 		// 画像アップロードと画像なしそれぞれの待機時間
-		if(($upfile && (time()-substr($_time_,0,-3))<30)||(!$upfile && (time()-substr($_time_,0,-3))<15)){
+		if(($upfile && ((int)time()-(int)substr($_time_,0,-3))<30)||(!$upfile && ((int)time()-(int)substr($_time_,0,-3))<15)){
 			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
@@ -1007,8 +1007,8 @@ function img_replace(){
 
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
-	$id = t((string)filter_input(INPUT_POST, 'id',FILTER_VALIDATE_INT));
-	$id = $id ? $id :t((string)filter_input(INPUT_GET, 'id',FILTER_VALIDATE_INT));
+	$id = t((string)filter_input(INPUT_POST, 'id'));//intの範囲外
+	$id = $id ? $id :t((string)filter_input(INPUT_GET, 'id'));
 
 	$getpwd = t((string)filter_input(INPUT_GET, 'pwd'));
 	$postpwd = t((string)filter_input(INPUT_POST, 'pwd'));
@@ -1229,7 +1229,7 @@ function img_replace(){
 	$chk_images=array_merge($chk_lines,$r_arr);
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
-		if(((int)$time-(int)$chk_time)<1000){//投稿時刻の重複回避が主目的
+		if((int)time()-(int)substr($chk_time,0,-3)<2){//投稿時刻の重複回避が主目的
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
@@ -1373,7 +1373,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	if($edit_mode!=='delmode' && $edit_mode!=='editmode'){
 		return error($en?'The operation failed.':'失敗しました。');
 	}
-	$id = t((string)filter_input(INPUT_POST,'id',FILTER_VALIDATE_INT));
+	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 
 	if(!is_file(LOG_DIR."{$no}.log")){
@@ -1530,7 +1530,7 @@ function edit(){
 	$name = t((string)filter_input(INPUT_POST,'name'));
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
-	$id = t((string)filter_input(INPUT_POST,'id',FILTER_VALIDATE_INT));
+	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 	
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
