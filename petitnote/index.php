@@ -169,7 +169,7 @@ function post(){
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
 		is_file(IMG_DIR.$time.$testext);
-			$time=(time()+1).substr(microtime(),2,3);
+			$time=(string)((int)time()+1).substr(microtime(),2,3);
 		break;	
 	}
 
@@ -1163,7 +1163,7 @@ function img_replace(){
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
 		is_file(IMG_DIR.$time.$testext);
-			$time=((int)time()+1).substr(microtime(),2,3);
+			$time=(string)((int)time()+1).substr(microtime(),2,3);
 		break;	
 	}
 		
@@ -1245,7 +1245,7 @@ function img_replace(){
 			closeFile($rp);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
-		if(!$is_upload && $time===$chk_time){
+		if(!$is_upload && (string)$time===(string)$chk_time){
 			$time=((int)substr($time,0,-3)+1).substr($time,-3);
 		}
 		if($is_upload && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
