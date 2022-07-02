@@ -27,7 +27,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.22.1';
+$petit_ver='v0.22.2';
 $petit_lot='lot.220701';
 
 if(!isset($functions_ver)||$functions_ver<20220630){
@@ -695,7 +695,7 @@ function paint(){
 		} 
 
 		if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK){
-
+	
 			$time = (string)(time().substr(microtime(),2,3));
 			$pchext=pathinfo($pchfilename, PATHINFO_EXTENSION);
 			$pchext=strtolower($pchext);//すべて小文字に
@@ -1239,7 +1239,7 @@ function img_replace(){
 	$chk_images=array_merge($chk_lines,$r_arr);
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
-		if($is_upload && (int)time()-(int)substr($chk_time,0,-3)<1){//投稿時刻の重複回避
+		if($is_upload && (int)substr($time,0,-3)-(int)substr($chk_time,0,-3)<1){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
@@ -1257,7 +1257,6 @@ function img_replace(){
 	}
 
 	$imgfile = $time.$imgext;
-
 	rename($upfile,IMG_DIR.$imgfile);
 	chmod(IMG_DIR.$imgfile,0606);
 	$src='';
@@ -1622,7 +1621,7 @@ function edit(){
 		closeFile($fp);
 		return error($en?'Please write something.':'何か書いて下さい。');
 	}
-	
+
 	$sub=($_oya==='res') ? $_sub : $sub; 
 
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
