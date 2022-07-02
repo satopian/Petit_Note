@@ -164,7 +164,7 @@ function post(){
 	$w='';
 	$h='';
 	$tool='';
-	$time = time().substr(microtime(),2,3);	//投稿時刻
+	$time = (string)(time().substr(microtime(),2,3));	//投稿時刻
 
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
@@ -695,8 +695,8 @@ function paint(){
 		} 
 
 		if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK){
-	
-			$time = time().substr(microtime(),2,3);
+
+			$time = (string)(time().substr(microtime(),2,3));
 			$pchext=pathinfo($pchfilename, PATHINFO_EXTENSION);
 			$pchext=strtolower($pchext);//すべて小文字に
 			//拡張子チェック
@@ -1159,7 +1159,7 @@ function img_replace(){
 		closeFile($fp);
 		return error($en?'The operation failed.':'失敗しました。');
 	}
-	$time = time().substr(microtime(),2,3);
+	$time = (string)(time().substr(microtime(),2,3));
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
 		is_file(IMG_DIR.$time.$testext);
@@ -1622,8 +1622,7 @@ function edit(){
 		closeFile($fp);
 		return error($en?'Please write something.':'何か書いて下さい。');
 	}
-	$time = time().substr(microtime(),2,3);
-
+	
 	$sub=($_oya==='res') ? $_sub : $sub; 
 
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
