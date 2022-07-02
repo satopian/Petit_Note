@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.22.2';
-$petit_lot='lot.220701';
+$petit_ver='v0.22.3';
+$petit_lot='lot.220702';
 
 if(!isset($functions_ver)||$functions_ver<20220630){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -168,9 +168,10 @@ function post(){
 
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
-		is_file(IMG_DIR.$time.$testext);
-			$time=(string)((int)time()+1).substr(microtime(),2,3);
+		if(is_file(IMG_DIR.$time.$testext)){
+		$time=(string)((int)time()+1).substr(microtime(),2,3);
 		break;	
+		}
 	}
 
 	$adminpost=adminpost_valid();
@@ -1162,9 +1163,10 @@ function img_replace(){
 	$time = (string)(time().substr(microtime(),2,3));
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
-		is_file(IMG_DIR.$time.$testext);
+		if(is_file(IMG_DIR.$time.$testext)){
 			$time=(string)((int)time()+1).substr(microtime(),2,3);
-		break;	
+			break;	
+		}
 	}
 		
 	$upfile=TEMP_DIR.$time.'.tmp';
