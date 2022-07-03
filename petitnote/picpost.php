@@ -132,8 +132,8 @@ if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
 	die("error\n{$errormsg_1}");
 }
 
-$imgfile = time().substr(microtime(),2,6;//画像ファイル名
-$imgfile = is_file(TEMP_DIR.$imgfile.$imgext) ? ((time()+1).substr(microtime(),2,6)) : $imgfile;
+$imgfile = time().substr(microtime(),2,6);//画像ファイル名
+$imgfile = is_file(TEMP_DIR.$imgfile.$imgext) ? (time()+1).substr(microtime(),2,6) : $imgfile;
 
 $full_imgfile = TEMP_DIR.$imgfile.$imgext;
 // 画像データをファイルに書き込む
