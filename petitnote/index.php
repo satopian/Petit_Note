@@ -27,10 +27,10 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.22.3';
-$petit_lot='lot.220702';
+$petit_ver='v0.22.5';
+$petit_lot='lot.220703';
 
-if(!isset($functions_ver)||$functions_ver<20220630){
+if(!isset($functions_ver)||$functions_ver<20220703){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
@@ -371,7 +371,7 @@ function post(){
 			}
 			$chk_ex_line=explode("\t",trim($line));
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
-			$chk_time=(strlen($time_)>13) ? substr($time_,0,-6) : substr($time_,0,-3);
+			$chk_time=(strlen($time_)>15) ? substr($time_,0,-6) : substr($time_,0,-3);
 			if((int)time()-(int)$chk_time<1){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
 				closeFile($fp);
@@ -401,7 +401,7 @@ function post(){
 		}
 
 		// 画像アップロードと画像なしそれぞれの待機時間
-		$_chk_time_=(strlen($_time_)>13) ? substr($_time_,0,-6) : substr($_time_,0,-3);
+		$_chk_time_=(strlen($_time_)>15) ? substr($_time_,0,-6) : substr($_time_,0,-3);
 		if($upfile && ((int)time()-(int)$_chk_time_<30)||(!$upfile && ((int)time()-(int)$_chk_time_)<15)){
 			closeFile($fp);
 			safe_unlink($upfile);
@@ -1243,7 +1243,7 @@ function img_replace(){
 	$chk_images=array_merge($chk_lines,$r_arr);
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
-		$_chk_time=(strlen($chk_time)>13) ? substr($chk_time,0,-6) : substr($chk_time,0,-3);//秒単位に戻す
+		$_chk_time=(strlen($chk_time)>15) ? substr($chk_time,0,-6) : substr($chk_time,0,-3);//秒単位に戻す
 		if($is_upload && (int)substr($time,0,-6)-(int)$_chk_time<1){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);

@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220630;
+$functions_ver=20220703;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -252,8 +252,9 @@ function create_res($line){
 	$anime = ($pchext==='.pch') ? true : false; 
 	$thumbnail = ($thumbnail==='thumbnail') ? $time.'s.jpg' : false; 
 	$painttime = is_numeric($painttime) ? calcPtime($painttime) : false;  
-
-	$datetime = $do_not_change_posts_time ? (int)substr($first_posted_time,0,-3) : (int)substr($time,0,-3);
+	$_time=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
+	$first_posted_time=(strlen($first_posted_time)>15) ? substr($first_posted_time,0,-6) : substr($first_posted_time,0,-3);
+	$datetime = $do_not_change_posts_time ? $first_posted_time : $_time;
 	$date=date('y/m/d',$datetime);
 
 	$check_elapsed_days = check_elapsed_days($time);
