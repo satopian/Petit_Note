@@ -164,12 +164,12 @@ function post(){
 	$w='';
 	$h='';
 	$tool='';
-	$time = (string)(time().substr(microtime(),2,3));	//投稿時刻
+	$time = (string)(time().substr(microtime(),2,6));	//投稿時刻
 
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
 		if(is_file(IMG_DIR.$time.$testext)){
-		$time=(string)((int)time()+1).substr(microtime(),2,3);
+		$time=(string)((int)time()+1).substr(microtime(),2,6);
 		break;	
 		}
 	}
@@ -371,7 +371,8 @@ function post(){
 			}
 			$chk_ex_line=explode("\t",trim($line));
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
-			if((int)time()-(int)substr($time_,0,-3)<1){//投稿時刻の重複回避が主目的
+			$chk_time=(strlen($time_)>13) ? substr($time_,0,-6) : substr($time_,0,-3);
+			if((int)time()-(int)$chk_time<1){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
 				closeFile($fp);
 				safe_unlink($upfile);
@@ -400,7 +401,8 @@ function post(){
 		}
 
 		// 画像アップロードと画像なしそれぞれの待機時間
-		if(($upfile && ((int)time()-(int)substr($_time_,0,-3))<30)||(!$upfile && ((int)time()-(int)substr($_time_,0,-3))<15)){
+		$_chk_time_=(strlen($_time_)>13) ? substr($_time_,0,-6) : substr($_time_,0,-3);
+		if($upfile && ((int)time()-(int)$_chk_time_<30)||(!$upfile && ((int)time()-(int)$_chk_time_)<15)){
 			closeFile($fp);
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
@@ -697,7 +699,7 @@ function paint(){
 
 		if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK){
 	
-			$time = (string)(time().substr(microtime(),2,3));
+			$time = (string)(time().substr(microtime(),2,6));
 			$pchext=pathinfo($pchfilename, PATHINFO_EXTENSION);
 			$pchext=strtolower($pchext);//すべて小文字に
 			//拡張子チェック
@@ -1160,11 +1162,11 @@ function img_replace(){
 		closeFile($fp);
 		return error($en?'The operation failed.':'失敗しました。');
 	}
-	$time = (string)(time().substr(microtime(),2,3));
+	$time = (string)(time().substr(microtime(),2,6));
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
 		if(is_file(IMG_DIR.$time.$testext)){
-			$time=(string)((int)time()+1).substr(microtime(),2,3);
+			$time=(string)((int)time()+1).substr(microtime(),2,6);
 			break;	
 		}
 	}
@@ -1241,14 +1243,15 @@ function img_replace(){
 	$chk_images=array_merge($chk_lines,$r_arr);
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
-		if($is_upload && (int)substr($time,0,-3)-(int)substr($chk_time,0,-3)<1){//投稿時刻の重複回避
+		$_chk_time=(strlen($chk_time)>13) ? substr($chk_time,0,-6) : substr($chk_time,0,-3);//秒単位に戻す
+		if($is_upload && (int)substr($time,0,-6)-(int)$_chk_time<1){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
 		if(!$is_upload && (string)$time===(string)$chk_time){
-			$time=((int)substr($time,0,-3)+1).substr($time,-3);
+			$time=((int)substr($time,0,-6)+1).substr($time,-6);
 		}
 		if($is_upload && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
 		safe_unlink($upfile);

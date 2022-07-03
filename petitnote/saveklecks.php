@@ -13,7 +13,7 @@ defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.ph
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
 $time = time();
-$imgfile = $time.substr(microtime(),2,3);	//画像ファイル名
+$imgfile = $time.substr(microtime(),2,6);	//画像ファイル名
 
 
 header('Content-type: text/plain');
