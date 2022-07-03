@@ -1064,7 +1064,7 @@ function img_replace(){
 	$starttime='';
 	$postedtime='';
 	$repfind=false;
-	if(!$up_tempfile && !$is_upload){
+	if(!$is_upload){
 		/*--- テンポラリ捜査 ---*/
 		$handle = opendir(TEMP_DIR);
 		while ($file = readdir($handle)) {
