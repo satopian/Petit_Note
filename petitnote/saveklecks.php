@@ -14,7 +14,7 @@ defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.
 
 $time = time();
 $imgfile = time().substr(microtime(),2,6);	//画像ファイル名
-$imgfile = is_file(TEMP_DIR.$imgfile.'.png') ? (time()+1).substr(microtime(),2,6) : $imgfile;
+$imgfile = is_file(TEMP_DIR.$imgfile.'.png') ? ((time()+1).substr(microtime(),2,6)) : $imgfile;
 
 header('Content-type: text/plain');
 
