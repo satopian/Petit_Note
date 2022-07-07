@@ -39,11 +39,10 @@ if(SIZE_CHECK && ($_FILES['picture']['size'] > (PICTURE_MAX_KB * 1024))){
 if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
 	die("Your picture upload failed! Please try again!");
 }
-
 $success = TRUE;
 $success = move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
 
-if (!$success) {
+if (!$success||!is_file(TEMP_DIR.$imgfile.'.png')) {
     die("Couldn't move uploaded files");
 }
 if (isset ($_FILES["psd"]) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
@@ -82,6 +81,9 @@ if(!$fp){
 	flock($fp, LOCK_UN);
 	fclose($fp);
 	chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
-
+	if (!is_file(TEMP_DIR.$imgfile.'.dat')) {
+		die("Your picture upload failed! Please try again!");
+	}
+	
 die("ok");
 

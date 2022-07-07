@@ -46,7 +46,7 @@ if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
 $success = TRUE;
 $success = move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
 
-if (!$success) {
+if (!$success||!is_file(TEMP_DIR.$imgfile.'.png')) {
     chibi_die("Couldn't move uploaded files");
 }
 if (isset($_FILES['chibifile']) && ($_FILES['chibifile']['error'] == UPLOAD_ERR_OK)){
@@ -85,7 +85,10 @@ if(!$fp){
 	fclose($fp);
 	chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 
-
+	if(!is_file(TEMP_DIR.$imgfile.'.dat')){
+		chibi_die("Your picture upload failed! Please try again!");
+	}
+	
 die("CHIBIOK\n");
 
 
