@@ -1,6 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
+header('X-Frame-Options: DENY');
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0) ? true : false;
@@ -27,8 +28,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.22.5';
-$petit_lot='lot.220703';
+$petit_ver='v0.22.6';
+$petit_lot='lot.220715';
 
 if(!isset($functions_ver)||$functions_ver<20220703){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
