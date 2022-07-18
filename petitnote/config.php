@@ -273,6 +273,12 @@ $deny_all_posts = false;
 
 date_default_timezone_set('asia/tokyo');
 
+//iframe内での表示を 拒否する:true 許可する:false
+//セキュリティリスクを回避するため "拒否する:true" を強く推奨。
+
+$x_frame_options_deny=true;
+// $x_frame_options_deny=false;
+
 //通常は変更しません
 //ペイント画面の$pwdの暗号化
 

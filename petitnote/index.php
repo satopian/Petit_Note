@@ -31,7 +31,7 @@ $skindir='template/'.$skindir;
 $petit_ver='v0.22.6';
 $petit_lot='lot.220715';
 
-if(!isset($functions_ver)||$functions_ver<20220703){
+if(!isset($functions_ver)||$functions_ver<20220718){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
