@@ -1,6 +1,6 @@
 <?php
 //編集モードログアウト
-$functions_ver=20220703;
+$functions_ver=20220718;
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
 	session_sta();
@@ -255,7 +255,7 @@ function create_res($line){
 	$_time=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 	$first_posted_time=(strlen($first_posted_time)>15) ? substr($first_posted_time,0,-6) : substr($first_posted_time,0,-3);
 	$datetime = $do_not_change_posts_time ? $first_posted_time : $_time;
-	$date=date('y/m/d',$datetime);
+	$date=$datetime ? date('y/m/d',(int)$datetime):'';
 
 	$check_elapsed_days = check_elapsed_days($time);
 	if(!$url||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)) $url="";
