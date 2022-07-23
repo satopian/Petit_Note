@@ -27,8 +27,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.22.8';
-$petit_lot='lot.220719';
+$petit_ver='v0.22.10';
+$petit_lot='lot.220723';
 
 if(!isset($functions_ver)||$functions_ver<20220718){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -1086,8 +1086,8 @@ function img_replace(){
 			}
 		}
 		closedir($handle);
-		if(!$repfind){
-		return error($en?'The operation failed.':'失敗しました。');
+		if(!$repfind){////見つからなかった時は
+			return paintcom();//新規投稿
 		}
 		$tempfile=TEMP_DIR.$file_name.$imgext;
 	}
