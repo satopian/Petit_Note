@@ -27,13 +27,13 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.22.10';
-$petit_lot='lot.220723';
+$petit_ver='v0.23.0';
+$petit_lot='lot.220801';
 
-if(!isset($functions_ver)||$functions_ver<20220718){
+if(!isset($functions_ver)||$functions_ver<20220801){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220322){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220801){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
 
@@ -49,6 +49,7 @@ $sage_all= isset($sage_all) ? $sage_all : false;
 $view_other_works= isset($view_other_works) ? $view_other_works : true;
 $deny_all_posts= isset($deny_all_posts) ? $deny_all_posts : (isset($denny_all_posts) ? $denny_all_posts : false);
 $latest_var=isset($latest_var) ? $latest_var : true;
+$badhost=isset($badhost) ? $badhost :[]; 
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -375,7 +376,7 @@ function post(){
 			$chk_ex_line=explode("\t",trim($line));
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
 			$chk_time=(strlen($time_)>15) ? substr($time_,0,-6) : substr($time_,0,-3);
-			if((int)time()-(int)$chk_time<1){//投稿時刻の重複回避が主目的
+			if(((int)time()-(int)$chk_time)<1){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
 				closeFile($fp);
 				safe_unlink($upfile);
@@ -1247,7 +1248,7 @@ function img_replace(){
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
 		$_chk_time=(strlen($chk_time)>15) ? substr($chk_time,0,-6) : substr($chk_time,0,-3);//秒単位に戻す
-		if($is_upload && (int)substr($time,0,-6)-(int)$_chk_time<1){//投稿時刻の重複回避
+		if($is_upload && ((int)time()-(int)$_chk_time)<1){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
