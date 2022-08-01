@@ -37,17 +37,17 @@
 <div class="catalog_desc_wrap">
 	<!-- 親のループ -->
 <?php if(isset($out)):?>
-<?php foreach($out as  $ress):?>
+<?php foreach($out as $t => $ress):?>
 	<?php foreach($ress as  $res):?>
 	<div class="catalog_image">			
 		<?php if($res['img']):?>
 			<a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
 			<?php if($res['thumbnail']):?>
 				
-					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
 				
 			<?php else:?>
-			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
 			<?php endif;?>
 			</a>
 			<?php else:?>
@@ -125,7 +125,7 @@
 </div>
 </div>
 <div id="bottom"></div>
-<div id="page_top"><a href="#" class="icon-angles-up-solid"></a></div>
+<div id="page_top"><a class="icon-angles-up-solid"></a></div>
 <script src="<?=h($skindir)?>jquery-3.5.1.min.js"></script>
 <script>
 	window.onpageshow = function(){
