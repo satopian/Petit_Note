@@ -1,11 +1,11 @@
 <?php
 // thumbnail_gd.php for PetitNote (C)さとぴあ 2021 - 2022   
 // originalscript (C)SakaQ 2005 >> http://www.punyu.net/php/
-
+//220729 処理が成功した時の返り値をtrueに変更。
 //220321 透過GIF、透過PNGの時は透明を出力、または透明色を白に変換。
 //220320 本体画像のリサイズにPNG→PNG、GIF→PNG、WEBP→JPEGの各処理を追加。
 //210920 PetitNote版。
-$thumbnail_gd_ver=20220613;
+$thumbnail_gd_ver=20220801;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$fname=$path.$fname;
@@ -64,7 +64,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$exists_ImageCopyResampled = false;
 	if(function_exists("ImageCreateTrueColor")&&get_gd_ver()=="2"){
 		$im_out = ImageCreateTrueColor($out_w, $out_h);
-		if(isset($options['toolarge'])&&($mime_type==="image/png" || $mime_type==="image/gif")){
+		if(isset($options['toolarge'])&&(in_array($mime_type,["image/png","image/gif"]))){
 			if(function_exists("imagealphablending") && function_exists("imagesavealpha")){
 				imagealphablending($im_out, false);
 				imagesavealpha($im_out, true);//透明
@@ -80,7 +80,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
 			$exists_ImageCopyResampled = true;
 		}
-	}else{$im_out = ImageCreate($out_w, $out_h);$nottrue = 1;}
+	}else{$im_out = ImageCreate($out_w, $out_h);}
 	// コピー＆縮小
 	if(!$exists_ImageCopyResampled) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
 	if(isset($options['toolarge'])){
@@ -106,7 +106,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 				break;
 			case "image/webp";
 				ImageJPEG($im_out, $outfile,98);
-			break;
+				break;
 
 			default : return;
 		}
@@ -114,7 +114,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	}else{
 		$outfile=THUMB_DIR.$time.'s.jpg';
 		// サムネイル画像を保存
-		ImageJPEG($im_out, THUMB_DIR.$time.'s.jpg',90);
+		ImageJPEG($im_out, $outfile,90);
 	}
 	// 作成したイメージを破棄
 	ImageDestroy($im_in);
@@ -124,9 +124,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 		return;
 	}
 
-	$thumbnail_size = [$out_w,$out_h];
-
-	return $thumbnail_size;
+	return is_file($outfile);
 
 }
 
