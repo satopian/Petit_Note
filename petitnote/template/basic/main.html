@@ -168,7 +168,7 @@ Size:
 <!-- スレッド -->
 	<!-- 親のループ -->
 <?php if(isset($out)):?>
-<?php foreach($out as $ress) : ?>
+<?php foreach($out as $t => $ress) : ?>
 	<!-- タイトル -->
 	<h2 class="article_title"><a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a></h2>
 	<?php $resform=true; ?>
