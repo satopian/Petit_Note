@@ -19,6 +19,11 @@ if (function_exists('check_file') && $err = check_file(__DIR__.'/thumbnail_gd.ph
 if (function_exists('check_file') && $err = check_file(__DIR__.'/noticemail.inc')) {
 	return die($err);
 }
+// jQueryバージョン
+const JQUERY='jquery-3.6.0.min.js';
+if (function_exists('check_file') && $err = check_file(__DIR__.'/lib/'.JQUERY)) {
+	return die($err);
+}
 
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/thumbnail_gd.php');
@@ -27,13 +32,13 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.23.0';
-$petit_lot='lot.220801';
+$petit_ver='v0.23.2';
+$petit_lot='lot.220804';
 
-if(!isset($functions_ver)||$functions_ver<20220801){
+if(!isset($functions_ver)||$functions_ver<20220803){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220801){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220803){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
 

@@ -5,7 +5,7 @@
 //220321 透過GIF、透過PNGの時は透明を出力、または透明色を白に変換。
 //220320 本体画像のリサイズにPNG→PNG、GIF→PNG、WEBP→JPEGの各処理を追加。
 //210920 PetitNote版。
-$thumbnail_gd_ver=20220801;
+$thumbnail_gd_ver=20220803;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$fname=$path.$fname;
@@ -64,17 +64,17 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$exists_ImageCopyResampled = false;
 	if(function_exists("ImageCreateTrueColor")&&get_gd_ver()=="2"){
 		$im_out = ImageCreateTrueColor($out_w, $out_h);
-		if(isset($options['toolarge'])&&(in_array($mime_type,["image/png","image/gif"]))){
+		if(isset($options['toolarge'])&&(in_array($mime_type,["image/png","image/gif","image/webp"]))){
 			if(function_exists("imagealphablending") && function_exists("imagesavealpha")){
 				imagealphablending($im_out, false);
 				imagesavealpha($im_out, true);//透明
 			}
-		}else{
-			if(function_exists("ImageColorAlLocate") && function_exists("imagefill")){
-				$background = ImageColorAlLocate($im_out, 0xFF, 0xFF, 0xFF);//背景色を白に
-				imagefill($im_out, 0, 0, $background);
+			}else{
+				if(function_exists("ImageColorAlLocate") && function_exists("imagefill")){
+					$background = ImageColorAlLocate($im_out, 0xFF, 0xFF, 0xFF);//背景色を白に
+					imagefill($im_out, 0, 0, $background);
+				}
 			}
-		}
 		// コピー＆再サンプリング＆縮小
 		if(function_exists("ImageCopyResampled")){
 			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
@@ -105,7 +105,11 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 				}
 				break;
 			case "image/webp";
-				ImageJPEG($im_out, $outfile,98);
+				if(function_exists("ImageWEBP")){
+					ImageWEBP($im_out, $outfile,98);
+				}else{
+					ImageJPEG($im_out, $outfile,98);
+				}
 				break;
 
 			default : return;
@@ -127,5 +131,3 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	return is_file($outfile);
 
 }
-
-
