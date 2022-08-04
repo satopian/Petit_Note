@@ -5,6 +5,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
+<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
+
 <?php if(isset($set_nsfw)&&$set_nsfw&&!$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
 <style>img {filter:blur(10px);}</style>
