@@ -20,7 +20,7 @@ if (function_exists('check_file') && $err = check_file(__DIR__.'/noticemail.inc'
 	return die($err);
 }
 // jQueryバージョン
-const JQUERY='jquery-3.6.0.min.js';
+	const JQUERY='jquery-3.6.0.min.js';
 if (function_exists('check_file') && $err = check_file(__DIR__.'/lib/'.JQUERY)) {
 	return die($err);
 }
