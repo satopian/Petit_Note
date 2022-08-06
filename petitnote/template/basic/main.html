@@ -321,8 +321,7 @@ Size:
 <a href="?page=0">start</a> |
 <?php endif;?>
 
-<?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
-<?php if(($i>=$start_page)&&($i<=$end_page)):?>
+<?php for($i = $start_page; ($i < $count_alllog && $i <= $end_page) ; $i+=$pagedef) :?>
 	<?php if($page==$i):?>
 			[<strong><?=h($i/$pagedef)?></strong>]
 		<?php else: ?>
@@ -338,7 +337,6 @@ Size:
 			[<a href="?page=<?=h($i)?>"><?=h($i/$pagedef)?></a>]
 			<?php endif;?>
 			<?php endif;?>
-		<?php endif;?>
 		<?php endif;?>
 		<?php endfor ;?>
 

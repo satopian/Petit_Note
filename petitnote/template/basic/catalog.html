@@ -6,7 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
 <link rel="stylesheet" href="<?=h($skindir)?>icomoon/style.css">
-
+<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 <?php if($set_nsfw && !$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
 <style>img {filter:blur(10px);}</style>
@@ -86,8 +86,7 @@
 <a href="?mode=catalog&page=0<?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">start</a> |
 <?php endif;?>
 <div class="pagination">
-<?php for($i = 0; $i < $count_alllog ; $i+=$pagedef) :?>
-<?php if(($i>=$start_page)&&($i<=$end_page)):?>
+	<?php for($i = $start_page; ($i < $count_alllog && $i <= $end_page) ; $i+=$pagedef) :?>
 	<?php if($page==$i):?>
 			[<strong><?=h($i/$pagedef)?></strong>]
 		<?php else: ?>
@@ -103,7 +102,6 @@
 			[<a href="?mode=catalog&page=<?=h($i)?><?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>"><?=h($i/$pagedef)?></a>]
 			<?php endif;?>
 			<?php endif;?>
-		<?php endif;?>
 		<?php endif;?>
 		<?php endfor ;?>
 		<?php if($next):?>
