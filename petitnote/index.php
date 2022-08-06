@@ -32,8 +32,8 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.23.2';
-$petit_lot='lot.220804';
+$petit_ver='v0.23.3';
+$petit_lot='lot.220805';
 
 if(!isset($functions_ver)||$functions_ver<20220803){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
@@ -1903,11 +1903,9 @@ function catalog($page=0,$q=''){
 
 	//ページング
 	$start_page=$page-$pagedef*8;
-	if($page<$pagedef*17){
-		$start_page=0;
-	}
 	$end_page=$page+($pagedef*8)	;
 	if($page<$pagedef*17){
+		$start_page=0;
 		$end_page=$pagedef*17;
 	}
 	//prev next 
