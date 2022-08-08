@@ -363,17 +363,17 @@ Size:
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
 <script src="lib/<?=h(JQUERY)?>"></script>
 <script>
-	window.onpageshow = function(){
-		var $btn = $('[type="submit"]');
-		//disbledを解除
-		$btn.prop("disabled", false);
-		$btn.click(function(){//送信ボタン2度押し対策
-			$(this).prop('disabled',true);
-			$(this).closest('form').submit();
-		});
-	}
-	// https://cotodama.co/pagetop/
 	jQuery(function() {
+		window.onpageshow = function(){
+			var $btn = $('[type="submit"]');
+			//disbledを解除
+			$btn.prop("disabled", false);
+			$btn.click(function(){//送信ボタン2度押し対策
+				$(this).prop('disabled',true);
+				$(this).closest('form').submit();
+			});
+		}
+		// https://cotodama.co/pagetop/
 		var pagetop = $('#page_top');   
 		pagetop.hide();
 		$(window).scroll(function () {

@@ -452,3 +452,6 @@ span.continue_menu {
 	word-break: normal;
 	overflow-wrap: break-word;
 }
+.pagination a,.pagination strong {
+    margin: 0 2px;
+}
