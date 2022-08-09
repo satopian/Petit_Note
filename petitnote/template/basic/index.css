@@ -5,7 +5,7 @@ body {
 }
 body,td {
 	color: #555;
-	word-break:break-all;
+	word-break: break-all;
 	font-family: "Hiragino Sans", meiryo, ヒラギノ角ゴシック, メイリオ, sans-serif;
 	background-color: #fff;
 }
@@ -152,7 +152,7 @@ span.info_name a {
 }
 /* ツイートボタン */
 span.share_button {
-    vertical-align: bottom;
+    vertical-align: sub;
     margin: 0 6px;
 }
 
