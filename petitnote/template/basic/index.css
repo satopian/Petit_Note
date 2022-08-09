@@ -7,11 +7,11 @@ body,td {
 	color: #555;
 	word-break:break-all;
 	font-family: "Hiragino Sans", meiryo, ヒラギノ角ゴシック, メイリオ, sans-serif;
+	background-color: #fff;
 }
 .container {
 	max-width: 928px;
 	margin: 0 auto 12px;
-	color: #555;
 }
 hr {
 	border: none;
@@ -85,7 +85,8 @@ form.resform {
 	text-align: right;
 }
 input.form_button {
-    margin: 10px 0 0;
+    margin: 10px 0 0 2px;
+    padding: 1px 12px;
 }
 input.pchup_button {
     margin: 0 0 10px;
@@ -165,6 +166,7 @@ button.copy_button {
     border-radius: 6px;
     border: 1px solid #ffcfcf;
     color: #555;
+	margin: 0 2px;
 }
 
 button.copy_button:hover {
@@ -175,10 +177,11 @@ button.copy_button:hover {
 .menu_pr {
     float: right;
     line-height: 1.8;
+    margin: 5px 0 10px;
 }
 
 nav.menu_wrap  {
-    margin: 0 0 8px;
+    margin: 5px 0 10px;
     display: inline-block;
     line-height: 1.8;
 }
@@ -217,6 +220,10 @@ form.res_button {
 	margin: 0;
 	display: inline-block;
 }
+form.res_button input {
+    padding: 1px 12px;
+    margin: 0 2px;
+}
 /* 返信フォーム */
 form.res_form {
 	text-align: right;
@@ -233,13 +240,11 @@ table.resform {
 }
 span.next {
     display: inline-block;
-    width: 120px;
     text-align: left;
 }
 
 span.prev {
 	display: inline-block;
-    width: 120px;
     text-align: right;
 }
 span.res_next {
