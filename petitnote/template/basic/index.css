@@ -152,8 +152,8 @@ span.info_name a {
 }
 /* ツイートボタン */
 span.share_button {
-    vertical-align: sub;
-    margin: 0 6px;
+    vertical-align: bottom;
+    margin: 0 0 0 8px;
 }
 
 .catalog_pagetop {
@@ -166,7 +166,6 @@ button.copy_button {
     border-radius: 6px;
     border: 1px solid #ffcfcf;
     color: #555;
-	margin: 0 2px;
 }
 
 button.copy_button:hover {
@@ -222,7 +221,7 @@ form.res_button {
 }
 form.res_button input {
     padding: 1px 12px;
-    margin: 0 2px;
+    margin: 0 0 0 8px;
 }
 /* 返信フォーム */
 form.res_form {
