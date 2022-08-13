@@ -64,13 +64,15 @@ h2.article_title a {
 textarea.post_com {
 	width: 300px;
 	height: 120px;
-	margin: 10px 0 0 0;
+	margin: 8px 0 5px 0;
 	font-family: inherit;
-	font-size: inherit;
 }
 
-input.input_txt {
+input.input_txt,textarea {
 	font-size: inherit;
+}
+input.input_txt,select {
+	margin: 3px 0;
 }
 select {
     font-size: inherit;
@@ -176,7 +178,7 @@ button.copy_button:hover {
 .menu_pr {
     float: right;
     line-height: 1.8;
-    margin: 5px 0 10px;
+    margin: 7px 0 10px;
 }
 
 nav.menu_wrap  {
@@ -193,6 +195,7 @@ nav.menu_wrap_catalog {
 }
 .menu_wrap span {
     display: inline-block;
+    margin: 2px 0;
 }
 span.canvas_size_wrap {
     display: inline-block;
