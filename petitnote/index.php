@@ -771,7 +771,6 @@ function paint(){
 		}
 
 		if($ctype=='img' && is_file(IMG_DIR.$imgfile)){//画像から続き
-			$anime=false;
 			$animeform = false;
 			$anime= false;
 			$imgfile = IMG_DIR.$imgfile;
