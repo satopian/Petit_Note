@@ -59,7 +59,6 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 
 ### 改善
 -  [禁止ホストが設定できるようになりました。](https://github.com/satopian/Petit_Note/commit/d660e1e1b98131e3ed9f1089e193b55e33495ddf)
-アクセスしてほしくないホスト名を設定して書き込みを拒絶する事ができます。  
 
 ```
 //禁止ホスト
