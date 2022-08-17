@@ -48,6 +48,55 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
 
+##  22/08/16 v0.23.3
+
+### 更新
+- jQueryをv3.6.0に更新しました。
+- Klecksを最新版に更新しました。  
+ノイズフィルタが追加されました。
+  
+![image](https://user-images.githubusercontent.com/44894014/184863023-12eefd41-0ac0-4f9a-b165-235d33d533eb.png)
+
+### 改善
+-  [禁止ホストが設定できるようになりました。](https://github.com/satopian/Petit_Note/commit/d660e1e1b98131e3ed9f1089e193b55e33495ddf)
+
+```
+//禁止ホスト
+$badhost =['example.com','example.org'];
+
+```
+config.phpに上記設定項目を追加する事で、指定したホストからの書き込みを拒絶できます。
+
+- クリックジャッキングの脆弱性を修正しました。  
+フレーム内に掲示板を表示しないのであれば下記設定項目の追加は必要ありません。
+フレーム内で表示したい方のみ、下記設定項目をconfig.phpのどこでもいいので貼り付けて設定してください。
+```
+//iframe内での表示を 拒否する:true 許可する:false
+//セキュリティリスクを回避するため "拒否する:true" を強く推奨。
+
+$x_frame_options_deny=true;
+// $x_frame_options_deny=false;
+
+```
+
+- スマホ操作に適した表示に。
+- 表示高速化。JavaScriptを先読みして、クリティカルチェーンを少なく。
+- ページーングのループを削減。コードを短縮。
+- jQueryのバージョンをindex.phpの設定から読み込んで、テンプレートに自動的に反映できるようにしました。  
+これまではjQueryのバージョンを変更するにはテンプレートを直接書き直して設定を変更する必要がありました。  
+
+- [見えている範囲にloading="lazy"を指定しない。](https://github.com/satopian/Petit_Note/commit/5accb75dee34cba964930365c2d7a1443e560bf2)
+
+すでに表示されているところにloading="lazy"が入っていると表示が遅くなるため、スレッドの上のほうの画像には`loading="lazy"`が追加されないようにしました。
+
+- PaintBBS NEO起動画面の時計のJavaScriptを修正しました。  
+[コンテンツセキュリティポリシーを設定したらPOTI-boardのお絵かき画面の時計が動かなくなりました。｜さとぴあ｜note](https://note.com/satopian/n/n7b757ee05975)
+### バグ修正
+[unixtimeが未入力でブランクの時に致命的エラーが発生していたのを修正しました。](https://github.com/satopian/Petit_Note/commit/6b6c9e17ce9c217b3eb0a18377e3ba48d5ed6b97)
+
+安定版をリリースからダウンロードできます。  
+[Petit Note v0.23.3 リリース](https://github.com/satopian/Petit_Note/releases/latest)
+
 ##  22/07/11 v0.22.5
 ### 改善
 - 記事の管理のための時刻を13桁から16桁へ。
@@ -68,9 +117,6 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 ### 改善
 - 動画を表示する画面からの戻り先のリンクを掲示板のトップページから、個別スレッドに変更しました。
 動画再生画面から掲示板の該当スレッドに戻れるようになりました。
-
-安定版をリリースからダウンロードできます。  
-[Petit Note v0.21.6 リリース](https://github.com/satopian/Petit_Note/releases/latest)
 
 ##  22/06/19 v0.21.6
 ### バグ修正
