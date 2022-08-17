@@ -92,7 +92,7 @@ $x_frame_options_deny=true;
 - PaintBBS NEO起動画面の時計のJavaScriptを修正しました。  
 [コンテンツセキュリティポリシーを設定したらPOTI-boardのお絵かき画面の時計が動かなくなりました。｜さとぴあ｜note](https://note.com/satopian/n/n7b757ee05975)
 ### バグ修正
-[unixtimeが未入力でブランクの時に致命的エラーが発生していたのを修正しました。](https://github.com/satopian/Petit_Note/commit/6b6c9e17ce9c217b3eb0a18377e3ba48d5ed6b97)
+- [unixtimeが未入力でブランクの時に致命的エラーが発生していたのを修正しました。](https://github.com/satopian/Petit_Note/commit/6b6c9e17ce9c217b3eb0a18377e3ba48d5ed6b97)
 
 安定版をリリースからダウンロードできます。  
 [Petit Note v0.23.3 リリース](https://github.com/satopian/Petit_Note/releases/latest)
