@@ -577,10 +577,10 @@ function is_ngword ($ngwords, $strs) {
 //初期化
 function init(){
 	
-	check_dir("src");
-	check_dir("temp");
-	check_dir("thumbnail");
-	check_dir("log");
+	check_dir(__DIR__."/src");
+	check_dir(__DIR__."/temp");
+	check_dir(__DIR__."/thumbnail");
+	check_dir(__DIR__."/log");
 	if(!is_file(LOG_DIR.'alllog.log')){
 	file_put_contents(LOG_DIR.'alllog.log','',FILE_APPEND|LOCK_EX);
 	chmod(LOG_DIR.'alllog.log',0600);	
