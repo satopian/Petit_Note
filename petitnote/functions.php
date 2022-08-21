@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20220803;
+$functions_ver=20220821;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -576,6 +576,7 @@ function is_ngword ($ngwords, $strs) {
 
 //初期化
 function init(){
+	
 	check_dir("src");
 	check_dir("temp");
 	check_dir("thumbnail");
@@ -595,17 +596,17 @@ function check_dir ($path) {
 			mkdir($path, 0707);
 			chmod($path, 0707);
 	}
-	if (!is_dir($path)) return h($path) . $msg['001'];
-	if (!is_readable($path)) return h($path) . $msg['002'];
-	if (!is_writable($path)) return h($path) . $msg['003'];
+	if (!is_dir($path)) return die(h($path) . $msg['001']);
+	if (!is_readable($path)) return die(h($path) . $msg['002']);
+	if (!is_writable($path)) return die(h($path) . $msg['003']);
 }
 
 // ファイル存在チェック
 function check_file ($path) {
 	$msg=initial_error_message();
 
-	if (!is_file($path)) return h($path) . $msg['001'];
-	if (!is_readable($path)) return h($path) . $msg['002'];
+	if (!is_file($path)) return die(h($path) . $msg['001']);
+	if (!is_readable($path)) return die(h($path) . $msg['002']);
 }
 function initial_error_message(){
 	global $en;

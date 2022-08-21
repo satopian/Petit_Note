@@ -1,6 +1,9 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
+$petit_ver='v0.23.5';
+$petit_lot='lot.220821';
+
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0) ? true : false;
@@ -9,21 +12,16 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-
-if (function_exists('check_file') && $err = check_file(__DIR__.'/config.php')) {
-	return die($err);
-}
-if (function_exists('check_file') && $err = check_file(__DIR__.'/thumbnail_gd.php')) {
-	return die($err);
-}
-if (function_exists('check_file') && $err = check_file(__DIR__.'/noticemail.inc')) {
-	return die($err);
+if(!isset($functions_ver)||$functions_ver<20220821){
+	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
-	const JQUERY='jquery-3.6.0.min.js';
-if (function_exists('check_file') && $err = check_file(__DIR__.'/lib/'.JQUERY)) {
-	return die($err);
-}
+const JQUERY='jquery-3.6.0.min.js';
+check_file(__DIR__.'/lib/'.JQUERY);
+
+check_file(__DIR__.'/config.php');
+check_file(__DIR__.'/thumbnail_gd.php');
+check_file(__DIR__.'/noticemail.inc');
 
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/thumbnail_gd.php');
@@ -32,12 +30,6 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-$petit_ver='v0.23.3';
-$petit_lot='lot.220805';
-
-if(!isset($functions_ver)||$functions_ver<20220803){
-	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
-}
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20220803){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
