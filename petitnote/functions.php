@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20220821;
+$functions_ver=20220823;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -410,7 +410,10 @@ function png2jpg ($src) {
 		ImageDestroy($im_in);// 作成したイメージを破棄
 		ImageDestroy($im_out);// 作成したイメージを破棄
 		chmod($dst,0606);
-		return $dst;
+		if(is_file($dst)){
+			return $dst;
+		}
+		return false;
 	}
 	return false;
 }
