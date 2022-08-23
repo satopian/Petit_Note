@@ -7,7 +7,7 @@ function logout(){
 	unset($_SESSION['admindel']);
 	unset($_SESSION['userdel']);
 	if($resno){
-		return header('Location: ./?resno='.$resno);	
+		return header('Location: ./?resno='.$resno);
 	}
 	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
 	$page= $page ? $page : filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
