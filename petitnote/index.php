@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.23.5';
-$petit_lot='lot.220821';
+$petit_ver='v0.23.10';
+$petit_lot='lot.220829';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -972,7 +972,9 @@ function download_app_dat(){
 
 	global $en;
 
-	$pwd=filter_input(INPUT_POST,'pwd');
+	$pwd=(string)filter_input(INPUT_POST,'pwd');
+	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
+	$pwd = $pwd ? $pwd : $pwdc;
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'id');//intの範囲外
 
@@ -1980,11 +1982,9 @@ function view($page=0){
 
 	//ページング
 	$start_page=$page-$pagedef*8;
-	if($page<$pagedef*17){
-		$start_page=0;
-	}
 	$end_page=$page+($pagedef*8);
 	if($page<$pagedef*17){
+		$start_page=0;
 		$end_page=$pagedef*17;
 	}
 	//prev next 
