@@ -411,7 +411,7 @@ function png2jpg ($src) {
 		ImageDestroy($im_out);// 作成したイメージを破棄
 		chmod($dst,0606);
 		if(is_file($dst)){
-			return true;//jpegファイル生成に成功
+			return $dst;//jpegファイル生成に成功
 		}
 		return false;
 	}
