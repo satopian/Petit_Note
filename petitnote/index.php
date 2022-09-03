@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.23.10';
-$petit_lot='lot.220829';
+$petit_ver='v0.25.1';
+$petit_lot='lot.220903';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -147,6 +147,7 @@ function post(){
 	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
 	$pwd=t((string)filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$sage = $sage_all ? true : filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
+	$hide_thumbnail = filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
 	$check_elapsed_days=false;
 
 	//NGワードがあれば拒絶
@@ -490,7 +491,9 @@ function post(){
 				$thumbnail='thumbnail';
 			}
 		}
-	}
+		$hide_thumbnail=$hide_thumbnail ? 'hide_' : '';
+		$thumbnail =  $hide_thumbnail.$thumbnail;
+		}
 	//ログの番号の最大値
 	$no_arr = [];
 	foreach($alllog_arr as $i => $_alllog){
@@ -949,6 +952,7 @@ function to_continue(){
 		$select_app = true;
 		$download_app_dat=false;
 	}
+	$hidethumbnail = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 	//日記判定処理
 	session_sta();
 	$adminpost=adminpost_valid();
@@ -1048,7 +1052,7 @@ function img_replace(){
 	} 
 	$is_upload=false;
 	$tool = '';
-	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $admindel)){
+	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 
 		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
 
@@ -1085,7 +1089,7 @@ function img_replace(){
 			}
 		}
 		closedir($handle);
-		if(!$repfind){////見つからなかった時は
+		if(!$repfind){//見つからなかった時は
 			return paintcom();//新規投稿
 		}
 		$tempfile=TEMP_DIR.$file_name.$imgext;
@@ -1174,16 +1178,14 @@ function img_replace(){
 	}
 		
 	$upfile=TEMP_DIR.$time.'.tmp';
-	if($is_upload&&($_tool==='upload')){
-		if(is_file($up_tempfile)){
-			move_uploaded_file($up_tempfile,$upfile);
-		}
-	}else{
-		if(is_file($tempfile)){
-			copy($tempfile, $upfile);
-		}
+	if($is_upload && ($_tool==='upload') && ( $use_upload || $adminpost || $admindel) && is_file($up_tempfile)){
+		move_uploaded_file($up_tempfile,$upfile);
 	}
-	if(!is_file($upfile)){
+	if(!$is_upload && $repfind && is_file($tempfile) && ($_tool !== 'upload')){
+		copy($tempfile, $upfile);
+	}
+
+if(!is_file($upfile)){
 		closeFile($rp);
 		closeFile($fp);
 		return error($en?'The operation failed.':'失敗しました。');
@@ -1291,6 +1293,9 @@ function img_replace(){
 			$thumbnail='thumbnail';
 		}
 	}
+	$hide_thumbnail = ($_imgfile && ($_thumbnail==='hide_thumbnail'||$_thumbnail==='hide_')) ? 'hide_' : '';
+
+	$thumbnail =  $hide_thumbnail.$thumbnail;
 
 	//描画時間追加
 
@@ -1458,10 +1463,11 @@ function confirmation_before_deletion ($edit_mode=''){
 //編集画面
 function edit_form($id='',$no=''){
 
-	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb;
+	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload;
 	$max_byte = $max_kb * 1024*2;
 	$token=get_csrf_token();
 	$admindel=admindel_valid();
+	$adminpost=adminpost_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
@@ -1532,6 +1538,9 @@ function edit_form($id='',$no=''){
 	$resno = $resno ? $resno : false;
 	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
+	$hide_thumb_checkd = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
+
+	$admin = ($admindel||$adminpost);
 	// HTML出力
 	$templete='edit_form.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -1556,6 +1565,7 @@ function edit(){
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
+	$hide_thumbnail = filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
 	
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
@@ -1631,9 +1641,13 @@ function edit(){
 
 	$sub=($_oya==='res') ? $_sub : $sub; 
 
+	$thumbnail=is_file(THUMB_DIR.$_time.'s.jpg') ? 'thumbnail': '';
+	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
+	$thumbnail =  $hide_thumbnail.$thumbnail;
+
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 
-	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$_thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
+	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 
 	$r_arr[$i] = $new_line;
 
