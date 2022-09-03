@@ -39,7 +39,7 @@
 <?php if(isset($out)):?>
 <?php foreach($out as $t => $ress):?>
 	<?php foreach($ress as  $res):?>
-	<div class="catalog_image">			
+		<div class="catalog_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>">	
 		<?php if($res['img']):?>
 			<a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
 			<?php if($res['thumbnail']):?>
@@ -80,12 +80,12 @@
 	<?php endif;?>
 	</span>
 </div>
-
+<div class="pagination">
 <?php if($prev!==false):?>
 <a href="?mode=catalog&page=0<?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">start</a> |
 <?php endif;?>
-<div class="pagination">
-	<?php for($i = $start_page; ($i < $count_alllog && $i <= $end_page) ; $i+=$pagedef) :?>
+
+<?php for($i = $start_page; ($i < $count_alllog && $i <= $end_page) ; $i+=$pagedef) :?>
 	<?php if($page==$i):?>
 			[<strong><?=h($i/$pagedef)?></strong>]
 		<?php else: ?>

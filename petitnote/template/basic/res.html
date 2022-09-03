@@ -102,14 +102,15 @@
 		<?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?>
 		</span>
 		<?php endif;?>
-		<?php if($res['thumbnail']):?>
 		<span>
+		<?php if($res['hide_thumbnail']):?>
+					<?php if($en):?>- Hiding thumbnail -<?php else:?>- サムネ非表示 -<?php endif;?>	
+
+				<?php elseif($res['thumbnail']):?>
 		<?php if($en):?>- Showing thumbnail -<?php else:?>- サムネイル表示中 -<?php endif;?>	
-		
+			<?php endif;?>
 		</span>
 		<?php endif;?>
-			
-	<?php endif;?>
 	<?php if($admindel):?>
 		<br>
 		HOST:<?=h($res['host'])?>
@@ -126,15 +127,21 @@
 		<?php endif;?>
 		</div>
 		<?php endif;?>
-			<div class="posted_image" <?php if($res['w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
-
-			<?php if($res['thumbnail']):?>
+		<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
+			<?php if($res['link_thumbnail']):?>
 				<a href="src/<?=h($res['img'])?>" target="_blank">
-					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
-				</a>
+				<?php endif;?>
+				<?php if($res['thumbnail']):?>
+					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>4):?>loading="lazy"<?php endif;?>>
 			<?php else:?>
-			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>4):?>loading="lazy"<?php endif;?>>
+				<?php endif;?>
+				<?php if($res['link_thumbnail']):?>
+					</a>
 			<?php endif;?>
+			<?php if($res['hide_thumbnail']):?>
+					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
+				<?php endif;?>
 			</div>
 			<?php endif;?>
 			<div class="comment"><?=com(h($res['com']))?></div>
@@ -284,9 +291,18 @@
 <input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
 <input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
 <br>
+<?php if($mark_sensitive_image):?>
+<span>
+<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail"><label for="hide_thumbnail"><?php if($en):?>Image as sensitive<?php else:?>閲覧注意にする
+	<?php endif;?>
+</span>
+<?php endif;?>
+</label>
 <?php endif;?>
 <?php if(!$sage_all):?>
-<label>sage:<input type="checkbox" name="sage" value="on" class="form_button"></label>
+	<span>
+	<input type="checkbox" name="sage" value="on" id="sage"><label for="sage">sage</label>
+	</span>
 <?php endif;?>
 <input type="submit" value="<?php if($en):?>Reply<?php else:?>返信<?php endif;?>" class="form_button">
 
@@ -326,7 +342,7 @@
 </div>
 <?php if($view_other_works):?>
 <div class="view_other_works">
-<?php foreach($view_other_works as $view_other_work):?><div><a href="?resno=<?=h($view_other_work['no'])?>"><img src="<?php if($view_other_work['thumbnail']):?>thumbnail/<?=h($view_other_work['thumbnail'])?><?php else:?>src/<?=h($view_other_work['img'])?><?php endif?>" alt="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" title="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" width="<?=h($view_other_work['w'])?>" height="<?=h($view_other_work['h'])?>" loading="lazy"></a></div><?php endforeach;?>
+<?php foreach($view_other_works as $view_other_work):?><div <?php if($view_other_work['hide_thumbnail']):?>class="hide_thumbnail"<?php endif;?>><a href="?resno=<?=h($view_other_work['no'])?>"><img src="<?php if($view_other_work['thumbnail']):?>thumbnail/<?=h($view_other_work['thumbnail'])?><?php else:?>src/<?=h($view_other_work['img'])?><?php endif?>" alt="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" title="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" width="<?=h($view_other_work['w'])?>" height="<?=h($view_other_work['h'])?>" loading="lazy"></a></div><?php endforeach;?>
 </div>
 <?php endif;?>
 </nav>

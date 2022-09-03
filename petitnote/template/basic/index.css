@@ -9,6 +9,7 @@ body,td {
 	font-family: "Hiragino Sans", meiryo, ヒラギノ角ゴシック, メイリオ, sans-serif;
 	background-color: #fff;
 }
+
 .container {
 	max-width: 928px;
 	margin: 0 auto 12px;
@@ -82,10 +83,17 @@ textarea.rescom {
 	height: 60px;
 	margin: 10px 0;
 }
+form.postform span {
+    margin: 0 0 0 10px;
+}
 
 form.resform {
 	text-align: right;
 }
+form.resform span {
+    margin: 0 10px 0 0;
+}
+
 input.form_button {
     margin: 10px 0 0 2px;
     padding: 1px 12px;
@@ -122,6 +130,11 @@ span.info_name a {
 .res_wrap {
     display: table;
 }
+.continue_img {
+    overflow: hidden;
+    display: inline-block;
+}
+
 .continue_img img {
     max-width: 100%;
     height: auto;
@@ -134,8 +147,23 @@ span.info_name a {
 	max-width: 100%;
 	height: auto;
 	margin: 0 10px 10px 0;
-	float: left;
+	float: left;	overflow: hidden;
+	position: relative;
 }
+
+.posted_image p {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    display: inline-block;
+    background-color: #555;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 18px;
+}
+
 .posted_image img {
 	max-width: 100%;
 	height: auto;
@@ -200,7 +228,14 @@ nav.menu_wrap_catalog {
 span.canvas_size_wrap {
     display: inline-block;
 }
-label {cursor: pointer;}
+label {
+	cursor: pointer;
+	margin: 0 3px;
+	padding: 2px;
+	border-radius: 5px;
+}
+input[type="checkbox"]:checked + label{background-color: #ffe6e6;font-weight: 600;}
+
 select.post_select_image {
     margin: 10px 6px 0;
 }
@@ -335,6 +370,8 @@ span.continue_menu {
     width: 32.6%;
     margin: 0.5% 0.5% 0.5% 0;
     display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
 }
 
 /* お絵かき画面 */
@@ -461,4 +498,7 @@ span.continue_menu {
 }
 .pagination a,.pagination strong {
     margin: 0 2px;
+}
+.hide_thumbnail img {
+	filter: blur(15px);
 }

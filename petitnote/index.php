@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20220823){
+if(!isset($functions_ver)||$functions_ver<20220903){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -47,6 +47,7 @@ $view_other_works= isset($view_other_works) ? $view_other_works : true;
 $deny_all_posts= isset($deny_all_posts) ? $deny_all_posts : (isset($denny_all_posts) ? $denny_all_posts : false);
 $latest_var=isset($latest_var) ? $latest_var : true;
 $badhost=isset($badhost) ? $badhost :[]; 
+$mark_sensitive_image = isset($mark_sensitive_image) ? $mark_sensitive_image : false; 
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -850,7 +851,7 @@ function paint(){
 }
 // お絵かきコメント 
 function paintcom(){
-	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en;
+	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
 	$token=get_csrf_token();
 	$userip = get_uip();
 	$usercode = filter_input(INPUT_COOKIE,'usercode');
@@ -1018,7 +1019,7 @@ function download_app_dat(){
 // 画像差し換え
 function img_replace(){
 
-	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload;
+	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image;
 
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
@@ -1463,7 +1464,7 @@ function confirmation_before_deletion ($edit_mode=''){
 //編集画面
 function edit_form($id='',$no=''){
 
-	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload;
+	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image;
 	$max_byte = $max_kb * 1024*2;
 	$token=get_csrf_token();
 	$admindel=admindel_valid();
@@ -1549,7 +1550,7 @@ function edit_form($id='',$no=''){
 
 //編集
 function edit(){
-	global $name_input_required,$max_com,$en;
+	global $name_input_required,$max_com,$en,$mark_sensitive_image;
 
 	check_csrf_token();
 
@@ -1643,7 +1644,7 @@ function edit(){
 
 	$thumbnail=is_file(THUMB_DIR.$_time.'s.jpg') ? 'thumbnail': '';
 	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
-	$thumbnail =  $hide_thumbnail.$thumbnail;
+	$thumbnail =  $mark_sensitive_image ? $hide_thumbnail.$thumbnail : $_thumbnail;
 
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 
@@ -1928,7 +1929,7 @@ function catalog($page=0,$q=''){
 //通常表示
 function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions,$max_kb;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en; 
+	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image; 
 	$max_byte = $max_kb * 1024*2;
 	$denny_all_posts=$deny_all_posts;//互換性
 
@@ -2012,7 +2013,7 @@ function view($page=0){
 }
 //レス画面
 function res ($resno){
-	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb;
+	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
 	$max_byte = $max_kb * 1024*2;
 

@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20220823;
+$functions_ver=20220903;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -221,7 +221,7 @@ function check_cont_pass(){
 
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line){
-	global $root_url,$boardname,$do_not_change_posts_time,$en;
+	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 	$res=[];
 
@@ -250,7 +250,16 @@ function create_res($line){
 	}
 
 	$anime = ($pchext==='.pch') ? true : false; 
-	$thumbnail = ($thumbnail==='thumbnail') ? $time.'s.jpg' : false; 
+	$hide_thumbnail = $mark_sensitive_image ? ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_') :'';
+
+	$_w=$w;
+	$_h=$h;
+	if($hide_thumbnail){
+	list($w,$h)=image_reduction_display($w,$h,300,300);
+	}
+
+	$thumbnail = ($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail') ? $time.'s.jpg' : false; 
+	$link_thumbnail= ($thumbnail || $hide_thumbnail);  
 	$painttime = is_numeric($painttime) ? calcPtime($painttime) : false;  
 	$_time=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 	$first_posted_time=(strlen($first_posted_time)>15) ? substr($first_posted_time,0,-6) : substr($first_posted_time,0,-3);
@@ -277,6 +286,8 @@ function create_res($line){
 		'painttime' => $painttime,
 		'w' => is_numeric($w) ? $w :'',
 		'h' => is_numeric($h) ? $h :'',
+		'_w' => is_numeric($w) ? $_w :'',
+		'_h' => is_numeric($h) ? $_h :'',
 		'tool' => $tool,
 		'upload_image' => $upload_image,
 		'pchext' => $pchext,
@@ -294,6 +305,8 @@ function create_res($line){
 		'encoded_u' => urlencode($root_url.'?resno='.$no),//tweet
 		'encoded_t' => urlencode('['.$no.']'.$sub.' by '.$name.' - '.$boardname),
 		'oya' => $oya,
+		'hide_thumbnail' => $hide_thumbnail, //サムネイルにぼかしをかける時
+		'link_thumbnail' => $link_thumbnail, //サムネイルにリンクがある時
 	];
 
 	$res['com']=str_replace('"\n"',"\n",$res['com']);

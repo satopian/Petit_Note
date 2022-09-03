@@ -137,8 +137,8 @@ $use_res_upload = true;
 //しない: false で、スレ立てに画像が必須になります。
 // する: true しない: false
 
-$allow_coments_only = true;
-// $allow_coments_only = false;
+// $allow_coments_only = true;
+$allow_coments_only = false;
 
 //日記モードを使用する
 //する: true でスレッド立ては管理者のみになります。
@@ -164,6 +164,13 @@ $aikotoba = 'あいうえお';
 
 // $set_nsfw = true;
 $set_nsfw = false;
+
+// 閲覧注意を設定する
+//する: trueに設定すると閲覧注意の設定ができるようになります。閲覧注意画像にぼかしが入ります。
+// する: true しない: false
+
+// $mark_sensitive_image = true;
+$mark_sensitive_image = false;
 
 //編集しても投稿日時を変更しないようにする 
 //日記などで日付が変わると困る人のための設定

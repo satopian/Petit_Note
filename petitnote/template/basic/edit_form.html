@@ -52,7 +52,7 @@
 		<span><?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?></span>
 	<?php endif;?>
 
-	<?php if($res['upload_image']):?>
+	<?php if(($use_upload && $res['upload_image']) || $admin):?>
 		<form action="./" method="POST" enctype="multipart/form-data" class="postform">
 		<input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
 		<input type="hidden" name="pwd" value="<?=h($pwd)?>">
@@ -72,13 +72,13 @@
 	</div>
 		<?php if($res['img']):?>
 
-			<div class="posted_image" <?php if($res['w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
+			<div class="posted_image" <?php if($res['_w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
 				<?php if($res['thumbnail']):?>
 					<a href="src/<?=h($res['img'])?>" target="_blank">
-						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>" loading="lazy">
 					</a>
 					<?php else:?>
-					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" loading="lazy">
+					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>" loading="lazy">
 				<?php endif;?>
 			</div>
 			<?php endif;?>
@@ -116,6 +116,9 @@
 <input type="hidden" name="no" value="<?=h($no)?>">
 <input type="hidden" name="mode" value="edit">
 <input type="hidden" name="token" value="<?=h($token)?>">
+<?php if($imgfile && $mark_sensitive_image):?>
+<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" <?php if($hide_thumb_checkd):?>checked="checked"<?php endif;?>><label for="hide_thumbnail"><?php if($en):?>Image as sensitive<?php else:?>閲覧注意にする<?php endif;?></label>
+<?php endif;?>
 <input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>" class="form_button">
 </form>
 

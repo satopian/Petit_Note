@@ -150,6 +150,11 @@ Size:
 <br>
 <?php endif;?>
 <input type="submit" value="<?php if($en):?>New Thread<?php else:?>スレッドを立てる<?php endif;?>" class="form_button">
+	<span>
+	<?php if($mark_sensitive_image):?>
+	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail"><label for="hide_thumbnail"><?php if($en):?>Image as sensitive<?php else:?>閲覧注意にする<?php endif;?></label>
+	<?php endif;?>
+	</span>
 </form>
 <?php endif;?>
 </div>
@@ -209,11 +214,14 @@ Size:
 					<?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?>
 				</span>
 				<?php endif;?>
-				<?php if($res['thumbnail']):?>
 				<span>
+				<?php if($res['hide_thumbnail']):?>
+					<?php if($en):?>- Hiding thumbnail -<?php else:?>- サムネ非表示 -<?php endif;?>	
+
+				<?php elseif($res['thumbnail']):?>
 					<?php if($en):?>- Showing thumbnail -<?php else:?>- サムネイル表示中 -<?php endif;?>	
-				</span>
 				<?php endif;?>
+				</span>
 						
 			<?php endif;?>
 		<?php if($admindel):?>
@@ -232,15 +240,22 @@ Size:
 			<?php endif;?>
 			</div>
 			<?php endif;?>
-			<div class="posted_image" <?php if($res['w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
-			
-			<?php if($res['thumbnail']):?>
+				<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
+			<?php if($res['link_thumbnail']):?>
 				<a href="src/<?=h($res['img'])?>" target="_blank">
+				<?php endif;?>
+				<?php if($res['thumbnail']):?>
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
-				</a>
 			<?php else:?>
 			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
+				<?php endif;?>
+				<?php if($res['link_thumbnail']):?>
+					</a>
 			<?php endif;?>
+			<?php if($res['hide_thumbnail']):?>
+					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
+				<?php endif;?>
+
 			</div>
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>
