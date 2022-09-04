@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.25.1';
-$petit_lot='lot.220903';
+$petit_ver='v0.25.2';
+$petit_lot='lot.220905';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -127,7 +127,7 @@ switch($mode){
 
 //投稿処理
 function post(){
-	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb;
+	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb,$mark_sensitive_image;
 	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all,$en;
 
 	if($use_aikotoba){
@@ -148,7 +148,7 @@ function post(){
 	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
 	$pwd=t((string)filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$sage = $sage_all ? true : filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
-	$hide_thumbnail = filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
+	$hide_thumbnail = $mark_sensitive_image ? filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
 	$check_elapsed_days=false;
 
 	//NGワードがあれば拒絶
@@ -1566,7 +1566,7 @@ function edit(){
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
-	$hide_thumbnail = filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
+	$hide_thumbnail = $mark_sensitive_image ? filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
 	
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
