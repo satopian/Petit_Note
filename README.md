@@ -25,7 +25,7 @@ PHP7.4～PHP8.1での使用を推奨します。
 - [リリース](https://github.com/satopian/Petit_Note/releases/latest)から安定版をダウンロードできます。
 
 ## Peti tNoteを使った交流サイト
-- [イラスト投稿サイトPetit Note](https://paintbbs.sakura.ne.jp/petit/)  
+- [イラスト投稿サイト Petit Note](https://paintbbs.sakura.ne.jp/petit/)  
 お絵かきとアップロード。
 - [お絵かき掲示板交流サイトPetit Note](https://paintbbs.sakura.ne.jp/)  
 お絵かきのみ。
