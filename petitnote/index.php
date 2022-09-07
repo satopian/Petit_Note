@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.25.2';
-$petit_lot='lot.220905';
+$petit_ver='v0.26.1';
+$petit_lot='lot.220907';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -48,6 +48,7 @@ $deny_all_posts= isset($deny_all_posts) ? $deny_all_posts : (isset($denny_all_po
 $latest_var=isset($latest_var) ? $latest_var : true;
 $badhost=isset($badhost) ? $badhost :[]; 
 $mark_sensitive_image = isset($mark_sensitive_image) ? $mark_sensitive_image : false; 
+$only_admin_can_reply = isset($only_admin_can_reply) ? $only_admin_can_reply : false;
 $mode = filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -128,7 +129,7 @@ switch($mode){
 //投稿処理
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb,$mark_sensitive_image;
-	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all,$en;
+	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -207,15 +208,18 @@ function post(){
 		if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
 			$painttime=(int)$postedtime-(int)$starttime;
 		}
-		if($resto && $picfile && !$use_res_upload && !$adminpost){
-			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
+		if($resto && $picfile && !$use_res_upload && !($adminpost || ($pwd && $pwd === $admin_pass))){
+			return error($en? 'Only administrator can post.':'投稿できるのは管理者だけです。');
 		}
 		$pictmp2=true;//お絵かきでエラーがなかった時にtrue;
 
 	}
 
-	if(!$resto && $use_diary && !$adminpost){
-		return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
+	if(!$resto && $use_diary && !($adminpost || ($pwd && $pwd === $admin_pass))){
+		return error($en? 'Only administrator can post.':'投稿できるのは管理者だけです。');
+	}
+	if($resto && $only_admin_can_reply && !($adminpost || ($pwd && $pwd === $admin_pass))){
+		return error($en?'Only administrator can reply.':'返信できるのは管理者だけです。');
 	}
 
 	if($resto && !is_file(LOG_DIR."{$resto}.log")){//エラー処理
@@ -265,6 +269,7 @@ function post(){
 		if($resto && $count_r_arr>$max_res){//最大レス数超過。
 			return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
 		}
+
 
 		$sub='Re: '.$oyasub;
 
@@ -2013,7 +2018,7 @@ function view($page=0){
 }
 //レス画面
 function res ($resno){
-	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image;
+	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
 	$max_byte = $max_kb * 1024*2;
 
@@ -2094,12 +2099,14 @@ function res ($resno){
 			$c=($i<5) ? 0 : (count($a)>9 ? 4 :0);
 			$view_other_works=array_slice($a,$c,6,false);
 		}
+
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
+	$resform = ((!$deny_all_posts && !$only_admin_can_reply)||$adminpost) ? true : false;
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}

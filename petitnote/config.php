@@ -147,6 +147,13 @@ $allow_coments_only = false;
 // $use_diary = true;
 $use_diary = false;
 
+//返信を管理者のみに限定する
+//する: true で管理者以外返信ができなくなります。
+//日記モードと併用すれば、すべての書き込みが管理者のみになります。
+
+// $only_admin_can_reply = true;
+$only_admin_can_reply = false;
+
 //合言葉機能を使って投稿を制限する
 // する: true しない: false
 
