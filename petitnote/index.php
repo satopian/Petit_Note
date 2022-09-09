@@ -270,7 +270,6 @@ function post(){
 			return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
 		}
 
-
 		$sub='Re: '.$oyasub;
 
 	}
