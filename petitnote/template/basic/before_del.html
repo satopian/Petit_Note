@@ -95,7 +95,7 @@
 		<?php endif;?> 
 	</div>
 		<?php if($res['img']):?>
-			<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
+			<div class="posted_image <?php if($res['hide_thumbnail'] && !$admindel):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
 			<?php if($res['link_thumbnail']):?>
 				<a href="src/<?=h($res['img'])?>" target="_blank">
 				<?php endif;?>

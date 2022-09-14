@@ -126,7 +126,7 @@
 		<?php endif;?>
 		</div>
 		<?php endif;?>
-		<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
+		<div class="posted_image <?php if($res['hide_thumbnail'] && !$admindel):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
 			<?php if($res['link_thumbnail']):?>
 				<a href="src/<?=h($res['img'])?>" target="_blank">
 				<?php endif;?>
@@ -341,7 +341,7 @@
 </div>
 <?php if($view_other_works):?>
 <div class="view_other_works">
-<?php foreach($view_other_works as $view_other_work):?><div <?php if($view_other_work['hide_thumbnail']):?>class="hide_thumbnail"<?php endif;?>><a href="?resno=<?=h($view_other_work['no'])?>"><img src="<?php if($view_other_work['thumbnail']):?>thumbnail/<?=h($view_other_work['thumbnail'])?><?php else:?>src/<?=h($view_other_work['img'])?><?php endif?>" alt="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" title="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" width="<?=h($view_other_work['w'])?>" height="<?=h($view_other_work['h'])?>" loading="lazy"></a></div><?php endforeach;?>
+<?php foreach($view_other_works as $view_other_work):?><div <?php if($view_other_work['hide_thumbnail'] && !$admindel):?>class="hide_thumbnail"<?php endif;?>><a href="?resno=<?=h($view_other_work['no'])?>"><img src="<?php if($view_other_work['thumbnail']):?>thumbnail/<?=h($view_other_work['thumbnail'])?><?php else:?>src/<?=h($view_other_work['img'])?><?php endif?>" alt="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" title="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" width="<?=h($view_other_work['w'])?>" height="<?=h($view_other_work['h'])?>" loading="lazy"></a></div><?php endforeach;?>
 </div>
 <?php endif;?>
 </nav>
