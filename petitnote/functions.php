@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20220903;
+$functions_ver=20220915;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -20,12 +20,16 @@ function logout_admin(){
 	session_sta();
 	unset($_SESSION['admindel']);
 	unset($_SESSION['adminpost']);
+	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
+	$page = $page ? $page : 0;
+	$catalog=filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);	
 	}
-	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
-	$page = $page ? $page : 0;
+	if($catalog){
+		return header('Location: ./?mode=catalog&resno='.$page);
+	}
 
 	return header('Location: ./?page='.$page);
 }
@@ -61,7 +65,8 @@ function admin_in(){
 	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
-
+	$catalog=filter_input(INPUT_GET,'catalog',FILTER_VALIDATE_BOOLEAN);
+	$catalog=$catalog ? 'on' : '';
 	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba=aikotoba_valid();
@@ -96,8 +101,9 @@ function adminpost(){
 	}
 	session_regenerate_id(true);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-
+	
 	$page = isset($page) ? $page : 0;
+	$catalog=filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 
 	$_SESSION['aikotoba']='aikotoba';
 	$_SESSION['adminpost']=$second_pass;
@@ -105,6 +111,9 @@ function adminpost(){
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);
+	}
+	if($catalog){
+		return header('Location: ./?mode=catalog&resno='.$page);
 	}
 	
 	return header('Location: ./?page='.$page);
@@ -123,6 +132,7 @@ function admin_del(){
 	session_regenerate_id(true);
 	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$page = isset($page) ? $page : 0;
+	$catalog=filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 
 	$_SESSION['aikotoba']='aikotoba';
 	
@@ -132,6 +142,9 @@ function admin_del(){
 
 	if($resno){
 		return header('Location: ./?resno='.$resno);
+	}
+	if($catalog){
+		return header('Location: ./?mode=catalog&resno='.$page);
 	}
 
 	return header('Location: ./?page='.$page);
