@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.26.1';
-$petit_lot='lot.220907';
+$petit_ver='v0.27.2';
+$petit_lot='lot.220915';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20220903){
+if(!isset($functions_ver)||$functions_ver<20220915){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -178,7 +178,7 @@ function post(){
 		}
 	}
 
-	$adminpost=adminpost_valid();
+	$adminpost=(adminpost_valid()||(($pwd && $pwd === $admin_pass)));
 
 	//お絵かきアップロード
 	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
@@ -208,17 +208,17 @@ function post(){
 		if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
 			$painttime=(int)$postedtime-(int)$starttime;
 		}
-		if($resto && $picfile && !$use_res_upload && !($adminpost || ($pwd && $pwd === $admin_pass))){
+		if($resto && $picfile && !$use_res_upload && !$adminpost){
 			return error($en? 'Only administrator can post.':'投稿できるのは管理者だけです。');
 		}
 		$pictmp2=true;//お絵かきでエラーがなかった時にtrue;
 
 	}
 
-	if(!$resto && $use_diary && !($adminpost || ($pwd && $pwd === $admin_pass))){
+	if(!$resto && $use_diary && !$adminpost){
 		return error($en? 'Only administrator can post.':'投稿できるのは管理者だけです。');
 	}
-	if($resto && $only_admin_can_reply && !($adminpost || ($pwd && $pwd === $admin_pass))){
+	if($resto && $only_admin_can_reply && !$adminpost){
 		return error($en?'Only administrator can reply.':'返信できるのは管理者だけです。');
 	}
 
@@ -278,6 +278,7 @@ function post(){
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
 		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
 	} 
+	$is_upload=false;
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
 
 		if($resto && $up_tempfile && !$use_res_upload && !$adminpost){
@@ -294,7 +295,7 @@ function post(){
 		$upfile=TEMP_DIR.$time.'.tmp';
 		move_uploaded_file($up_tempfile,$upfile);
 		$tool = 'upload'; 
-		
+		$is_upload=true;	
 	}
 
 	//お絵かきアップロード
@@ -338,7 +339,7 @@ function post(){
 	//ユーザーid
 	$userid = t(getId($userip));
 
-	$verified = ($adminpost||($admin_pass && $pwd===$admin_pass)) ? 'adminpost' : ''; 
+	$verified = $adminpost ? 'adminpost' : ''; 
 
 	//全体ログを開く
 	$fp=fopen(LOG_DIR."alllog.log","r+");
@@ -423,7 +424,7 @@ function post(){
 		}	
 		clearstatcache();
 		$filesize=filesize($upfile);
-		if($filesize > 800 * 1024){//指定サイズを超えていたら
+		if(($filesize > 1024 * 1024) ||($is_upload && $filesize > 800 * 1024)){//指定サイズを超えていたら
 			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 
 				if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
@@ -1202,7 +1203,7 @@ if(!is_file($upfile)){
 	}	
 
 	$filesize=filesize($upfile);
-	if($filesize > 800 * 1024){//指定サイズを超えていたら
+	if(($filesize > 1024 * 1024) ||($is_upload && $filesize > 800 * 1024)){//指定サイズを超えていたら
 		if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
 
 			if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
@@ -1708,8 +1709,8 @@ function del(){
 	check_csrf_token();
 	session_sta();
 	$admindel=admindel_valid();
-	$userdel_mode=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	if(!($admindel||($userdel_mode&&$pwd))){
+	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	if(!($admindel||($userdel&&$pwd))){
 		return error($en?'The operation failed.':'失敗しました。');
 	}
 	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
