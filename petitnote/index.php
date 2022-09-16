@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.27.2';
-$petit_lot='lot.220915';
+$petit_ver='v0.27.5';
+$petit_lot='lot.220916';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -177,8 +177,9 @@ function post(){
 		break;	
 		}
 	}
+	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)((substr($time,0,-6)+1).substr(microtime(),2,6)) : $time;
 
-	$adminpost=(adminpost_valid()||(($pwd && $pwd === $admin_pass)));
+	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
 
 	//お絵かきアップロード
 	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
@@ -305,6 +306,9 @@ function post(){
 			copy($tempfile, $upfile);
 			chmod($upfile,0606);
 	}
+	if(($is_upload||$pictmp2) && !is_file($upfile)){
+		return error($en?'The operation failed.':'失敗しました。');
+	}
 	//POSTされた値をログファイルに格納する書式にフォーマット
 	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
 	$name = $formatted_post['name'];
@@ -380,7 +384,7 @@ function post(){
 			$chk_ex_line=explode("\t",trim($line));
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
 			$chk_time=(strlen($time_)>15) ? substr($time_,0,-6) : substr($time_,0,-3);
-			if(((int)time()-(int)$chk_time)<1){//投稿時刻の重複回避が主目的
+			if(((int)substr($time,0,-6)-(int)$chk_time)<1){//投稿時刻の重複回避が主目的
 				safe_unlink($upfile);
 				closeFile($fp);
 				safe_unlink($upfile);
@@ -1182,8 +1186,9 @@ function img_replace(){
 			break;	
 		}
 	}
-		
+	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)((substr($time,0,-6)+1).substr(microtime(),2,6)) : $time;
 	$upfile=TEMP_DIR.$time.'.tmp';
+	
 	if($is_upload && ($_tool==='upload') && ( $use_upload || $adminpost || $admindel) && is_file($up_tempfile)){
 		move_uploaded_file($up_tempfile,$upfile);
 	}
