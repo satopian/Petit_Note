@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.27.5';
+$petit_ver='v0.27.6';
 $petit_lot='lot.220916';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -306,8 +306,12 @@ function post(){
 			copy($tempfile, $upfile);
 			chmod($upfile,0606);
 	}
-	if(($is_upload||$pictmp2) && !is_file($upfile)){
-		return error($en?'The operation failed.':'失敗しました。');
+	$is_file_upfile=false;
+	if($is_upload||$pictmp2){
+		if(!is_file($upfile)){
+			return error($en?'The operation failed.':'失敗しました。');
+		}
+		$is_file_upfile=true;
 	}
 	//POSTされた値をログファイルに格納する書式にフォーマット
 	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
@@ -325,11 +329,11 @@ function post(){
 		}
 	}
 
-	if(!$upfile&&!$com){
+	if(!$is_file_upfile&&!$com){
 		return error($en?'Please write something.':'何か書いて下さい。');
 	}
 
-	if(!$resto && !$allow_coments_only && !$upfile && !$adminpost){
+	if(!$resto && !$allow_coments_only && !$is_file_upfile && !$adminpost){
 		return error($en?'Please attach an image.':'画像を添付してください。');
 	}
 
@@ -361,7 +365,7 @@ function post(){
 	}
 	$img_md5='';
 	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
-	$n= $upfile ? 15 : 5;
+	$n= $is_file_upfile ? 15 : 5;
 	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
 	$chk_com=[];
 	$chk_images=[];
@@ -393,7 +397,7 @@ function post(){
 			if($host === $host_){
 				$chk_com[$time_]=$chk_ex_line;//コメント
 			}
-			if($upfile && $imgfile_){
+			if($is_file_upfile && $imgfile_){
 				$chk_images[$time_]=$chk_ex_line;//画像
 			}
 		}
@@ -420,7 +424,7 @@ function post(){
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
 	}
-	if($upfile && is_file($upfile)){
+	if($is_file_upfile){
 
 		if(!$pictmp2){//実体データの縮小
 			$max_px=isset($max_px) ? $max_px : 1024;
