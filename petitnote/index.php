@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.27.6';
-$petit_lot='lot.220916';
+$petit_ver='v0.27.8';
+$petit_lot='lot.220917';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -177,7 +177,7 @@ function post(){
 		break;	
 		}
 	}
-	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)((substr($time,0,-6)+1).substr(microtime(),2,6)) : $time;
+	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)(((int)substr($time,0,-6)+1).substr(microtime(),2,6)) : $time;
 
 	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
 
@@ -189,11 +189,10 @@ function post(){
 	$tempfile='';
 	if($pictmp===2){//ユーザーデータを調べる
 
-		if(!$picfile) return error($en? 'Posting failed.':'投稿に失敗しました。');
 		$tempfile = TEMP_DIR.$picfile;
 		$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
 		//選択された絵が投稿者の絵か再チェック
-		if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat")) {
+		if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat" || !is_file($tempfile))) {
 			return error($en? 'Posting failed.':'投稿に失敗しました。');
 		}
 		//ユーザーデータから情報を取り出す
@@ -209,7 +208,7 @@ function post(){
 		if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
 			$painttime=(int)$postedtime-(int)$starttime;
 		}
-		if($resto && $picfile && !$use_res_upload && !$adminpost){
+		if($resto && !$use_res_upload && !$adminpost){
 			return error($en? 'Only administrator can post.':'投稿できるのは管理者だけです。');
 		}
 		$pictmp2=true;//お絵かきでエラーがなかった時にtrue;
@@ -282,7 +281,7 @@ function post(){
 	$is_upload=false;
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
 
-		if($resto && $up_tempfile && !$use_res_upload && !$adminpost){
+		if($resto && !$use_res_upload && !$adminpost){
 			safe_unlink($up_tempfile);
 			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
 		}
@@ -1190,7 +1189,7 @@ function img_replace(){
 			break;	
 		}
 	}
-	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)((substr($time,0,-6)+1).substr(microtime(),2,6)) : $time;
+	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)(((int)substr($time,0,-6)+1).substr(microtime(),2,6)) : $time;
 	$upfile=TEMP_DIR.$time.'.tmp';
 	
 	if($is_upload && ($_tool==='upload') && ( $use_upload || $adminpost || $admindel) && is_file($up_tempfile)){
