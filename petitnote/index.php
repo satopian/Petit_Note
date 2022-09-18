@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.27.9';
-$petit_lot='lot.220917';
+$petit_ver='v0.28.0';
+$petit_lot='lot.220918';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -366,43 +366,71 @@ function post(){
 	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
 	$n= $is_file_upfile ? 15 : 5;
 	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
-	$chk_com=[];
-	$chk_images=[];
+	$r_arr=[];
+	if($resto){
+		if(!is_file(LOG_DIR."{$resto}.log")){
+			return error($en? 'The article does not exist.':'記事がありません。');
+		}
+
+		$rp=fopen(LOG_DIR."{$resto}.log","r+");
+		flock($rp, LOCK_EX);
+		while ($line = fgets($rp)) {
+			if(!trim($line)){
+				continue;
+			}
+			$r_arr[]=$line;
+		}
+		if(empty($r_arr)){
+			closeFile($rp);
+			closeFile($fp);
+			return error($en?'The operation failed.':'失敗しました。');
+		}
+	}
+	
 	$chk_resnos=[];
 	foreach($chk_log_arr as $chk_log){
 		list($chk_resno)=explode("\t",$chk_log);
 		$chk_resnos[]=$chk_resno;
 	}
-	if($resto){//レスの時はレスファイルをチェックに追加
-		$chk_resnos=array_merge($chk_resnos,[$resto]);
-	} 
+	$_chk_lines=[];
+	$chk_lines=[];
 	foreach($chk_resnos as $chk_resno){
-		if(is_file(LOG_DIR."{$chk_resno}.log")){
 
-		$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-		while($line=fgets($cp)){
-			if(!trim($line)){
-				continue;
+			if(($chk_resno!==$resto)&&is_file(LOG_DIR."{$chk_resno}.log")){
+
+				$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
+				while($line=fgets($cp)){
+					if(!trim($line)){
+						continue;
+					}
+				$_chk_lines[]=$line;
+				}
+				closefile($cp);
 			}
-			$chk_ex_line=explode("\t",trim($line));
-			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
-			$chk_time=(strlen($time_)>15) ? substr($time_,0,-6) : substr($time_,0,-3);
-			if(((int)substr($time,0,-6)-(int)$chk_time)<1){//投稿時刻の重複回避が主目的
-				safe_unlink($upfile);
-				closeFile($fp);
-				safe_unlink($upfile);
-				return error($en? 'Please wait a little.':'少し待ってください。');
-			}
-			if($host === $host_){
-				$chk_com[$time_]=$chk_ex_line;//コメント
-			}
-			if($is_file_upfile && $imgfile_){
-				$chk_images[$time_]=$chk_ex_line;//画像
-			}
+	}
+	$chk_lines=array_merge($_chk_lines,$r_arr);
+
+	$chk_com=[];
+	$chk_images=[];
+	foreach($chk_lines as $chk_line){
+		$chk_ex_line=explode("\t",trim($chk_line));
+		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
+		$chk_time=(strlen($time_)>15) ? substr($time_,0,-6) : substr($time_,0,-3);
+		if(((int)substr($time,0,-6)-(int)$chk_time)<1){//投稿時刻の重複回避が主目的
+			safe_unlink($upfile);
+			closeFile($fp);
+			closeFile($rp);
+			safe_unlink($upfile);
+			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
-		fclose($cp);
+		if($host === $host_){
+			$chk_com[$time_]=$chk_ex_line;//コメント
+		}
+		if($is_file_upfile && $imgfile_){
+			$chk_images[$time_]=$chk_ex_line;//画像
 		}
 	}
+
 	krsort($chk_com);
 	$chk_com=array_slice($chk_com,0,20,false);
 
@@ -522,30 +550,14 @@ function post(){
 	$line='';
 	$newline='';
 	if($resto){//レスの時はスレッド別ログに追記
-		//ファイルロックした状態で再度開く
-		$rp=fopen(LOG_DIR."{$resto}.log","r+");
-		if(!$rp){
-			closeFile($fp);
-			safe_unlink(IMG_DIR.$imgfile);
-			return error($en?'The operation failed.':'失敗しました。');
-		}
-		flock($rp, LOCK_EX);
-		$r_arr=[];
 		$r_oya='';
 		$r_no='';
-		while ($line = fgets($rp)) {
-			if(!trim($line)){
-				continue;
-			}
-			$r_arr[]=$line;
-		}
 		if(empty($r_arr)){
 			closeFile($rp);
 			closeFile($fp);
 			safe_unlink(IMG_DIR.$imgfile);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
-		//ファイルロックがかかった状態で再確認。
 		//レス先はoya?
 		list($r_no,,,,,,,,,,,,,,,,,,,$r_oya)=explode("\t",trim($r_arr[0]));
 		if($r_no!==$resto||$r_oya!=='oya'){
