@@ -8,6 +8,7 @@
 ** http://www.punyu.net/php/
 ** 
 **
+** 2022/09/18 URLがURLとして正しい事を確認できるようにした。
 ** 2022/09/18 多国語対応。mb_language( 'uni' )。
 ** 2020/06/20 多国語対応。メール送信をJISからutf-8へ。
 ** 2020/07/12 軽微なエラーを修正。
@@ -71,12 +72,13 @@
 【使用例】※実際には変数を使うが、判り易くする為に直接内容をセットしています
 
 $data['to'] = 'me@example.com';
-$data['subject'] = 'なんか投稿されてますよー';
+$data['subject'] = '投稿がありました。';
 $data['name'] = '名無しさん';
 $data['email'] = 'example@example.com';
-$data['option'][] = 'URL,http://www.example.com/';
+$data['url'] ='http://www.example.com/';
+$data['title'] = 'はじめての投稿です。';
 $data['option'][] = 'お絵かき絵,http://example.com/poti/src/OB11111111.png';
-$data['comment'] = 'お絵かきしたにゃ';
+$data['comment'] = 'はじめまして。';
 noticemail::send($data);
 
 【ご注意】
@@ -93,7 +95,10 @@ class noticemail{
 	mb_language( 'uni' );
 	mb_internal_encoding("UTF-8");
 
-	$name = $data['name'];
+	$name = isset($data['name']) ? $data['name'] : '';
+	$url = isset($data['url']) ? $data['url'] : '';
+	$title = isset($data['title']) ? $data['title'] : '';
+
 	$line = "---------------------------------------------------------------------\n";
 
 	// ヘッダを指定
@@ -116,7 +121,9 @@ class noticemail{
 	$Message .= 'Host: '.gethostbyaddr($userip)."\n";
 	$Message .= 'UserAgent: '.getenv("HTTP_USER_AGENT")."\n";
 	$Message .= $line;
-	$Message .= 'Name: '.$name."\n";
+	$Message .= $name ? ('Name: '.$name."\n") :'';
+	$Message .= filter_var($url,FILTER_VALIDATE_URL) ? ('URL: '.$url."\n") : '';
+	$Message .= $title ? ('Title: '.$title."\n") : '';
 	$option = $data['option'];
 	if(is_array($option)){
 		foreach($option as $value){

@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.28.2';
+$petit_ver='v0.28.3';
 $petit_lot='lot.220918';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20220915){
+if(!isset($functions_ver)||$functions_ver<20220918){
 	return error($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -658,10 +658,14 @@ function post(){
 
 		$data['to'] = $to_mail;
 		$data['name'] = $name;
-		$data['option'][] = 'URL,'.$url;
-		$data['option'][] = NOTICE_MAIL_TITLE.','.$sub;
-		if($imgfile) $data['option'][] = NOTICE_MAIL_IMG.','.$root_url.IMG_DIR.$imgfile;//拡張子があったら
-		if(is_file(THUMB_DIR.$time.'s.jpg')) $data['option'][] = NOTICE_MAIL_THUMBNAIL.','.$root_url.THUMB_DIR.$time.'s.jpg';
+		$data['url'][] = filter_var($url,FILTER_VALIDATE_URL) ? $url:'';
+		$data['title'][] = $sub;
+		if($imgfile){
+			$data['option'][] = NOTICE_MAIL_IMG.','.$root_url.IMG_DIR.$imgfile;//拡張子があったら
+		} 
+		if(is_file(THUMB_DIR.$time.'s.jpg')){
+			$data['option'][] = NOTICE_MAIL_THUMBNAIL.','.$root_url.THUMB_DIR.$time.'s.jpg';
+		} 
 		if($resto){
 			$data['subject'] = '['.$boardname.'] No.'.$resto.NOTICE_MAIL_REPLY;
 			$data['option'][] = "\n".NOTICE_MAIL_URL.','.$root_url.'?res='.$resto;
@@ -673,7 +677,6 @@ function post(){
 		$data['comment'] = str_replace('"\n"',"\n",$com);
 
 		noticemail::send($data);
-
 	}
 
 	//多重送信防止

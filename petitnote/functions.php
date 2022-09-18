@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20220915;
+$functions_ver=20220918;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -654,9 +654,11 @@ function writeFile ($fp, $data) {
 }
 //fpクローズ
 function closeFile ($fp) {
-	fflush($fp);
-	flock($fp, LOCK_UN);
-	fclose($fp);
+	if($fp){
+		fflush($fp);
+		flock($fp, LOCK_UN);
+		fclose($fp);
+	}
 }
 
 //縮小表示
