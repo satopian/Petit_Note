@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.28.0';
+$petit_ver='v0.28.2';
 $petit_lot='lot.220918';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -363,11 +363,8 @@ function post(){
 		$alllog_arr[]=$_line;
 	}
 	$img_md5='';
-	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
-	$n= $is_file_upfile ? 15 : 5;
-	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
 	$r_arr=[];
-	if($resto){
+	if($resto){//レスの時はファイルロックしてレスファイルを開く
 		if(!is_file(LOG_DIR."{$resto}.log")){
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
@@ -386,6 +383,10 @@ function post(){
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 	}
+
+	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
+	$n= $is_file_upfile ? 15 : 5;
+	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
 	
 	$chk_resnos=[];
 	foreach($chk_log_arr as $chk_log){
@@ -439,6 +440,7 @@ function post(){
 
 		if($com && ($com === $_com_)){
 			closeFile($fp);
+			closeFile($rp);
 			safe_unlink($upfile);
 			return error($en?'Post once by this comment.':'同じコメントがありました。');
 		}
@@ -447,6 +449,7 @@ function post(){
 		$_chk_time_=(strlen($_time_)>15) ? substr($_time_,0,-6) : substr($_time_,0,-3);
 		if($upfile && ((int)time()-(int)$_chk_time_<30)||(!$upfile && ((int)time()-(int)$_chk_time_)<15)){
 			closeFile($fp);
+			closeFile($rp);
 			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
@@ -474,6 +477,7 @@ function post(){
 			clearstatcache();
 			if(filesize($upfile) > $max_kb*1024){
 				closeFile($fp);
+				closeFile($rp);
 				safe_unlink($upfile);
 			return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを超えています。");
 			}
@@ -484,6 +488,7 @@ function post(){
 		$ext=getImgType ($_img_type);
 		if (!$ext) {
 			closeFile($fp);
+			closeFile($rp);
 			safe_unlink($upfile);
 			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
 		}
@@ -496,6 +501,7 @@ function post(){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
 				if($log_md5 && ($log_md5 === $img_md5)){
 					closeFile($fp);
+					closeFile($rp);
 					safe_unlink($upfile);
 					return error($en?'Image already exists.':'同じ画像がありました。');
 				}
@@ -553,16 +559,16 @@ function post(){
 		$r_oya='';
 		$r_no='';
 		if(empty($r_arr)){
-			closeFile($rp);
 			closeFile($fp);
+			closeFile($rp);
 			safe_unlink(IMG_DIR.$imgfile);
 			return error($en?'The operation failed.':'失敗しました。');
 		}
 		//レス先はoya?
 		list($r_no,,,,,,,,,,,,,,,,,,,$r_oya)=explode("\t",trim($r_arr[0]));
 		if($r_no!==$resto||$r_oya!=='oya'){
-			closeFile($rp);
 			closeFile($fp);
+			closeFile($rp);
 			safe_unlink(IMG_DIR.$imgfile);
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
