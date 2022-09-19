@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20220918;
+$functions_ver=20220919;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -20,7 +20,7 @@ function logout_admin(){
 	session_sta();
 	unset($_SESSION['admindel']);
 	unset($_SESSION['adminpost']);
-	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
+	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$page = $page ? $page : 0;
 	$catalog=filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
@@ -28,7 +28,7 @@ function logout_admin(){
 		return header('Location: ./?resno='.$resno);	
 	}
 	if($catalog){
-		return header('Location: ./?mode=catalog&resno='.$page);
+		return header('Location: ./?mode=catalog&page='.$page);
 	}
 
 	return header('Location: ./?page='.$page);
@@ -113,7 +113,7 @@ function adminpost(){
 		return header('Location: ./?resno='.$resno);
 	}
 	if($catalog){
-		return header('Location: ./?mode=catalog&resno='.$page);
+		return header('Location: ./?mode=catalog&page='.$page);
 	}
 	
 	return header('Location: ./?page='.$page);
@@ -144,7 +144,7 @@ function admin_del(){
 		return header('Location: ./?resno='.$resno);
 	}
 	if($catalog){
-		return header('Location: ./?mode=catalog&resno='.$page);
+		return header('Location: ./?mode=catalog&page='.$page);
 	}
 
 	return header('Location: ./?page='.$page);
