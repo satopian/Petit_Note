@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.28.6';
+$petit_ver='v0.28.8';
 $petit_lot='lot.220919';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -281,48 +281,6 @@ function post(){
 
 	}
 
-	// if($resto){//エラー処理
-		
-	// 	if(!is_file(LOG_DIR."{$resto}.log")){
-	// 		return error($en? 'The article does not exist.':'記事がありません。');
-	// 	}
-	// 	$rp=fopen(LOG_DIR."$resto.log","r");
-	// 	$r_arr=[];
-	// 	while($line = fgets($rp)){
-	// 		if(!trim($line)){
-	// 			continue;
-	// 		}
-	// 		$r_arr[]=$line;
-	// 	}
-	// 	closeFile ($rp);
-
-	// 	list($r_no,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$r_oya)=explode("\t",trim($r_arr[0]));
-	// 	//レスファイルの1行目のチェック。経過日数、ログの1行目が'oya'かどうか確認。
-	// 	$check_elapsed_days = check_elapsed_days($postedtime);
-	// 	$count_r_arr=count($r_arr);
-
-	// 	if($pictmp2){//お絵かきの時は新規投稿にする
-
-	// 		//お絵かきの時に日数を経過していたら新規投稿。
-	// 		//お絵かきの時に最大レス数を超過していたら新規投稿。
-	// 		if($resto && (!$check_elapsed_days || $count_r_arr>$max_res || $r_no!==$resto || $r_oya!=='oya')){
-	// 			$resto='';
-	// 		}
-	// 	}
-	// 	if($resto && ($r_no!==$resto || $r_oya!=='oya')){
-	// 		return error($en? 'The article does not exist.':'記事がありません。');
-	// 	}
-	// 	//お絵かき以外。
-	// 	if($resto && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
-	// 		return error($en? 'This thread is too old to post.':'このスレッドには投稿できません。');
-	// 	}
-	// 	if($resto && $count_r_arr>$max_res){//最大レス数超過。
-	// 		return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
-	// 	}
-
-	// 	$sub='Re: '.$oyasub;
-
-	// }
 	//ファイルアップロード
 	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
@@ -412,27 +370,6 @@ function post(){
 		}
 		$alllog_arr[]=$_line;
 	}
-	$img_md5='';
-	// $r_arr=[];
-	// if($resto){//レスの時はファイルロックしてレスファイルを開く
-	// 	if(!is_file(LOG_DIR."{$resto}.log")){
-	// 		return error($en? 'The article does not exist.':'記事がありません。');
-	// 	}
-
-	// 	$rp=fopen(LOG_DIR."{$resto}.log","r+");
-	// 	flock($rp, LOCK_EX);
-	// 	while ($line = fgets($rp)) {
-	// 		if(!trim($line)){
-	// 			continue;
-	// 		}
-	// 		$r_arr[]=$line;
-	// 	}
-	// 	if(empty($r_arr)){
-	// 		closeFile($rp);
-	// 		closeFile($fp);
-	// 		return error($en?'The operation failed.':'失敗しました。');
-	// 	}
-	// }
 
 	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
 	$n= $is_file_upfile ? 15 : 5;
@@ -504,6 +441,8 @@ function post(){
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
 	}
+
+	$img_md5='';
 	if($is_file_upfile){
 
 		if(!$pictmp2){//実体データの縮小
