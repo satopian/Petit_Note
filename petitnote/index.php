@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.28.8';
-$petit_lot='lot.220919';
+$petit_ver='v0.28.10';
+$petit_lot='lot.220920';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1951,7 +1951,7 @@ function catalog($page=0,$q=''){
 //通常表示
 function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions,$max_kb;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image; 
+	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	$max_byte = $max_kb * 1024*2;
 	$denny_all_posts=$deny_all_posts;//互換性
 
@@ -2000,6 +2000,7 @@ function view($page=0){
 	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
+	$resform = ((!$deny_all_posts && !$only_admin_can_reply)||$adminpost);
 
 	if(!$use_aikotoba){
 		$aikotoba=true;
@@ -2044,78 +2045,78 @@ function res ($resno){
 	$resno=filter_input(INPUT_GET,'resno');
 	if(!is_file(LOG_DIR."{$resno}.log")){
 		return error($en?'Thread does not exist.':'スレッドがありません');	
-		}
-		$rresname = [];
-		$resname = '';
-		$oyaname='';
-			$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
-			$out[0]=[];
-			while ($line = fgets($rp)) {
-				if(!trim($line)){
-					continue;
-				}
-				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
-
-				if($_res['oya']==='oya'){
-					$oyaname = $_res['name'];
-				} 
-				// 投稿者名を配列にいれる
-					if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
-						$rresname[] = $_res['name'];
-					}
-			$out[0][]=$_res;
-			}	
-		fclose($rp);
-		if(empty($out[0])||$out[0][0]['oya']!=='oya'){
-			return error($en? 'The article does not exist.':'記事がありません。');
-		}
-		//投稿者名の特殊文字を全角に
-		foreach($rresname as $key => $val){
-			$rep=str_replace('&quot;','”',$val);
-			$rep=str_replace('&#039;','’',$rep);
-			$rep=str_replace('&lt;','＜',$rep);
-			$rep=str_replace('&gt;','＞',$rep);
-			$rresname[$key]=str_replace('&amp;','＆',$rep);
-		}			
-	
-		$resname = !empty($rresname) ? implode(($en?'-san':'さん').' ',$rresname) : false; // レス投稿者一覧
-
-		$fp=fopen(LOG_DIR."alllog.log","r");
-		$articles=[];
-		while ($line = fgets($fp)) {
+	}
+	$rresname = [];
+	$resname = '';
+	$oyaname='';
+		$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
+		$out[0]=[];
+		while ($line = fgets($rp)) {
 			if(!trim($line)){
 				continue;
 			}
-			$articles[] = $line;//$_lineから、情報を取り出す
-		}
-		fclose($fp);
-		$i=0;
-		foreach($articles as $i =>$article){//現在のスレッドのキーを取得
-			if (strpos(trim($article), $resno . "\t") === 0) {
-				break;
-			}
-		}
-		$next=isset($articles[$i+1])? rtrim($articles[$i+1]) :'';
-		$prev=isset($articles[$i-1])? rtrim($articles[$i-1]) :'';
-		$next=$next ? (create_res(explode("\t",trim($next)))):[];
-		$prev=$prev ? (create_res(explode("\t",trim($prev)))):[];
-		$next=(!empty($next) && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
-		$prev=(!empty($prev) && is_file(LOG_DIR."{$prev['no']}.log"))?$prev:[];
+			$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
 
-		if($view_other_works){
-			$view_other_works=[];
-			$a=[];
-			$start_view=(($i-7)>=0) ? ($i-7) : 0;
-			$other_articles=array_slice($articles,$start_view,17,false);
-			foreach($other_articles as $val){
-				$b=create_res(explode("\t",trim($val)));
-				if(!empty($b)&&$b['img']&&$b['no']!==$resno){
-					$a[]=$b;
+			if($_res['oya']==='oya'){
+				$oyaname = $_res['name'];
+			} 
+			// 投稿者名を配列にいれる
+				if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
+					$rresname[] = $_res['name'];
 				}
-			}
-			$c=($i<5) ? 0 : (count($a)>9 ? 4 :0);
-			$view_other_works=array_slice($a,$c,6,false);
+		$out[0][]=$_res;
+		}	
+	fclose($rp);
+	if(empty($out[0])||$out[0][0]['oya']!=='oya'){
+		return error($en? 'The article does not exist.':'記事がありません。');
+	}
+	//投稿者名の特殊文字を全角に
+	foreach($rresname as $key => $val){
+		$rep=str_replace('&quot;','”',$val);
+		$rep=str_replace('&#039;','’',$rep);
+		$rep=str_replace('&lt;','＜',$rep);
+		$rep=str_replace('&gt;','＞',$rep);
+		$rresname[$key]=str_replace('&amp;','＆',$rep);
+	}			
+
+	$resname = !empty($rresname) ? implode(($en?'-san':'さん').' ',$rresname) : false; // レス投稿者一覧
+
+	$fp=fopen(LOG_DIR."alllog.log","r");
+	$articles=[];
+	while ($line = fgets($fp)) {
+		if(!trim($line)){
+			continue;
 		}
+		$articles[] = $line;//$_lineから、情報を取り出す
+	}
+	fclose($fp);
+	$i=0;
+	foreach($articles as $i =>$article){//現在のスレッドのキーを取得
+		if (strpos(trim($article), $resno . "\t") === 0) {
+			break;
+		}
+	}
+	$next=isset($articles[$i+1])? rtrim($articles[$i+1]) :'';
+	$prev=isset($articles[$i-1])? rtrim($articles[$i-1]) :'';
+	$next=$next ? (create_res(explode("\t",trim($next)))):[];
+	$prev=$prev ? (create_res(explode("\t",trim($prev)))):[];
+	$next=(!empty($next) && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
+	$prev=(!empty($prev) && is_file(LOG_DIR."{$prev['no']}.log"))?$prev:[];
+
+	if($view_other_works){
+		$view_other_works=[];
+		$a=[];
+		$start_view=(($i-7)>=0) ? ($i-7) : 0;
+		$other_articles=array_slice($articles,$start_view,17,false);
+		foreach($other_articles as $val){
+			$b=create_res(explode("\t",trim($val)));
+			if(!empty($b)&&$b['img']&&$b['no']!==$resno){
+				$a[]=$b;
+			}
+		}
+		$c=($i<5) ? 0 : (count($a)>9 ? 4 :0);
+		$view_other_works=array_slice($a,$c,6,false);
+	}
 
 	//管理者判定処理
 	session_sta();
@@ -2123,7 +2124,7 @@ function res ($resno){
 	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
-	$resform = ((!$deny_all_posts && !$only_admin_can_reply)||$adminpost) ? true : false;
+	$resform = ((!$deny_all_posts && !$only_admin_can_reply)||$adminpost);
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
