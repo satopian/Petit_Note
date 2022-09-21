@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20220919;
+$functions_ver=20220921;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -783,4 +783,11 @@ foreach($formatted_post as $key => $val){
 }
 return $formatted_post;
 
+}
+//PaintBBS NEOのpchかどうか調べる
+function is_neo($src) {
+	$fp = fopen("$src", "rb");
+	$is_neo=(fread($fp,3)==="NEO");
+	fclose($fp);
+	return $is_neo;
 }
