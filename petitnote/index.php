@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.29.3';
+$petit_ver='v0.29.5';
 $petit_lot='lot.220921';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -297,7 +297,7 @@ function post(){
 
 		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
 			safe_unlink($up_tempfile);
-			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
+			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 		}
 		$upfile=TEMP_DIR.$time.'.tmp';
 		move_uploaded_file($up_tempfile,$upfile);
@@ -478,7 +478,7 @@ function post(){
 			closeFile($fp);
 			closeFile($rp);
 			safe_unlink($upfile);
-			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
+			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 		}
 
 		//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
@@ -739,7 +739,7 @@ function paint(){
 				$pchup=TEMP_DIR.basename($pchup);//ファイルを開くディレクトリを固定
 				if(!in_array(mime_content_type($pchup),["application/octet-stream","application/gzip","image/vnd.adobe.photoshop"])){
 					safe_unlink($pchup);
-					return error($en?'This file does not supported':'ファイル形式が一致しません。');
+					return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 				}
 				if(($pchext==="pch")&&is_neo($pchup)){
 					$app='neo';
@@ -752,7 +752,7 @@ function paint(){
 					$img_klecks = $pchup;
 				}else{
 					safe_unlink($pchup);
-					return error($en?'This file does not supported':'ファイル形式が一致しません。');
+					return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 				}
 			}
 		}
@@ -1083,7 +1083,7 @@ function img_replace(){
 
 		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
 			safe_unlink($up_tempfile);
-			return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
+			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 		}
 
 		check_csrf_token();
@@ -1243,7 +1243,7 @@ if(!is_file($upfile)){
 		closeFile($fp);
 		closeFile($rp);
 		safe_unlink($upfile);
-		return error($en? 'This file is an unsupported format.':'対応していないフォーマットです。');
+		return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 	}
 	list($w, $h) = getimagesize($upfile);
 	$img_md5=md5_file($upfile);
