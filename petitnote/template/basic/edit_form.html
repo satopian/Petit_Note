@@ -5,8 +5,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
+<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="script" href="lib/luminous/luminous.min.js">
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
-
 <?php if(isset($set_nsfw)&&$set_nsfw&&!$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
 <style>img {filter:blur(10px);}</style>
@@ -20,11 +22,7 @@
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <nav class="menu_wrap">
 <span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
-<?php if($userdel || $admindel):?>
 	<span>[<a href="./?mode=logout&resno=<?=h($no)?>#<?=h($time)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
-<?php else:?>
-	<span>[<a href="./?mode=userdel&page=<?=h($page)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
-<?php endif;?>
  <a href="#bottom">▽</a>
 	</nav>
 	<h2 class="article_title"><?php if($en):?>Editing an article<?php else:?>記事編集中<?php endif;?></h2>
@@ -73,13 +71,13 @@
 		<?php if($res['img']):?>
 
 			<div class="posted_image" <?php if($res['_w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
+				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
 				<?php if($res['thumbnail']):?>
-					<a href="src/<?=h($res['img'])?>" target="_blank">
-						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>" loading="lazy">
-					</a>
+					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>">
 					<?php else:?>
 					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>" loading="lazy">
 				<?php endif;?>
+				</a>
 			</div>
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>
@@ -139,7 +137,9 @@
 </div>
 </div>
 <div id="bottom"></div>
+<div id="page_top"><a class="icon-angles-up-solid"></a></div>
 <script src="lib/<?=h(JQUERY)?>"></script>
+<script src="lib/luminous/luminous.min.js"></script>
 <script>
 	jQuery(function() {
 	window.onpageshow = function(){
@@ -150,6 +150,30 @@
 			$(this).prop('disabled',true);
 			$(this).closest('form').submit();
 		});
+		}
+		// https://cotodama.co/pagetop/
+		var pagetop = $('#page_top');   
+		pagetop.hide();
+		$(window).scroll(function () {
+			if ($(this).scrollTop() > 100) {  //100pxスクロールしたら表示
+				pagetop.fadeIn();
+			} else {
+				pagetop.fadeOut();
+			}
+		});
+		pagetop.click(function () {
+			$('body,html').animate({
+				scrollTop: 0
+			}, 500); //0.5秒かけてトップへ移動
+			return false;
+		});
+		// https://www.webdesignleaves.com/pr/plugins/luminous-lightbox.html
+		const luminousElems = document.querySelectorAll('.luminous');
+		//取得した要素の数が 0 より大きければ
+		if( luminousElems.length > 0 ) {
+			luminousElems.forEach( (elem) => {
+			new Luminous(elem);
+			});
 		}
 	});
 
