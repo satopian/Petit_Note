@@ -271,8 +271,8 @@
     margin: auto;
   }
 
-  .lum-lightbox-inner img {
+  /* .lum-lightbox-inner img {
     max-width: none;
     max-height: none;
-  }
+  } */
 }
