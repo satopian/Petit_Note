@@ -5,7 +5,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
-<link rel="stylesheet" href="<?=h($skindir)?>icomoon/style.css">
+<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="script" href="iib/luminous/luminous.min.js">
+<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 <?php if(isset($set_nsfw)&&$set_nsfw&&!$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
 <style>img {filter:blur(10px);}</style>
@@ -17,7 +20,6 @@
 <div class="container" id="top">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
-		
 	<nav class="menu_wrap">
 		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 	<?php if($userdel || $admindel):?>
@@ -96,17 +98,13 @@
 	</div>
 		<?php if($res['img']):?>
 			<div class="posted_image <?php if($res['hide_thumbnail'] && !$admindel):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
-			<?php if($res['link_thumbnail']):?>
-				<a href="src/<?=h($res['img'])?>" target="_blank">
-				<?php endif;?>
+				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
 				<?php if($res['thumbnail']):?>
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 			<?php else:?>
 			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 				<?php endif;?>
-				<?php if($res['link_thumbnail']):?>
 					</a>
-			<?php endif;?>
 			<?php if($res['hide_thumbnail']):?>
 					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
 				<?php endif;?>
@@ -135,6 +133,8 @@
 <br>
 <span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
 <!--http://wondercatstudio.com/-->
+, 
+<a href="https://github.com/imgix/luminous" target="_blank" rel="noopener noreferrer" title="by Zebrafish Labs" >luminous</a>
 </div>
 </div>
 </div>

@@ -52,7 +52,7 @@
 		<span><?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?></span>
 	<?php endif;?>
 
-	<?php if(($use_upload && $res['upload_image']) || $admin):?>
+	<?php if(($use_upload && $res['upload_image'])):?>
 		<form action="./" method="POST" enctype="multipart/form-data" class="postform">
 		<input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
 		<input type="hidden" name="pwd" value="<?=h($pwd)?>">
@@ -133,6 +133,8 @@
 <br>
 <span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
 <!--http://wondercatstudio.com/-->
+, 
+<a href="https://github.com/imgix/luminous" target="_blank" rel="noopener noreferrer" title="by Zebrafish Labs" >luminous</a>
 </div>
 </div>
 </div>

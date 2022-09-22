@@ -5,7 +5,9 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
-<link rel="stylesheet" href="<?=h($skindir)?>icomoon/style.css">
+<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="script" href="iib/luminous/luminous.min.js">
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 
 <?php if($set_nsfw && !$nsfwc):?>
@@ -240,17 +242,13 @@ Size:
 			</div>
 			<?php endif;?>
 				<div class="posted_image <?php if($res['hide_thumbnail'] && !$admindel):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
-			<?php if($res['link_thumbnail']):?>
-				<a href="src/<?=h($res['img'])?>" target="_blank">
-				<?php endif;?>
+				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
 				<?php if($res['thumbnail']):?>
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
 			<?php else:?>
 			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
 				<?php endif;?>
-				<?php if($res['link_thumbnail']):?>
 					</a>
-			<?php endif;?>
 			<?php if($res['hide_thumbnail']):?>
 					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
 				<?php endif;?>
@@ -369,12 +367,15 @@ Size:
 <br>
 <span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
 <!--http://wondercatstudio.com/-->
+, 
+<a href="https://github.com/imgix/luminous" target="_blank" rel="noopener noreferrer" title="by Zebrafish Labs" >luminous</a>
 </div>
 </div>
 </div>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
 <script src="lib/<?=h(JQUERY)?>"></script>
+<script src="lib/luminous/luminous.min.js"></script>
 <script>
 	jQuery(function() {
 		window.onpageshow = function(){
@@ -402,6 +403,14 @@ Size:
 			}, 500); //0.5秒かけてトップへ移動
 			return false;
 		});
+		// https://www.webdesignleaves.com/pr/plugins/luminous-lightbox.html
+		const luminousElems = document.querySelectorAll('.luminous');
+		//取得した要素の数が 0 より大きければ
+		if( luminousElems.length > 0 ) {
+			luminousElems.forEach( (elem) => {
+			new Luminous(elem);
+			});
+		}
 	});
 </script>
 </body>
