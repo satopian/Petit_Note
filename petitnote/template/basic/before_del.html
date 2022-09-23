@@ -104,10 +104,10 @@
 			<?php else:?>
 			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 				<?php endif;?>
-					</a>
-			<?php if($res['hide_thumbnail']):?>
+				<?php if($res['hide_thumbnail']):?>
 					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
-				<?php endif;?>
+						<?php endif;?>
+					</a>
 			</div>
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>

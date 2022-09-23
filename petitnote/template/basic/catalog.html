@@ -49,6 +49,9 @@
 			<?php else:?>
 			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
 			<?php endif;?>
+			<?php if($res['hide_thumbnail']):?>
+					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
+			<?php endif;?>
 			</a>
 			<?php else:?>
 				<a href="./?resno=<?= h($res['no'])?>" target="_blank"><?php if($en):?>No image.<?php else:?>画像なし<?php endif;?></a>
