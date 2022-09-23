@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.30.2';
+$petit_ver='v0.30.3';
 $petit_lot='lot.220923';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -959,8 +959,8 @@ function to_continue(){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
 	$thumbnail=($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail');
-	$picfile = $thumbnail ? THUMB_DIR.$time.'.s.jpg' : IMG_DIR.$imgfile;
-	list($picw, $pich) = getimagesize($picfile);
+	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
+	$picfile = $thumbnail ? THUMB_DIR.$time.'s.jpg' : IMG_DIR.$imgfile;
 
 	$select_app = false;
 	$app_to_use = false;
