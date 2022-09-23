@@ -135,10 +135,10 @@
 			<?php else:?>
 			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>4):?>loading="lazy"<?php endif;?>>
 				<?php endif;?>
-					</a>
-			<?php if($res['hide_thumbnail']):?>
+				<?php if($res['hide_thumbnail']):?>
 					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
-				<?php endif;?>
+						<?php endif;?>
+				</a>
 			</div>
 			<?php endif;?>
 			<div class="comment"><?=com(h($res['com']))?></div>
@@ -290,11 +290,11 @@
 <br>
 <?php if($mark_sensitive_image):?>
 <span>
-<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail"><label for="hide_thumbnail"><?php if($en):?>Image as sensitive<?php else:?>閲覧注意にする
+<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail"><label for="hide_thumbnail"><?php if($en):?>Sensitive image<?php else:?>閲覧注意にする
 	<?php endif;?>
+</label>
 </span>
 <?php endif;?>
-</label>
 <?php endif;?>
 <?php if(!$sage_all):?>
 	<span>

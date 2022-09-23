@@ -147,7 +147,8 @@ span.info_name a {
 	max-width: 100%;
 	height: auto;
 	margin: 0 10px 10px 0;
-	float: left;	overflow: hidden;
+	float: left;
+	overflow: hidden;
 	position: relative;
 }
 
@@ -372,6 +373,19 @@ span.continue_menu {
     display: inline-block;
     overflow: hidden;
     vertical-align: top;
+	position: relative;
+}
+.catalog_image p {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    display: inline-block;
+    background-color: #555;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 18px;
 }
 
 /* お絵かき画面 */
