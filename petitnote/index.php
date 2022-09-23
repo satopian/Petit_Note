@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.30.1';
-$petit_lot='lot.220922';
+$petit_ver='v0.30.2';
+$petit_lot='lot.220923';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -958,7 +958,8 @@ function to_continue(){
 	if(!$flag || !$imgfile || !is_file(IMG_DIR.$imgfile)){//画像が無い時は処理しない
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
-	$picfile = IMG_DIR.$imgfile;
+	$thumbnail=($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail');
+	$picfile = $thumbnail ? THUMB_DIR.$time.'.s.jpg' : IMG_DIR.$imgfile;
 	list($picw, $pich) = getimagesize($picfile);
 
 	$select_app = false;
