@@ -473,11 +473,10 @@ span.continue_menu {
 
 }
 
-@media screen and (max-width:413px){
-	/* 閲覧注意の文字を改行させる */
+@media screen and (max-width:389px){
+	/* 閲覧注意のlabel */
 	form.resform span {
-		display: block;
-		margin: 12px 0;
+		margin: 0 1px;
 	}
 }
 /* スクロールすると出てくる「トップへ戻る」ボタン */
