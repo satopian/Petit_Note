@@ -415,6 +415,39 @@ span.continue_menu {
 }
 
 
+/* メディアクエリ */
+.pcdisp {
+	display: block;
+}
+
+.mobiledisp {
+	display: none;
+}
+
+@media screen and (max-width:767px){
+	textarea.post_com {
+		max-width: 276px;
+	}
+	.posted_image{
+		float:none;
+		margin-right:0;
+	}
+	.comment {
+		min-width: initial;
+	}
+	.mobiledisp {
+			display: block;
+			margin: 10px 0;
+			line-height: 1.8;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+	}
+	.pcdisp{
+		display: none;
+	}
+}
+
 @media screen and (max-width:599px){
 	/* カタログ表示を3列にするか2列にするか */
 
@@ -439,35 +472,12 @@ span.continue_menu {
 	}
 
 }
-.pcdisp {
-	display: block;
-}
 
-.mobiledisp {
-	display: none;
-}
-/* メディアクエリ */
-@media screen and (max-width:767px){
-	textarea.post_com {
-		max-width: 276px;
-	}
-	.posted_image{
-		float:none;
-		margin-right:0;
-	}
-	.comment {
-		min-width: initial;
-	}
-	.mobiledisp {
-			display: block;
-			margin: 10px 0;
-			line-height: 1.8;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-	}
-	.pcdisp{
-		display: none;
+@media screen and (max-width:413px){
+	/* 閲覧注意の文字を改行させる */
+	form.resform span {
+		display: block;
+		margin: 12px 0;
 	}
 }
 /* スクロールすると出てくる「トップへ戻る」ボタン */
