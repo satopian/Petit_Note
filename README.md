@@ -135,6 +135,8 @@ Java版の`.pch`とNEOの`.pch`を判定する処理を追加して、Java版の
 
 - メール送信時のエンコードが多国語対応になっていなかったのを修正しました。
 
+安定版をリリースからダウンロードできます。  
+[Petit Note v0.30.6 リリース](https://github.com/satopian/Petit_Note/releases/latest)
 
 ##  22/08/16 v0.23.3
 
@@ -181,9 +183,6 @@ $x_frame_options_deny=true;
 [コンテンツセキュリティポリシーを設定したらPOTI-boardのお絵かき画面の時計が動かなくなりました。｜さとぴあ｜note](https://note.com/satopian/n/n7b757ee05975)
 ### バグ修正
 - [unixtimeが未入力でブランクの時に致命的エラーが発生していたのを修正しました。](https://github.com/satopian/Petit_Note/commit/6b6c9e17ce9c217b3eb0a18377e3ba48d5ed6b97)
-
-安定版をリリースからダウンロードできます。  
-[Petit Note v0.23.3 リリース](https://github.com/satopian/Petit_Note/releases/latest)
 
 ##  22/07/11 v0.22.5
 ### 改善
