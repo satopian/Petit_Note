@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.30.8';
-$petit_lot='lot.220926';
+$petit_ver='v0.30.10';
+$petit_lot='lot.22102';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,6 +18,9 @@ if(!isset($functions_ver)||$functions_ver<20220926){
 // jQueryバージョン
 const JQUERY='jquery-3.6.0.min.js';
 check_file(__DIR__.'/lib/'.JQUERY);
+// luminous
+check_file(__DIR__.'/lib/luminous/luminous.min.js');
+check_file(__DIR__.'/lib/luminous/luminous-basic.min.css');
 
 check_file(__DIR__.'/config.php');
 check_file(__DIR__.'/thumbnail_gd.php');
