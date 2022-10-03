@@ -48,6 +48,24 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
 
+##  22/10/03 v0.30.10
+
+### ChickenPaintを最新版に更新
+#### Chromeのバグを回避
+- ChickenPaintのカラーピッカーで色を選択する操作をすると、表示されていた色が消え、真っ白になる問題がChromeのバグによって発生しました。  
+  
+![ChickenPaint_Chrome106_bug](https://user-images.githubusercontent.com/44894014/193554250-e09961ba-9b43-4795-b03d-d172b63f6975.gif)
+  
+このGoogle Chromeのバグを回避して動作するChickenPaintの最新版に更新しました。
+
+### klecksを最新版に更新
+- グラデーションツールにグラデーションを消しゴム化して使うオプションが追加されました。
+- 集中線を描写する機能が追加されました。
+
+### 改善
+- luminousの実行に必要なファイルが存在しない時はエラーメッセージでファイルが存在しない事を知らせるようになりました。  
+
+
 ##  22/09/26 v0.30.8
 
 ### 更新
