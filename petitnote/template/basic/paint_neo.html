@@ -154,6 +154,7 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <?php foreach($arr_dynp as $palname):?>
 	<option><?=h($palname)?></option>
 <?php endforeach;?>
+</select>
 <INPUT type="button" VALUE="<?php if($en):?>New<?php else:?>作成<?php endif;?>" OnClick="PaletteNew()">
 <INPUT type="button" VALUE="<?php if($en):?>Renew<?php else:?>変更<?php endif;?>" OnClick="PaletteRenew()">
 <INPUT type="button" VALUE="<?php if($en):?>Del<?php else:?>削除<?php endif;?>" OnClick="PaletteDel()"><br>
