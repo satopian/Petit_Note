@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20220926;
+$functions_ver=20221005;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -473,7 +473,7 @@ function session_sta(){
 	if(!isset($_SESSION)){
 		ini_set('session.use_strict_mode', 1);
 		session_set_cookie_params(
-			0,"","",null,true
+			0,"","",false,true
 		);
 		session_start();
 		header('Expires:');
