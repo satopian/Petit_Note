@@ -86,7 +86,6 @@
 <div class="post_table_title"><?php if($en):?>Images<?php else:?>画像<?php endif;?>
 	<select name="picfile" class="post_select_image" onchange="select_pic();" id="select_picfile">
 
-?>
 	<?php foreach($out as $i=>$val):?>
 
 	<?php krsort($val);?>
@@ -101,11 +100,11 @@
 		</div>
 	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>">
 	
-	<label id="paintcom_sage">
 	<?php if(!$sage_all):?>
-	sage:<input type="checkbox" name="sage" value="on" class="form_button">
+	<span id="paintcom_sage">
+	<input type="checkbox" name="sage" value="on" id="sage"><label for="sage">sage</label>	
+	</span>
 	<?php endif;?>
-	</label>
 	<?php if($mark_sensitive_image):?>
 	<span>
 	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
