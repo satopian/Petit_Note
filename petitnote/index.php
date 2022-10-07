@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.30.11';
-$petit_lot='lot.22105';
+$petit_ver='v0.30.12';
+$petit_lot='lot.22107';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -850,6 +850,7 @@ function paint(){
 			$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
 			$pal=[];
 			$DynP=[];
+			$arr_pal=[];
 			foreach ( $lines as $i => $line ) {
 				$line=str_replace(["\r","\n","\t"],"",$line);
 				$line=h($line);
