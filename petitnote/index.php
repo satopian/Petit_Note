@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.31.0';
+$petit_ver='v0.31.1';
 $petit_lot='lot.22108';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -850,25 +850,20 @@ function paint(){
 			$lines =file($palettetxt);
 			$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
 			$pal=[];
-			$DynP=[];
+			$arr_dynp=[];
 			$arr_pal=[];
 			foreach ( $lines as $i => $line ) {
 				$line=str_replace(["\r","\n","\t"],"",$line);
-				$line=h($line);
+				$line=$line;
 				list($pid,$pname,$pal[0],$pal[2],$pal[4],$pal[6],$pal[8],$pal[10],$pal[1],$pal[3],$pal[5],$pal[7],$pal[9],$pal[11],$pal[12],$pal[13]) = explode(",", $line);
-				$DynP[]=$pname;
+				$arr_dynp[]=h($pname);
 				$p_cnt=$i+1;
-				$palettes = 'Palettes['.$p_cnt.'] = "#';
 				ksort($pal);
-				$palettes.=implode('\n#',$pal);
-				$palettes.='";';
-				$arr_pal[$i] = $palettes;
+				$arr_pal[$i] = 'Palettes['.h($p_cnt).'] = "#'.h(implode('\n#',$pal)).'";';
 			}
 			$palettes=$initial_palette.implode('',$arr_pal);
-			$palsize = count($DynP) + 1;
-			foreach ($DynP as $p){
-				$arr_dynp[] = $p;
-			}
+			$palsize = count($arr_dynp) + 1;
+			
 			// HTML出力
 			$templete='paint_neo.html';
 			return include __DIR__.'/'.$skindir.$templete;
