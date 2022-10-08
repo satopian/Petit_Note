@@ -1,18 +1,18 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.31.1';
+$petit_ver='v0.31.3';
 $petit_lot='lot.22108';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
-$en= (stripos($lang,'ja')!==0) ? true : false;
+$en= (stripos($lang,'ja')!==0);
 
 if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20221005){
+if(!isset($functions_ver)||$functions_ver<20221008){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -848,10 +848,10 @@ function paint(){
 			$palettetxt = $en? 'palette_en.txt' : 'palette.txt';
 			check_file(__DIR__.'/'.$palettetxt);  
 			$lines =file($palettetxt);
-			$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
 			$pal=[];
 			$arr_dynp=[];
 			$arr_pal=[];
+			$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
 			foreach ( $lines as $i => $line ) {
 				$line=str_replace(["\r","\n","\t"],"",$line);
 				$line=$line;

@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221005;
+$functions_ver=20221008;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -367,14 +367,14 @@ function com($str){
 }
 //マークダウン記法のリンクをHTMLに変換
 function md_link($str){
-	$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","<a href=\"\\2\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\\1</a>",$str);
+	$str= preg_replace('{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}','<a href="$2" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
 	return $str;
 }
 
 // 自動リンク
 function auto_link($str){
 	if(strpos($str,'<a')===false){//マークダウン記法がなかった時
-		$str= preg_replace("{(https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)}","<a href=\"\\1\" target=\"_blank\" rel=\"nofollow noopener noreferrer\">\\1</a>",$str);
+		$str= preg_replace('{(https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)}','<a href="$1" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
 	}
 	return $str;
 }
