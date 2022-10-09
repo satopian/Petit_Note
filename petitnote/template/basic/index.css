@@ -389,6 +389,9 @@ span.continue_menu {
 }
 
 /* お絵かき画面 */
+.appstage {
+	word-break: initial;overflow-wrap: initial;
+}
 .app_toolleft {
     margin: 16px auto;
 }
