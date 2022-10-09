@@ -490,7 +490,7 @@ function getId ($userip) {
 function deltemp(){
 	$handle = opendir(TEMP_DIR);
 	while ($file = readdir($handle)) {
-		if(!is_dir($file) && $file!=='.htaccess') {
+		if(!is_dir($file)) {
 			//pchアップロードペイントファイル削除
 			//仮差し換えアップロードファイル削除
 			$lapse = time() - filemtime(TEMP_DIR.$file);
