@@ -5,7 +5,7 @@ body {
 }
 body,td {
 	color: #555;
-	word-break: break-all;
+	overflow-wrap: anywhere;
 	font-family: "Hiragino Sans", meiryo, ヒラギノ角ゴシック, メイリオ, sans-serif;
 	background-color: #fff;
 }
@@ -517,7 +517,6 @@ span.continue_menu {
 /* ページネーションと著作表示の改行処理 */
 .pagination,.copy{
 	word-break: normal;
-	overflow-wrap: break-word;
 }
 .pagination a,.pagination strong {
     margin: 0 2px;
