@@ -70,7 +70,7 @@
 	<?php endif;?>
 <input type="hidden" name="mode" value="paint">
 <input type="submit" value="PAINT" class="paint_button">
-<span>TOOL:
+<span>Tool:
 <select name="app" class="select_applet">
 <option value="neo" 
 <?php if($appc==='neo'):?>
@@ -209,7 +209,7 @@ Size:
 				<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
 				<span><?=h($res['date'])?></span>		
 			<?php if($res['img']):?>
-				<span>TOOL:<?=h($res['tool'])?></span>
+				<span>Tool:<?=h($res['tool'])?></span>
 				<?php if($res['painttime']):?>
 				<span>
 					<?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?>

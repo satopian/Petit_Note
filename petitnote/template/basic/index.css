@@ -517,13 +517,11 @@ span.continue_menu {
 	margin: auto;
 	text-align: center
 }
-/* ページネーションと著作表示の改行処理 */
-.pagination,.copy{
-	word-break: normal;
-}
+/* ページネーション */
 .pagination a,.pagination strong {
     margin: 0 2px;
 }
+/* 閲覧注意 */
 .hide_thumbnail img {
 	filter: blur(15px);
 }
