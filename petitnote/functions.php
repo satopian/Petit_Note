@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221009;
+$functions_ver=20221011;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -244,6 +244,9 @@ function create_res($line){
 	switch($tool){
 		case 'neo':
 			$tool='PaintBBS NEO';
+			break;
+		case '.spch':
+			$tool='shi-Painter';
 			break;
 		case 'chi':
 			$tool='ChickenPaint';
