@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.32.1';
+$petit_ver='v0.32.5';
 $petit_lot='lot.22111';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20221011){
+if(!isset($functions_ver)||$functions_ver<20221009){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -546,6 +546,8 @@ function post(){
 	//書き込むログの書式
 	$line='';
 	$newline='';
+	$r_line='';
+	$new_r_line='';
 	if($resto){//レスの時はスレッド別ログに追記
 		$r_oya='';
 		$r_no='';
@@ -588,7 +590,8 @@ function post(){
 		//コメントを120バイトに短縮
 		$strcut_com=mb_strcut($com,0,120);
 		$newline = "$no\t$sub\t$name\t$verified\t$strcut_com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
-		file_put_contents(LOG_DIR.$no.'.log',$newline,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
+		$new_r_line = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
+		file_put_contents(LOG_DIR.$no.'.log',$new_r_line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 		chmod(LOG_DIR.$no.'.log',0600);
 	}
 
@@ -1337,11 +1340,15 @@ if(!is_file($upfile)){
 		$painttime=(int)$_painttime+(int)$psec;
 	}
 	
-	$new_line= "$_no\t$_sub\t$_name\t$_verified\t$_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
+	$r_line= "$_no\t$_sub\t$_name\t$_verified\t$_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 
-	$r_arr[$i] = $new_line;
+	$r_arr[$i] = $r_line;
 
 	if($_oya ==='oya'){
+	
+		$strcut_com=mb_strcut($_com,0,120);
+		$newline = "$_no\t$_sub\t$_name\t$_verified\t$strcut_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\t'oya'\n";
+	
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
@@ -1349,7 +1356,7 @@ if(!is_file($upfile)){
 			if(($id===$time_ && $no===$no_) &&
 			(($admindel && $is_upload ||
 			($pwd && password_verify($pwd,$hash_))))){
-				$alllog_arr[$i] = $new_line;
+				$alllog_arr[$i] = $newline;
 				$flag=true;
 				break;
 			}
