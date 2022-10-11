@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.31.5';
-$petit_lot='lot.22109';
+$petit_ver='v0.32.1';
+$petit_lot='lot.22111';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20221009){
+if(!isset($functions_ver)||$functions_ver<20221011){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -585,7 +585,9 @@ function post(){
 	}else{
 		//最後の記事ナンバーに+1
 		$no=$max_no+1;
-		$newline = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
+		//コメントを120バイトに短縮
+		$strcut_com=mb_strcut($com,0,120);
+		$newline = "$no\t$sub\t$name\t$verified\t$strcut_com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
 		file_put_contents(LOG_DIR.$no.'.log',$newline,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 		chmod(LOG_DIR.$no.'.log',0600);
 	}
@@ -669,6 +671,8 @@ function post(){
 
 		noticemail::send($data);
 	}
+
+	unset($admin_pass);
 
 	//多重送信防止
 	if($resto){
@@ -1675,11 +1679,16 @@ function edit(){
 
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 
-	$new_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
-
-	$r_arr[$i] = $new_line;
+	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
+	
+	$r_arr[$i] = $r_line;
 
 	if($_oya==='oya'){
+
+	//コメントを120バイトに短縮
+	$strcut_com=mb_strcut($com,0,120);
+	$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t'oya'\n";
+
 		$alllog_arr=[];
 		while ($_line = fgets($fp)) {
 			if(!trim($_line)){
@@ -1698,7 +1707,7 @@ function edit(){
 			if(($id===$time_ && $no===$no_) &&
 			($admindel || ($pwd && password_verify($pwd,$hash_)))){
 
-				$alllog_arr[$i] = $new_line;
+				$alllog_arr[$i] = $newline;
 				$flag=true;
 				break;
 			}
