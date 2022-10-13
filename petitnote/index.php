@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.32.5';
+$petit_ver='v0.32.6';
 $petit_lot='lot.22111';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -1399,11 +1399,10 @@ function pchview(){
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$pch = pathinfo($imagefile, PATHINFO_FILENAME);
 	$pchext = check_pch_ext(IMG_DIR . $pch);
-	if(!$pchext){
+	if(!$pchext||!is_file(IMG_DIR.$imagefile)){
 		return error('ファイルがありません。');
 	}
 	$pchfile = IMG_DIR.$pch.$pchext;
-
 	list($picw, $pich) = getimagesize(IMG_DIR.$imagefile);
 	$appw = $picw < 200 ? 200 : $picw;
 	$apph = $pich < 200 ? 200 : $pich + 26;
