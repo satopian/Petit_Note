@@ -45,14 +45,13 @@ if (!$success||!is_file(TEMP_DIR.$imgfile.'.png')) {
 }
 chmod(TEMP_DIR.$imgfile.'.png',PERMISSION_FOR_DEST);
 
-if (isset ($_FILES["psd"]) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
+if (isset ($_FILES['psd']) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
 		//PSDファイルのアップロードができなかった場合はエラーメッセージはださず、画像のみ投稿する。 
 		move_uploaded_file($_FILES['psd']['tmp_name'], TEMP_DIR.$imgfile.'.psd');
 		if(is_file(TEMP_DIR.$imgfile.'.psd')){
 			chmod(TEMP_DIR.$imgfile.'.psd',PERMISSION_FOR_DEST);
 		}
 	}
-
 
 $u_ip = getenv("HTTP_CLIENT_IP");
 if(!$u_ip) $u_ip = getenv("HTTP_X_FORWARDED_FOR");

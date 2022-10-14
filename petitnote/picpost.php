@@ -138,16 +138,18 @@ if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
 $imgfile = time().substr(microtime(),2,6);//画像ファイル名
 $imgfile = is_file(TEMP_DIR.$imgfile.$imgext) ? ((time()+1).substr(microtime(),2,6)) : $imgfile;
 
+$full_imgfile = TEMP_DIR.$imgfile.$imgext;
 // 画像データをファイルに書き込む
-file_put_contents(TEMP_DIR.$imgfile.$imgext,$imgdata,LOCK_EX);
-if(!is_file(TEMP_DIR.$imgfile.$imgext)){
+file_put_contents($full_imgfile,$imgdata,LOCK_EX);
+if(!is_file($full_imgfile)){
 	die("error\n{$errormsg_3}");
 }
-$img_type=mime_content_type(TEMP_DIR.$imgfile.$imgext);
+$img_type=mime_content_type($full_imgfile);
 if(!in_array($img_type,["image/png","image/jpeg"])){
-	die("error\n{$errormsg_5}");
+	unlink($full_imgfile);
+	die("error\n{$errormsg_3}");
 }
-chmod(TEMP_DIR.$imgfile.$imgext,PERMISSION_FOR_DEST);
+chmod($full_imgfile,PERMISSION_FOR_DEST);
 
 
 // PCHファイルの長さを取り出す
@@ -181,4 +183,3 @@ if(!is_file(TEMP_DIR.$imgfile.'.dat')){
 chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 
 die("ok");
-
