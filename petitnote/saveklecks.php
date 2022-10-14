@@ -6,8 +6,8 @@ include(__DIR__.'/config.php');
 //容量違反チェックをする する:1 しない:0
 define('SIZE_CHECK', '1');
 //PNG画像データ投稿容量制限KB(chiは含まない)
-define('PICTURE_MAX_KB', '5120');//5MBまで
-define('PSD_MAX_KB', '20480');//20MBまで。ただしサーバのPHPの設定によって2MB以下に制限される可能性があります。
+define('PICTURE_MAX_KB', '8192');//8MBまで
+define('PSD_MAX_KB', '40960');//40MBまで。ただしサーバのPHPの設定によって2MB以下に制限される可能性があります。
 defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
