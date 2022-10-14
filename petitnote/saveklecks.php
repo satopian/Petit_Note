@@ -7,6 +7,7 @@ include(__DIR__.'/config.php');
 define('SIZE_CHECK', '1');
 //PNG画像データ投稿容量制限KB(chiは含まない)
 define('PICTURE_MAX_KB', '5120');//5MBまで
+define('PSD_MAX_KB', '20480');//10MBまで。ただしサーバのPHPの設定によって2MB以下に制限される可能性があります。
 defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
@@ -44,15 +45,15 @@ if (!$success||!is_file(TEMP_DIR.$imgfile.'.png')) {
     die("Couldn't move uploaded files");
 }
 chmod(TEMP_DIR.$imgfile.'.png',PERMISSION_FOR_DEST);
-
 if (isset ($_FILES['psd']) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
+	if(!SIZE_CHECK || ($_FILES['psd']['size'] < (PSD_MAX_KB * 1024))){
 		//PSDファイルのアップロードができなかった場合はエラーメッセージはださず、画像のみ投稿する。 
 		move_uploaded_file($_FILES['psd']['tmp_name'], TEMP_DIR.$imgfile.'.psd');
 		if(is_file(TEMP_DIR.$imgfile.'.psd')){
 			chmod(TEMP_DIR.$imgfile.'.psd',PERMISSION_FOR_DEST);
 		}
 	}
-
+}
 $u_ip = getenv("HTTP_CLIENT_IP");
 if(!$u_ip) $u_ip = getenv("HTTP_X_FORWARDED_FOR");
 if(!$u_ip) $u_ip = getenv("REMOTE_ADDR");
