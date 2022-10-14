@@ -8,6 +8,7 @@
 // このスクリプトはPaintBBS（藍珠CGI）のPNG保存ルーチンを参考に
 // PHP用に作成したものです。
 //----------------------------------------------------------------------
+// 2022/10/14 画像データのmimeタイプのチェックを追加。
 // 2022/08/21 PCHデータの書き込みエラーでは停止しないようにした。
 // 2022/07/03 同名のファイルが存在する時は秒数に+1して回避。ファイル名の秒数を13桁→16桁へ。
 // 2022/06/27 画像とユーザーデータが存在しない時は画面を推移せずエラーのアラートを出す。
@@ -137,22 +138,17 @@ if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
 $imgfile = time().substr(microtime(),2,6);//画像ファイル名
 $imgfile = is_file(TEMP_DIR.$imgfile.$imgext) ? ((time()+1).substr(microtime(),2,6)) : $imgfile;
 
-$full_imgfile = TEMP_DIR.$imgfile.$imgext;
 // 画像データをファイルに書き込む
-$fp = fopen($full_imgfile,"wb");
-if(!$fp){
-	//画像ファイルの作成に失敗しました。お絵かき画像は保存されません。
-	die("error\n{$errormsg_3}");
-}else{
-	flock($fp, LOCK_EX);
-	fwrite($fp, $imgdata);
-	fflush($fp);
-	flock($fp, LOCK_UN);
-	fclose($fp);
-}
+file_put_contents(TEMP_DIR.$imgfile.$imgext,$imgdata,LOCK_EX);
 if(!is_file(TEMP_DIR.$imgfile.$imgext)){
 	die("error\n{$errormsg_3}");
 }
+$img_type=mime_content_type(TEMP_DIR.$imgfile.$imgext);
+if(!in_array($img_type,["image/png","image/jpeg"])){
+	die("error\n{$errormsg_5}");
+}
+chmod(TEMP_DIR.$imgfile.$imgext,PERMISSION_FOR_DEST);
+
 
 // PCHファイルの長さを取り出す
 $pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);
@@ -161,40 +157,28 @@ $h = substr($buffer, 0, 1);
 // 拡張子設定
 
 if($h=='S'){
-	$ext = '.spch';
+	$pchext = '.spch';
 }else{
-	$ext = '.pch';
+	$pchext = '.pch';
 }
 
 if($pchLength){
 	// PCHイメージを取り出す
 	$PCHdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength + 8, $pchLength);
 	// PCHデータをファイルに書き込む
-	$fp = fopen(TEMP_DIR.$imgfile.$ext,"wb");
-	if($fp){
-		flock($fp, LOCK_EX);
-		fwrite($fp, $PCHdata);
-		fflush($fp);
-		flock($fp, LOCK_UN);
-		fclose($fp);
+	file_put_contents(TEMP_DIR.$imgfile.$pchext,$PCHdata,LOCK_EX);
+	if(is_file(TEMP_DIR.$imgfile.$pchext)){
+		chmod(TEMP_DIR.$imgfile.$pchext,PERMISSION_FOR_DEST);
 	}
+
 }
 
 // 情報データをファイルに書き込む
-$fp = fopen(TEMP_DIR.$imgfile.".dat","w");
-if(!$fp){
-	//情報ファイルの作成に失敗しました。投稿者情報は記録されません。
-	die("error\n{$errormsg_7}");
-}else{
-	flock($fp, LOCK_EX);
-	fwrite($fp, $userdata);
-	fflush($fp);
-	flock($fp, LOCK_UN);
-	fclose($fp);
-	chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
-}
-
+file_put_contents(TEMP_DIR.$imgfile.".dat",$userdata,LOCK_EX);
 if(!is_file(TEMP_DIR.$imgfile.'.dat')){
 	die("error\n{$errormsg_7}");
 }
+chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
+
 die("ok");
+
