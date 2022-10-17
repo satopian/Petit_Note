@@ -3,7 +3,7 @@
 - PaintBBS NEO,ChickenPaint,Klecksが使えるお絵かき掲示板です。
 ##  動作環境
 - PHP5.6以上の環境が必要です。  
-PHP5.6,PHP7.2,PHP8.1で動作確認しています。  
+PHP5.6,PHP7.2,PHP8.1, PHP8.2.0RC4で動作確認しています。  
 PHP7.4～PHP8.1での使用を推奨します。
 
 ##  v0.9.16.x以前のPetit Noteをご利用の方へのお願い
