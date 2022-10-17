@@ -4,26 +4,26 @@
 /*-----絶対に変更が必要な項目-----*/
 
 //管理者パスワード 必ず変更してください。
-$admin_pass = 'kanripass';
+$admin_pass = "kanripass";
 
 //第2パスワード 必ず変更してください。
 //管理者投稿や管理者削除の時に管理者である事を再確認する為に使うパスワード。
 //内部で処理するため覚えておく必要はありません。
 //管理パスと同じパスワードは使えません。
-$second_pass = 'mGeL5dhpQ8e9ugd';
+$second_pass = "mGeL5dhpQ8e9ugd";
 
 //この掲示板の名前
-$boardname = 'Petit Note';
+$boardname = "Petit Note";
 
 //ホームページ(掲示板からの戻り先)
-$home = './'; //相対パス、絶対パス、URLどれでもOK 
+$home = "./"; //相対パス、絶対パス、URLどれでもOK 
 
 //最大スレッド保存件数上限 これ以上はスレッドを削除
 //最低500スレッド。
 $max_log = 1000;
 
 // 設置場所のurl `/`まで。
-$root_url = 'http://example.com/oekaki/';
+$root_url = "http://example.com/oekaki/";
 
 //名前を必須にする
 // しない: false の時に名前を空欄で投稿すると、｢anonymous｣になります。
@@ -47,19 +47,19 @@ $use_sns_button = true;
 // $use_sns_button = false;
 
 /*テンプレート切り替え*/
-//テンプレートのディレクトリ`/`まで 初期値 'basic/'
-$skindir='basic/';
+//テンプレートのディレクトリ`/`まで 初期値 "basic/"
+$skindir="basic/";
 
 /*掲示板の説明文*/
 
 // テンプレートに直接記入しても構いませんが、ここで入力する事もできます。
-// 説明文が1行なら ['説明そのいち']
-// 説明文が3行なら ['説明そのいち','説明そのに','説明そのさん']
+// 説明文が1行なら ["説明そのいち"]
+// 説明文が3行なら ["説明そのいち","説明そのに","説明そのさん"]
 // 文字をシングルクオートで囲って、カンマで区切ります。
 // 説明文が不要なら []で。
 
-// $descriptions = ['iPadやスマートフォンでも描けるお絵かき掲示板です。'];	
-$descriptions = ['iPadやスマートフォンでも描けるお絵かき掲示板です。','楽しくお絵かき。'];	
+// $descriptions = ["iPadやスマートフォンでも描けるお絵かき掲示板です。"];	
+$descriptions = ["iPadやスマートフォンでも描けるお絵かき掲示板です。","楽しくお絵かき。"];	
 
 
 /*メール通知*/
@@ -71,7 +71,7 @@ $descriptions = ['iPadやスマートフォンでも描けるお絵かき掲示�
 $send_email = false;
 
 //投稿があった事を通知するメールアドレス
-$to_mail = 'example@example.com';
+$to_mail = "example@example.com";
 
 /*スパム対策*/
 //本文に日本語がなければ拒絶 する:true しない:false
@@ -80,20 +80,20 @@ $use_japanesefilter = true;
 
 //拒絶する文字列 正規表現
 // 設定しないなら[]で。
-$badstring = ['example.example.com','未承諾広告'];
+$badstring = ["example.example.com","未承諾広告"];
 
 //拒絶するurl
 $badurl = ["example.com","www.example.com"];
 
 //使用できない名前 正規表現
-$badname = ['ブランド','通販','販売','口コミ'];
+$badname = ["ブランド","通販","販売","口コミ"];
 
 //AとBが両方あったら拒絶 正規表現
-$badstr_A = ['激安','低価','コピー','品質を?重視','大量入荷'];
-$badstr_B = ['シャネル','シュプリーム','バレンシアガ','ブランド'];
+$badstr_A = ["激安","低価","コピー","品質を?重視","大量入荷"];
+$badstr_B = ["シャネル","シュプリーム","バレンシアガ","ブランド"];
 
 //禁止ホスト
-$badhost =['example.com','example.org'];
+$badhost =["example.com","example.org"];
 
 /*使用目的別設定*/
 
@@ -163,7 +163,7 @@ $use_aikotoba=false;
 //合言葉機能で投稿を制限する時の合言葉
 //この合言葉が入力されていない時には書き込むことができません。
 // 必要に応じて変更してください。
-$aikotoba = 'あいうえお';
+$aikotoba = "あいうえお";
 
 //年齢制限付きの掲示板として設定する
 //する: trueに設定すると確認ボタンを押すまで画像にぼかしが入ります。
@@ -286,9 +286,9 @@ $elapsed_days=180;
 $deny_all_posts = false;
 
 
-//タイムゾーン 日本時間で良ければ初期値 'asia/tokyo'
+//タイムゾーン 日本時間で良ければ初期値 "asia/tokyo"
 
-date_default_timezone_set('asia/tokyo');
+date_default_timezone_set("asia/tokyo");
 
 //iframe内での表示を 拒否する:true 許可する:false
 //セキュリティリスクを回避するため "拒否する:true" を強く推奨。
@@ -299,18 +299,18 @@ $x_frame_options_deny=true;
 //通常は変更しません
 //ペイント画面の$pwdの暗号化
 
-define('CRYPT_PASS','v25Xc9nZ82a5JPT');//暗号鍵初期値
-define('CRYPT_METHOD','aes-128-cbc');
-define('CRYPT_IV','T3pkYxNyjN7Wz3pu');//半角英数16文字
+define("CRYPT_PASS","v25Xc9nZ82a5JPT");//暗号鍵初期値
+define("CRYPT_METHOD","aes-128-cbc");
+define("CRYPT_IV","T3pkYxNyjN7Wz3pu");//半角英数16文字
 
 /*変更不可*/
 
 //変更しないでください
 //テンポラリ
-define('TEMP_DIR','temp/');
+define("TEMP_DIR","temp/");
 //ログ
-define('LOG_DIR','log/');
+define("LOG_DIR","log/");
 //画像
-define('IMG_DIR','src/');
+define("IMG_DIR","src/");
 //画像
-define('THUMB_DIR','thumbnail/');
+define("THUMB_DIR","thumbnail/");
