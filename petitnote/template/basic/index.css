@@ -187,6 +187,10 @@ span.share_button {
     vertical-align: bottom;
     margin: 0 0 0 8px;
 }
+.icon-twitter{
+	display: inline-block;
+	padding: 0 2px;
+}
 
 .catalog_pagetop {
     display: block;
