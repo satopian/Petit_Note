@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.32.7';
-$petit_lot='lot.22116';
+$petit_ver='v0.33.0';
+$petit_lot='lot.22120';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -272,10 +272,10 @@ function post(){
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		//お絵かき以外。
-		if($resto && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
+		if($resto && !$adminpost && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
 			return error($en? 'This thread is too old to post.':'このスレッドには投稿できません。');
 		}
-		if($resto && $count_r_arr>$max_res){//最大レス数超過。
+		if($resto && !$adminpost &&  $count_r_arr>$max_res){//最大レス数超過。
 			return error($en?'The maximum number of replies has been exceeded.':'最大レス数を超過しています。');
 		}
 

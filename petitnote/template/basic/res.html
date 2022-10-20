@@ -147,7 +147,7 @@
 			<div class="comment"><?=com(h($res['com']))?></div>
 	
 
-			<?php if($i>=$max_res||!$ress[0]['check_elapsed_days']){
+			<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
 				$resform=false;//最大レス数を超えている時と指定した日数を超えた古いスレッドはレスフォームを閉じる
 			}?>
 			<?php if($i!==0):?>
@@ -196,7 +196,7 @@
 		<button class="copy_button" onclick="add_to_com()"><?php if($en):?>Copy the poster name<?php else:?>投稿者名をコピー<?php endif;?></button>
 	<?php endif;?>
 <span class="share_button">
-	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>tweet</a>
+	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a>
 </span>
 </div>
 <?php endif; ?>
