@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.33.0';
-$petit_lot='lot.22120';
+$petit_ver='v0.33.1';
+$petit_lot='lot.221023';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -900,7 +900,7 @@ function paintcom(){
 			$uresto = $uresto ? 'res' :''; 
 			if(is_file(TEMP_DIR.$file_name.$imgext)){ //画像があればリストに追加
 				if($ucode === $usercode||$uip === $userip){
-					$tmps[] = [$file_name.$imgext,$uresto];
+					$tmps[$file_name] = [$file_name.$imgext,$uresto];
 				}
 			}
 		}
@@ -909,8 +909,7 @@ function paintcom(){
 
 	if(!empty($tmps)){
 		$pictmp = 2;
-		sort($tmps);
-		reset($tmps);
+		ksort($tmps);
 		foreach($tmps as $tmp){
 			list($tmpfile,$resto)=$tmp;
 			$tmp_img['src'] = TEMP_DIR.$tmpfile;
