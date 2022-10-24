@@ -207,7 +207,6 @@ function check_cont_pass(){
 
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'time');//intの範囲外
-	$pwd = filter_input(INPUT_POST, 'pwd');
 
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
@@ -346,20 +345,32 @@ function get_uip(){
 
 //タブ除去
 function t($str){
+	if(!$str){
+		return '';
+	}
 	return str_replace("\t","",$str);
 }
 //タグ除去
 function s($str){
+	if(!$str){
+		return '';
+	}
 	return strip_tags($str);
 }
 //エスケープ
 function h($str){
+	if(!$str){
+		return '';
+	}
 	return htmlspecialchars($str,ENT_QUOTES,"utf-8",false);
 }
 //コメント出力
 function com($str){
-	
 	global $use_autolink;
+
+	if(!$str){
+		return '';
+	}
 
 	if($use_autolink){
 	$str=md_link($str);
