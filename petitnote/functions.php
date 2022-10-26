@@ -563,7 +563,7 @@ function Reject_if_NGword_exists_in_the_post(){
 
 	//本文へのURLの書き込みを禁止
 	if(!$allow_comments_url && !$adminpost && (!$admin_pass||$pwd !== $admin_pass)){
-		if(preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) return error($en?'This URL can not be used in text.':'URLの記入はできません。');
+		if($com && preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) return error($en?'This URL can not be used in text.':'URLの記入はできません。');
 	}
 
 	// 使えない文字チェック
