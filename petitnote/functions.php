@@ -543,17 +543,23 @@ function Reject_if_NGword_exists_in_the_post(){
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$pwd = t((string)filter_input(INPUT_POST,'pwd'));
 
-	if($name && (strlen($name) > 30)) return error($en?'Name is too long':'名前が長すぎます。');
-	if($sub && (strlen($sub) > 80)) return error($en? 'Subject is too long.':'題名が長すぎます。');
-	if($url && (strlen($url) > 100)) return error($en? 'URL is too long.':'URLが長すぎます。');
-	if($com && (strlen($com) > $max_com)) return error($en? 'Comment is too long.':'本文が長すぎます。');
-	if($pwd && (strlen($pwd) > 100)) return error($en? 'Password is too long.':'パスワードが長すぎます。');
+	$com_len=strlen($com);
+	$name_len=strlen($name);
+	$sub_len=strlen($sub);
+	$url_len=strlen($url);
+	$pwd_len=strlen($pwd);
+
+	if($name_len && ($name_len > 30)) return error($en?'Name is too long':'名前が長すぎます。');
+	if($sub_len && ($sub_len > 80)) return error($en? 'Subject is too long.':'題名が長すぎます。');
+	if($url_len && ($url_len > 100)) return error($en? 'URL is too long.':'URLが長すぎます。');
+	if($com_len && ($com_len > $max_com)) return error($en? 'Comment is too long.':'本文が長すぎます。');
+	if($pwd_len && ($pwd_len > 100)) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
 	//チェックする項目から改行・スペース・タブを消す
-	$chk_name = $name ? preg_replace("/\s/u", "", $name ) : '';
-	$chk_sub = $sub ? preg_replace("/\s/u", "", $sub ) : '';
-	$chk_url = $url ? preg_replace("/\s/u", "", $url ) : '';
-	$chk_com  = $com ? preg_replace("/\s/u", "", $com ) : '';
+	$chk_name = $name_len ? preg_replace("/\s/u", "", $name ) : '';
+	$chk_sub = $sub_len ? preg_replace("/\s/u", "", $sub ) : '';
+	$chk_url = $url_len ? preg_replace("/\s/u", "", $url ) : '';
+	$chk_com  = $com_len ? preg_replace("/\s/u", "", $com ) : '';
 
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
@@ -563,7 +569,7 @@ function Reject_if_NGword_exists_in_the_post(){
 
 	//本文へのURLの書き込みを禁止
 	if(!$allow_comments_url && !$adminpost && (!$admin_pass||$pwd !== $admin_pass)){
-		if($com && preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) return error($en?'This URL can not be used in text.':'URLの記入はできません。');
+		if($com_len && preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) return error($en?'This URL can not be used in text.':'URLの記入はできません。');
 	}
 
 	// 使えない文字チェック
