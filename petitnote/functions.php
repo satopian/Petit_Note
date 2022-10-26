@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221016;
+$functions_ver=20221026;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -207,7 +207,6 @@ function check_cont_pass(){
 
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'time');//intの範囲外
-
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 
@@ -282,7 +281,6 @@ function create_res($line){
 	$date=$datetime ? date('y/m/d',(int)$datetime):'';
 
 	$check_elapsed_days = check_elapsed_days($time);
-	if(!$url||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)) $url="";
 
 	$verified = ($verified==='adminpost') ? true : false;
 	$three_point_sub=(mb_strlen($sub)>15) ? '…' :'';
@@ -294,15 +292,15 @@ function create_res($line){
 		'name' => $name,
 		'verified' => $verified,
 		'com' => $com,
-		'descriptioncom' => s(mb_strcut(str_replace('"\n"'," ",$com),0,300)),
-		'url' => $url,
+		'descriptioncom' => $com ? s(mb_strcut(str_replace('"\n"'," ",$com),0,300)) : '',
+		'url' => $url ? filter_var($url,FILTER_VALIDATE_URL) : '',
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail,
 		'painttime' => $painttime,
-		'w' => is_numeric($w) ? $w :'',
-		'h' => is_numeric($h) ? $h :'',
-		'_w' => is_numeric($w) ? $_w :'',
-		'_h' => is_numeric($h) ? $_h :'',
+		'w' => ($w && is_numeric($w)) ? $w :'',
+		'h' => ($h && is_numeric($h)) ? $h :'',
+		'_w' => ($w && is_numeric($w)) ? $_w :'',
+		'_h' => ($h && is_numeric($h)) ? $_h :'',
 		'tool' => $tool,
 		'upload_image' => $upload_image,
 		'pchext' => $pchext,
@@ -545,17 +543,17 @@ function Reject_if_NGword_exists_in_the_post(){
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$pwd = t((string)filter_input(INPUT_POST,'pwd'));
 
-	if(strlen($name) > 30) return error($en?'Name is too long':'名前が長すぎます。');
-	if(strlen($sub) > 80) return error($en? 'Subject is too long.':'題名が長すぎます。');
-	if(strlen($url) > 100) return error($en? 'URL is too long.':'URLが長すぎます。');
-	if(strlen($com) > $max_com) return error($en? 'Comment is too long.':'本文が長すぎます。');
-	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
+	if($name && (strlen($name) > 30)) return error($en?'Name is too long':'名前が長すぎます。');
+	if($sub && (strlen($sub) > 80)) return error($en? 'Subject is too long.':'題名が長すぎます。');
+	if($url && (strlen($url) > 100)) return error($en? 'URL is too long.':'URLが長すぎます。');
+	if($com && (strlen($com) > $max_com)) return error($en? 'Comment is too long.':'本文が長すぎます。');
+	if($pwd && (strlen($pwd) > 100)) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
 	//チェックする項目から改行・スペース・タブを消す
-	$chk_name = preg_replace("/\s/u", "", $name );
-	$chk_sub = preg_replace("/\s/u", "", $sub );
-	$chk_url = preg_replace("/\s/u", "", $url );
-	$chk_com  = preg_replace("/\s/u", "", $com );
+	$chk_name = $name ? preg_replace("/\s/u", "", $name ) : '';
+	$chk_sub = $sub ? preg_replace("/\s/u", "", $sub ) : '';
+	$chk_url = $url ? preg_replace("/\s/u", "", $url ) : '';
+	$chk_com  = $com ? preg_replace("/\s/u", "", $com ) : '';
 
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
@@ -597,7 +595,7 @@ function Reject_if_NGword_exists_in_the_post(){
  * @return bool
  */
 function is_ngword ($ngwords, $strs) {
-	if (empty($ngwords)) {
+	if (empty($ngwords)||empty($strs)) {
 		return false;
 	}
 	if (!is_array($strs)) {
