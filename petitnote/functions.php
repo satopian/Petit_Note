@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221026;
+$functions_ver=20221027;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -543,11 +543,11 @@ function Reject_if_NGword_exists_in_the_post(){
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$pwd = t((string)filter_input(INPUT_POST,'pwd'));
 
-	$com_len=strlen($com);
-	$name_len=strlen($name);
-	$sub_len=strlen($sub);
-	$url_len=strlen($url);
-	$pwd_len=strlen($pwd);
+	$com_len=strlen((string)$com);
+	$name_len=strlen((string)$name);
+	$sub_len=strlen((string)$sub);
+	$url_len=strlen((string)$url);
+	$pwd_len=strlen((string)$pwd);
 
 	if($name_len && ($name_len > 30)) return error($en?'Name is too long':'名前が長すぎます。');
 	if($sub_len && ($sub_len > 80)) return error($en? 'Subject is too long.':'題名が長すぎます。');
@@ -782,10 +782,10 @@ function check_elapsed_days ($postedtime) {
 function create_formatted_text_from_post($name,$sub,$url,$com){
 global $en;
 // 変数取得
-if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
-if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
-if(!$url||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)||preg_match("/\A\s*\z/u",$url)) $url="";
-if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
+if(!strlen((string)$name)||preg_match("/\A\s*\z/u",$name)) $name="";
+if(!strlen((string)$sub)||preg_match("/\A\s*\z/u",$sub))   $sub="";
+if(!strlen((string)$url)||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)||preg_match("/\A\s*\z/u",$url)) $url="";
+if(!strlen((string)$com)||preg_match("/\A\s*\z/u",$com)) $com="";
 $sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 $com=str_replace(["\r\n","\r"],"\n",$com);
 $com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
