@@ -564,7 +564,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
 		mb_regex_encoding("UTF-8");
-		if (strlen($com) > 0 && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) return error($en?'Comment should have at least some Japanese characters.':'日本語で何か書いてください。');
+		if ($com_len && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) return error($en?'Comment should have at least some Japanese characters.':'日本語で何か書いてください。');
 	}
 
 	//本文へのURLの書き込みを禁止
