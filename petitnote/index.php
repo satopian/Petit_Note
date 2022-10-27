@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.33.3';
-$petit_lot='lot.221027';
+$petit_ver='v0.33.5';
+$petit_lot='lot.221028';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1346,7 +1346,7 @@ if(!is_file($upfile)){
 	if($_oya ==='oya'){
 	
 		$strcut_com=mb_strcut($_com,0,120);
-		$newline = "$_no\t$_sub\t$_name\t$_verified\t$strcut_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\t'oya'\n";
+		$newline = "$_no\t$_sub\t$_name\t$_verified\t$strcut_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
 	
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
@@ -1692,7 +1692,7 @@ function edit(){
 
 	//コメントを120バイトに短縮
 	$strcut_com=mb_strcut($com,0,120);
-	$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t'oya'\n";
+	$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
 
 		$alllog_arr=[];
 		while ($_line = fgets($fp)) {
