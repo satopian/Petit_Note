@@ -723,15 +723,13 @@ function calcPtime ($psec) {
 }
 
 /**
- * pchかspchか、それともファイルが存在しないかチェック
+ * pchか、それ以外の固有形式のファイルか、それともファイルが存在しないかチェック
  * @param $filepath
  * @return string
  */
 function check_pch_ext ($filepath,$option=[]) {
 	if (is_file($filepath . ".pch")) {
 		return ".pch";
-	} elseif (is_file($filepath . ".spch")) {
-		return ".spch";
 	} elseif (!isset($option['upload'])) {
 		return "";
 	} elseif (is_file($filepath . ".chi")) {
@@ -781,11 +779,11 @@ function check_elapsed_days ($postedtime) {
 //POSTされた値をログファイルに格納する書式にフォーマット
 function create_formatted_text_from_post($name,$sub,$url,$com){
 global $en;
-// 変数取得
-if(!strlen((string)$name)||preg_match("/\A\s*\z/u",$name)) $name="";
-if(!strlen((string)$sub)||preg_match("/\A\s*\z/u",$sub))   $sub="";
-if(!strlen((string)$url)||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)||preg_match("/\A\s*\z/u",$url)) $url="";
-if(!strlen((string)$com)||preg_match("/\A\s*\z/u",$com)) $com="";
+
+if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
+if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
+if(!$url||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)||preg_match("/\A\s*\z/u",$url)) $url="";
+if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
 $sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 $com=str_replace(["\r\n","\r"],"\n",$com);
 $com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
