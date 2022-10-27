@@ -343,21 +343,21 @@ function get_uip(){
 
 //タブ除去
 function t($str){
-	if(!$str){
+	if($str!==0 && !$str){
 		return '';
 	}
 	return str_replace("\t","",$str);
 }
 //タグ除去
 function s($str){
-	if(!$str){
+	if($str!==0 && !$str){
 		return '';
 	}
 	return strip_tags($str);
 }
 //エスケープ
 function h($str){
-	if(!$str){
+	if($str!==0 && !$str){
 		return '';
 	}
 	return htmlspecialchars($str,ENT_QUOTES,"utf-8",false);
