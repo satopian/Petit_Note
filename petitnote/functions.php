@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221028;
+$functions_ver=20221031;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -482,10 +482,13 @@ function get_csrf_token(){
 //csrfトークンをチェック	
 function check_csrf_token(){
 	global $en;
+	if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
+		return error($en?'The operation failed.':'失敗しました。');
+	} 
 	session_sta();
 	$token=filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
-	if(!$session_token||$token!==$session_token){
+	if(!$session_token||($token && ($token!==$session_token))){
 		return error($en?'CSRF token mismatch.':'CSRFトークンが一致しません。');
 	}
 }
