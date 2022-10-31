@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.33.6';
-$petit_lot='lot.221028';
+$petit_ver='v0.35.0';
+$petit_lot='lot.221029';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1150,7 +1150,11 @@ function img_replace(){
 	}
 	if(empty($alllog_arr)){
 		closeFile($fp);
-		return error($en?'The operation failed.':'失敗しました。');
+
+		if($is_upload){//該当記事が無い時はエラー
+			return error($en?'The operation failed.':'失敗しました。');
+		} 
+		return paintcom();//該当記事が無い時は新規投稿。
 	}
 
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
@@ -1165,7 +1169,10 @@ function img_replace(){
 	if(empty($r_arr)){
 		closeFile($rp);
 		closeFile($fp);
-		return error($en?'The operation failed.':'失敗しました。');
+		if($is_upload){//該当記事が無い時はエラー
+			return error($en?'The operation failed.':'失敗しました。');
+		} 
+		return paintcom();//該当記事が無い時は新規投稿。
 	}
 
 	$flag=false;
@@ -1199,7 +1206,10 @@ function img_replace(){
 	if(!$flag){
 		closeFile($rp);
 		closeFile($fp);
-		return error($en?'The operation failed.':'失敗しました。');
+		if($is_upload){//該当記事が無い時はエラー
+			return error($en?'The operation failed.':'失敗しました。');
+		} 
+		return paintcom();//該当記事が無い時は新規投稿。
 	}
 	$time = (string)(time().substr(microtime(),2,6));
 	$testexts=['.gif','.jpg','.png','.webp'];
@@ -1364,7 +1374,10 @@ if(!is_file($upfile)){
 			closeFile($rp);
 			closeFile($fp);
 			safe_unlink(IMG_DIR.$imgfile);
-			return error($en?'The operation failed.':'失敗しました。');
+			if($is_upload){//該当記事が無い時はエラー
+				return error($en?'The operation failed.':'失敗しました。');
+			} 
+			return paintcom();//該当記事が無い時は新規投稿。
 		}
 
 		writeFile($fp,implode("",$alllog_arr));
