@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.35.2';
+$petit_ver='v0.35.3';
 $petit_lot='lot.221101';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -1293,13 +1293,13 @@ if(!is_file($upfile)){
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
 		$_chk_time=(strlen($chk_time)>15) ? substr($chk_time,0,-6) : substr($chk_time,0,-3);//秒単位に戻す
-		if($is_upload && ((int)time()-(int)$_chk_time)<1){//投稿時刻の重複回避
+		if($is_upload && ((string)substr($time,0,-6) === (string)$_chk_time)){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
-		if(!$is_upload && (string)$time===(string)$chk_time){
+		if(!$is_upload && ((string)substr($time,0,-6) === (string)$_chk_time)){
 			$time=((int)substr($time,0,-6)+1).substr($time,-6);
 		}
 		if($is_upload && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
