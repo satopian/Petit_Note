@@ -488,7 +488,7 @@ function check_csrf_token(){
 	session_sta();
 	$token=filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
-	if(!$session_token||($token && ($token!==$session_token))){
+	if(!$session_token||$token!==$session_token){
 		return error($en?'CSRF token mismatch.':'CSRFトークンが一致しません。');
 	}
 }
