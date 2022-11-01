@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.35.1';
-$petit_lot='lot.221031';
+$petit_ver='v0.35.2';
+$petit_lot='lot.221101';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -406,7 +406,7 @@ function post(){
 		$chk_ex_line=explode("\t",trim($chk_line));
 		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
 		$chk_time=(strlen($time_)>15) ? substr($time_,0,-6) : substr($time_,0,-3);
-		if(((int)substr($time,0,-6)-(int)$chk_time)<1){//投稿時刻の重複回避が主目的
+		if((string)substr($time,0,-6)===(string)$chk_time){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
@@ -436,7 +436,8 @@ function post(){
 
 		// 画像アップロードと画像なしそれぞれの待機時間
 		$_chk_time_=(strlen($_time_)>15) ? substr($_time_,0,-6) : substr($_time_,0,-3);
-		if($upfile && ((int)time()-(int)$_chk_time_<30)||(!$upfile && ((int)time()-(int)$_chk_time_)<15)){
+		$interval=(int)time()-(int)$_chk_time_;
+		if($interval>=0 && (($upfile && $interval<30)||(!$upfile && $interval<15))){//待機時間がマイナスの時は通す
 			closeFile($fp);
 			closeFile($rp);
 			safe_unlink($upfile);
