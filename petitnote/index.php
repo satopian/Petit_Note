@@ -1151,7 +1151,6 @@ function img_replace(){
 	}
 	if(empty($alllog_arr)){
 		closeFile($fp);
-
 		if($is_upload){//該当記事が無い時はエラー
 			return error($en?'The operation failed.':'失敗しました。');
 		} 
@@ -1299,7 +1298,7 @@ if(!is_file($upfile)){
 			closeFile($rp);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
-		if(!$is_upload && ((string)substr($time,0,-6) === (string)$_chk_time)){
+		if(!$is_upload && ((string)$time === (string)$chk_time)){
 			$time=((int)substr($time,0,-6)+1).substr($time,-6);
 		}
 		if($is_upload && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
