@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.35.3';
-$petit_lot='lot.221101';
+$petit_ver='v0.35.5';
+$petit_lot='lot.221102';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -176,11 +176,11 @@ function post(){
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
 		if(is_file(IMG_DIR.$time.$testext)){
-		$time=(string)((int)time()+1).substr(microtime(),2,6);
+			$time=((string)substr($time,0,-6)+1).(string)substr($time,-6);
 		break;	
 		}
 	}
-	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)(((int)substr($time,0,-6)+1).substr(microtime(),2,6)) : $time;
+	$time= is_file(TEMP_DIR.$time.'.tmp') ?	((string)substr($time,0,-6)+1).(string)substr($time,-6)	: $time;
 
 	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
 
@@ -1215,11 +1215,12 @@ function img_replace(){
 	$testexts=['.gif','.jpg','.png','.webp'];
 	foreach($testexts as $testext){
 		if(is_file(IMG_DIR.$time.$testext)){
-			$time=(string)((int)time()+1).substr(microtime(),2,6);
+			$time=((string)substr($time,0,-6)+1).(string)substr($time,-6);
+
 			break;	
 		}
 	}
-	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)(((int)substr($time,0,-6)+1).substr(microtime(),2,6)) : $time;
+	$time= is_file(TEMP_DIR.$time.'.tmp') ?	((string)substr($time,0,-6)+1).(string)substr($time,-6) : $time;
 	$upfile=TEMP_DIR.$time.'.tmp';
 	
 	if($is_upload && ($_tool==='upload') && ( $use_upload || $adminpost || $admindel) && is_file($up_tempfile)){
@@ -1299,7 +1300,7 @@ if(!is_file($upfile)){
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
 		if(!$is_upload && ((string)$time === (string)$chk_time)){
-			$time=((int)substr($time,0,-6)+1).substr($time,-6);
+			$time=((string)substr($time,0,-6)+1).(string)substr($time,-6);
 		}
 		if($is_upload && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
 		safe_unlink($upfile);
