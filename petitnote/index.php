@@ -180,7 +180,7 @@ function post(){
 		break;	
 		}
 	}
-	$time= is_file(TEMP_DIR.$time.'.tmp') ?	((string)substr($time,0,-6)+1).(string)substr($time,-6)	: $time;
+	$time= is_file(TEMP_DIR.$time.'.tmp') ?	((string)substr($time,0,-6)+1).(string)substr($time,-6) : $time;
 
 	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
 
