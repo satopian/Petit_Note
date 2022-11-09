@@ -50,7 +50,7 @@
 			<?php foreach($val as $tempimg):?>
 <div class="posted_img_form">
 	<img src="<?=h($tempimg['src'])?>"
-	alt="<?=h($tempimg['srcname'])?>"></div>
+	alt="<?=h($tempimg['srcname'])?>" width="<?=h($tempimg['w'])?>" height="<?=h($tempimg['h'])?>"></div>
 <?=h($tempimg['srcname'])?><br>
 <?=h($tempimg['date'])?>
 

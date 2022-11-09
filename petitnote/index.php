@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.35.5';
+$petit_ver='v0.36.0';
 $petit_lot='lot.221102';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -913,6 +913,9 @@ function paintcom(){
 		ksort($tmps);
 		foreach($tmps as $tmp){
 			list($tmpfile,$resto)=$tmp;
+			list($w,$h)=getimagesize(TEMP_DIR.$tmpfile);
+			$tmp_img['w']=$w;
+			$tmp_img['h']=$h;
 			$tmp_img['src'] = TEMP_DIR.$tmpfile;
 			$tmp_img['srcname'] = $tmpfile;
 			$tmp_img['slect_src_val'] = $tmpfile.','.$resto;
