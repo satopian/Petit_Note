@@ -6,18 +6,22 @@
 PHP5.6,PHP7.2,PHP8.1, PHP8.2.0RC6で動作確認しています。  
 PHP7.4～PHP8.1での使用を推奨します。
 
+# ダウンロード
+
+- [リリース](https://github.com/satopian/Petit_Note/releases/latest)から安定版をダウンロードできます。
+
 ## 設置方法
 設置はとても簡単です。
 
-- リリースのページの一番下からzipファイルをダウンロード
+- [リリース](https://github.com/satopian/Petit_Note/releases/latest)のページの一番下からzipファイルをダウンロードします。
 - petitnoteフォルダ内のconfig.phpの管理者パスワードを他の人にはわからないパスワードに変更します。
-- petitnoteフォルダをアップロード。
-- サーバ上のpetitnoteディレクトリを開くと必要なディレクトリが自動的に作成され設置が完了します。
+- petitnoteフォルダをアップロードします。
+- サーバ上のpetitnoteディレクトリを開くと設置が完了します。
 
 ### 設置しても動作しない場合
 - 設置時にディレクトリやファイルのパーミッションを変更すると正常に動作しない事があります。  
 必要なディレクトリの作成･パーミッションの変更はPHPスクリプトが自動的に行います。
-- PHPのバージョンが5.3以下の場合は500エラーになります。  
+- PHPのバージョンが5.3以下の時は500エラーになります。  
 PHPのバージョンが切り替え可能な場合はPHP5.6以上への変更をお願いします。  
 このスクリプトの動作環境はPHP5.6-PHP8.xです。推奨はPHP7.4以上です。
 
@@ -25,9 +29,6 @@ PHPのバージョンが切り替え可能な場合はPHP5.6以上への変更�
 
 [設置サポート掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/support/)をご利用ください。
 
-# ダウンロード
-
-- [リリース](https://github.com/satopian/Petit_Note/releases/latest)から安定版をダウンロードできます。
 
 ## Petit Noteを使った交流サイト
 - [イラスト投稿サイト Petit Note](https://paintbbs.sakura.ne.jp/petit/)  
