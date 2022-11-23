@@ -58,7 +58,7 @@ $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 $page= $page ? $page : 0; 
 $resno=filter_input(INPUT_GET,'resno');
 
-$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//nullならuser-codeを発行
+$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//falseならuser-codeを発行
 $userip = get_uip();
 //user-codeの発行
 if(!$usercode){//falseなら発行
@@ -133,7 +133,7 @@ switch($mode){
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb,$mark_sensitive_image;
 	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
-	global $usercode; 
+	global $usercode;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -692,7 +692,6 @@ function paint(){
 	global $boardname,$skindir,$pmax_w,$pmax_h,$en;
 	global $usercode; 
 
-
 	$app = (string)filter_input(INPUT_POST,'app');
 	$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 	$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
@@ -1223,8 +1222,7 @@ function img_replace(){
 	foreach($testexts as $testext){
 		if(is_file(IMG_DIR.$time.$testext)){
 			$time=((string)substr($time,0,-6)+1).(string)substr($time,-6);
-
-			break;	
+			break;
 		}
 	}
 	$time= is_file(TEMP_DIR.$time.'.tmp') ?	((string)substr($time,0,-6)+1).(string)substr($time,-6) : $time;
