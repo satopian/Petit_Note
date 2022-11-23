@@ -58,6 +58,7 @@ if($en){//ブラウザの言語が日本語以外の時
 	$errormsg_5 = "There was an illegal image. The drawng image is not saved.";
 	$errormsg_6 = "Failed to open PCH file. Please try posting again after a while.";
 	$errormsg_7 = "Failed to create user data. Please try posting again after a while.";
+	$errormsg_8 = "User code mismatch.";
 }else{//日本語
 	$errormsg_1 = "データの取得に失敗しました。時間を置いて再度投稿してみて下さい。";
 	$errormsg_2 = "規定容量オーバー。お絵かき画像は保存されません。";
@@ -66,6 +67,7 @@ if($en){//ブラウザの言語が日本語以外の時
 	$errormsg_5 = "不正な画像を検出しました。お絵かき画像は保存されません。";
 	$errormsg_6 = "PCHファイルの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
 	$errormsg_7 = "ユーザーデータの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
+	$errormsg_8 = "ユーザーコードが一致しません。";
 }
 
 /* ---------- picpost.php用設定 ---------- */
@@ -136,7 +138,7 @@ $userdata .= "\n";
 
 //CSRF
 if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
-	die("error\n{$errormsg_1}");
+	die("error\n{$errormsg_8}");
 }
 
 $imgfile = time().substr(microtime(),2,6);//画像ファイル名

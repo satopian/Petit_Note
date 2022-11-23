@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.36.0';
-$petit_lot='lot.221109';
+$petit_ver='v0.37.0';
+$petit_lot='lot.221123';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -133,6 +133,7 @@ switch($mode){
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb,$mark_sensitive_image;
 	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
+	global $usercode; 
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -140,7 +141,6 @@ function post(){
 	check_csrf_token();
 
 	//POSTされた内容を取得
-	$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
 	$userip =t(get_uip());
 	//ホスト取得
 	$host = t(gethostbyaddr($userip));
@@ -690,16 +690,19 @@ return header('Location: ./');
 function paint(){
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$en;
+	global $usercode; 
+
 
 	$app = (string)filter_input(INPUT_POST,'app');
 	$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
 	$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
-	$usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));
 	$resto = t((string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
 	if(strlen($resto)>1000){
 		return error($en?'Unknown error':'問題が発生しました。');
 	}
-
+	if(!$usercode){
+		error($en? 'User code does not exist.' :'ユーザーコードがありません。');
+	}
 	if($picw < 300) $picw = 300;
 	if($pich < 300) $pich = 300;
 	if($picw > $pmax_w) $picw = $pmax_w;
@@ -884,9 +887,10 @@ function paint(){
 // お絵かきコメント 
 function paintcom(){
 	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
+	global $usercode; 
+
 	$token=get_csrf_token();
 	$userip = get_uip();
-	$usercode = filter_input(INPUT_COOKIE,'usercode');
 	//テンポラリ画像リスト作成
 	$uresto = '';
 	$handle = opendir(TEMP_DIR);
