@@ -30,7 +30,7 @@
     - on continuing a drawing, read psd that was stored on server (klecks.readPsd -> klecks.openProject)
      */
 
-	 const psdURL = '<?php if($img_klecks):?><?=h($img_klecks)?><?php endif;?>';
+	const psdURL = '<?php if($img_klecks):?><?=h($img_klecks)?><?php endif;?>';
 
     let saveData = (function () {
         let a = document.createElement("a");
@@ -95,11 +95,11 @@
 						if(req_status===0){
 							return alert(<?php if($en):?>'Server or line is unstable.\nPlease try again!'<?php else:?>'サーバまたは回線が不安定です。\n時間をおいて再度投稿してみてください。'<?php endif;?>);	
 						}
-						if(req_status===404){
-							return alert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
-						}
 						if(req_status===403){
 							return alert(<?php if($en):?>'403 Forbidden\nsaveklecks.php'<?php else:?>'エラー403\nsaveklecks.phpへのアクセスが拒否されました。'<?php endif;?>);
+						}
+						if(req_status===404){
+							return alert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
 						}
 						if(req_status===503){
 							return alert(<?php if($en):?>'503 Service Unavailable\nPlease try again!'<?php else:?>'エラー503\n時間をおいて再度投稿してみてください。'<?php endif;?>);
@@ -126,37 +126,37 @@
 
     } else {
 
-    klecks.openProject({
-        width: <?=h($picw)?>,
-        height: <?=h($pich)?>,
+		klecks.openProject({
+		width: <?=h($picw)?>,
+		height: <?=h($pich)?>,
 
-		layers: [{
-            name: 'Background',
-            opacity: 1,
-            mixModeStr: 'source-over',
+			layers: [{
+				name: 'Background',
+				opacity: 1,
+				mixModeStr: 'source-over',
 
-			image: (() => {
-                const canvas = document.createElement('canvas');
-                canvas.width = <?=h($picw)?>;
-                canvas.height = <?=h($pich)?>;
-				const ctx = canvas.getContext('2d');
-				//PSDがなく画像だけの時はcanvasに読み込む
-				 <?php if($imgfile):?>
-					var img = new Image();
-					img.src = "<?=h($imgfile)?>";
-					img.onload = function(){
-						ctx.drawImage(img, 0, 0);
-					}
-				<?php endif;?>
-				ctx.save();
-				ctx.fillStyle = '#fff';
-				ctx.fillRect(0, 0, canvas.width, canvas.height);
-				ctx.restore();
-			return canvas;
-            })(),
-        }]
-    });
-}
+				image: (() => {
+					const canvas = document.createElement('canvas');
+					canvas.width = <?=h($picw)?>;
+					canvas.height = <?=h($pich)?>;
+					const ctx = canvas.getContext('2d');
+					//PSDがなく画像だけの時はcanvasに読み込む
+					<?php if($imgfile):?>
+						var img = new Image();
+						img.src = "<?=h($imgfile)?>";
+						img.onload = function(){
+							ctx.drawImage(img, 0, 0);
+						}
+					<?php endif;?>
+					ctx.save();
+					ctx.fillStyle = '#fff';
+					ctx.fillRect(0, 0, canvas.width, canvas.height);
+					ctx.restore();
+					return canvas;
+				})(),
+			}]
+		});
+	}
 </script>
 <!-- embed end -->
 </body>
