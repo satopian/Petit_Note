@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.37.1';
+$petit_ver='v0.37.2';
 $petit_lot='lot.221130';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -58,13 +58,13 @@ $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 $page= $page ? $page : 0; 
 $resno=filter_input(INPUT_GET,'resno');
 
-$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//falseならuser-codeを発行
+$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
 $userip = get_uip();
 //user-codeの発行
-if(!$usercode){//falseなら発行
+if(!$usercode){//user-codeがなければ発行
 	$usercode = substr(crypt(md5($userip.date("Ymd", time())),'id'),-12);
 	//念の為にエスケープ文字があればアルファベットに変換
-	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
+	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno");
 }
 setcookie("usercode", $usercode, time()+(86400*365),"","",false,true);//1年間
 $x_frame_options_deny = isset($x_frame_options_deny) ? $x_frame_options_deny : true;

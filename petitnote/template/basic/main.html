@@ -96,10 +96,10 @@ Size:
 	//幅 300から、$pmax_w で設定した最大値まで。
 		for($i = 300; $i <=$pmax_w ; $i+=50){//50ずつ増える
 		if($picwc==$i){//デフォルトサイズ
-		echo'<option value="'.$i.'" selected>'.$i.'</option>';
+		echo'<option value="'.h($i).'" selected>'.h($i).'</option>';
 		}
 		else{
-		echo'<option value="'.$i.'">'.$i.'</option>';
+		echo'<option value="'.h($i).'">'.h($i).'</option>';
 		}
 		}
 	?>
