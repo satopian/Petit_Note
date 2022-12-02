@@ -14,6 +14,7 @@ PHP7.4～PHP8.1での使用を推奨します。
 
 ### 設置方法
 
+- 設置するサーバのPHPのバージョンが5.6以上になっている事を確認します。
 - [リリース](https://github.com/satopian/Petit_Note/releases/latest)のページの一番下からzipファイルをダウンロードします。
 - `petitnote`フォルダ内の`config.php`の管理者パスワードを他の人にはわからないパスワードに変更します。
 - `petitnote`フォルダをアップロードします。
