@@ -5,6 +5,7 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="<?=h($skindir)?>index.css">
+	<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
 	<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 	<title><?=h($boardname)?></title> 
 
@@ -130,6 +131,7 @@
 </div>
 </div>
 <div id="bottom"></div>
+<div id="page_top"><a class="icon-angles-up-solid"></a></div>
 <script src="lib/<?=h(JQUERY)?>"></script>
 <script>
 	jQuery(function() {
@@ -142,8 +144,23 @@
 			$(this).closest('form').submit();
 		});
 		}
+		// https://cotodama.co/pagetop/
+		var pagetop = $('#page_top');   
+		pagetop.hide();
+		$(window).scroll(function () {
+			if ($(this).scrollTop() > 100) {  //100pxスクロールしたら表示
+				pagetop.fadeIn();
+			} else {
+				pagetop.fadeOut();
+			}
+		});
+		pagetop.click(function () {
+			$('body,html').animate({
+				scrollTop: 0
+			}, 500); //0.5秒かけてトップへ移動
+			return false;
+		});
 	});
-
 </script>
 </body>
 </html>

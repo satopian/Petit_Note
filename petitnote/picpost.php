@@ -1,6 +1,6 @@
 <?php
 //----------------------------------------------------------------------
-// picpost.php lot.221123  for PetitNote
+// picpost.php lot.221203 for POTI-board
 // by さとぴあ & POTI-board redevelopment team >> https://paintbbs.sakura.ne.jp/poti/ 
 // originalscript (c)SakaQ 2005 >> http://www.punyu.net/php/
 // しぃからPOSTされたお絵かき画像をTEMPに保存
@@ -8,6 +8,7 @@
 // このスクリプトはPaintBBS（藍珠CGI）のPNG保存ルーチンを参考に
 // PHP用に作成したものです。
 //----------------------------------------------------------------------
+// 2022/12/03 same-originでは無かった時はエラーにする。
 // 2022/11/23 ユーザーコード不一致の時のためのエラーメッセージを追加。
 // 2022/10/14 画像データのmimeタイプのチェックを追加。
 // 2022/08/21 PCHデータの書き込みエラーでは停止しないようにした。
@@ -41,10 +42,11 @@
 // 2003/08/28 perl -> php 移植  by TakeponG >> https://chomstudio.com/
 // 2003/07/11 perl版初公開
 
-//設定
 if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
-	header( "Location: ./ ") ;
+	return header( "Location: ./ ") ;
 }
+
+//設定
 
 include(__DIR__.'/config.php');
 
@@ -60,6 +62,7 @@ if($en){//ブラウザの言語が日本語以外の時
 	$errormsg_6 = "Failed to open PCH file. Please try posting again after a while.";
 	$errormsg_7 = "Failed to create user data. Please try posting again after a while.";
 	$errormsg_8 = "User code mismatch.";
+	$errormsg_9 = "The post has been rejected.";
 }else{//日本語
 	$errormsg_1 = "データの取得に失敗しました。時間を置いて再度投稿してみて下さい。";
 	$errormsg_2 = "規定容量オーバー。お絵かき画像は保存されません。";
@@ -69,10 +72,19 @@ if($en){//ブラウザの言語が日本語以外の時
 	$errormsg_6 = "PCHファイルの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
 	$errormsg_7 = "ユーザーデータの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
 	$errormsg_8 = "ユーザーコードが一致しません。";
+	$errormsg_9 = "拒絶されました。";
 }
 
-/* ---------- picpost.php用設定 ---------- */
+header('Content-type: text/plain');
 
+//Sec-Fetch-SiteがSafariに実装されていないので、Orijinと、hostをそれぞれ取得して比較。
+//Orijinがhostと異なっていたら投稿を拒絶。
+$url_scheme=isset($_SERVER['HTTP_ORIGIN']) ? parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://':'';
+if($url_scheme && isset($_SERVER['HTTP_HOST']) &&
+str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
+	die("error\n{$errormsg_9}");
+}
+/* ---------- picpost.php用設定 ---------- */
 defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
@@ -92,7 +104,6 @@ $u_host = gethostbyaddr($u_ip);
 $u_agent = getenv("HTTP_USER_AGENT");
 $u_agent = str_replace("\t", "", $u_agent);
 
-header('Content-type: text/plain');
 //raw POST データ取得
 $buffer = file_get_contents('php://input');
 if(!$buffer){
@@ -179,7 +190,6 @@ if($pchLength){
 	if(is_file(TEMP_DIR.$imgfile.$pchext)){
 		chmod(TEMP_DIR.$imgfile.$pchext,PERMISSION_FOR_DEST);
 	}
-
 }
 
 // 情報データをファイルに書き込む

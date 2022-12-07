@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221031;
+$functions_ver=20221205;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -485,6 +485,14 @@ function check_csrf_token(){
 	if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
 		return error($en?'The operation failed.':'失敗しました。');
 	} 
+	//Sec-Fetch-SiteがSafariに実装されていないので、Orijinと、hostをそれぞれ取得して比較。
+	//Orijinがhostと異なっていたら投稿を拒絶。
+	$url_scheme=isset($_SERVER['HTTP_ORIGIN']) ? parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://':'';
+	if($url_scheme && isset($_SERVER['HTTP_HOST']) &&
+	str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
+		return error($en?'The post has been rejected.':'拒絶されました。');
+	}
+
 	session_sta();
 	$token=filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
