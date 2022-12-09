@@ -223,7 +223,7 @@ function check_cont_pass(){
 
 
 	if(is_file(LOG_DIR."$no.log")){
-		$no=basename($no);
+		check_open_no($no);
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgets($rp)) {
 			if(!trim($line)){
@@ -536,7 +536,7 @@ function check_same_origin(){
 
 function check_open_no($no){
 	global $en;
-	if(!is_numeric($no)){
+	if($no && !is_numeric($no)){
 		return error($en?'This operation has failed.':'失敗しました。');
 	}
 }
