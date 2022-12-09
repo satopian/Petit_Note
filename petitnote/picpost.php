@@ -152,15 +152,13 @@ if($sendheader){
 }
 $userdata .= "\n";
 
-//CSRF
+// CSRF
 if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
 	die("error\n{$errormsg_8}");
 }
 
 $imgfile = time().substr(microtime(),2,6);//画像ファイル名
 $imgfile = is_file(TEMP_DIR.$imgfile.$imgext) ? ((time()+1).substr(microtime(),2,6)) : $imgfile;
-$imgfile = basename($imgfile);
-$imgext = basename($imgext);
 $full_imgfile = TEMP_DIR.$imgfile.$imgext;
 // 画像データをファイルに書き込む
 file_put_contents($full_imgfile,$imgdata,LOCK_EX);
