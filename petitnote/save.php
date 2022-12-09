@@ -18,7 +18,6 @@ $time = time();
 $imgfile = time().substr(microtime(),2,6);	//画像ファイル名
 $imgfile = is_file(TEMP_DIR.$imgfile.'.png') ? ((time()+1).substr(microtime(),2,6)) : $imgfile;
 
-
 function chibi_die($message) {
 	die("CHIBIERROR $message");
 }
@@ -27,9 +26,11 @@ header('Content-type: text/plain');
 
 //Sec-Fetch-SiteがSafariに実装されていないので、Orijinと、hostをそれぞれ取得して比較。
 //Orijinがhostと異なっていたら投稿を拒絶。
-$url_scheme=isset($_SERVER['HTTP_ORIGIN']) ? parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://':'';
-if($url_scheme && isset($_SERVER['HTTP_HOST']) &&
-str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
+if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
+	chibi_die("Your browser is not supported.");
+}
+$url_scheme=parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://';
+if(str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
 	chibi_die("The post has been rejected.");
 }
 

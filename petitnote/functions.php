@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221205;
+$functions_ver=20221209;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -37,6 +37,8 @@ function logout_admin(){
 //合言葉認証
 function aikotoba(){
 	global $aikotoba,$en;
+
+	check_same_origin();
 
 	session_sta();
 	if(!$aikotoba || $aikotoba!==filter_input(INPUT_POST,'aikotoba')){
@@ -92,6 +94,9 @@ function check_aikotoba(){
 //管理者投稿モード
 function adminpost(){
 	global $admin_pass,$second_pass,$en;
+
+	check_same_origin();
+
 	session_sta();
 	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['adminpost'])){
@@ -122,6 +127,9 @@ function adminpost(){
 //管理者削除モード
 function admin_del(){
 	global $admin_pass,$second_pass,$en;
+
+	check_same_origin();
+
 	session_sta();
 	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['admindel'])){
@@ -151,6 +159,7 @@ function admin_del(){
 }
 //ユーザー削除モード
 function userdel_mode(){
+
 	session_sta();
 
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -205,6 +214,8 @@ function check_cont_pass(){
 
 	global $en;
 
+	check_same_origin();
+
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'time');//intの範囲外
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
@@ -212,7 +223,7 @@ function check_cont_pass(){
 
 
 	if(is_file(LOG_DIR."$no.log")){
-		
+		$no=basename($no);
 		$rp=fopen(LOG_DIR."$no.log","r");
 		while ($line = fgets($rp)) {
 			if(!trim($line)){
@@ -426,6 +437,9 @@ function safe_unlink ($path) {
  * @param $ext
  */
 function delete_files ($imgfile, $time) {
+
+	$imgfile=basename($imgfile);
+	$time=basename($time);
 	safe_unlink(IMG_DIR.$imgfile);
 	safe_unlink(THUMB_DIR.$time.'s.jpg');
 	safe_unlink(IMG_DIR.$time.'.pch');
@@ -482,17 +496,11 @@ function get_csrf_token(){
 //csrfトークンをチェック	
 function check_csrf_token(){
 	global $en;
-	if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
-		return error($en?'The operation failed.':'失敗しました。');
-	} 
-	//Sec-Fetch-SiteがSafariに実装されていないので、Orijinと、hostをそれぞれ取得して比較。
-	//Orijinがhostと異なっていたら投稿を拒絶。
-	$url_scheme=isset($_SERVER['HTTP_ORIGIN']) ? parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://':'';
-	if($url_scheme && isset($_SERVER['HTTP_HOST']) &&
-	str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
-		return error($en?'The post has been rejected.':'拒絶されました。');
-	}
 
+	if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
+		return error($en?'This operation has failed.':'失敗しました。');
+	} 
+	check_same_origin();
 	session_sta();
 	$token=filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
@@ -514,6 +522,25 @@ function session_sta(){
 	}
 }
 
+function check_same_origin(){
+	global $en;
+
+	if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
+		return error($en?'Your browser is not supported. ':'お使いのブラウザはサポートされていません。');
+	}
+	$url_scheme=parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://';
+	if(str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
+		return error($en?"The post has been rejected.":'拒絶されました。');
+	}
+}
+
+function check_open_no($no){
+	global $en;
+	if(!is_numeric($no)){
+		return error($en?'This operation has failed.':'失敗しました。');
+	}
+}
+
 function getId ($userip) {
 	return substr(hash('sha256', $userip, false),-8);
 }
@@ -523,6 +550,7 @@ function deltemp(){
 	$handle = opendir(TEMP_DIR);
 	while ($file = readdir($handle)) {
 		if(!is_dir($file)) {
+			$file=basename($file);
 			//pchアップロードペイントファイル削除
 			//仮差し換えアップロードファイル削除
 			$lapse = time() - filemtime(TEMP_DIR.$file);

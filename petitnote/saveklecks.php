@@ -21,14 +21,16 @@ $imgfile = is_file(TEMP_DIR.$imgfile.'.png') ? ((time()+1).substr(microtime(),2,
 header('Content-type: text/plain');
 //Sec-Fetch-SiteがSafariに実装されていないので、Orijinと、hostをそれぞれ取得して比較。
 //Orijinがhostと異なっていたら投稿を拒絶。
-$url_scheme=isset($_SERVER['HTTP_ORIGIN']) ? parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://':'';
-if($url_scheme && isset($_SERVER['HTTP_HOST']) &&
-str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
+if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
+	die("Your browser is not supported.");
+}
+$url_scheme=parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://';
+if(str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
 	die("The post has been rejected.");
 }
-// if(!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) !== "klecks") {
-// 	die('Your operation failed.');
-// }
+if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+	die('This operation has failed.');
+}
 
 if (!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK){
 	die("Your picture upload failed! Please try again!");

@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.38.0';
-$petit_lot='lot.221205';
+$petit_ver='v0.50.0';
+$petit_lot='lot.221209';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20221205){
+if(!isset($functions_ver)||$functions_ver<20221209){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -52,8 +52,8 @@ $latest_var=isset($latest_var) ? $latest_var : true;
 $badhost=isset($badhost) ? $badhost :[]; 
 $mark_sensitive_image = isset($mark_sensitive_image) ? $mark_sensitive_image : false; 
 $only_admin_can_reply = isset($only_admin_can_reply) ? $only_admin_can_reply : false;
-$mode = filter_input(INPUT_POST,'mode');
-$mode = $mode ? $mode :filter_input(INPUT_GET,'mode');
+$mode = (string)filter_input(INPUT_POST,'mode');
+$mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 $page= $page ? $page : 0; 
 $resno=filter_input(INPUT_GET,'resno');
@@ -122,12 +122,14 @@ switch($mode){
 		return catalog($page);
 	case 'download':
 		return download_app_dat();
-	default:
+	case '':
+		return view($page);
 		if($resno){
 			return res($resno);
 		}
-		return view($page);
-}
+	default:
+		return header('Location: ./');
+	}
 
 //投稿処理
 function post(){
@@ -186,12 +188,13 @@ function post(){
 
 	//お絵かきアップロード
 	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
-	list($picfile,) = explode(",",filter_input(INPUT_POST, 'picfile'));
 	$painttime ='';
 	$pictmp2=false;
 	$tempfile='';
+	$picfile='';
 	if($pictmp===2){//ユーザーデータを調べる
-
+		list($picfile,) = explode(",",filter_input(INPUT_POST, 'picfile'));
+		$picfile=basename($picfile);
 		$tempfile = TEMP_DIR.$picfile;
 		$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
 		//選択された絵が投稿者の絵か再チェック
@@ -206,6 +209,7 @@ function post(){
 		if(($ucode != $usercode) && ($uip != $userip)){return error($en? 'Posting failed.':'投稿に失敗しました。');}
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
+		check_open_no($resto);
 		$resto=(string)$resto;//(string)厳密な型
 		//描画時間を$userdataをもとに計算
 		if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
@@ -240,7 +244,7 @@ function post(){
 		if(!is_file(LOG_DIR."{$resto}.log")){
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
-
+		check_open_no($resto);
 		$rp=fopen(LOG_DIR."{$resto}.log","r+");
 		flock($rp, LOCK_EX);
 		while ($line = fgets($rp)) {
@@ -252,7 +256,7 @@ function post(){
 		if(empty($r_arr)){
 			closeFile($rp);
 			closeFile($fp);
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 		}
 
 		list($r_no,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$r_oya)=explode("\t",trim($r_arr[0]));
@@ -318,7 +322,7 @@ function post(){
 	$is_file_upfile=false;
 	if($is_upload||$pictmp2){
 		if(!is_file($upfile)){
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 		}
 		$is_file_upfile=true;
 	}
@@ -362,7 +366,7 @@ function post(){
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	if(!$fp){
 		safe_unlink($upfile);
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	flock($fp, LOCK_EX);
 	$alllog_arr=[];
@@ -387,7 +391,7 @@ function post(){
 	foreach($chk_resnos as $chk_resno){
 
 			if(($chk_resno!==$resto)&&is_file(LOG_DIR."{$chk_resno}.log")){
-
+				check_open_no($chk_resno);
 				$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
 				while($line=fgets($cp)){
 					if(!trim($line)){
@@ -556,7 +560,7 @@ function post(){
 			closeFile($fp);
 			closeFile($rp);
 			safe_unlink(IMG_DIR.$imgfile);
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 		}
 		//レス先はoya?
 		list($r_no,,,,,,,,,,,,,,,,,,,$r_oya)=explode("\t",trim($r_arr[0]));
@@ -592,6 +596,7 @@ function post(){
 		$strcut_com=mb_strcut($com,0,120);
 		$newline = "$no\t$sub\t$name\t$verified\t$strcut_com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
 		$new_r_line = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
+		check_open_no($no);
 		file_put_contents(LOG_DIR.$no.'.log',$new_r_line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 		chmod(LOG_DIR.$no.'.log',0600);
 	}
@@ -606,7 +611,7 @@ function post(){
 		}
 		list($d_no,)=explode("\t",$alllog_arr[$i]);
 		if(is_file(LOG_DIR."{$d_no}.log")){
-
+			check_open_no($d_no);
 			$dp = fopen(LOG_DIR."{$d_no}.log", "r");//個別スレッドのログを開く
 			flock($dp, LOCK_EX);
 
@@ -690,7 +695,9 @@ return header('Location: ./');
 function paint(){
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$en;
-	global $usercode; 
+	global $usercode;
+	
+	check_same_origin();
 
 	$app = (string)filter_input(INPUT_POST,'app');
 	$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
@@ -780,7 +787,7 @@ function paint(){
 		$time = (string)filter_input(INPUT_POST, 'time');
 
 		if(($type!=='rep') && is_file(LOG_DIR."{$no}.log")){
-		
+			check_open_no($no);
 			$rp=fopen(LOG_DIR."{$no}.log","r");
 			while ($line = fgets($rp)) {
 				if(!trim($line)){
@@ -820,6 +827,7 @@ function paint(){
 			$pwd=$pwd ? $pwd : t((string)filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 			if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 			if($pwd){
+				$pwd=basename($pwd);
 				$pwd=openssl_encrypt ($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//暗号化
 				$pwd=bin2hex($pwd);//16進数に
 			}
@@ -879,7 +887,7 @@ function paint(){
 			return include __DIR__.'/'.$skindir.$templete;
 
 		default:
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 	}
 
 }
@@ -896,6 +904,7 @@ function paintcom(){
 	$tmps = [];
 	while ($file = readdir($handle)) {
 		if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
+			$file=basename($file);
 			$fp = fopen(TEMP_DIR.$file, "r");
 			$userdata = fread($fp, 1024);
 			fclose($fp);
@@ -954,7 +963,7 @@ function to_continue(){
 	$flag = false;
 
 	if(is_file(LOG_DIR."{$no}.log")){
-		
+		check_open_no($no);
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		while ($line = fgets($rp)) {
 			if(!trim($line)){
@@ -1025,7 +1034,7 @@ function download_app_dat(){
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
-
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	$flag=false;
 	while ($line = fgets($rp)) {
@@ -1033,7 +1042,7 @@ function download_app_dat(){
 			continue;
 		}
 		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-		if($id==$time && $no===$_no){
+		if($id===$time && $no===$_no){
 			if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
 				return error($en?'Password is incorrect.':'パスワードが違います。');
 			}
@@ -1043,9 +1052,11 @@ function download_app_dat(){
 		} 
 	}
 	closeFile ($rp);
+	$time=basename($time);
+	$pchext=basename($pchext);
 	$filepath= ($flag && is_file(IMG_DIR.$time.$pchext)) ? IMG_DIR.$time.$pchext : '';
 	if(!$filepath){
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	$mime_type = mime_content_type($filepath);
 	header('Content-Type: '.$mime_type);
@@ -1073,6 +1084,7 @@ function img_replace(){
 	$host = t(gethostbyaddr($userip));
 	//ユーザーid
 	$userid = t(getId($userip));
+	$getpwd= basename($getpwd);
 	$getpwd = $getpwd ? hex2bin($getpwd): '';//バイナリに
 	$pwd = $getpwd ? 
 	openssl_decrypt($getpwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV):$postpwd;//復号化
@@ -1115,6 +1127,7 @@ function img_replace(){
 		$handle = opendir(TEMP_DIR);
 		while ($file = readdir($handle)) {
 			if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
+				$file=basename($file);
 				$fp = fopen(TEMP_DIR.$file, "r");
 				$userdata = fread($fp, 1024);
 				fclose($fp);
@@ -1158,11 +1171,11 @@ function img_replace(){
 	if(empty($alllog_arr)){
 		closeFile($fp);
 		if($is_upload){//該当記事が無い時はエラー
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 		} 
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
-
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 	$r_arr=[];
@@ -1176,7 +1189,7 @@ function img_replace(){
 		closeFile($rp);
 		closeFile($fp);
 		if($is_upload){//該当記事が無い時はエラー
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 		} 
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
@@ -1190,7 +1203,7 @@ function img_replace(){
 
 				closeFile($rp);
 				closeFile($fp);
-				return error($en?'The operation failed.':'失敗しました。');
+				return error($en?'This operation has failed.':'失敗しました。');
 			}
 
 			if(($is_upload && $admindel) || ($pwd && password_verify($pwd,$_hash))){
@@ -1204,7 +1217,7 @@ function img_replace(){
 		closeFile($rp);
 		closeFile($fp);
 		if($is_upload){
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 		} 
 		return paintcom();
 	}
@@ -1213,7 +1226,7 @@ function img_replace(){
 		closeFile($rp);
 		closeFile($fp);
 		if($is_upload){//該当記事が無い時はエラー
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 		} 
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
@@ -1238,7 +1251,7 @@ function img_replace(){
 if(!is_file($upfile)){
 		closeFile($rp);
 		closeFile($fp);
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	} 
 	chmod($upfile,0606);
 	if($is_upload&&($_tool==='upload')){//実体データの縮小
@@ -1284,6 +1297,7 @@ if(!is_file($upfile)){
 
 	foreach($chk_resnos as $chk_resno){
 		if(($chk_resno!==$no)&&is_file(LOG_DIR."{$chk_resno}.log")){
+			check_open_no($chk_resno);
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
 			while($line=fgets($cp)){
 				if(!trim($line)){
@@ -1381,7 +1395,7 @@ if(!is_file($upfile)){
 			closeFile($fp);
 			safe_unlink(IMG_DIR.$imgfile);
 			if($is_upload){//該当記事が無い時はエラー
-				return error($en?'The operation failed.':'失敗しました。');
+				return error($en?'This operation has failed.':'失敗しました。');
 			} 
 			return paintcom();//該当記事が無い時は新規投稿。
 		}
@@ -1435,6 +1449,8 @@ function confirmation_before_deletion ($edit_mode=''){
 
 	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en;
 	//管理者判定処理
+	check_same_origin();
+
 	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba=aikotoba_valid();
@@ -1452,11 +1468,11 @@ function confirmation_before_deletion ($edit_mode=''){
 	$edit_mode = filter_input(INPUT_POST,'edit_mode');
 
 	if(!($admindel||$userdel)){
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 
 	if($edit_mode!=='delmode' && $edit_mode!=='editmode'){
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
@@ -1464,7 +1480,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
-
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	flock($rp, LOCK_EX);
 	$r_arr=[];
@@ -1476,7 +1492,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	}
 	if(empty($r_arr)){
 		closeFile($rp);
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	$find=false;
 	foreach($r_arr as $i =>$val){
@@ -1514,12 +1530,15 @@ function confirmation_before_deletion ($edit_mode=''){
 		$templete='before_edit.html';
 		return include __DIR__.'/'.$skindir.$templete;
 	}
-	return error($en?'The operation failed.':'失敗しました。');
+	return error($en?'This operation has failed.':'失敗しました。');
 }
 //編集画面
 function edit_form($id='',$no=''){
 
 	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image;
+
+	check_same_origin();
+
 	$max_byte = $max_kb * 1024*2;
 	$token=get_csrf_token();
 	$admindel=admindel_valid();
@@ -1531,7 +1550,7 @@ function edit_form($id='',$no=''){
 	$pwd = $pwd ? $pwd : $pwdc;
 	
 	if(!($admindel||($userdel&&$pwd))){
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
 
@@ -1542,7 +1561,7 @@ function edit_form($id='',$no=''){
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
-		
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	flock($rp, LOCK_EX);
 	$r_arr=[];
@@ -1554,7 +1573,7 @@ function edit_form($id='',$no=''){
 	}
 	if(empty($r_arr)){
 		closeFile($rp);
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 
 	$flag=false;
@@ -1574,7 +1593,7 @@ function edit_form($id='',$no=''){
 
 	if(!$flag){
 		closeFile($rp);
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	closeFile($rp);
 
@@ -1630,7 +1649,7 @@ function edit(){
 	$admindel=admindel_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	if(!($admindel||($userdel&&$pwd))){
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 
 	//NGワードがあれば拒絶
@@ -1658,6 +1677,7 @@ function edit(){
 	flock($fp, LOCK_EX);
 
 	$r_arr=[];
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 	while ($line = fgets($rp)) {
@@ -1669,7 +1689,7 @@ function edit(){
 	if(empty($r_arr)){
 		closeFile($rp);
 		closeFile($fp);
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 
 	$flag=false;
@@ -1687,7 +1707,7 @@ function edit(){
 	if(!$flag){
 		closeFile($rp);
 		closeFile($fp);
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	if(!$_imgfile && !$com){
 		closeFile($rp);
@@ -1723,7 +1743,7 @@ function edit(){
 		if(empty($alllog_arr)){
 			closeFile($rp);
 			closeFile($fp);
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 		}
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
@@ -1739,7 +1759,7 @@ function edit(){
 		if(!$flag){
 			closeFile($rp);
 			closeFile($fp);
-			return error($en?'The operation failed.':'失敗しました。');
+			return error($en?'This operation has failed.':'失敗しました。');
 		}
 
 		writeFile($fp,implode("",$alllog_arr));
@@ -1766,7 +1786,7 @@ function del(){
 	$admindel=admindel_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	if(!($admindel||($userdel&&$pwd))){
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
 	if(!$id_and_no){
@@ -1782,6 +1802,7 @@ function del(){
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 	$r_arr=[];
@@ -1794,7 +1815,7 @@ function del(){
 	if(empty($r_arr)){
 		closeFile ($rp);
 		closeFile($fp);
-		return error($en?'The operation failed.':'失敗しました。');
+		return error($en?'This operation has failed.':'失敗しました。');
 	}
 
 	$find=false;
@@ -1806,7 +1827,7 @@ function del(){
 				if(!$pwd||!password_verify($pwd,$hash)){
 					closeFile ($rp);
 					closeFile($fp);
-					return error($en?'The operation failed.':'失敗しました。');
+					return error($en?'This operation has failed.':'失敗しました。');
 				}
 			}
 			if($oya==='oya'){//スレッド削除
@@ -1820,7 +1841,7 @@ function del(){
 				if(empty($alllog_arr)){
 					closeFile ($rp);
 					closeFile($fp);
-					return error($en?'The operation failed.':'失敗しました。');
+					return error($en?'This operation has failed.':'失敗しました。');
 				}
 				$flag=false;
 				foreach($alllog_arr as $i =>$_val){//全体ログ
@@ -1836,7 +1857,7 @@ function del(){
 				if(!$flag){
 					closeFile ($rp);
 					closeFile($fp);
-					return error($en?'The operation failed.':'失敗しました。');
+					return error($en?'This operation has failed.':'失敗しました。');
 				}
 
 				foreach($r_arr as $r_line) {//レスファイル
@@ -1909,6 +1930,7 @@ function catalog($page=0,$q=''){
 			if(!is_file(LOG_DIR."{$no}.log")){
 				continue;	
 			}
+			check_open_no($no);
 			$cp=fopen('log/'."{$no}.log","r");
 			while($r_line=fgets($cp)){
 				if(!trim($r_line)){
@@ -2017,7 +2039,8 @@ function view($page=0){
 		}
 		$_res=[];
 		$out[$oya]=[];
-			$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
+		check_open_no($no);
+		$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
 			$s=0;
 			while ($line = fgets($rp)) {
 				if(!trim($line)){
@@ -2087,7 +2110,8 @@ function res ($resno){
 	$rresname = [];
 	$resname = '';
 	$oyaname='';
-		$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
+	check_open_no($resno);
+	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 		$out[0]=[];
 		while ($line = fgets($rp)) {
 			if(!trim($line)){

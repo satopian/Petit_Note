@@ -1,6 +1,6 @@
 <?php
 //----------------------------------------------------------------------
-// picpost.php lot.221203 for POTI-board
+// picpost.php lot.221203 for PetitNote
 // by さとぴあ & POTI-board redevelopment team >> https://paintbbs.sakura.ne.jp/poti/ 
 // originalscript (c)SakaQ 2005 >> http://www.punyu.net/php/
 // しぃからPOSTされたお絵かき画像をTEMPに保存
@@ -47,12 +47,12 @@ if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
 }
 
 //設定
-
 include(__DIR__.'/config.php');
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0) ? true : false;
+
 if($en){//ブラウザの言語が日本語以外の時
 	$errormsg_1 = "Failed to get data. Please try posting again after a while.";
 	$errormsg_2 = "The size of the picture is too big. The drawing image is not saved.";
@@ -63,6 +63,7 @@ if($en){//ブラウザの言語が日本語以外の時
 	$errormsg_7 = "Failed to create user data. Please try posting again after a while.";
 	$errormsg_8 = "User code mismatch.";
 	$errormsg_9 = "The post has been rejected.";
+	$errormsg_10 = "Your browser is not supported.";
 }else{//日本語
 	$errormsg_1 = "データの取得に失敗しました。時間を置いて再度投稿してみて下さい。";
 	$errormsg_2 = "規定容量オーバー。お絵かき画像は保存されません。";
@@ -73,15 +74,18 @@ if($en){//ブラウザの言語が日本語以外の時
 	$errormsg_7 = "ユーザーデータの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
 	$errormsg_8 = "ユーザーコードが一致しません。";
 	$errormsg_9 = "拒絶されました。";
+	$errormsg_10 = "お使いのブラウザはサポートされていません。";
 }
 
 header('Content-type: text/plain');
 
 //Sec-Fetch-SiteがSafariに実装されていないので、Orijinと、hostをそれぞれ取得して比較。
 //Orijinがhostと異なっていたら投稿を拒絶。
-$url_scheme=isset($_SERVER['HTTP_ORIGIN']) ? parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://':'';
-if($url_scheme && isset($_SERVER['HTTP_HOST']) &&
-str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
+if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
+	die("error\n{$errormsg_10}");
+}
+$url_scheme=parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://';
+if(str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
 	die("error\n{$errormsg_9}");
 }
 /* ---------- picpost.php用設定 ---------- */
@@ -155,7 +159,8 @@ if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
 
 $imgfile = time().substr(microtime(),2,6);//画像ファイル名
 $imgfile = is_file(TEMP_DIR.$imgfile.$imgext) ? ((time()+1).substr(microtime(),2,6)) : $imgfile;
-
+$imgfile = basename($imgfile);
+$imgext = basename($imgext);
 $full_imgfile = TEMP_DIR.$imgfile.$imgext;
 // 画像データをファイルに書き込む
 file_put_contents($full_imgfile,$imgdata,LOCK_EX);
@@ -186,6 +191,7 @@ if($pchLength){
 	// PCHイメージを取り出す
 	$PCHdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength + 8, $pchLength);
 	// PCHデータをファイルに書き込む
+	$pchext=basename($pchext);
 	file_put_contents(TEMP_DIR.$imgfile.$pchext,$PCHdata,LOCK_EX);
 	if(is_file(TEMP_DIR.$imgfile.$pchext)){
 		chmod(TEMP_DIR.$imgfile.$pchext,PERMISSION_FOR_DEST);
