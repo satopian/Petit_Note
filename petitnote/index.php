@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.50.3';
-$petit_lot='lot.221209';
+$petit_ver='v0.50.9';
+$petit_lot='lot.221210';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -56,7 +56,7 @@ $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 $page= $page ? $page : 0; 
-$resno=filter_input(INPUT_GET,'resno');
+$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
 $usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
 $userip = get_uip();
@@ -265,10 +265,13 @@ function post(){
 		$count_r_arr=count($r_arr);
 
 		if($pictmp2){//お絵かきの時は新規投稿にする
-
+			//レス先のログファイルを再確認
+			if($resto || $r_no!==$resto || $r_oya!=='oya'){
+				$resto='';
+			}
 			//お絵かきの時に日数を経過していたら新規投稿。
 			//お絵かきの時に最大レス数を超過していたら新規投稿。
-			if($resto && (!$check_elapsed_days || $count_r_arr>$max_res || $r_no!==$resto || $r_oya!=='oya')){
+			if(($resto && !$adminpost && !$check_elapsed_days || $count_r_arr>$max_res)){
 				$resto='';
 			}
 		}
@@ -1452,7 +1455,6 @@ function confirmation_before_deletion ($edit_mode=''){
 	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en;
 	//管理者判定処理
 	check_same_origin();
-
 	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba=aikotoba_valid();
@@ -2105,7 +2107,7 @@ function res ($resno){
 
 	$denny_all_posts=$deny_all_posts;
 	$page='';
-	$resno=filter_input(INPUT_GET,'resno');
+	$resno=(string)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	if(!is_file(LOG_DIR."{$resno}.log")){
 		return error($en?'Thread does not exist.':'スレッドがありません');	
 	}

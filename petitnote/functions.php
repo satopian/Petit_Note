@@ -96,7 +96,6 @@ function adminpost(){
 	global $admin_pass,$second_pass,$en;
 
 	check_same_origin();
-
 	session_sta();
 	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['adminpost'])){
