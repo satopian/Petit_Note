@@ -241,9 +241,6 @@ function post(){
 	$rp=false;
 	$r_arr=[];
 	if($resto){//レスの時はファイルロックしてレスファイルを開く
-		if(!is_file(LOG_DIR."{$resto}.log")){
-			return error($en? 'The article does not exist.':'記事がありません。');
-		}
 		check_open_no($resto);
 		$rp=fopen(LOG_DIR."{$resto}.log","r+");
 		flock($rp, LOCK_EX);
@@ -1732,7 +1729,6 @@ function edit(){
 	$r_arr[$i] = $r_line;
 
 	if($_oya==='oya'){
-
 	//コメントを120バイトに短縮
 	$strcut_com=mb_strcut($com,0,120);
 	$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
@@ -1875,7 +1871,6 @@ function del(){
 				safe_unlink(LOG_DIR.$no.'.log');
 		
 			}else{
-
 				unset($r_arr[$i]);
 				delete_files ($imgfile, $time);//一連のファイルを削除
 				writeFile ($rp,implode("",$r_arr));
