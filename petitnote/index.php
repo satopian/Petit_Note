@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.50.9';
+$petit_ver='v0.50.10';
 $petit_lot='lot.221210';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -266,12 +266,12 @@ function post(){
 
 		if($pictmp2){//お絵かきの時は新規投稿にする
 			//レス先のログファイルを再確認
-			if($resto || $r_no!==$resto || $r_oya!=='oya'){
+			if($resto && ($r_no!==$resto || $r_oya!=='oya')){
 				$resto='';
 			}
 			//お絵かきの時に日数を経過していたら新規投稿。
 			//お絵かきの時に最大レス数を超過していたら新規投稿。
-			if(($resto && !$adminpost && !$check_elapsed_days || $count_r_arr>$max_res)){
+			if($resto && !$adminpost && (!$check_elapsed_days || $count_r_arr>$max_res)){
 				$resto='';
 			}
 		}
@@ -1871,6 +1871,7 @@ function del(){
 					
 				}
 				writeFile($fp,implode("",$alllog_arr));
+				closeFile ($rp);
 				safe_unlink(LOG_DIR.$no.'.log');
 		
 			}else{
