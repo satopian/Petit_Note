@@ -865,15 +865,15 @@ function check_password_input_error_count(){
 	}
 	$userip = get_uip();
 	check_dir(__DIR__.'/template/errorlog/');
-	$arr_err=is_file(__DIR__.'/template/errorlog/') ? file(__DIR__.'/template/errorlog/error.log'):[];
+	$arr_err=is_file(__DIR__.'/template/errorlog/error.log') ? file(__DIR__.'/template/errorlog/error.log'):[];
 	if(count($arr_err)>=5){
 		error($en?'Rejected.':'拒絶されました。');
 	}
 if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		$errlog=$userip."\n";
-		file_put_contents(__DIR__.'/template/log/error.log',$errlog,FILE_APPEND);
-		chmod(__DIR__.'/template/log/err.log',0600);
+		file_put_contents(__DIR__.'/template/errorlog/error.log',$errlog,FILE_APPEND);
+		chmod(__DIR__.'/template/errorlog/error.log',0600);
 		}else{
-			unlink(__DIR__.'/template/log/error.log');
+			unlink(__DIR__.'/template/errorlog/error.log');
 		}
 }
