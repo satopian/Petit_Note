@@ -781,7 +781,7 @@ function paint(){
 	$repcode='';
 	if($mode==="contpaint"){
 
-		$imgfile = (string)filter_input(INPUT_POST,'imgfile');
+		$imgfile = basename((string)filter_input(INPUT_POST,'imgfile'));
 		$ctype = (string)filter_input(INPUT_POST, 'ctype');
 		$type = (string)filter_input(INPUT_POST, 'type');
 		$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
@@ -1438,7 +1438,7 @@ if(!is_file($upfile)){
 function pchview(){
 	global $boardname,$skindir,$en;
 
-	$imagefile = filter_input(INPUT_GET, 'imagefile');
+	$imagefile = basename((string)filter_input(INPUT_GET, 'imagefile'));
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$pch = pathinfo($imagefile, PATHINFO_FILENAME);
 	$pchext = check_pch_ext(IMG_DIR . $pch);
