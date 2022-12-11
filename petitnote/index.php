@@ -1076,6 +1076,9 @@ function download_app_dat(){
 function img_replace(){
 
 	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image;
+	global $admin_pass;
+
+	check_same_origin();
 
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
@@ -1097,7 +1100,7 @@ function img_replace(){
 
 	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
-	$adminpost=adminpost_valid();
+	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
 	$admindel=admindel_valid();
 
 	//アップロード画像の差し換え
