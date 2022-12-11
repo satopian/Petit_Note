@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 $petit_ver='v0.50.10';
-$petit_lot='lot.221211';
+$petit_lot='lot.221212';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -802,7 +802,9 @@ function paint(){
 			}
 			closeFile ($rp);
 		}
-
+		if(!is_file(IMG_DIR.$imgfile)){
+			return error($en? 'The article does not exist.':'記事がありません。');
+		}
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
 
 		$_pch_ext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
@@ -811,7 +813,7 @@ function paint(){
 			$pchfile = IMG_DIR.$time.$_pch_ext;
 		}
 
-		if($ctype=='img' && is_file(IMG_DIR.$imgfile)){//画像から続き
+		if($ctype=='img'){//画像から続き
 			$animeform = false;
 			$anime= false;
 			$imgfile = IMG_DIR.$imgfile;
@@ -926,6 +928,9 @@ function paintcom(){
 		ksort($tmps);
 		foreach($tmps as $tmp){
 			list($tmpfile,$resto)=$tmp;
+			if(!is_file(TEMP_DIR.$tmpfile)){
+				continue;
+			}
 			list($w,$h)=getimagesize(TEMP_DIR.$tmpfile);
 			$tmp_img['w']=$w;
 			$tmp_img['h']=$h;
@@ -1334,6 +1339,9 @@ if(!is_file($upfile)){
 
 	$imgfile = $time.$imgext;
 	rename($upfile,IMG_DIR.$imgfile);
+	if(!is_file(IMG_DIR.$imgfile)){
+		return error($en?'This operation has failed.':'失敗しました。');
+	}
 	chmod(IMG_DIR.$imgfile,0606);
 	$src='';
 	//PCHファイルアップロード
