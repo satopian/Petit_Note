@@ -262,19 +262,19 @@ function post(){
 		$check_elapsed_days = check_elapsed_days($postedtime);
 		$count_r_arr=count($r_arr);
 
+		//レス先のログファイルを再確認
+		if($resto && ($r_no!==$resto || $r_oya!=='oya')){
+		if(!$pictmp2){
+			return error($en? 'The article does not exist.':'記事がありません。');
+		}
+		$resto='';
+		}
 		if($pictmp2){//お絵かきの時は新規投稿にする
-			//レス先のログファイルを再確認
-			if($resto && ($r_no!==$resto || $r_oya!=='oya')){
-				$resto='';
-			}
 			//お絵かきの時に日数を経過していたら新規投稿。
 			//お絵かきの時に最大レス数を超過していたら新規投稿。
 			if($resto && !$adminpost && (!$check_elapsed_days || $count_r_arr>$max_res)){
 				$resto='';
 			}
-		}
-		if($resto && ($r_no!==$resto || $r_oya!=='oya')){
-			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		//お絵かき以外。
 		if($resto && !$adminpost && !$check_elapsed_days){//指定した日数より古いスレッドには投稿できない。
