@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 $petit_ver='v0.50.10';
-$petit_lot='lot.221210';
+$petit_lot='lot.221211';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20221209){
+if(!isset($functions_ver)||$functions_ver<20221211){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -52,6 +52,7 @@ $latest_var=isset($latest_var) ? $latest_var : true;
 $badhost=isset($badhost) ? $badhost :[]; 
 $mark_sensitive_image = isset($mark_sensitive_image) ? $mark_sensitive_image : false; 
 $only_admin_can_reply = isset($only_admin_can_reply) ? $only_admin_can_reply : false;
+$check_password_input_error_count = isset($check_password_input_error_count) ? $check_password_input_error_count : false;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);

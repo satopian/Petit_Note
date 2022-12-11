@@ -268,6 +268,19 @@ $res_max_h = 300;
 $use_thumb = true;
 // $use_thumb = false;
 
+/*セキュリティ*/
+
+// 管理者パスワードを5回連続して間違えた時は拒絶する
+// する: true しない: false
+// trueにするとセキュリティは高まりますが、ログインページがロックされた時の解除に手間がかかります。
+
+// $check_password_input_error_count = true;
+$check_password_input_error_count = false;
+
+//ftp等でアクセスして、
+// `template/errorlog/error.log`
+// を削除すると、再度ログインできるようになります。
+//このファイルには、間違った管理者パスワードを入力したクライアントのIPアドレスが保存されています。
 
 /*詳細設定*/
 

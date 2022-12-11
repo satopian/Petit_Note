@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221209;
+$functions_ver=20221211;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -96,6 +96,7 @@ function adminpost(){
 	global $admin_pass,$second_pass,$en;
 
 	check_same_origin();
+	check_password_input_error_count();
 	session_sta();
 	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['adminpost'])){
@@ -126,8 +127,10 @@ function adminpost(){
 //管理者削除モード
 function admin_del(){
 	global $admin_pass,$second_pass,$en;
+	global $check_password_input_error_count;
 
 	check_same_origin();
+	check_password_input_error_count();
 
 	session_sta();
 	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
@@ -853,4 +856,24 @@ function is_neo($src) {
 	$is_neo=(fread($fp,3)==="NEO");
 	fclose($fp);
 	return $is_neo;
+}
+//パスワードを5回連続して間違えた時は拒絶
+function check_password_input_error_count(){
+	global $admin_pass,$second_pass,$en,$check_password_input_error_count;
+	if(!$check_password_input_error_count){
+		return;
+	}
+	$userip = get_uip();
+	check_dir(__DIR__.'/template/errorlog/');
+	$arr_err=is_file(__DIR__.'/template/errorlog/') ? file(__DIR__.'/template/errorlog/error.log'):[];
+	if(count($arr_err)>=5){
+		error($en?'Rejected.':'拒絶されました。');
+	}
+if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
+		$errlog=$userip."\n";
+		file_put_contents(__DIR__.'/template/log/error.log',$errlog,FILE_APPEND);
+		chmod(__DIR__.'/template/log/err.log',0600);
+		}else{
+			unlink(__DIR__.'/template/log/error.log');
+		}
 }
