@@ -1875,12 +1875,12 @@ function del(){
 				unset($r_arr[$i]);
 				delete_files ($imgfile, $time);//一連のファイルを削除
 				writeFile ($rp,implode("",$r_arr));
+				closeFile ($rp);
 			}
 			$find=true;
 			break;
 		}
 	}
-	closeFile ($rp);
 	closeFile($fp);
 
 	if(!$find){
