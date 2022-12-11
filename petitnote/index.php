@@ -912,6 +912,7 @@ function paintcom(){
 			$userdata = fread($fp, 1024);
 			fclose($fp);
 			list($uip,$uhost,$uagent,$imgext,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t\t");
+			$imgext=basename($imgext);
 			$file_name = pathinfo($file, PATHINFO_FILENAME);
 			$uresto = $uresto ? 'res' :''; 
 			if(is_file(TEMP_DIR.$file_name.$imgext)){ //画像があればリストに追加
@@ -928,9 +929,6 @@ function paintcom(){
 		ksort($tmps);
 		foreach($tmps as $tmp){
 			list($tmpfile,$resto)=$tmp;
-			if(!is_file(TEMP_DIR.$tmpfile)){
-				continue;
-			}
 			list($w,$h)=getimagesize(TEMP_DIR.$tmpfile);
 			$tmp_img['w']=$w;
 			$tmp_img['h']=$h;
