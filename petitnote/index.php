@@ -1078,8 +1078,6 @@ function img_replace(){
 	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image;
 	global $admin_pass;
 
-	check_same_origin();
-
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
 	$id = t((string)filter_input(INPUT_POST, 'id'));//intの範囲外
