@@ -504,9 +504,14 @@ function post(){
 				}
 			}
 		}
-		$imgfile=$time.$ext;	
+		$imgfile=$time.$ext;
+	
 		rename($upfile,IMG_DIR.$imgfile);
+		if(!is_file(IMG_DIR.$imgfile)){
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
 	}
+
 	$src='';
 	$pchext = '';
 	if($pictmp2 && $imgfile){
@@ -625,8 +630,8 @@ function post(){
 				delete_files ($d_imgfile, $d_time);//一連のファイルを削除
 
 			}
-		safe_unlink(LOG_DIR.$d_no.'.log');//スレッド個別ログファイル削除
-		closeFile($dp);
+			closeFile($dp);
+			safe_unlink(LOG_DIR.$d_no.'.log');//スレッド個別ログファイル削除
 		}	
 		unset($alllog_arr[$i]);//全体ログ記事削除
 		}
