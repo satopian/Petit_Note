@@ -790,7 +790,7 @@ function paint(){
 		$ctype = (string)filter_input(INPUT_POST, 'ctype');
 		$type = (string)filter_input(INPUT_POST, 'type');
 		$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
-		$time = (string)filter_input(INPUT_POST, 'time');
+		$time = basename((string)filter_input(INPUT_POST, 'time'));
 
 		if(($type!=='rep') && is_file(LOG_DIR."{$no}.log")){
 			check_open_no($no);
@@ -1146,7 +1146,7 @@ function img_replace(){
 				list($uip,$uhost,$uagent,$imgext,$ucode,$urepcode,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");//区切りの"\t"を行末に
 				$file_name = pathinfo($file, PATHINFO_FILENAME );//拡張子除去
 				//画像があり、認識コードがhitすれば抜ける
-			
+				$imgext=basename($imgext);
 				if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $urepcode === $repcode){
 					$repfind=true;
 					break;
@@ -1572,10 +1572,10 @@ function edit_form($id='',$no=''){
 		list($id,$no)=explode(",",trim($id_and_no));
 	}
 
+	check_open_no($no);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
-	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	flock($rp, LOCK_EX);
 	$r_arr=[];

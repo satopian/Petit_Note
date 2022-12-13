@@ -77,7 +77,6 @@ function admin_in(){
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
-
 	// HTML出力
 	$templete='admin_in.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -526,6 +525,12 @@ function session_sta(){
 
 function check_same_origin(){
 	global $en;
+
+	$usercode = filter_input(INPUT_COOKIE, 'usercode');//user-codeを取得
+
+	if(!$usercode){
+		return error($en?'Unable to verify cookies.':'Cookieが確認できません。');
+	} 
 
 	if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
 		return error($en?'Your browser is not supported. ':'お使いのブラウザはサポートされていません。');
