@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221211;
+$functions_ver=20221214;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -529,7 +529,7 @@ function check_same_origin(){
 	$usercode = filter_input(INPUT_COOKIE, 'usercode');//user-codeを取得
 
 	if(!$usercode){
-		return error($en?'Unable to verify cookies.':'Cookieが確認できません。');
+		return error($en?'Cookie check failed.':'Cookieが確認できません。');
 	} 
 
 	if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
