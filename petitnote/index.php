@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 $petit_ver='v0.50.12';
-$petit_lot='lot.221214';
+$petit_lot='lot.221215';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1042,10 +1042,10 @@ function download_app_dat(){
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'id');//intの範囲外
 
+	check_open_no($no);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
-	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	$flag=false;
 	while ($line = fgets($rp)) {
