@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 $petit_ver='v0.50.12';
-$petit_lot='lot.221215';
+$petit_lot='lot.221217';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20221211){
+if(!isset($functions_ver)||$functions_ver<20221217){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -146,7 +146,7 @@ function post(){
 	//POSTされた内容を取得
 	$userip =t(get_uip());
 	//ホスト取得
-	$host = t(gethostbyaddr($userip));
+	$host = $userip ? t(gethostbyaddr($userip)) : '';
 
 	$sub = t((string)filter_input(INPUT_POST,'sub'));
 	$name = t((string)filter_input(INPUT_POST,'name'));
@@ -1093,7 +1093,7 @@ function img_replace(){
 	$repcode = t((string)filter_input(INPUT_GET, 'repcode'));
 	$userip = t(get_uip());
 	//ホスト取得
-	$host = t(gethostbyaddr($userip));
+	$host = $userip ? t(gethostbyaddr($userip)) : '';
 	//ユーザーid
 	$userid = t(getId($userip));
 	$getpwd= basename($getpwd);
@@ -1646,7 +1646,7 @@ function edit(){
 	//POSTされた内容を取得
 	$userip =t(get_uip());
 	//ホスト取得
-	$host = t(gethostbyaddr($userip));
+	$host = $userip ? t(gethostbyaddr($userip)) : '';
 	$userid = t(getId($userip));
 
 	$sub = t((string)filter_input(INPUT_POST,'sub'));

@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221214;
+$functions_ver=20221217;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -345,12 +345,15 @@ function create_res($line){
 
 //ユーザーip
 function get_uip(){
-	if ($ip = getenv("HTTP_CLIENT_IP")) {
-		return $ip;
-	} elseif ($ip = getenv("HTTP_X_FORWARDED_FOR")) {
-		return $ip;
+	$ip = '';
+	$ip = getenv("HTTP_CLIENT_IP");
+	$ip = $ip ? $ip : getenv("HTTP_X_FORWARDED_FOR");
+	$ip = $ip ? $ip : getenv("REMOTE_ADDR");
+	if (strstr($ip, ', ')) {
+		$ips = explode(', ', $ip);
+		$ip = $ips[0];
 	}
-	return getenv("REMOTE_ADDR");
+	return $ip;
 }
 
 //タブ除去
