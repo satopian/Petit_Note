@@ -126,7 +126,6 @@ function adminpost(){
 //管理者削除モード
 function admin_del(){
 	global $admin_pass,$second_pass,$en;
-	global $check_password_input_error_count;
 
 	check_same_origin();
 	check_password_input_error_count();
