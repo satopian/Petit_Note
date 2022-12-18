@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221217;
+$functions_ver=20221218;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -344,10 +344,10 @@ function create_res($line){
 
 //ユーザーip
 function get_uip(){
-	$ip = '';
-	$ip = getenv("HTTP_CLIENT_IP");
-	$ip = $ip ? $ip : getenv("HTTP_X_FORWARDED_FOR");
-	$ip = $ip ? $ip : getenv("REMOTE_ADDR");
+	$ip = isset($_SERVER["HTTP_CLIENT_IP"]) ? $_SERVER["HTTP_CLIENT_IP"] :'';
+	$ip = $ip ? $ip : (isset($_SERVER["HTTP_INCAP_CLIENT_IP"]) ? $_SERVER["HTTP_INCAP_CLIENT_IP"] : '');
+	$ip = $ip ? $ip : (isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : '');
+	$ip = $ip ? $ip : (isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '');
 	if (strstr($ip, ', ')) {
 		$ips = explode(', ', $ip);
 		$ip = $ips[0];
@@ -584,7 +584,7 @@ function Reject_if_NGword_exists_in_the_post(){
 
 	//ホスト取得
 	$userip = get_uip();
-	$host = gethostbyaddr($userip);
+	$host = $userip ? gethostbyaddr($userip) :'';
 	//拒絶ホスト
 	foreach($badhost as $value){
 		if (preg_match("/$value\z/i",$host)) {

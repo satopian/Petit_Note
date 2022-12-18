@@ -101,14 +101,7 @@ $time = time();
 
 /* ■■■■■ メイン処理 ■■■■■ */
 
-$u_ip = '';
-$u_ip = getenv("HTTP_CLIENT_IP");
-$u_ip = $u_ip ? $u_ip : getenv("HTTP_X_FORWARDED_FOR");
-$u_ip = $u_ip ? $u_ip : getenv("REMOTE_ADDR");
-if (strstr($u_ip, ', ')) {
-    $ips = explode(', ', $u_ip);
-    $u_ip = $ips[0];
-}
+$u_ip = get_uip();
 $u_host = $u_ip ? gethostbyaddr($u_ip) : '';
 $u_agent = getenv("HTTP_USER_AGENT");
 $u_agent = str_replace("\t", "", $u_agent);
@@ -209,3 +202,16 @@ if(!is_file(TEMP_DIR.$imgfile.'.dat')){
 chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 
 die("ok");
+
+//ユーザーip
+function get_uip(){
+	$ip = isset($_SERVER["HTTP_CLIENT_IP"]) ? $_SERVER["HTTP_CLIENT_IP"] :'';
+	$ip = $ip ? $ip : (isset($_SERVER["HTTP_INCAP_CLIENT_IP"]) ? $_SERVER["HTTP_INCAP_CLIENT_IP"] : '');
+	$ip = $ip ? $ip : (isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : '');
+	$ip = $ip ? $ip : (isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '');
+	if (strstr($ip, ', ')) {
+		$ips = explode(', ', $ip);
+		$ip = $ips[0];
+	}
+	return $ip;
+}
