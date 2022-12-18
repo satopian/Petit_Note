@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 $petit_ver='v0.50.12';
-$petit_lot='lot.221218';
+$petit_lot='lot.221219';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -63,7 +63,7 @@ $usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
 $userip = get_uip();
 //user-codeの発行
 if(!$usercode){//user-codeがなければ発行
-	$usercode = substr(crypt(md5($userip.date("Ymd", time())),'id'),-12);
+	$usercode = substr(crypt(md5($userip.uniqid()),'id'),-12);
 	//念の為にエスケープ文字があればアルファベットに変換
 	$usercode = strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno");
 }
@@ -165,7 +165,7 @@ function post(){
 	if(!$pwd){//それでも$pwdが空なら
 		srand();
 		$pwd = substr(md5(uniqid(rand(),true)),2,15);
-		$pwd = strtr($pwd,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
+		$pwd = strtr($pwd,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno");
 	}
 	if(strlen($pwd) < 6) return error($en? 'The password is too short. At least 6 characters.':'パスワードが短すぎます。最低6文字。');
 
@@ -842,9 +842,9 @@ function paint(){
 			$userip = get_uip();
 			$paintmode='picrep';
 			$id=$time;	//テンプレートでも使用。
-			$repcode = substr(crypt(md5($no.$id.$userip.$pwd.date("Ymd", time())),time()),-8);
+			$repcode = substr(crypt(md5($no.$id.$userip.$pwd.uniqid()),'id'),-8);
 			//念の為にエスケープ文字があればアルファベットに変換
-			$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~","ABCDEFGHIJKLMNOabcdefghijklmn");
+			$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno");
 		}
 	}
 
