@@ -207,7 +207,7 @@ function post(){
 		$userdata = fread($fp, 1024);
 		fclose($fp);
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t\t");
-		if(($ucode != $usercode) && ($uip != $userip)){return error($en? 'Posting failed.':'投稿に失敗しました。');}
+		if(($ucode != $usercode) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
 		check_open_no($resto);
