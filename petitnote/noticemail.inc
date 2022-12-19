@@ -118,7 +118,7 @@ class noticemail{
 	$Message .= $line;
 	$Message .= $name ? ('Name: '.$name."\n") :'';
 	$Message .= filter_var($url,FILTER_VALIDATE_URL) ? ('URL: '.$url."\n") : '';
-	$Message .= $title ? ($title."\n") : '';
+	$Message .= $title ? ('Subject: '.$title."\n") : '';
 	$option = $data['option'];
 	if(is_array($option)){
 		foreach($option as $value){

@@ -656,7 +656,6 @@ function post(){
 	if($send_email){
 	//template_ini.phpで未定義の時の初期値
 	//このままでよければ定義不要
-	defined('NOTICE_MAIL_TITLE') or define('NOTICE_MAIL_TITLE', '記事題名');
 	defined('NOTICE_MAIL_IMG') or define('NOTICE_MAIL_IMG', '投稿画像');
 	defined('NOTICE_MAIL_THUMBNAIL') or define('NOTICE_MAIL_THUMBNAIL', 'サムネイル画像');
 	defined('NOTICE_MAIL_URL') or define('NOTICE_MAIL_URL', '記事URL');
@@ -666,7 +665,7 @@ function post(){
 		$data['to'] = $to_mail;
 		$data['name'] = $name;
 		$data['url'] = filter_var($url,FILTER_VALIDATE_URL) ? $url:'';
-		$data['title'] = NOTICE_MAIL_TITLE.': '.$sub;
+		$data['title'] = $sub;
 		if($imgfile){
 			$data['option'][] = NOTICE_MAIL_IMG.','.$root_url.IMG_DIR.$imgfile;//拡張子があったら
 		} 
