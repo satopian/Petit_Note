@@ -111,19 +111,14 @@ class noticemail{
 	$Message = '■'.$data['subject']."\n";
 	$Message .= 'Date: '.date("Y/m/d H:i:s",time())."\n";
 	//ユーザーip
-	$userip = getenv("HTTP_CLIENT_IP");
-	if(!$userip){
-		$userip = getenv("HTTP_X_FORWARDED_FOR");
-	} 
-	if(!$userip){
-		$userip = getenv("REMOTE_ADDR");
-	} 
-	$Message .= 'Host: '.gethostbyaddr($userip)."\n";
+	$userip = self::get_uip();
+	$host= $userip ? gethostbyaddr($userip) :'';
+	$Message .= 'Host: '.$host."\n";
 	$Message .= 'UserAgent: '.getenv("HTTP_USER_AGENT")."\n";
 	$Message .= $line;
 	$Message .= $name ? ('Name: '.$name."\n") :'';
 	$Message .= filter_var($url,FILTER_VALIDATE_URL) ? ('URL: '.$url."\n") : '';
-	$Message .= $title ? ('Title: '.$title."\n") : '';
+	$Message .= $title ? ($title."\n") : '';
 	$option = $data['option'];
 	if(is_array($option)){
 		foreach($option as $value){
@@ -154,5 +149,17 @@ class noticemail{
 
 			return true;
 	}
-}
+	//ユーザーip
+	private function get_uip(){
+		$ip = isset($_SERVER["HTTP_CLIENT_IP"]) ? $_SERVER["HTTP_CLIENT_IP"] :'';
+		$ip = $ip ? $ip : (isset($_SERVER["HTTP_INCAP_CLIENT_IP"]) ? $_SERVER["HTTP_INCAP_CLIENT_IP"] : '');
+		$ip = $ip ? $ip : (isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : '');
+		$ip = $ip ? $ip : (isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '');
+		if (strstr($ip, ', ')) {
+			$ips = explode(', ', $ip);
+			$ip = $ips[0];
+		}
+		return $ip;
+	}
 
+}
