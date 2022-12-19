@@ -140,7 +140,7 @@ class noticemail{
 	
 		// メールアドレスの入力欄が無いので代替え
 		$from = 'nomail@'.$_SERVER["HTTP_HOST"];
-		$name = mb_encode_mimeheader(($name));
+		$name = mb_encode_mimeheader($name);
 		// ヘッダにFrom追加
 		$MailHeaders .= 'From: '.$name.' <'.$from.'>'."\n";
 			// メール送信
