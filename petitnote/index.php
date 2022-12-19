@@ -842,7 +842,7 @@ function paint(){
 			$userip = get_uip();
 			$paintmode='picrep';
 			$id=$time;	//テンプレートでも使用。
-			$repcode = substr(crypt(md5($no.$id.$userip.$pwd.uniqid()),'id'),-8);
+			$repcode = substr(crypt(md5($no.$id.$userip.$pwd.uniqid()),'id'),-12);
 			//念の為にエスケープ文字があればアルファベットに変換
 			$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno");
 		}
