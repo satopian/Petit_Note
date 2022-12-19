@@ -114,7 +114,7 @@ class noticemail{
 	$userip = self::get_uip();
 	$host= $userip ? gethostbyaddr($userip) :'';
 	$Message .= 'Host: '.$host."\n";
-	$Message .= 'UserAgent: '.getenv("HTTP_USER_AGENT")."\n";
+	$Message .= 'UserAgent: '.$_SERVER["HTTP_USER_AGENT"]."\n";
 	$Message .= $line;
 	$Message .= $name ? ('Name: '.$name."\n") :'';
 	$Message .= filter_var($url,FILTER_VALIDATE_URL) ? ('URL: '.$url."\n") : '';
@@ -138,7 +138,7 @@ class noticemail{
 		$name = mb_convert_kana($name);
 	
 		// メールアドレスの入力欄が無いので代替え
-		$from = 'nomail@'.getenv("HTTP_HOST");
+		$from = 'nomail@'.$_SERVER["HTTP_HOST"];
 		$name = mb_encode_mimeheader(($name));
 		// ヘッダにFrom追加
 		$MailHeaders .= 'From: '.$name.' <'.$from.'>'."\n";
