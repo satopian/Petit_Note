@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221218;
+$functions_ver=20221220;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -881,6 +881,6 @@ if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!
 		file_put_contents(__DIR__.'/template/errorlog/error.log',$errlog,FILE_APPEND);
 		chmod(__DIR__.'/template/errorlog/error.log',0600);
 		}else{
-			unlink(__DIR__.'/template/errorlog/error.log');
+			safe_unlink(__DIR__.'/template/errorlog/error.log');
 		}
 }
