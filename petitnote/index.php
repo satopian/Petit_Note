@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.50.12';
-$petit_lot='lot.221219';
+$petit_ver='v0.51.0';
+$petit_lot='lot.221220';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1087,7 +1087,6 @@ function img_replace(){
 	$id = $id ? $id :t((string)filter_input(INPUT_GET, 'id'));
 
 	$getpwd = t((string)filter_input(INPUT_GET, 'pwd'));
-	$postpwd = t((string)filter_input(INPUT_POST, 'pwd'));
 	$repcode = t((string)filter_input(INPUT_GET, 'repcode'));
 	$userip = t(get_uip());
 	//ホスト取得
@@ -1097,7 +1096,7 @@ function img_replace(){
 	$getpwd= basename($getpwd);
 	$getpwd = $getpwd ? hex2bin($getpwd): '';//バイナリに
 	$pwd = $getpwd ? 
-	openssl_decrypt($getpwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV):$postpwd;//復号化
+	openssl_decrypt($getpwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV):'';//復号化
 
 	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
@@ -1126,6 +1125,8 @@ function img_replace(){
 		check_csrf_token();
 		$is_upload = true;
 		$tool = 'upload';
+		$pwd = t((string)filter_input(INPUT_POST, 'pwd'));//アップロードの時はpostのパスワード
+
 	}
 	$tempfile='';
 	$file_name='';
