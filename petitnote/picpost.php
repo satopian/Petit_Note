@@ -103,7 +103,7 @@ $time = time();
 
 $u_ip = get_uip();
 $u_host = $u_ip ? gethostbyaddr($u_ip) : '';
-$u_agent = getenv("HTTP_USER_AGENT");
+$u_agent = $_SERVER["HTTP_USER_AGENT"];
 $u_agent = str_replace("\t", "", $u_agent);
 
 //raw POST データ取得
@@ -140,8 +140,8 @@ $usercode='';
 if($sendheader){
 	$sendheader = str_replace("&amp;", "&", $sendheader);
 	parse_str($sendheader, $u);
+	$tool = 'neo';
 	$usercode = isset($u['usercode']) ? $u['usercode'] : '';
-	$tool = isset($u['tool']) ? $u['tool'] : '';
 	$resto = isset($u['resto']) ? $u['resto'] : '';
 	$repcode = isset($u['repcode']) ? $u['repcode'] : '';
 	$stime = isset($u['stime']) ? $u['stime'] : '';
