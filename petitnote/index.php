@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.51.0';
+$petit_ver='v0.51.1';
 $petit_lot='lot.221220';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -208,6 +208,7 @@ function post(){
 		fclose($fp);
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t\t");
 		if(($ucode != $usercode) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
+		$tool = ($tool === 'upload') ?  '???' : $tool;//お絵かき投稿の時はツールをアップロードにしない  
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
 		check_open_no($resto);
@@ -312,7 +313,6 @@ function post(){
 		$tool = 'upload'; 
 		$is_upload=true;	
 	}
-
 	//お絵かきアップロード
 	if($pictmp2 && is_file($tempfile)){
 
