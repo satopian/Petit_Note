@@ -80,7 +80,7 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 ## PitNoteとは
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
-##  22/10/29 v0.51.2
+##  22/12/21 v0.51.2
 
 ### セキュリティ強化
 
@@ -162,7 +162,7 @@ WAFをオンにしていないのであれば、何も変わりませんが、�
 ![Screen-2022-12-21_14-35-27](https://user-images.githubusercontent.com/44894014/208885100-73cbdcfa-84c8-4f36-8b19-adb7eba9c701.png)
 
 
-##  22/10/29 v0.37.2
+##  22/11/30 v0.37.2
 ### klecks更新
 - ブラシのショートカットキーの動作が修正されています。
 
