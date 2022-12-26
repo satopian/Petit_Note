@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221220;
+$functions_ver=20221226;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -864,6 +864,26 @@ function is_neo($src) {
 	fclose($fp);
 	return $is_neo;
 }
+//pchデータから幅と高さを取得
+function get_pch_size($src) {
+	$fp = fopen("$src", "rb");
+	$pch_data=(string)bin2hex(fread($fp,8));
+	fclose($fp);
+	if($pch_data===''){
+		return;
+	}
+	$w0=hexdec(substr($pch_data,8,2));
+	$w1=hexdec(substr($pch_data,10,2));
+	$h0=hexdec(substr($pch_data,12,2));
+	$h1=hexdec(substr($pch_data,14,2));
+	if(!is_numeric($w0)||!is_numeric($w1)||!is_numeric($h0)||!is_numeric($h1)){
+		return;
+	}
+	$with=(int)$w0+((int)$w1*256);
+	$height=(int)$h0+((int)$h1*256);
+	return[$with,$height];
+}
+
 //パスワードを5回連続して間違えた時は拒絶
 function check_password_input_error_count(){
 	global $admin_pass,$second_pass,$en,$check_password_input_error_count;

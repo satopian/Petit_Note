@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.51.2';
-$petit_lot='lot.221220';
+$petit_ver='v0.52.0';
+$petit_lot='lot.221226';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20221218){
+if(!isset($functions_ver)||$functions_ver<20221226){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -767,6 +767,14 @@ function paint(){
 				}
 				if(($pchext==="pch")&&is_neo($pchup)){
 					$app='neo';
+					if(is_neo($pchup)){
+						if($get_pch_size=get_pch_size($pchup)){
+							list($_picw,$_pich)=$get_pch_size;//pchの幅と高さを取得
+							$numeric_getpch_size=(is_numeric($_picw)&&is_numeric($_pich));
+							$picw = $numeric_getpch_size ? $_picw : $picw;
+							$pich = $numeric_getpch_size ? $_pich : $pich;
+						}
+					}
 					$pchfile = $pchup;
 				} elseif($pchext==="chi"){
 					$app='chi';
