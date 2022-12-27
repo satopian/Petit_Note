@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221226;
+$functions_ver=20221227;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -879,9 +879,9 @@ function get_pch_size($src) {
 	if(!is_numeric($w0)||!is_numeric($w1)||!is_numeric($h0)||!is_numeric($h1)){
 		return;
 	}
-	$with=(int)$w0+((int)$w1*256);
+	$width=(int)$w0+((int)$w1*256);
 	$height=(int)$h0+((int)$h1*256);
-	return[$with,$height];
+	return[$width,$height];
 }
 
 //パスワードを5回連続して間違えた時は拒絶
