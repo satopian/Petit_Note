@@ -881,7 +881,7 @@ function get_pch_size($src) {
 	}
 	$width=(int)$w0+((int)$w1*256);
 	$height=(int)$h0+((int)$h1*256);
-	return[$width,$height];
+	return[(int)$width,(int)$height];
 }
 
 //パスワードを5回連続して間違えた時は拒絶
