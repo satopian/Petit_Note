@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221227;
+$functions_ver=20221228;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -866,6 +866,9 @@ function is_neo($src) {
 }
 //pchデータから幅と高さを取得
 function get_pch_size($src) {
+	if(!$src){
+		return;
+	}
 	$fp = fopen("$src", "rb");
 	$pch_data=(string)bin2hex(fread($fp,8));
 	fclose($fp);
@@ -881,6 +884,9 @@ function get_pch_size($src) {
 	}
 	$width=(int)$w0+((int)$w1*256);
 	$height=(int)$h0+((int)$h1*256);
+	if(!$width||!$height){
+		return;
+	}
 	return[(int)$width,(int)$height];
 }
 
