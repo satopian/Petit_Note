@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.52.2';
-$petit_lot='lot.221228';
+$petit_ver='v0.52.6';
+$petit_lot='lot.221229';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20221228){
+if(!isset($functions_ver)||$functions_ver<20221229){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -521,12 +521,16 @@ function post(){
 
 			$src = TEMP_DIR.$picfile.$pchext;
 			$dst = IMG_DIR.$time.$pchext;
-			if(copy($src, $dst)){
-				chmod($dst,0606);
+			if(in_array(mime_content_type($src),["application/octet-stream","image/vnd.adobe.photoshop"])){
+				if(copy($src, $dst)){
+					chmod($dst,0606);
+				}else{
+				safe_unlink($src);
+				}
 			}
 		}
-
 	}
+
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
 		
@@ -761,7 +765,7 @@ function paint(){
 			if(move_uploaded_file($pchtmp, $pchup)){//アップロード成功なら続行
 
 				$pchup=TEMP_DIR.basename($pchup);//ファイルを開くディレクトリを固定
-				if(!in_array(mime_content_type($pchup),["application/octet-stream","application/gzip","image/vnd.adobe.photoshop"])){
+				if(!in_array(mime_content_type($pchup),["application/octet-stream","image/vnd.adobe.photoshop"])){
 					safe_unlink($pchup);
 					return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 				}
@@ -1356,11 +1360,15 @@ if(!is_file($upfile)){
 	$src='';
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-	if ($pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true])) {
+	if (!$is_upload && $repfind && $pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true])) {
 		$src = TEMP_DIR . $file_name . $pchext;
 		$dst = IMG_DIR . $time . $pchext;
-		if(copy($src, $dst)){
-			chmod($dst, 0606);
+		if(in_array(mime_content_type($src),["application/octet-stream","image/vnd.adobe.photoshop"])){
+			if(copy($src, $dst)){
+				chmod($dst,0606);
+			}else{
+			safe_unlink($src);
+			}
 		}
 	}
 	list($w,$h)=getimagesize(IMG_DIR.$imgfile);

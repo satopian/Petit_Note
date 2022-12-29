@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221228;
+$functions_ver=20221229;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -274,7 +274,7 @@ function create_res($line){
 			break;
 	}
 
-	$anime = ($pchext==='.pch') ? true : false; 
+	$anime = ($pchext==='.pch'); 
 	$hide_thumbnail = $mark_sensitive_image ? ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_') :'';
 
 	$_w=$w;
@@ -780,19 +780,25 @@ function calcPtime ($psec) {
 }
 
 /**
- * pchか、それ以外の固有形式のファイルか、それともファイルが存在しないかチェック
+ * pchかchiかpsdか、それともファイルが存在しないかチェック
  * @param $filepath
  * @return string
  */
-function check_pch_ext ($filepath,$option=[]) {
-	if (is_file($filepath . ".pch")) {
-		return ".pch";
-	} elseif (!isset($option['upload'])) {
-		return "";
-	} elseif (is_file($filepath . ".chi")) {
-		return ".chi";
-	} elseif (is_file($filepath . ".psd")) {
-		return ".psd";
+function check_pch_ext ($filepath,$options = []) {
+	
+	$exts=[".pch",".chi",".psd"];
+
+	foreach($exts as $i => $ext){
+
+		if (is_file($filepath . $ext)) {
+			if(!in_array(mime_content_type($filepath . $ext),["application/octet-stream","image/vnd.adobe.photoshop"])){
+				return '';
+			}
+			return $ext;
+		}
+		if(!isset($options['upload'])){
+			return '';
+		}
 	}
 	return '';
 }
@@ -870,15 +876,18 @@ function get_pch_size($src) {
 		return;
 	}
 	$fp = fopen("$src", "rb");
-	$pch_data=(string)bin2hex(fread($fp,8));
+	$is_neo=(fread($fp,3)==="NEO");//ファイルポインタが3byte移動
+	$pch_data=(string)bin2hex(fread($fp,5));
 	fclose($fp);
-	if($pch_data===''){
+	if(!$is_neo || !$pch_data){
 		return;
 	}
-	$w0=hexdec(substr($pch_data,8,2));
-	$w1=hexdec(substr($pch_data,10,2));
-	$h0=hexdec(substr($pch_data,12,2));
-	$h1=hexdec(substr($pch_data,14,2));
+	$width=null;
+	$height=null;
+	$w0=hexdec(substr($pch_data,2,2));
+	$w1=hexdec(substr($pch_data,4,2));
+	$h0=hexdec(substr($pch_data,6,2));
+	$h1=hexdec(substr($pch_data,8,2));
 	if(!is_numeric($w0)||!is_numeric($w1)||!is_numeric($h0)||!is_numeric($h1)){
 		return;
 	}
