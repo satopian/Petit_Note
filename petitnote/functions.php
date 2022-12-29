@@ -788,7 +788,7 @@ function check_pch_ext ($filepath,$options = []) {
 	
 	$exts=[".pch",".chi",".psd"];
 
-	foreach($exts as $i => $ext){
+	foreach($exts as $ext){
 
 		if (is_file($filepath . $ext)) {
 			if(!in_array(mime_content_type($filepath . $ext),["application/octet-stream","image/vnd.adobe.photoshop"])){
