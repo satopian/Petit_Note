@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.52.6';
+$petit_ver='v0.52.8';
 $petit_lot='lot.221229';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -381,7 +381,7 @@ function post(){
 	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
 	$n= $is_file_upfile ? 15 : 5;
 	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
-	
+
 	$chk_resnos=[];
 	foreach($chk_log_arr as $chk_log){
 		list($chk_resno)=explode("\t",$chk_log);
@@ -391,17 +391,17 @@ function post(){
 	$chk_lines=[];
 	foreach($chk_resnos as $chk_resno){
 
-			if(($chk_resno!==$resto)&&is_file(LOG_DIR."{$chk_resno}.log")){
-				check_open_no($chk_resno);
-				$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-				while($line=fgets($cp)){
-					if(!trim($line)){
-						continue;
-					}
-				$_chk_lines[]=$line;
+		if(($chk_resno!==$resto)&&is_file(LOG_DIR."{$chk_resno}.log")){
+			check_open_no($chk_resno);
+			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
+			while($line=fgets($cp)){
+				if(!trim($line)){
+					continue;
 				}
-				closefile($cp);
+				$_chk_lines[]=$line;
 			}
+			closefile($cp);
+		}
 	}
 	$chk_lines=array_merge($_chk_lines,$r_arr);
 
@@ -771,11 +771,9 @@ function paint(){
 				}
 				if(($pchext==="pch")&&is_neo($pchup)){
 					$app='neo';
-					if(is_neo($pchup)){
 						if($get_pch_size=get_pch_size($pchup)){
 							list($picw,$pich)=$get_pch_size;//pchの幅と高さを取得
 						}
-					}
 					$pchfile = $pchup;
 				} elseif($pchext==="chi"){
 					$app='chi';
@@ -1363,12 +1361,8 @@ if(!is_file($upfile)){
 	if (!$is_upload && $repfind && $pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true])) {
 		$src = TEMP_DIR . $file_name . $pchext;
 		$dst = IMG_DIR . $time . $pchext;
-		if(in_array(mime_content_type($src),["application/octet-stream","image/vnd.adobe.photoshop"])){
 			if(copy($src, $dst)){
-				chmod($dst,0606);
-			}else{
-			safe_unlink($src);
-			}
+				chmod($dst, 0606);
 		}
 	}
 	list($w,$h)=getimagesize(IMG_DIR.$imgfile);
