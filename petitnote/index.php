@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 $petit_ver='v0.52.8';
-$petit_lot='lot.221229';
+$petit_lot='lot.221231';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -514,20 +514,14 @@ function post(){
 
 	$src='';
 	$pchext = '';
-	if($pictmp2 && $imgfile){
-		//PCHファイルアップロード
+	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-		if ($pchext = check_pch_ext(TEMP_DIR.$picfile,['upload'=>true])) {
+	if ($pictmp2 && $imgfile && ($pchext = check_pch_ext(TEMP_DIR.$picfile,['upload'=>true]))) {
 
-			$src = TEMP_DIR.$picfile.$pchext;
-			$dst = IMG_DIR.$time.$pchext;
-			if(in_array(mime_content_type($src),["application/octet-stream","image/vnd.adobe.photoshop"])){
-				if(copy($src, $dst)){
-					chmod($dst,0606);
-				}else{
-				safe_unlink($src);
-				}
-			}
+		$src = TEMP_DIR.$picfile.$pchext;
+		$dst = IMG_DIR.$time.$pchext;
+			if(copy($src, $dst)){
+				chmod($dst,0606);
 		}
 	}
 
@@ -1358,7 +1352,7 @@ if(!is_file($upfile)){
 	$src='';
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-	if (!$is_upload && $repfind && $pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true])) {
+	if (!$is_upload && $repfind && ($pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true]))) {
 		$src = TEMP_DIR . $file_name . $pchext;
 		$dst = IMG_DIR . $time . $pchext;
 			if(copy($src, $dst)){
