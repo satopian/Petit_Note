@@ -81,6 +81,13 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
 
+##  22/12/27 v0.52.8
+
+### セキュリティ対策
+- `.pch`データや`.psd`データのmime typeのチェックを追加しました。
+### コード整理
+mime typeのチェックのコードが煩雑にならないようにするため、pchファイルかどうかをチェックしている`check_pch_ext()`関数のコードを整理してforeach化しました。
+
 ##  22/12/27 v0.52.1
 ### PaintBBS NEOのPCH形式の動画ファイルの幅と高さを自動的に取得できるようになりました。
 
