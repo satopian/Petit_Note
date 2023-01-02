@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.52.8';
-$petit_lot='lot.221231';
+$petit_ver='v0.52.10';
+$petit_lot='lot.230102';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20221229){
+if(!isset($functions_ver)||$functions_ver<20230102){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -163,7 +163,6 @@ function post(){
 
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
-		srand();
 		$pwd = substr(md5(uniqid(rand(),true)),2,15);
 		$pwd = strtr($pwd,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno");
 	}
@@ -1478,7 +1477,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	$postpage = ($postpage || $postpage===0) ? $postpage : 0; 
 	$postresno = ($postresno) ? $postresno : false; 
 
-	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
+	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 
 
 	$edit_mode = filter_input(INPUT_POST,'edit_mode');

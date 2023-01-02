@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20221229;
+$functions_ver=20230102;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -293,7 +293,7 @@ function create_res($line){
 
 	$check_elapsed_days = check_elapsed_days($time);
 
-	$verified = ($verified==='adminpost') ? true : false;
+	$verified = ($verified==='adminpost');
 	$three_point_sub=(mb_strlen($sub)>15) ? '…' :'';
 
 	$res=[
@@ -805,7 +805,7 @@ function check_pch_ext ($filepath,$options = []) {
 
 //GD版が使えるかチェック
 function gd_check(){
-	$check = array("ImageCreate","ImageCopyResized","ImageCreateFromJPEG","ImageJPEG","ImageDestroy");
+	$check = ["ImageCreate","ImageCopyResized","ImageCreateFromJPEG","ImageJPEG","ImageDestroy"];
 
 	//最低限のGD関数が使えるかチェック
 	if(!(get_gd_ver() && (ImageTypes() & IMG_JPG))){
@@ -835,8 +835,9 @@ function get_gd_ver(){
 // 古いスレッドへの投稿を許可するかどうか
 function check_elapsed_days ($postedtime) {
 	global $elapsed_days;
+	$postedtime=(strlen($postedtime)>15) ? substr($postedtime,0,-6) : substr($postedtime,0,-3);
 	return $elapsed_days //古いスレッドのフォームを閉じる日数が設定されていたら
-		? ((time() - (int)(substr($postedtime, 0, -3))) <= ((int)$elapsed_days * 86400)) // 指定日数以内なら許可
+		? ((time() - (int)$postedtime) <= ((int)$elapsed_days * 86400)) // 指定日数以内なら許可
 		: true; // フォームを閉じる日数が未設定なら許可
 }
 //POSTされた値をログファイルに格納する書式にフォーマット
