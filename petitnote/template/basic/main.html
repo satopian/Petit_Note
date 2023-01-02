@@ -253,7 +253,7 @@ Size:
 			</div>
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>
-			<?php if($i>=$max_res||!$ress[0]['check_elapsed_days']){
+			<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
 				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
 			}?>
 			<?php if($i!==0):?>
