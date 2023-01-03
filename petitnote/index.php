@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.52.10';
-$petit_lot='lot.230102';
+$petit_ver='v0.53.0';
+$petit_lot='lot.230103';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -12,7 +12,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230102){
+if(!isset($functions_ver)||$functions_ver<20230103){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -53,6 +53,9 @@ $badhost=isset($badhost) ? $badhost :[];
 $mark_sensitive_image = isset($mark_sensitive_image) ? $mark_sensitive_image : false; 
 $only_admin_can_reply = isset($only_admin_can_reply) ? $only_admin_can_reply : false;
 $check_password_input_error_count = isset($check_password_input_error_count) ? $check_password_input_error_count : false;
+$use_paintbbs_neo=isset($use_paintbbs_neo) ? $use_paintbbs_neo : true;
+$use_chickenpaint=isset($use_chickenpaint) ? $use_chickenpaint : true;
+$use_klecs=isset($use_klecs) ? $use_klecs : true;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -2029,6 +2032,8 @@ function catalog($page=0,$q=''){
 function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
+	
 	$max_byte = $max_kb * 1024*2;
 	$denny_all_posts=$deny_all_posts;//互換性
 
@@ -2096,6 +2101,12 @@ function view($page=0){
 	//token
 	$token=get_csrf_token();
 
+	$arr_apps=app_to_use();
+	$count_arr_apps=count($arr_apps);
+	$use_paint=!empty($count_arr_apps);
+	$select_app=($count_arr_apps>1);
+	$app_to_use=($count_arr_apps===1) ? $arr_apps[0] : ''; 
+
 	//ページング
 	$start_page=$page-$pagedef*8;
 	$end_page=$page+($pagedef*8);
@@ -2116,6 +2127,7 @@ function view($page=0){
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
 	$max_byte = $max_kb * 1024*2;
 
 	$denny_all_posts=$deny_all_posts;
@@ -2217,9 +2229,16 @@ function res ($resno){
 	$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
 	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
+	$arr_apps=app_to_use();
+	$count_arr_apps=count($arr_apps);
+	$use_paint=!empty($count_arr_apps);
+	$select_app=($count_arr_apps>1);
+	$app_to_use=($count_arr_apps===1) ? $arr_apps[0] : ''; 
+
 	//token
 	$token=get_csrf_token();
 	$templete='res.html';
 	return include __DIR__.'/'.$skindir.$templete;
 	
+
 }

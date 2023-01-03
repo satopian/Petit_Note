@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230102;
+$functions_ver=20230103;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -899,6 +899,22 @@ function get_pch_size($src) {
 	}
 	return[(int)$width,(int)$height];
 }
+
+//使用するペイントアプリの配列化
+function app_to_use(){
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
+		$arr_apps=[];
+		if($use_paintbbs_neo){
+			$arr_apps[]='neo';
+		}
+		if($use_chickenpaint){
+			$arr_apps[]='chi';
+		}
+		if($use_klecs){
+			$arr_apps[]='klecks';
+		}
+		return $arr_apps;
+	}
 
 //パスワードを5回連続して間違えた時は拒絶
 function check_password_input_error_count(){

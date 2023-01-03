@@ -97,6 +97,18 @@ $badhost =["example.com","example.org"];
 
 /*使用目的別設定*/
 
+//PaintBBS NEOを使う 使う true 使わない false
+$use_paintbbs_neo= true;
+// $use_paintbbs_neo= false;
+
+//ChickenPaintを使う 使う true 使わない false
+$use_chickenpaint= true;
+// $use_chickenpaint= false;
+
+//Klecksを使う 使う true 使わない false
+$use_klecs= true;
+// $use_klecs= false;
+
 // 本文へのURLの書き込みを許可する
 // URLを書き込むスパムを排除する時は しない: false
 // 管理者は設定に関わらず本文にURLを書き込めます。

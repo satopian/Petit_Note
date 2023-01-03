@@ -60,6 +60,7 @@
 	<?php if((!$use_diary || $adminpost) && !$deny_all_posts):?>
 <div class="mainform">
 
+<?php if($use_paint):?>
 <!-- ペイントフォーム -->
 <form action="./" method="post" enctype="multipart/form-data" class="paint_form">
 	<?php if($adminpost):?>
@@ -70,25 +71,8 @@
 	<?php endif;?>
 <input type="hidden" name="mode" value="paint">
 <input type="submit" value="PAINT" class="paint_button">
-<span>Tool:
-<select name="app" class="select_applet">
-<option value="neo" 
-<?php if($appc==='neo'):?>
-selected
-<?php endif;?>
->PaintBBS NEO</option>
-<option value="chi"
-<?php if($appc==='chi'):?>
-selected
-<?php endif;?>
->ChickenPaint</option>
-<option value="klecks"
-<?php if($appc==='klecks'):?>
-selected
-<?php endif;?>
->Klecks</option>
-</select>
-</span>
+<!-- ペイントアプリ選択のプルダウンメニューをインクルード -->
+<?php include __DIR__.'/parts/select_apps.html'?>
 <span class="canvas_size_wrap"> 
 Size:
 <select name="picw" title="幅" class="canvas_select">
@@ -120,6 +104,7 @@ Size:
 	</select>
 </span>
 </form>
+<?php endif;?>
 <!-- フォーム入力欄 -->
 	<?php if(($use_top_form && ($use_upload||$allow_coments_only))||$adminpost):?>
 	<form action="./" method="POST" enctype="multipart/form-data" class="postform">

@@ -204,7 +204,7 @@
 <?php if($resform):?>
 
 <?php if($use_res_upload || $adminpost):?>
-
+<?php if($use_paint):?>
 <form action="./" method="post" enctype="multipart/form-data" class="res_form">
 	<?php if($adminpost):?>
 	<span>
@@ -215,24 +215,8 @@
 <input type="hidden" name="mode" value="paint">
 <input type="hidden" name="resto" value="<?=h($res['no'])?>">
 <input type="submit" value="PAINT" class="paint_button">
-<span class="select_applet bold_gray">Tool:</span>
-<select name="app" class="select_applet">
-	<option value="neo" 
-	<?php if($appc==='neo'):?>
-	selected
-	<?php endif;?>
-	>PaintBBS NEO</option>
-	<option value="chi"
-	<?php if($appc==='chi'):?>
-	selected
-	<?php endif;?>
-	>ChickenPaint</option>
-	<option value="klecks"
-	<?php if($appc==='klecks'):?>
-	selected
-	<?php endif;?>
-	>Klecks</option>
-	</select>
+<!-- ペイントアプリ選択のプルダウンメニューをインクルード -->
+<?php include __DIR__.'/parts/select_apps.html'?>
 <span class="canvas_size_wrap"> 
 <span class="canvas_size">Size</span>:
 <select name="picw" title="<?php if($en):?>Width<?php else:?>幅<?php endif;?>" class="canvas_select">
@@ -264,6 +248,7 @@
 	</select>
 </span>
 </form>
+<?php endif;?>
 <?php endif;?>
 
 <form action="./" method="POST" enctype="multipart/form-data" class="resform">
