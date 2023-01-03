@@ -71,8 +71,18 @@
 	<?php endif;?>
 <input type="hidden" name="mode" value="paint">
 <input type="submit" value="PAINT" class="paint_button">
+
+<?php if($select_app):?>
+<span>Tool:
+<select name="app" class="select_applet">
 <!-- ペイントアプリ選択のプルダウンメニューをインクルード -->
 <?php include __DIR__.'/parts/select_apps.html'?>
+</select>
+</span>
+<?php else:?>
+<input type="hidden" name="app" value="<?=h($app_to_use)?>">
+<?php endif;?>
+
 <span class="canvas_size_wrap"> 
 Size:
 <select name="picw" title="幅" class="canvas_select">
@@ -216,7 +226,7 @@ Size:
 			<?php if($res['img']):?>
 			<?php if($res['continue']||$res['anime']):?>
 			<div class="imginfo_wrap">
-			<?php if($res['continue'] && $aikotoba):?>
+			<?php if($res['continue'] && $aikotoba && $use_paint):?>
 			<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>"><?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?></a></span>
 			<?php endif;?>
 			<?php if($res['anime']):?>

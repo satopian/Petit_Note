@@ -1,6 +1,3 @@
-<?php if($select_app):?>
-<span>Tool:
-<select name="app" class="select_applet">
 <?php if($use_paintbbs_neo):?>
 	<option value="neo" 
 	<?php if($appc==='neo'):?>
@@ -21,9 +18,4 @@
 	selected
 	<?php endif;?>
 	>Klecks</option>
-	</select>
-<?php endif;?>
-</span>
-<?php else:?>
-<input type="hidden" name="app" value="<?=h($app_to_use)?>">
 <?php endif;?>

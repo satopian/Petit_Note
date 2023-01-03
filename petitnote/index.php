@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.53.0';
+$petit_ver='v0.53.2';
 $petit_lot='lot.230103';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -963,6 +963,7 @@ function paintcom(){
 function to_continue(){
 
 	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
 
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
@@ -1022,6 +1023,12 @@ function to_continue(){
 	if(!$use_aikotoba){
 	$aikotoba=true;
 	}
+
+	$arr_apps=app_to_use();
+	$count_arr_apps=count($arr_apps);
+	$use_paint=!empty($count_arr_apps);
+	$select_app= $select_app ? ($count_arr_apps>1) : false;
+	$app_to_use=($use_paint && !$select_app && !$app_to_use) ? $arr_apps[0]: $app_to_use;
 	// nsfw
 	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 

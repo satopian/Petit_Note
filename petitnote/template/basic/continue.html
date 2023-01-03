@@ -19,8 +19,8 @@
 		<a href="#bottom">▽</a>
 		</nav>
 	<hr>
-
-<?php if($aikotoba):?>
+	<?php if($aikotoba):?>
+	<?php if($use_paint):?>
 
 <!--  画像と描画時間  -->
 <div class="continue_img <?php if($hidethumbnail):?>hide_thumbnail<?php endif;?>">
@@ -68,21 +68,8 @@
 
 <?php if($select_app):?>
 <select name="app" class="paint_select">
-<option value="neo"
-<?php if($appc==='neo'):?>
-selected
-<?php endif;?>
->PaintBBS NEO</option>
-<option value="chi"
-<?php if($appc==='chi'):?>
-selected
-<?php endif;?>
->ChickenPaint</option>
-<option value="klecks"
-<?php if($appc==='klecks'):?>
-selected
-<?php endif;?>
->Klecks</option>
+<!-- ペイントアプリ選択のプルダウンメニューをインクルード -->
+<?php include __DIR__.'/parts/select_apps.html'?>
 </select>
 <?php endif;?>
 <?php if($app_to_use):?>
@@ -101,6 +88,7 @@ selected
 <li><?php if($en):?>If it is a new post, you can draw the continuation without a password.<?php else:?>新規投稿ならパスワードがなくても続きを描く事ができます。<?php endif;?></li>
 </ul>
 </div>
+<?php endif;?>
 <?php endif;?>
 <?php endif;?>
 </div>
