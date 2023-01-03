@@ -254,10 +254,10 @@
 	//高さ 300から、PMAX_H で設定した最大値まで。
 		for($i = 300; $i <=$pmax_h ; $i+=50){//50ずつ増える
 		if($pichc==$i){//デフォルトサイズ
-		echo'<option value="'.$i.'" selected>'.$i.'</option>';
+		echo'<option value="'.h($i).'" selected>'.h($i).'</option>';
 		}
 		else{
-		echo'<option value="'.$i.'">'.$i.'</option>';
+		echo'<option value="'.h($i).'">'.h($i).'</option>';
 		}
 		}
 	?>
