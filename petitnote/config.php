@@ -97,15 +97,18 @@ $badhost =["example.com","example.org"];
 
 /*使用目的別設定*/
 
-//PaintBBS NEOを使う 使う true 使わない false
+// PaintBBS NEOを使う
+// 使う: true 使わない: false
 $use_paintbbs_neo= true;
 // $use_paintbbs_neo= false;
 
-//ChickenPaintを使う 使う true 使わない false
+// ChickenPaintを使う
+// 使う: true 使わない: false
 $use_chickenpaint= true;
 // $use_chickenpaint= false;
 
-//Klecksを使う 使う true 使わない false
+// Klecksを使う
+// 使う: true 使わない: false
 $use_klecs= true;
 // $use_klecs= false;
 
@@ -214,7 +217,7 @@ $sage_all = false;
 $verified_adminpost = true; 
 // $verified_adminpost = false; 
 
-//レス画面に前後のスレッドの画像を表示する する:1 しない:0
+//レス画面に前後のスレッドの画像を表示する
 // する: true しない: false
 
 $view_other_works = true;
