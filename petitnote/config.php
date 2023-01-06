@@ -166,24 +166,6 @@ $use_diary = false;
 // $only_admin_can_reply = true;
 $only_admin_can_reply = false;
 
-//合言葉機能を使って投稿を制限する
-// する: true しない: false
-
-// $use_aikotoba = true;
-$use_aikotoba=false;
-
-//合言葉機能で投稿を制限する時の合言葉
-//この合言葉が入力されていない時には書き込むことができません。
-// 必要に応じて変更してください。
-$aikotoba = "あいうえお";
-
-// 掲示板の閲覧に合言葉を必須にする
-// する: true しない: false
-// する: trueで掲示板のすべてのコンテンツの閲覧に合言葉が必要になります。
-
-// $aikotoba_required_to_view=true;
-$aikotoba_required_to_view=false;
-
 //年齢制限付きの掲示板として設定する
 //する: trueに設定すると確認ボタンを押すまで画像にぼかしが入ります。
 // する: true しない: false
@@ -286,6 +268,27 @@ $res_max_h = 300;
 
 $use_thumb = true;
 // $use_thumb = false;
+
+/*合言葉設定*/
+
+// 投稿に合言葉を必須にする
+// する: trueで投稿に合言葉が必要になります。
+// する: true しない: false
+
+// $use_aikotoba = true;
+$use_aikotoba=false;
+
+// 掲示板の閲覧に合言葉を必須にする
+// する: true しない: false
+// する: trueで掲示板のすべてのコンテンツの閲覧に合言葉が必要になります。
+
+$aikotoba_required_to_view=true;
+// $aikotoba_required_to_view=false;
+
+//合言葉
+//上記の合言葉機能のどちらか、あいるは両方が true の時に入力する秘密の答え。
+// 必要に応じて変更してください。
+$aikotoba = "ひみつ";
 
 /*セキュリティ*/
 

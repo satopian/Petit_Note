@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230103;
+$functions_ver=20230106;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -498,9 +498,10 @@ function png2jpg ($src) {
 }
 
 function error($str){
-	global $boardname,$skindir,$en;
+	global $boardname,$skindir,$en,$aikotoba_required_to_view;
+	$boardname = ($aikotoba_required_to_view && !aikotoba_valid()) ? '' : $boardname; 
 	$templete='error.html';
-	return include __DIR__.'/'.$skindir.$templete;
+	include __DIR__.'/'.$skindir.$templete;
 	exit;
 }
 //csrfトークンを作成
