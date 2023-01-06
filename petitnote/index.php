@@ -1,12 +1,17 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.53.2';
-$petit_lot='lot.230103';
-
+$petit_ver='v0.53.5';
+$petit_lot='lot.230106';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
+
+if (version_compare(PHP_VERSION, '5.6.0', '<')) {
+	die($en? "Error. PHP version 5.6.0 or higher is required for this program to work. <br>\n(Current PHP version:".PHP_VERSION.")":
+		"エラー。本プログラムの動作には PHPバージョン 5.6.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
+	);
+}
 
 if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
@@ -53,6 +58,7 @@ $badhost=isset($badhost) ? $badhost :[];
 $mark_sensitive_image = isset($mark_sensitive_image) ? $mark_sensitive_image : false; 
 $only_admin_can_reply = isset($only_admin_can_reply) ? $only_admin_can_reply : false;
 $check_password_input_error_count = isset($check_password_input_error_count) ? $check_password_input_error_count : false;
+$aikotoba_required_to_view=isset($aikotoba_required_to_view) ? $aikotoba_required_to_view : false;
 $use_paintbbs_neo=isset($use_paintbbs_neo) ? $use_paintbbs_neo : true;
 $use_chickenpaint=isset($use_chickenpaint) ? $use_chickenpaint : true;
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
@@ -965,6 +971,8 @@ function to_continue(){
 	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
 
+	aikotoba_required_to_view();
+
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
 
@@ -1042,6 +1050,8 @@ function to_continue(){
 function download_app_dat(){
 
 	global $en;
+
+	aikotoba_required_to_view();
 
 	check_same_origin();
 
@@ -1452,7 +1462,10 @@ if(!is_file($upfile)){
 
 // 動画表示
 function pchview(){
+
 	global $boardname,$skindir,$en;
+
+	aikotoba_required_to_view();
 
 	$imagefile = basename((string)filter_input(INPUT_GET, 'imagefile'));
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
@@ -1929,6 +1942,9 @@ function del(){
 function catalog($page=0,$q=''){
 	global $use_aikotoba,$home,$catalog_pagedef,$skindir;
 	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en; 
+
+	aikotoba_required_to_view();
+
 	$pagedef=$catalog_pagedef;
 	
 	$q=filter_input(INPUT_GET,'q');
@@ -2041,6 +2057,8 @@ function view($page=0){
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
 	
+	aikotoba_required_to_view();
+
 	$max_byte = $max_kb * 1024*2;
 	$denny_all_posts=$deny_all_posts;//互換性
 
@@ -2135,6 +2153,9 @@ function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
+
+	aikotoba_required_to_view();
+
 	$max_byte = $max_kb * 1024*2;
 
 	$denny_all_posts=$deny_all_posts;

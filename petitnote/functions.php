@@ -62,9 +62,24 @@ function aikotoba(){
 	return header('Location: ./?page='.$page);
 	
 }
+//記事の表示に合言葉を必須にする
+function aikotoba_required_to_view(){
+global $aikotoba_required_to_view,$skindir,$en;
+	if($aikotoba_required_to_view){
+		if(!aikotoba_valid()){
+			$templete='aikotoba.html';
+			include __DIR__.'/'.$skindir.$templete;
+			exit;//return include では処理が止まらない。 
+		}
+	}
+} 
+
 function admin_in(){
 
 	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
+
+	aikotoba_required_to_view();
+
 	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	$catalog=filter_input(INPUT_GET,'catalog',FILTER_VALIDATE_BOOLEAN);

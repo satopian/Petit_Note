@@ -177,6 +177,13 @@ $use_aikotoba=false;
 // 必要に応じて変更してください。
 $aikotoba = "あいうえお";
 
+// 掲示板の閲覧に合言葉を必須にする
+// する: true しない: false
+// する: trueで掲示板のすべてのコンテンツの閲覧に合言葉が必要になります。
+
+// $aikotoba_required_to_view=true;
+$aikotoba_required_to_view=false;
+
 //年齢制限付きの掲示板として設定する
 //する: trueに設定すると確認ボタンを押すまで画像にぼかしが入ります。
 // する: true しない: false

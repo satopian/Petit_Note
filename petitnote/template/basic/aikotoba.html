@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta name="robots" content="noindex,nofollow">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="<?=h($skindir)?>index.css">
+<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
+<title></title> 
+</head>
+<body>
+<div class="container" id="top">
+<div class="mainform">
+<?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
+<form action="./" method="post" class="aikotoba">
+	<input type="text" name="aikotoba" class="input_txt">
+	<input type="hidden" name="mode" value="aikotoba">
+	<input type="submit" value="<?php if($en):?>Answer<?php else:?>秘密の答え<?php endif;?>">
+</form><br>
+</div>
+</div>
+</body>
+</html>
