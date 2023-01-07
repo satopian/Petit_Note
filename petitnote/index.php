@@ -912,6 +912,8 @@ function paintcom(){
 	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
 	global $usercode; 
 
+	aikotoba_required_to_view();
+	
 	$token=get_csrf_token();
 	$userip = get_uip();
 	//テンポラリ画像リスト作成
@@ -1050,8 +1052,6 @@ function to_continue(){
 function download_app_dat(){
 
 	global $en;
-
-	aikotoba_required_to_view();
 
 	check_same_origin();
 
