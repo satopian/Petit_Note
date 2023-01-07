@@ -67,6 +67,7 @@
 	const postData = (path, data) => {
     fetch(path, {
         method: 'post',
+		mode: 'same-origin',
         headers: {
             'X-Requested-With': 'klecks'
             ,
