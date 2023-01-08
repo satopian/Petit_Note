@@ -97,15 +97,18 @@ $badhost =["example.com","example.org"];
 
 /*使用目的別設定*/
 
-//PaintBBS NEOを使う 使う true 使わない false
+// PaintBBS NEOを使う
+// 使う:true 使わない:false
 $use_paintbbs_neo= true;
 // $use_paintbbs_neo= false;
 
-//ChickenPaintを使う 使う true 使わない false
+// ChickenPaintを使う
+// 使う:true 使わない:false
 $use_chickenpaint= true;
 // $use_chickenpaint= false;
 
-//Klecksを使う 使う true 使わない false
+// Klecksを使う
+// 使う:true 使わない:false
 $use_klecs= true;
 // $use_klecs= false;
 
@@ -282,8 +285,8 @@ $use_aikotoba=false;
 // する: true しない: false
 // する: trueで掲示板のすべてのコンテンツの閲覧に合言葉が必要になります。
 
-$aikotoba_required_to_view=true;
-// $aikotoba_required_to_view=false;
+// $aikotoba_required_to_view=true;
+$aikotoba_required_to_view=false;
 
 //合言葉
 //上記の合言葉機能のどちらか、あいるは両方が true の時に入力する秘密の答え。

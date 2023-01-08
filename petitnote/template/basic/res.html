@@ -146,7 +146,7 @@
 					$resform=false;//最大レス数を超えている時と指定した日数を超えた古いスレッドはレスフォームを閉じる
 				}?>
 				<?php if($aikotoba && ($userdel || $admindel)):?>
-
+				<div>
 					<form action="./" method="POST" class="aikotoba">
 					<input type="hidden" name="mode" value="before_del">
 					<input type="hidden" name="edit_mode" value="editmode">
@@ -169,7 +169,8 @@
 
 					<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
 					</form>
-					<?php endif;?>	
+				</div>
+				<?php endif;?>	
 			</div>
 		<?php if($i!==0):?>
 		</div><!-- 子レスのwrap	 -->

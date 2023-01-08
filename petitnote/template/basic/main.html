@@ -237,7 +237,7 @@ Size:
 					<?php if($res['thumbnail']):?>
 						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
 					<?php else:?>
-					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
+						<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
 					<?php endif;?>
 					<?php if($res['hide_thumbnail']):?>
 						<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
@@ -273,7 +273,7 @@ Size:
 							<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
 							<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
 						</form>
-						</div>
+					</div>
 				<?php endif;?>
 			</div>
 		<?php if($i!==0):?>
