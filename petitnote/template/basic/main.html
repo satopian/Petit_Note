@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
 <link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
 <link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
@@ -12,7 +12,7 @@
 
 <?php if($set_nsfw && !$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
-<style>img {filter:blur(10px);}</style>
+<style>img {filter:blur(15px);}</style>
 <?php endif;?>
 
 <title><?=h($boardname)?></title> 
@@ -57,7 +57,7 @@
 </ul>
 </div>
 <?php endif;?>
-	<?php if((!$use_diary || $adminpost) && !$deny_all_posts):?>
+<?php if((!$use_diary || $adminpost) && !$deny_all_posts):?>
 <div class="mainform">
 
 <?php if($use_paint):?>
@@ -181,106 +181,106 @@ Size:
 		$skipres=0;	//削除モードの時はレスを省略しない
 	}
 	?>
-		<!-- 個別スレッドのループ -->
-		<?php foreach($ress as $i => $res) : ?>
-			<?php if($skipres && $i===$skipres):?>
-			<hr>
-			<?php if($en):?><?=h($skipres)?> posts omitted.<?php else:?>レス<?=h($skipres)?>件省略中。<?php endif;?>
-			<?php endif;?>	
-			<?php if($i===0 || $i>$skipres):?>
+	<!-- 個別スレッドのループ -->
+	<?php foreach($ress as $i => $res) : ?>
+		<?php if($skipres && $i===$skipres):?>
+		<hr>
+		<?php if($en):?><?=h($skipres)?> posts omitted.<?php else:?>レス<?=h($skipres)?>件省略中。<?php endif;?>
+		<?php endif;?>	
+		<?php if($i===0 || $i>$skipres):?>
 		<hr>
 		<?php if($i!==0):?>
-		<div class="res_wrap">	
+		<div class="res_wrap">
 		<?php endif;?>
-
-		<div class="imginfo_wrap">
-			<span class="info_name"><a href="./?mode=catalog&q=<?=h($res['encoded_name'])?>" target="_blank"><?= h($res['name'])?></a></span>
-			<?php if($res['verified']):?>
-			<span class="icon-checkmark2"></span>
-			<?php endif?>
-			<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
-				<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
-				<span><?=h($res['date'])?></span>		
-			<?php if($res['img']):?>
-				<span>Tool:<?=h($res['tool'])?></span>
-				<?php if($res['painttime']):?>
-				<span>
-					<?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?>
-				</span>
-				<?php endif;?>
-				<span>
-				<?php if($res['hide_thumbnail']):?>
-					<?php if($en):?>- Hiding thumbnail -<?php else:?>- サムネ非表示 -<?php endif;?>	
-
-				<?php elseif($res['thumbnail']):?>
-					<?php if($en):?>- Showing thumbnail -<?php else:?>- サムネイル表示中 -<?php endif;?>	
-				<?php endif;?>
-				</span>
-						
-			<?php endif;?>
-		<?php if($admindel):?>
-			<br>
-			HOST:<?=h($res['host'])?>
-			<?php endif;?> 
-		</div>
-			<?php if($res['img']):?>
-			<?php if($res['continue']||$res['anime']):?>
 			<div class="imginfo_wrap">
-			<?php if($res['continue'] && $aikotoba && $use_paint):?>
-			<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>"><?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?></a></span>
-			<?php endif;?>
-			<?php if($res['anime']):?>
-					<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>&no=<?=h($res['no'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
-			<?php endif;?>
+				<span class="info_name"><a href="./?mode=catalog&q=<?=h($res['encoded_name'])?>" target="_blank"><?= h($res['name'])?></a></span>
+				<?php if($res['verified']):?>
+				<span class="icon-checkmark2"></span>
+				<?php endif?>
+				<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
+					<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
+					<span><?=h($res['date'])?></span>		
+				<?php if($res['img']):?>
+					<span>Tool:<?=h($res['tool'])?></span>
+					<?php if($res['painttime']):?>
+					<span>
+						<?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?>
+					</span>
+					<?php endif;?>
+					<span>
+					<?php if($res['hide_thumbnail']):?>
+						<?php if($en):?>- Hiding thumbnail -<?php else:?>- サムネ非表示 -<?php endif;?>
+					<?php elseif($res['thumbnail']):?>
+						<?php if($en):?>- Showing thumbnail -<?php else:?>- サムネイル表示中 -<?php endif;?>
+					<?php endif;?>
+					</span>
+							
+				<?php endif;?>
+				<?php if($admindel):?>
+				<br>
+				HOST:<?=h($res['host'])?>
+				<?php endif;?> 
 			</div>
-			<?php endif;?>
+			<?php if($res['img']):?>
+				<?php if($res['continue']||$res['anime']):?>
+				<div class="imginfo_wrap">
+					<?php if($res['continue'] && $aikotoba && $use_paint):?>
+						<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>"><?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?></a></span>
+					<?php endif;?>
+					<?php if($res['anime']):?>
+						<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>&no=<?=h($res['no'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
+					<?php endif;?>
+				</div>
+				<?php endif;?>
 				<div class="posted_image <?php if($res['hide_thumbnail'] && !$admindel):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
-				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
-				<?php if($res['thumbnail']):?>
-					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
-			<?php else:?>
-			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
+					<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
+					<?php if($res['thumbnail']):?>
+						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
+					<?php else:?>
+					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4):?>loading="lazy"<?php endif;?>>
+					<?php endif;?>
+					<?php if($res['hide_thumbnail']):?>
+						<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
+					<?php endif;?>
+						</a>
+				</div>
+			<?php endif;?>
+			<div class="comment"><?= com(h($res['com']))?>
+				<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
+					$resform=false;//最大レス数を超えている時はレスフォームを閉じる
+				}?>
+				<?php if($aikotoba && ($userdel || $admindel)):?>
+					<div>
+						<!-- 編集削除のためのボタン -->
+						<form action="./" method="POST" class="aikotoba">
+							<input type="hidden" name="mode" value="before_del">
+							<input type="hidden" name="edit_mode" value="editmode">
+							<input type="hidden" name="resmode" value="false">
+							<input type="hidden" name="id" value="<?=h($res['time'])?>">
+							<input type="hidden" name="no" value="<?=h($res['no'])?>">
+							<input type="hidden" name="postpage" value="<?=h($page)?>">
+							<?php if($res['check_elapsed_days']||$admindel):?>
+							<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
+							<?php endif;?>
+						</form>
+						<form action="./" method="POST" class="aikotoba">
+							<input type="hidden" name="mode" value="before_del">
+							<input type="hidden" name="edit_mode" value="delmode">
+							<input type="hidden" name="resmode" value="false">
+							<input type="hidden" name="id" value="<?=h($res['time'])?>">
+							<input type="hidden" name="no" value="<?=h($res['no'])?>">
+							<input type="hidden" name="postpage" value="<?=h($page)?>">
+							<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
+							<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
+						</form>
+						</div>
 				<?php endif;?>
-				<?php if($res['hide_thumbnail']):?>
-					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
-						<?php endif;?>
-				</a>
 			</div>
-			<?php endif;?>
-			<div class="comment"><?= com(h($res['com']))?></div>
-			<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
-				$resform=false;//最大レス数を超えている時はレスフォームを閉じる
-			}?>
-			<?php if($i!==0):?>
-			</div><!-- 子レスのwrap	 -->
-			<?php endif;?>
-		<?php if($aikotoba && ($userdel || $admindel)):?>
-			<!-- 編集削除のためのボタン -->
-			<form action="./" method="POST" class="aikotoba">
-				<input type="hidden" name="mode" value="before_del">
-				<input type="hidden" name="edit_mode" value="editmode">
-				<input type="hidden" name="resmode" value="false">
-				<input type="hidden" name="id" value="<?=h($res['time'])?>">
-				<input type="hidden" name="no" value="<?=h($res['no'])?>">
-				<input type="hidden" name="postpage" value="<?=h($page)?>">
-				<?php if($res['check_elapsed_days']||$admindel):?>
-				<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
-				<?php endif;?>
-			</form>
-			<form action="./" method="POST" class="aikotoba">
-				<input type="hidden" name="mode" value="before_del">
-				<input type="hidden" name="edit_mode" value="delmode">
-				<input type="hidden" name="resmode" value="false">
-				<input type="hidden" name="id" value="<?=h($res['time'])?>">
-				<input type="hidden" name="no" value="<?=h($res['no'])?>">
-				<input type="hidden" name="postpage" value="<?=h($page)?>">
-				<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
-				<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
-			</form>
+		<?php if($i!==0):?>
+		</div><!-- 子レスのwrap	 -->
 		<?php endif;?>
-			
-		<?php endif;?>	
-		<?php endforeach;?>
+		<?php endif;?>
+	<?php endforeach;?>
 	<!-- 返信ボタン -->
 	<div class="clear"></div>
 
