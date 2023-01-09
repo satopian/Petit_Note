@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230106;
+$functions_ver=20230109;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -590,8 +590,12 @@ function deltemp(){
 			}
 		}
 	}
-	
 	closedir($handle);
+	$file=__DIR__.'/template/errorlog/error.log';
+	$lapse = time() - filemtime($file);
+	if($lapse > (3*24*3600)){//3日
+		safe_unlink($file);
+	}
 }
 
 // NGワードがあれば拒絶
