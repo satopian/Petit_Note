@@ -592,9 +592,11 @@ function deltemp(){
 	}
 	closedir($handle);
 	$file=__DIR__.'/template/errorlog/error.log';
-	$lapse = time() - filemtime($file);
-	if($lapse > (3*24*3600)){//3日
-		safe_unlink($file);
+	if(is_file($file)){
+		$lapse = time() - filemtime($file);
+		if($lapse > (3*24*3600)){//3日
+			safe_unlink($file);
+		}
 	}
 }
 
