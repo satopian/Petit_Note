@@ -152,8 +152,8 @@ $use_res_upload = true;
 //しない: false で、スレ立てに画像が必須になります。
 // する: true しない: false
 
-// $allow_coments_only = true;
-$allow_coments_only = false;
+// $allow_comments_only = true;
+$allow_comments_only = false;
 
 //日記モードを使用する
 //する: true でスレッド立ては管理者のみになります。
