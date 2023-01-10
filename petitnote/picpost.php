@@ -10,6 +10,7 @@
 //----------------------------------------------------------------------
 // 2022/12/03 same-originでは無かった時はエラーにする。
 // 2022/11/23 ユーザーコード不一致の時のためのエラーメッセージを追加。
+// 2022/10/22 '$security_timer''$security_click'で設定された必要な描画時間と描画工程数をチェックする処理を追加。
 // 2022/10/14 画像データのmimeタイプのチェックを追加。
 // 2022/08/21 PCHデータの書き込みエラーでは停止しないようにした。
 // 2022/07/03 同名のファイルが存在する時は秒数に+1して回避。ファイル名の秒数を13桁→16桁へ。
@@ -145,6 +146,8 @@ if($sendheader){
 	$resto = isset($u['resto']) ? $u['resto'] : '';
 	$repcode = isset($u['repcode']) ? $u['repcode'] : '';
 	$stime = isset($u['stime']) ? $u['stime'] : '';
+	$count = isset($u['count']) ? $u['count'] : 0;
+	$timer = isset($u['timer']) ? ($u['timer']/1000) : 0;
 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
 	$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
 }
@@ -153,6 +156,17 @@ $userdata .= "\n";
 // CSRF
 if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
 	die("error\n{$errormsg_8}");
+}
+if((!adminpost_valid() && !$repcode && $timer) && $timer<$security_timer){
+
+	$psec=$security_timer-$timer;
+	$waiting_time=calcPtime ($psec);
+	if($en){
+		die("error\nPlease draw for another {$waiting_time}.");
+	}else{
+		die("error\n描画時間が短すぎます。あと{$waiting_time}。");
+	}
+
 }
 
 $imgfile = time().substr(microtime(),2,6);//画像ファイル名
@@ -203,6 +217,32 @@ chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 
 die("ok");
 
+/**
+ * 描画時間を計算
+ * @param $starttime
+ * @return string
+ */
+function calcPtime ($psec) {
+	global $en;
+
+	$D = floor($psec / 86400);
+	$H = floor($psec % 86400 / 3600);
+	$M = floor($psec % 3600 / 60);
+	$S = $psec % 60;
+
+	if($en){
+		return
+			($D ? $D.'day '  : '')
+			. ($H ? $H.'hr ' : '')
+			. ($M ? $M.'min ' : '')
+			. ($S ? $S.'sec' : '');
+	}
+		return
+			($D ? $D.'日'  : '')
+			. ($H ? $H.'時間' : '')
+			. ($M ? $M.'分' : '')
+			. ($S ? $S.'秒' : '');
+}
 //ユーザーip
 function get_uip(){
 	$ip = isset($_SERVER["HTTP_CLIENT_IP"]) ? $_SERVER["HTTP_CLIENT_IP"] :'';
@@ -214,4 +254,23 @@ function get_uip(){
 		$ip = $ips[0];
 	}
 	return $ip;
+}
+//sessionの確認
+function adminpost_valid(){
+	global $second_pass;
+	session_sta();
+	return isset($_SESSION['adminpost'])&&($second_pass && $_SESSION['adminpost']===$second_pass);
+}
+//session開始
+function session_sta(){
+	if(!isset($_SESSION)){
+		ini_set('session.use_strict_mode', 1);
+		session_set_cookie_params(
+			0,"","",false,true
+		);
+		session_start();
+		header('Expires:');
+		header('Cache-Control:');
+		header('Pragma:');
+	}
 }
