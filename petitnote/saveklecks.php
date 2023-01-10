@@ -53,7 +53,6 @@ $imgext='.png';
 /* ---------- 投稿者情報記録 ---------- */
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
 $tool = 'klecks';
-$stime = (string)filter_input(INPUT_POST, 'stime',FILTER_VALIDATE_INT);
 $repcode = (string)filter_input(INPUT_POST, 'repcode');
 $stime = (string)filter_input(INPUT_POST, 'stime',FILTER_VALIDATE_INT);
 $resto = (string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT);
@@ -61,7 +60,7 @@ $resto = (string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT);
 $userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
 $userdata .= "\n";
 
-$timer=time()-$stime;
+$timer=time()-(int)$stime;
 if((bool)$security_timer && !$repcode && !adminpost_valid()  && ((int)$timer<(int)$security_timer)){
 
 	$psec=$security_timer-$timer;
@@ -73,7 +72,7 @@ if((bool)$security_timer && !$repcode && !adminpost_valid()  && ((int)$timer<(in
 	}
 }
 
-if (!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK){
+if(!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK){
 	die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
 }
 
@@ -86,8 +85,8 @@ if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
 }
 $success = move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
 
-if (!$success||!is_file(TEMP_DIR.$imgfile.'.png')) {
-    die("Couldn't move uploaded files");
+if(!$success||!is_file(TEMP_DIR.$imgfile.'.png')) {
+    die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
 }
 chmod(TEMP_DIR.$imgfile.'.png',PERMISSION_FOR_DEST);
 if(isset($_FILES['psd']) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
@@ -104,7 +103,7 @@ if(isset($_FILES['psd']) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
 // 情報データをファイルに書き込む
 file_put_contents(TEMP_DIR.$imgfile.".dat",$userdata,LOCK_EX);
 
-if (!is_file(TEMP_DIR.$imgfile.'.dat')) {
+if(!is_file(TEMP_DIR.$imgfile.'.dat')) {
 	die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
 }
 chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
@@ -142,7 +141,7 @@ function get_uip(){
 	$ip = $ip ? $ip : (isset($_SERVER["HTTP_INCAP_CLIENT_IP"]) ? $_SERVER["HTTP_INCAP_CLIENT_IP"] : '');
 	$ip = $ip ? $ip : (isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : '');
 	$ip = $ip ? $ip : (isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '');
-	if (strstr($ip, ', ')) {
+	if(strstr($ip, ', ')) {
 		$ips = explode(', ', $ip);
 		$ip = $ips[0];
 	}
