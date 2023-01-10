@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.53.8';
-$petit_lot='lot.230109';
+$petit_ver='v0.55.0';
+$petit_lot='lot.230110';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -53,6 +53,8 @@ $max_com= isset($max_com) ? $max_com : 1000;
 $sage_all= isset($sage_all) ? $sage_all : false;
 $view_other_works= isset($view_other_works) ? $view_other_works : true;
 $deny_all_posts= isset($deny_all_posts) ? $deny_all_posts : (isset($denny_all_posts) ? $denny_all_posts : false);
+$allow_comments_only = isset($allow_comments_only) ? $allow_commments_only : (isset($allow_coments_only) ? $allow_coments_only : false); 
+$dispres = isset($dispres) ? $dispres : (isset($display) ? $display : 5); 
 $latest_var=isset($latest_var) ? $latest_var : true;
 $badhost=isset($badhost) ? $badhost :[]; 
 $mark_sensitive_image = isset($mark_sensitive_image) ? $mark_sensitive_image : false; 
@@ -144,7 +146,7 @@ switch($mode){
 //投稿処理
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb,$mark_sensitive_image;
-	global $allow_coments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
+	global $allow_comments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 	global $usercode;
 
 	if($use_aikotoba){
@@ -356,7 +358,7 @@ function post(){
 		return error($en?'Please write something.':'何か書いて下さい。');
 	}
 
-	if(!$resto && !$allow_coments_only && !$is_file_upfile && !$adminpost){
+	if(!$resto && !$allow_comments_only && !$is_file_upfile && !$adminpost){
 		return error($en?'Please attach an image.':'画像を添付してください。');
 	}
 
@@ -2052,14 +2054,16 @@ function catalog($page=0,$q=''){
 
 //通常表示
 function view($page=0){
-	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_coments_only,$use_top_form,$skindir,$descriptions,$max_kb;
+	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
 	
+	
 	aikotoba_required_to_view();
-
+	
 	$max_byte = $max_kb * 1024*2;
 	$denny_all_posts=$deny_all_posts;//互換性
+	$allow_coments_only=$allow_comments_only;//互換性
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
 	$alllog_arr=[];
@@ -2266,6 +2270,5 @@ function res ($resno){
 	$token=get_csrf_token();
 	$templete='res.html';
 	return include __DIR__.'/'.$skindir.$templete;
-	
 
 }
