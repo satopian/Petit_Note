@@ -49,7 +49,7 @@ if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
 
 //設定
 include(__DIR__.'/config.php');
-
+$security_timer = isset($security_timer) ? $security_timer : 0;
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0) ? true : false;

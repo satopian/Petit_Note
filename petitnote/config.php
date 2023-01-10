@@ -312,7 +312,7 @@ $check_password_input_error_count = false;
 // 指定した秒数に達しない場合は、描画に必要な秒数を知らせるアラートが開きます。
 
 $security_timer = 0;
-// $security_timer = 120;
+// $security_timer = 60;
 
 /*詳細設定*/
 
