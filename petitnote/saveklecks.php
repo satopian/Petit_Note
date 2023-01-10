@@ -6,6 +6,12 @@ if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
 //設定
 include(__DIR__.'/config.php');
 
+$security_timer = isset($security_timer) ? $security_timer : 0;
+$security_timer=20;
+$lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
+  ? explode( ',', $http_langs )[0] : '';
+$en= (stripos($lang,'ja')!==0) ? true : false;
+
 //容量違反チェックをする する:1 しない:0
 define('SIZE_CHECK', '1');
 //PNG画像データ投稿容量制限KB(chiは含まない)
@@ -22,32 +28,62 @@ header('Content-type: text/plain');
 //Sec-Fetch-SiteがSafariに実装されていないので、Orijinと、hostをそれぞれ取得して比較。
 //Orijinがhostと異なっていたら投稿を拒絶。
 if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
-	die("Your browser is not supported.");
+	die($en ? "Your browser is not supported." : "お使いのブラウザはサポートされていません。");
 }
 $url_scheme=parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://';
+
 if(str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
-	die("The post has been rejected.");
+	die($en ? "The post has been rejected." : "拒絶されました。");
 }
+
 if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-	die('This operation has failed.');
+	die($en ? "The post has been rejected." : "拒絶されました。");
+}
+$usercode = (string)filter_input(INPUT_POST, 'usercode');
+//csrf
+
+if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
+	die($en ? "User code mismatch." : "ユーザーコードが一致しません。");
+}
+
+$u_ip = get_uip();
+$u_host = $u_ip ? gethostbyaddr($u_ip) : '';
+$u_agent = $_SERVER["HTTP_USER_AGENT"];
+$u_agent = str_replace("\t", "", $u_agent);
+$imgext='.png';
+/* ---------- 投稿者情報記録 ---------- */
+$userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
+$tool = 'klecks';
+$stime = (string)filter_input(INPUT_POST, 'stime',FILTER_VALIDATE_INT);
+$repcode = (string)filter_input(INPUT_POST, 'repcode');
+$stime = (string)filter_input(INPUT_POST, 'stime',FILTER_VALIDATE_INT);
+$resto = (string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT);
+//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
+$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
+$userdata .= "\n";
+
+$timer=time()-$stime;
+if((bool)$security_timer && !$repcode && !adminpost_valid()  && ((int)$timer<(int)$security_timer)){
+
+	$psec=$security_timer-$timer;
+	$waiting_time=calcPtime ($psec);
+	if($en){
+		die("Please draw for another {$waiting_time}.");
+	}else{
+		die("描画時間が短すぎます。あと{$waiting_time}。");
+	}
 }
 
 if (!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK){
-	die("Your picture upload failed! Please try again!");
-}
-
-$usercode = (string)filter_input(INPUT_POST, 'usercode');
-//csrf
-if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
-	die("Your picture upload failed! Please try again!");
+	die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
 }
 
 if(SIZE_CHECK && ($_FILES['picture']['size'] > (PICTURE_MAX_KB * 1024))){
-	die("Your picture upload failed! Please try again!");
+	die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
 }
 
 if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
-	die("Your picture upload failed! Please try again!");
+	die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
 }
 $success = move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
 
@@ -66,30 +102,41 @@ if(isset($_FILES['psd']) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
 		}
 	}
 }
-$u_ip = get_uip();
-$u_host = $u_ip ? gethostbyaddr($u_ip) : '';
-$u_agent = $_SERVER["HTTP_USER_AGENT"];
-$u_agent = str_replace("\t", "", $u_agent);
-$imgext='.png';
-/* ---------- 投稿者情報記録 ---------- */
-$userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
-$tool = 'klecks';
-$repcode = (string)filter_input(INPUT_POST, 'repcode');
-$stime = (string)filter_input(INPUT_POST, 'stime',FILTER_VALIDATE_INT);
-$resto = (string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT);
-//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
-$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
-$userdata .= "\n";
 // 情報データをファイルに書き込む
 file_put_contents(TEMP_DIR.$imgfile.".dat",$userdata,LOCK_EX);
 
 if (!is_file(TEMP_DIR.$imgfile.'.dat')) {
-	die("Your picture upload failed! Please try again!");
+	die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
 }
 chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 	
 die("ok");
+/**
+ * 描画時間を計算
+ * @param $starttime
+ * @return string
+ */
+function calcPtime ($psec) {
+	global $en;
 
+	$D = floor($psec / 86400);
+	$H = floor($psec % 86400 / 3600);
+	$M = floor($psec % 3600 / 60);
+	$S = $psec % 60;
+
+	if($en){
+		return
+			($D ? $D.'day '  : '')
+			. ($H ? $H.'hr ' : '')
+			. ($M ? $M.'min ' : '')
+			. ($S ? $S.'sec' : '');
+	}
+		return
+			($D ? $D.'日'  : '')
+			. ($H ? $H.'時間' : '')
+			. ($M ? $M.'分' : '')
+			. ($S ? $S.'秒' : '');
+}
 //ユーザーip
 function get_uip(){
 	$ip = isset($_SERVER["HTTP_CLIENT_IP"]) ? $_SERVER["HTTP_CLIENT_IP"] :'';
@@ -101,4 +148,23 @@ function get_uip(){
 		$ip = $ips[0];
 	}
 	return $ip;
+}
+//sessionの確認
+function adminpost_valid(){
+	global $second_pass;
+	session_sta();
+	return isset($_SESSION['adminpost'])&&($second_pass && $_SESSION['adminpost']===$second_pass);
+}
+//session開始
+function session_sta(){
+	if(!isset($_SESSION)){
+		ini_set('session.use_strict_mode', 1);
+		session_set_cookie_params(
+			0,"","",false,true
+		);
+		session_start();
+		header('Expires:');
+		header('Cache-Control:');
+		header('Pragma:');
+	}
 }

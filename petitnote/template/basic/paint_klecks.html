@@ -90,7 +90,7 @@
 								if(text==='ok'){
 									return window.location.href="index.php?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>";
 								}
-								return alert('<?php if($en):?>Your picture upload failed! Please try again!<?php else:?>投稿に失敗。時間をおいて再度投稿してみてください。<?php endif;?>');
+								return alert(text);
 							})
 						}
 
