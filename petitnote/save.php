@@ -63,7 +63,7 @@ $userdata .= "\n";
 $timer=time()-(int)$stime;
 if((bool)$security_timer && !$repcode && !adminpost_valid()  && ((int)$timer<(int)$security_timer)){
 
-	$psec=$security_timer-$timer;
+	$psec=(int)$security_timer-(int)$timer;
 	$waiting_time=calcPtime ($psec);
 	if($en){
 		die("Please draw for another {$waiting_time}.");
@@ -77,7 +77,7 @@ if(!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK) 
 }
 
 if(SIZE_CHECK && ($_FILES['picture']['size'] > (PICTURE_MAX_KB * 1024))){
-	chibi_die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
+	chibi_die($en ? "The size of the picture is too big. " : "ファイルサイズが大きすぎます。");
 }
 
 if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
@@ -125,13 +125,13 @@ function calcPtime ($psec) {
 			($D ? $D.'day '  : '')
 			. ($H ? $H.'hr ' : '')
 			. ($M ? $M.'min ' : '')
-			. ($S ? $S.'sec' : '');
+			. ($S ? $S : '0').'sec';
 	}
 		return
 			($D ? $D.'日'  : '')
 			. ($H ? $H.'時間' : '')
 			. ($M ? $M.'分' : '')
-			. ($S ? $S.'秒' : '');
+			. ($S ? $S : '0').'秒';
 }
 //ユーザーip
 function get_uip(){

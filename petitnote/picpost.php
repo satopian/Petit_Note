@@ -157,9 +157,9 @@ $userdata .= "\n";
 if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
 	die("error\n{$errormsg_8}");
 }
-if((!adminpost_valid() && !$repcode && $timer) && $timer<$security_timer){
+if((!adminpost_valid() && !$repcode && $timer) && (int)$timer<(int)$security_timer){
 
-	$psec=$security_timer-$timer;
+	$psec=(int)$security_timer-(int)$timer;
 	$waiting_time=calcPtime ($psec);
 	if($en){
 		die("error\nPlease draw for another {$waiting_time}.");
@@ -235,13 +235,13 @@ function calcPtime ($psec) {
 			($D ? $D.'day '  : '')
 			. ($H ? $H.'hr ' : '')
 			. ($M ? $M.'min ' : '')
-			. ($S ? $S.'sec' : '');
+			. ($S ? $S : '0').'sec';
 	}
 		return
 			($D ? $D.'日'  : '')
 			. ($H ? $H.'時間' : '')
 			. ($M ? $M.'分' : '')
-			. ($S ? $S.'秒' : '');
+			. ($S ? $S : '0').'秒';
 }
 //ユーザーip
 function get_uip(){

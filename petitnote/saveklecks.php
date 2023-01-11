@@ -9,7 +9,7 @@ include(__DIR__.'/config.php');
 $security_timer = isset($security_timer) ? $security_timer : 0;
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
-$en= (stripos($lang,'ja')!==0) ? true : false;
+$en= (stripos($lang,'ja')!==0);
 
 //容量違反チェックをする する:1 しない:0
 define('SIZE_CHECK', '1');
@@ -61,9 +61,9 @@ $userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
 $userdata .= "\n";
 
 $timer=time()-(int)$stime;
-if((bool)$security_timer && !$repcode && !adminpost_valid()  && ((int)$timer<(int)$security_timer)){
+if((bool)$security_timer && !$repcode && !adminpost_valid() && ((int)$timer<(int)$security_timer)){
 
-	$psec=$security_timer-$timer;
+	$psec=(int)$security_timer-(int)$timer;
 	$waiting_time=calcPtime ($psec);
 	if($en){
 		die("Please draw for another {$waiting_time}.");
@@ -77,7 +77,7 @@ if(!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK){
 }
 
 if(SIZE_CHECK && ($_FILES['picture']['size'] > (PICTURE_MAX_KB * 1024))){
-	die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
+	die($en ? "The size of the picture is too big. " : "ファイルサイズが大きすぎます。");
 }
 
 if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
@@ -127,13 +127,13 @@ function calcPtime ($psec) {
 			($D ? $D.'day '  : '')
 			. ($H ? $H.'hr ' : '')
 			. ($M ? $M.'min ' : '')
-			. ($S ? $S.'sec' : '');
+			. ($S ? $S : '0').'sec';
 	}
 		return
 			($D ? $D.'日'  : '')
 			. ($H ? $H.'時間' : '')
 			. ($M ? $M.'分' : '')
-			. ($S ? $S.'秒' : '');
+			. ($S ? $S : '0').'秒';
 }
 //ユーザーip
 function get_uip(){
