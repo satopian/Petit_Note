@@ -1,4 +1,8 @@
 <?php
+if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
+	return header( "Location: ./ ") ;
+}
+
 //----------------------------------------------------------------------
 // picpost.php lot.221203 for PetitNote
 // by さとぴあ & POTI-board redevelopment team >> https://paintbbs.sakura.ne.jp/poti/ 
@@ -43,100 +47,66 @@
 // 2003/08/28 perl -> php 移植  by TakeponG >> https://chomstudio.com/
 // 2003/07/11 perl版初公開
 
-if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
-	return header( "Location: ./ ") ;
-}
 
 //設定
 include(__DIR__.'/config.php');
 $security_timer = isset($security_timer) ? $security_timer : 0;
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
-$en= (stripos($lang,'ja')!==0) ? true : false;
+$en= (stripos($lang,'ja')!==0);
 
 if($en){//ブラウザの言語が日本語以外の時
-	$errormsg_1 = "Failed to get data. Please try posting again after a while.";
-	$errormsg_2 = "The size of the picture is too big. The drawing image is not saved.";
-	$errormsg_3 = "Failed to create the image file. Please try posting again after a while.";
-	$errormsg_4 = "The size of the picture too large.drawng image will not be saved.";
-	$errormsg_5 = "There was an illegal image. The drawng image is not saved.";
-	$errormsg_6 = "Failed to open PCH file. Please try posting again after a while.";
-	$errormsg_7 = "Failed to create user data. Please try posting again after a while.";
-	$errormsg_8 = "User code mismatch.";
-	$errormsg_9 = "The post has been rejected.";
-	$errormsg_10 = "Your browser is not supported.";
+	$errormsg_1 = "Your picture upload failed! Please try again!";
+	$errormsg_2 = "Your browser is not supported.";
+	$errormsg_3 = "The post has been rejected.";
+	$errormsg_4 = "User code mismatch.";
+	$errormsg_5 = "The size of the picture is too big. ";
+	$errormsg_6 = "Your browser is not supported.";
 }else{//日本語
-	$errormsg_1 = "データの取得に失敗しました。時間を置いて再度投稿してみて下さい。";
-	$errormsg_2 = "規定容量オーバー。お絵かき画像は保存されません。";
-	$errormsg_3 = "画像ファイルの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
-	$errormsg_4 = "規定サイズ違反を検出しました。お絵かき画像は保存されません。";
-	$errormsg_5 = "不正な画像を検出しました。お絵かき画像は保存されません。";
-	$errormsg_6 = "PCHファイルの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
-	$errormsg_7 = "ユーザーデータの作成に失敗しました。時間を置いて再度投稿してみて下さい。";
-	$errormsg_8 = "ユーザーコードが一致しません。";
-	$errormsg_9 = "拒絶されました。";
-	$errormsg_10 = "お使いのブラウザはサポートされていません。";
+	$errormsg_1 = "投稿に失敗。時間をおいて再度投稿してみてください。";
+	$errormsg_2 = "お使いのブラウザはサポートされていません。";
+	$errormsg_3 = "拒絶されました。";
+	$errormsg_4 = "ユーザーコードが一致しません。";
+	$errormsg_5 = "ファイルサイズが大きすぎます。";
+	$errormsg_6 = "お使いのブラウザはサポートされていません。";
 }
-
-header('Content-type: text/plain');
-
-//Sec-Fetch-SiteがSafariに実装されていないので、Orijinと、hostをそれぞれ取得して比較。
-//Orijinがhostと異なっていたら投稿を拒絶。
-if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
-	die("error\n{$errormsg_10}");
-}
-$url_scheme=parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://';
-if(str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
-	die("error\n{$errormsg_9}");
-}
-/* ---------- picpost.php用設定 ---------- */
-defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
-defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
 //容量違反チェックをする する:1 しない:0
 define('SIZE_CHECK', '1');
-//投稿容量制限 KB
-define('PICPOST_MAX_KB', '8192');//8MBまで
+//PNG画像データ投稿容量制限KB(chiは含まない)
+define('PICTURE_MAX_KB', '8192');//8MBまで
+define('PSD_MAX_KB', '40960');//40MBまで。ただしサーバのPHPの設定によって2MB以下に制限される可能性があります。
+defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
+defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
 $time = time();
+$imgfile = time().substr(microtime(),2,6);	//画像ファイル名
+$imgfile = is_file(TEMP_DIR.$imgfile.'.png') ? ((time()+1).substr(microtime(),2,6)) : $imgfile;
 
-/* ■■■■■ メイン処理 ■■■■■ */
+header('Content-type: text/plain');
+//Sec-Fetch-SiteがSafariに実装されていないので、Orijinと、hostをそれぞれ取得して比較。
+//Orijinがhostと異なっていたら投稿を拒絶。
+if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
+	die("error\n{$$errormsg_2}");
+}
+$url_scheme=parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://';
+if(str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
+	die("error\n{$errormsg_3}");
+}
+if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+	die("error\n{$errormsg_3}");
+}
+
 
 $u_ip = get_uip();
 $u_host = $u_ip ? gethostbyaddr($u_ip) : '';
 $u_agent = $_SERVER["HTTP_USER_AGENT"];
 $u_agent = str_replace("\t", "", $u_agent);
-
-//raw POST データ取得
-$buffer = file_get_contents('php://input');
-if(!$buffer){
-	//データの取得に失敗しました。お絵かき画像は保存されません。
-	die("error\n{$errormsg_1}");
-}
-
-// 拡張ヘッダー長さを獲得
-$headerLength = substr($buffer, 1, 8);
-// 画像ファイルの長さを取り出す
-$imgLength = substr($buffer, 1 + 8 + $headerLength, 8);
-// 投稿容量制限を超えていたら保存しない
-if(SIZE_CHECK && ($imgLength > PICPOST_MAX_KB * 1024)){
-	//規定容量オーバー。お絵かき画像は保存されません。
-	die("error\n{$errormsg_2}");
-}
-// 画像イメージを取り出す
-$imgdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2, $imgLength);
-// 画像ヘッダーを獲得
-$imgh = substr($imgdata, 1, 5);
-// 拡張子設定
-if($imgh=="PNG\r\n"){
-	$imgext = '.png';	// PNG
-}else{
-	$imgext = '.jpg';	// JPEG
-}
+$imgext='.png';
+// 拡張ヘッダーを取り出す
+$sendheader = filter_input(INPUT_POST,'header',);
 /* ---------- 投稿者情報記録 ---------- */
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
-// 拡張ヘッダーを取り出す
-$sendheader = substr($buffer, 1 + 8, $headerLength);
 $usercode='';
 if($sendheader){
 	$sendheader = str_replace("&amp;", "&", $sendheader);
@@ -151,12 +121,12 @@ if($sendheader){
 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
 	$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
 }
-$userdata .= "\n";
 
-// CSRF
-if(!$usercode || $usercode !== filter_input(INPUT_COOKIE, 'usercode')){
-	die("error\n{$errormsg_8}");
+//csrf
+if($usercode !== filter_input(INPUT_COOKIE, 'usercode')){
+	die("error\n{$errormsg_4}");
 }
+
 if((!adminpost_valid() && !$repcode && $timer) && (int)$timer<(int)$security_timer){
 
 	$psec=(int)$security_timer-(int)$timer;
@@ -166,57 +136,44 @@ if((!adminpost_valid() && !$repcode && $timer) && (int)$timer<(int)$security_tim
 	}else{
 		die("error\n描画時間が短すぎます。あと{$waiting_time}。");
 	}
-
 }
 
-$imgfile = time().substr(microtime(),2,6);//画像ファイル名
-$imgfile = is_file(TEMP_DIR.$imgfile.$imgext) ? ((time()+1).substr(microtime(),2,6)) : $imgfile;
-$full_imgfile = TEMP_DIR.$imgfile.$imgext;
-// 画像データをファイルに書き込む
-file_put_contents($full_imgfile,$imgdata,LOCK_EX);
-if(!is_file($full_imgfile)){
-	die("error\n{$errormsg_3}");
-}
-$img_type=mime_content_type($full_imgfile);
-if(!in_array($img_type,["image/png","image/jpeg"])){
-	unlink($full_imgfile);
-	die("error\n{$errormsg_3}");
-}
-chmod($full_imgfile,PERMISSION_FOR_DEST);
-
-
-// PCHファイルの長さを取り出す
-$pchLength = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength, 8);
-// ヘッダーを獲得
-$h = substr($buffer, 0, 1);
-// 拡張子設定
-
-if($h=='P'){
-	$pchext = '.pch';
-}elseif($h=='S'){
-	$pchext = '.spch';
+if(!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK){
+	die("error\n{$errormsg_1}");
 }
 
-if($pchLength){
-	// PCHイメージを取り出す
-	$PCHdata = substr($buffer, 1 + 8 + $headerLength + 8 + 2 + $imgLength + 8, $pchLength);
-	// PCHデータをファイルに書き込む
-	$pchext=basename($pchext);
-	file_put_contents(TEMP_DIR.$imgfile.$pchext,$PCHdata,LOCK_EX);
-	if(is_file(TEMP_DIR.$imgfile.$pchext)){
-		chmod(TEMP_DIR.$imgfile.$pchext,PERMISSION_FOR_DEST);
-	}
+if(SIZE_CHECK && ($_FILES['picture']['size'] > (PICTURE_MAX_KB * 1024))){
+	die("error\n{$errormsg_5}");
 }
 
+if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
+	die("error\n{$errormsg_1}");
+}
+$success = move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$imgfile.'.png');
+
+if(!$success||!is_file(TEMP_DIR.$imgfile.'.png')) {
+    die("error\n{$errormsg_1}");
+}
+chmod(TEMP_DIR.$imgfile.'.png',PERMISSION_FOR_DEST);
+if(isset($_FILES['pch']) && ($_FILES['pch']['error'] == UPLOAD_ERR_OK)){
+	// if(mime_content_type($_FILES['psd']['tmp_name'])==="image/vnd.adobe.photoshop"){
+		if(!SIZE_CHECK || ($_FILES['pch']['size'] < (PSD_MAX_KB * 1024))){
+			//PSDファイルのアップロードができなかった場合はエラーメッセージはださず、画像のみ投稿する。 
+			move_uploaded_file($_FILES['pch']['tmp_name'], TEMP_DIR.$imgfile.'.pch');
+			if(is_file(TEMP_DIR.$imgfile.'.pch')){
+				chmod(TEMP_DIR.$imgfile.'.pch',PERMISSION_FOR_DEST);
+			}
+		}
+	// }
+}
 // 情報データをファイルに書き込む
 file_put_contents(TEMP_DIR.$imgfile.".dat",$userdata,LOCK_EX);
 if(!is_file(TEMP_DIR.$imgfile.'.dat')){
-	die("error\n{$errormsg_7}");
+	die("error\n{$errormsg_1}");
 }
 chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 
 die("ok");
-
 /**
  * 描画時間を計算
  * @param $starttime
@@ -249,7 +206,7 @@ function get_uip(){
 	$ip = $ip ? $ip : (isset($_SERVER["HTTP_INCAP_CLIENT_IP"]) ? $_SERVER["HTTP_INCAP_CLIENT_IP"] : '');
 	$ip = $ip ? $ip : (isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : '');
 	$ip = $ip ? $ip : (isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '');
-	if (strstr($ip, ', ')) {
+	if(strstr($ip, ', ')) {
 		$ips = explode(', ', $ip);
 		$ip = $ips[0];
 	}
