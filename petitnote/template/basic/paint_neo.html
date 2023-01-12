@@ -23,7 +23,7 @@ return;
 }
 </script>
 <link rel="stylesheet" href="./app/neo/neo.css?<?=h($parameter_day)?>" type="text/css">
-<script src="./app/neo/paintbbs_neo.js?<?=h($parameter_day)?>" charset="UTF-8"></script>
+<script src="./app/neo/neo.js?<?=h($parameter_day)?>" charset="UTF-8"></script>
 <script>
 	function fixneo() {
 
@@ -106,6 +106,7 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <applet-dummy CODE="pbbs.PaintBBS.class" ARCHIVE="./PaintBBS.jar" NAME="paintbbs" WIDTH="<?=h($appw)?>"
 	 HEIGHT="<?=h($apph)?>" MAYSCRIPT>
 <!-- ページ移動の警告 -->
+<param name="neo_send_with_formdata" value="true">
 <param name="neo_confirm_unload" value="true">
 <param name="neo_show_right_button" value="true">
 <param name="send_header_count" value="true">
