@@ -792,7 +792,7 @@ function calcPtime ($psec) {
 			($D ? $D.'day '  : '')
 			. ($H ? $H.'hr ' : '')
 			. ($M ? $M.'min ' : '')
-			. ($S ? $S.'sec' : '')
+			. ($S ? $S.'sec' : '');
 	}
 		return
 			($D ? $D.'日'  : '')
