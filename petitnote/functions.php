@@ -65,14 +65,15 @@ function aikotoba(){
 //記事の表示に合言葉を必須にする
 function aikotoba_required_to_view(){
 global $aikotoba_required_to_view,$skindir,$en;
-	if($aikotoba_required_to_view){
-		if(!aikotoba_valid()){
-			$templete='aikotoba.html';
-			include __DIR__.'/'.$skindir.$templete;
-			exit;//return include では処理が止まらない。 
-		}
+	if(!$aikotoba_required_to_view){
+	return;
 	}
-} 
+	if(!aikotoba_valid()){
+		$templete='aikotoba.html';
+		include __DIR__.'/'.$skindir.$templete;
+		exit;//return include では処理が止まらない。 
+	}
+}
 
 function admin_in(){
 
