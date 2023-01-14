@@ -2058,7 +2058,6 @@ function view($page=0){
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
 	
-	
 	aikotoba_required_to_view();
 	
 	$max_byte = $max_kb * 1024*2;
