@@ -293,6 +293,13 @@ $aikotoba_required_to_view=false;
 // 必要に応じて変更してください。
 $aikotoba = "ひみつ";
 
+//合言葉のログイン状態を維持する
+// する: true しない: false
+// する: true に設定すると合言葉のログイン状態を30日間維持します。
+
+// $keep_aikotoba_login_status=true;
+$keep_aikotoba_login_status=false;
+
 /*セキュリティ*/
 
 // 管理者パスワードを5回連続して間違えた時は拒絶する

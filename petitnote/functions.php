@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230109;
+$functions_ver=20230116;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -36,7 +36,7 @@ function logout_admin(){
 
 //合言葉認証
 function aikotoba(){
-	global $aikotoba,$en;
+	global $aikotoba,$en,$keep_aikotoba_login_status;
 
 	check_same_origin();
 
@@ -46,6 +46,9 @@ function aikotoba(){
 			unset($_SESSION['aikotoba']);
 		} 
 		return error($en?'The secret words is wrong':'合言葉が違います。');
+	}
+	if($keep_aikotoba_login_status){
+		setcookie("aikotoba",$aikotoba, time()+(86400*30),"","",false,true);//1ヶ月
 	}
 
 	$_SESSION['aikotoba']='aikotoba';
@@ -199,9 +202,13 @@ function admindel_valid(){
 	session_sta();
 	return isset($_SESSION['admindel'])&&($second_pass && $_SESSION['admindel']===$second_pass);
 }
+//合言葉の確認
 function aikotoba_valid(){
+	global $keep_aikotoba_login_status,$aikotoba;
 	session_sta();
-	return isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba');
+	$keep=$keep_aikotoba_login_status ? ($aikotoba && ($aikotoba===filter_input(INPUT_COOKIE,'aikotoba'))
+	) : false;
+	return ($keep||isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba'));
 }
 
 //センシティブコンテンツ
