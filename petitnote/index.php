@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.55.1';
+$petit_ver='v0.55.2';
 $petit_lot='lot.230116';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -61,7 +61,7 @@ $mark_sensitive_image = isset($mark_sensitive_image) ? $mark_sensitive_image : f
 $only_admin_can_reply = isset($only_admin_can_reply) ? $only_admin_can_reply : false;
 $check_password_input_error_count = isset($check_password_input_error_count) ? $check_password_input_error_count : false;
 $aikotoba_required_to_view=isset($aikotoba_required_to_view) ? $aikotoba_required_to_view : false;
-$maintain_aikotoba_login_state=isset($maintain_aikotoba_login_state) ? $maintain_aikotoba_login_state : false;
+$keep_aikotoba_login_status=isset($keep_aikotoba_login_status) ? $keep_aikotoba_login_status : false;
 $use_paintbbs_neo=isset($use_paintbbs_neo) ? $use_paintbbs_neo : true;
 $use_chickenpaint=isset($use_chickenpaint) ? $use_chickenpaint : true;
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
