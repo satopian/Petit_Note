@@ -56,7 +56,7 @@ $u_agent = $_SERVER["HTTP_USER_AGENT"];
 $u_agent = str_replace("\t", "", $u_agent);
 $imgext='.png';
 // 拡張ヘッダーを取り出す
-$sendheader = filter_input(INPUT_POST,'header',);
+$sendheader = filter_input(INPUT_POST,'header');
 /* ---------- 投稿者情報記録 ---------- */
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
 $usercode='';
@@ -73,6 +73,7 @@ if($sendheader){
 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
 	$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
 }
+$userdata .= "\n";
 
 //csrf
 if($usercode !== filter_input(INPUT_COOKIE, 'usercode')){
@@ -89,7 +90,6 @@ if((!adminpost_valid() && !$repcode && $timer) && (int)$timer<(int)$security_tim
 		die("error\n描画時間が短すぎます。あと{$waiting_time}。");
 	}
 }
-
 if(!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK){
 	die("error\n{$errormsg_1}");
 }
