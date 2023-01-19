@@ -56,7 +56,7 @@ $u_agent = $_SERVER["HTTP_USER_AGENT"];
 $u_agent = str_replace("\t", "", $u_agent);
 $imgext='.png';
 // 拡張ヘッダーを取り出す
-$sendheader = filter_input(INPUT_POST,'header');
+$sendheader = (string)filter_input(INPUT_POST,'header');
 /* ---------- 投稿者情報記録 ---------- */
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
 $usercode='';
@@ -76,7 +76,7 @@ if($sendheader){
 $userdata .= "\n";
 
 //csrf
-if($usercode !== filter_input(INPUT_COOKIE, 'usercode')){
+if($usercode !== (string)filter_input(INPUT_COOKIE, 'usercode')){
 	die("error\n{$errormsg_4}");
 }
 
