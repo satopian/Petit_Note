@@ -94,13 +94,13 @@ config.phpに新規設定項目を追加しました。
 config.phpのどこでもいいので、下記設定項目を追加すると、この設定が有効になります。  
 設定項目が存在しない時は、これまでのバージョンと同じ動作になります。
 
-> //合言葉のログイン状態を維持する
-> // する: true しない: false
-> // する: true に設定すると合言葉のログイン状態を30日間維持します。
-> 
-> // $keep_aikotoba_login_status=true;
-> $keep_aikotoba_login_status=false;
-> 
+> //合言葉のログイン状態を維持する  
+> // する: true しない: false  
+> // する: true に設定すると合言葉のログイン状態を30日間維持します。  
+>   
+> // $keep_aikotoba_login_status=true;  
+> $keep_aikotoba_login_status=false;  
+>   
 
 
 ##  23/01/14 v0.55.0.2
