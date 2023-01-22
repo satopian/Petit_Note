@@ -9,9 +9,8 @@ function logout(){
 	if($resno){
 		return header('Location: ./?resno='.$resno);
 	}
-	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
-	$page= $page ? $page : filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$page = $page ? $page : 0;
+	$page=(int)filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
+	$page= $page ? $page : (int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 
 	return header('Location: ./?page='.$page);
 }
@@ -20,10 +19,9 @@ function logout_admin(){
 	session_sta();
 	unset($_SESSION['admindel']);
 	unset($_SESSION['adminpost']);
-	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-	$page = $page ? $page : 0;
-	$catalog=filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
-	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$catalog=(bool)filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
+	$resno=(int)filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);	
 	}
@@ -41,7 +39,7 @@ function aikotoba(){
 	check_same_origin();
 
 	session_sta();
-	if(!$aikotoba || $aikotoba!==filter_input(INPUT_POST,'aikotoba')){
+	if(!$aikotoba || $aikotoba!==(string)filter_input(INPUT_POST,'aikotoba')){
 		if(isset($_SESSION['aikotoba'])){
 			unset($_SESSION['aikotoba']);
 		} 
@@ -52,15 +50,14 @@ function aikotoba(){
 	}
 
 	$_SESSION['aikotoba']='aikotoba';
-	if(filter_input(INPUT_POST,'paintcom')){
+	if((bool)filter_input(INPUT_POST,'paintcom',FILTER_VALIDATE_BOOLEAN)){
 		return header('Location: ./?mode=paintcom');
 	}
-	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	$resno=(int)filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);
 	}
-	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-	$page = $page ? $page : 0;
+	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
 	return header('Location: ./?page='.$page);
 	
@@ -84,9 +81,9 @@ function admin_in(){
 
 	aikotoba_required_to_view();
 
-	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
-	$catalog=filter_input(INPUT_GET,'catalog',FILTER_VALIDATE_BOOLEAN);
+	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
+	$catalog=(bool)filter_input(INPUT_GET,'catalog',FILTER_VALIDATE_BOOLEAN);
 	$catalog=$catalog ? 'on' : '';
 	session_sta();
 	$admindel=admindel_valid();
@@ -123,15 +120,14 @@ function adminpost(){
 		return error($en?'password is wrong.':'パスワードが違います。');
 	}
 	session_regenerate_id(true);
-	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	
-	$page = isset($page) ? $page : 0;
-	$catalog=filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
+	$catalog=(bool)filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 
 	$_SESSION['aikotoba']='aikotoba';
 	$_SESSION['adminpost']=$second_pass;
 
-	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	$resno=(int)filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);
 	}
@@ -157,15 +153,14 @@ function admin_del(){
 		return error($en?'password is wrong.':'パスワードが違います。');
 	}
 	session_regenerate_id(true);
-	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-	$page = isset($page) ? $page : 0;
-	$catalog=filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
+	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$catalog=(bool)filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 
 	$_SESSION['aikotoba']='aikotoba';
 	
 	$_SESSION['admindel']=$second_pass;
 
-	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	$resno=(int)filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
 
 	if($resno){
 		return header('Location: ./?resno='.$resno);
@@ -181,10 +176,9 @@ function userdel_mode(){
 
 	session_sta();
 
-	$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$page = $page ? $page : 0;
+	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$_SESSION['userdel']='userdel_mode';
-	$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
+	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	if($resno){
 		return header('Location: ./?resno='.$resno);
 	}
@@ -214,15 +208,14 @@ function aikotoba_valid(){
 //センシティブコンテンツ
 function view_nsfw(){
 
-	$view=filter_input(INPUT_POST,'view_nsfw',FILTER_VALIDATE_BOOLEAN);
+	$view=(bool)filter_input(INPUT_POST,'view_nsfw',FILTER_VALIDATE_BOOLEAN);
 	if($view){
 		setcookie("nsfwc",'on',time()+(60*60*24*30),"","",false,true);
 	}
 
-	$page=filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
-	$page = isset($page) ? $page : 0;
-	$resno=filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
-	$catalogpage=filter_input(INPUT_POST,'catalogpage',FILTER_VALIDATE_INT);
+	$page=(int)filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
+	$resno=(int)filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	$catalogpage=(int)filter_input(INPUT_POST,'catalogpage',FILTER_VALIDATE_INT);
 	if($catalogpage){
 		return header('Location: ./?mode=catalog&page='.$catalogpage);
 	}
@@ -241,9 +234,8 @@ function check_cont_pass(){
 
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'time');//intの範囲外
-	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
-	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
-
+	$pwd=t((string)filter_input(INPUT_POST, 'pwd'));//パスワードを取得
+	$pwd=$pwd ? $pwd : t((string)filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 
 	if(is_file(LOG_DIR."$no.log")){
 		check_open_no($no);
@@ -552,7 +544,7 @@ function session_sta(){
 function check_same_origin(){
 	global $en;
 
-	$usercode = filter_input(INPUT_COOKIE, 'usercode');//user-codeを取得
+	$usercode = (string)filter_input(INPUT_COOKIE, 'usercode');//user-codeを取得
 
 	if(!$usercode){
 		return error($en?'Cookie check failed.':'Cookieが確認できません。');
@@ -876,7 +868,7 @@ global $en;
 
 if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
 if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
-if(!$url||!filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)||preg_match("/\A\s*\z/u",$url)) $url="";
+if(!$url||!(string)filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)||preg_match("/\A\s*\z/u",$url)) $url="";
 if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
 $sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 $com=str_replace(["\r\n","\r"],"\n",$com);

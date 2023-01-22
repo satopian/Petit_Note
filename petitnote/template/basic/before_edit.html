@@ -27,7 +27,7 @@
 		<?php if($postresno):?>
 		[<a href="./?mode=logout&resno=<?=h($postresno)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
 		<?php endif;?>
-		<?php if(!$postresno && ($postpage||$postpage===0)):?>
+		<?php if(!$postresno):?>
 		[<a href="./?mode=logout&page=<?=h($postpage)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
 		<?php endif;?>
 	</span>

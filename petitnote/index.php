@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.55.2';
-$petit_lot='lot.230116';
+$petit_ver='v0.55.3';
+$petit_lot='lot.230122';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -67,11 +67,10 @@ $use_chickenpaint=isset($use_chickenpaint) ? $use_chickenpaint : true;
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
-$page=filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-$page= $page ? $page : 0; 
-$resno=filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
+$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
-$usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
+$usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
 $userip = get_uip();
 //user-codeの発行
 if(!$usercode){//user-codeがなければ発行
@@ -102,7 +101,7 @@ switch($mode){
 	case 'to_continue':
 		return to_continue();
 	case 'contpaint':
-		$type = filter_input(INPUT_POST, 'type');
+		$type = (string)filter_input(INPUT_POST, 'type');
 		if($type==='rep') check_cont_pass();
 		return paint();
 	case 'picrep':
@@ -166,14 +165,14 @@ function post(){
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$resto = t((string)filter_input(INPUT_POST,'resto',FILTER_VALIDATE_INT));
 	$pwd=t((string)filter_input(INPUT_POST, 'pwd'));//パスワードを取得
-	$sage = $sage_all ? true : filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
-	$hide_thumbnail = $mark_sensitive_image ? filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
+	$sage = $sage_all ? true : (bool)filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
+	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
 	$check_elapsed_days=false;
 
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
 
-	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+	$pwd=$pwd ? $pwd : t((string)filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
 		srand();
 		$pwd = substr(md5(uniqid(rand(),true)),2,15);
@@ -200,13 +199,13 @@ function post(){
 	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
 
 	//お絵かきアップロード
-	$pictmp = filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
+	$pictmp = (int)filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
 	$painttime ='';
 	$pictmp2=false;
 	$tempfile='';
 	$picfile='';
 	if($pictmp===2){//ユーザーデータを調べる
-		list($picfile,) = explode(",",filter_input(INPUT_POST, 'picfile'));
+		list($picfile,) = explode(",",(string)filter_input(INPUT_POST, 'picfile'));
 		$picfile=basename($picfile);
 		$tempfile = TEMP_DIR.$picfile;
 		$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
@@ -714,8 +713,8 @@ function paint(){
 	check_same_origin();
 
 	$app = (string)filter_input(INPUT_POST,'app');
-	$picw = filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
-	$pich = filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
+	$picw = (int)filter_input(INPUT_POST,'picw',FILTER_VALIDATE_INT);
+	$pich = (int)filter_input(INPUT_POST,'pich',FILTER_VALIDATE_INT);
 	$resto = t((string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
 	if(strlen($resto)>1000){
 		return error($en?'Unknown error':'問題が発生しました。');
@@ -732,7 +731,7 @@ function paint(){
 	setcookie("picwc", $picw , time()+(60*60*24*30),"","",false,true);//幅
 	setcookie("pichc", $pich , time()+(60*60*24*30),"","",false,true);//高さ
 
-	$mode = filter_input(INPUT_POST, 'mode');
+	$mode = (string)filter_input(INPUT_POST, 'mode');
 
 	$imgfile='';
 	$pchfile='';
@@ -800,7 +799,7 @@ function paint(){
 		$imgfile = basename((string)filter_input(INPUT_POST,'imgfile'));
 		$ctype = (string)filter_input(INPUT_POST, 'ctype');
 		$type = (string)filter_input(INPUT_POST, 'type');
-		$no = filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
+		$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 		$time = basename((string)filter_input(INPUT_POST, 'time'));
 
 		if(($type!=='rep') && is_file(LOG_DIR."{$no}.log")){
@@ -811,7 +810,7 @@ function paint(){
 					continue;
 				}
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($line));
-				if($time===$time_ && (int)$no==$no_){
+				if($time===$time_ && $no===$no_){
 					$resto=(trim($oya_)==='res') ? $no_ : '';
 					break;
 				}
@@ -960,9 +959,9 @@ function paintcom(){
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
-	$namec = filter_input(INPUT_COOKIE,'namec');
-	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
-	$urlc=(string)filter_input(INPUT_COOKIE,'urlc');
+	$namec = (string)filter_input(INPUT_COOKIE,'namec');
+	$pwdc = (string)filter_input(INPUT_COOKIE,'pwdc');
+	$urlc = (string)filter_input(INPUT_COOKIE,'urlc');
 
 	// HTML出力
 	$templete='paint_com.html';
@@ -978,8 +977,7 @@ function to_continue(){
 	aikotoba_required_to_view();
 
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
-	$pwdc=filter_input(INPUT_COOKIE,'pwdc');
-
+	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_GET, 'id');//intの範囲外
@@ -1042,7 +1040,7 @@ function to_continue(){
 	$select_app= $select_app ? ($count_arr_apps>1) : false;
 	$app_to_use=($use_paint && !$select_app && !$app_to_use) ? $arr_apps[0]: $app_to_use;
 	// nsfw
-	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	// HTML出力
 	$templete='continue.html';
@@ -1496,17 +1494,14 @@ function confirmation_before_deletion ($edit_mode=''){
 	$admindel=admindel_valid();
 	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	$resmode = filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
+	$resmode = ((string)filter_input(INPUT_POST,'resmode')==='true');
 	$resmode = $resmode ? 'true' : 'false';
-	$postpage = filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-	$postresno = filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
-	$postpage = ($postpage || $postpage===0) ? $postpage : 0; 
-	$postresno = ($postresno) ? $postresno : false; 
+	$postpage = (int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$postresno = (int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
+	$postresno = $postresno ? $postresno : false; 
 
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
-
-
-	$edit_mode = filter_input(INPUT_POST,'edit_mode');
+	$edit_mode = (string)filter_input(INPUT_POST,'edit_mode');
 
 	if(!($admindel||$userdel)){
 		return error($en?'This operation has failed.':'失敗しました。');
@@ -1561,7 +1556,7 @@ function confirmation_before_deletion ($edit_mode=''){
 		$aikotoba=true;
 	}
 	// nsfw
-	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	if($edit_mode==='delmode'){
 		$templete='before_del.html';
@@ -1640,8 +1635,8 @@ function edit_form($id='',$no=''){
 
 	$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
-	$resno=filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
-	$page=filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$resno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
+	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
 	foreach($line as $i => $val){
 		$line[$i]=h($val);
@@ -1650,9 +1645,7 @@ function edit_form($id='',$no=''){
 
 	$com=h(str_replace('"\n"',"\n",$com));
 
-	$page = ($page||$page===0) ? $page : false; 
-	$resno = $resno ? $resno : false;
-	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	$hide_thumb_checkd = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 
@@ -1681,7 +1674,7 @@ function edit(){
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
-	$hide_thumbnail = $mark_sensitive_image ? filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
+	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
 	
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
@@ -1931,13 +1924,13 @@ function del(){
 	unset($_SESSION['userdel']);
 	$resno=(string)filter_input(INPUT_POST,'postresno');
 	//多重送信防止
-	if(filter_input(INPUT_POST,'resmode')==='true'){
+	if((string)filter_input(INPUT_POST,'resmode')==='true'){
 		if(!is_file(LOG_DIR.$resno.'.log')){
 			return header('Location: ./');
 		}
 		return header('Location: ./?resno='.$resno);
 	}
-	return header('Location: ./?page='.filter_input(INPUT_POST,'postpage'));
+	return header('Location: ./?page='.(int)filter_input(INPUT_POST,'postpage'));
 }
 
 //カタログ表示
@@ -1949,7 +1942,7 @@ function catalog($page=0,$q=''){
 
 	$pagedef=$catalog_pagedef;
 	
-	$q=filter_input(INPUT_GET,'q');
+	$q=(string)filter_input(INPUT_GET,'q');
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
 	$alllog_arr=[];
@@ -2032,7 +2025,7 @@ function catalog($page=0,$q=''){
 	}
 
 	//Cookie
-	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	//token
 	$token=get_csrf_token();
 
@@ -2124,7 +2117,7 @@ function view($page=0){
 	$appc=h((string)filter_input(INPUT_COOKIE,'appc'));
 	$picwc=h((string)filter_input(INPUT_COOKIE,'picwc'));
 	$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
-	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	//token
 	$token=get_csrf_token();
@@ -2258,7 +2251,7 @@ function res ($resno){
 	$appc=h((string)filter_input(INPUT_COOKIE,'appc'));
 	$picwc=h((string)filter_input(INPUT_COOKIE,'picwc'));
 	$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
-	$nsfwc=filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	$arr_apps=app_to_use();
 	$count_arr_apps=count($arr_apps);
