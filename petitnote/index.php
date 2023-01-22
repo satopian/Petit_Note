@@ -64,6 +64,8 @@ $aikotoba_required_to_view=isset($aikotoba_required_to_view) ? $aikotoba_require
 $keep_aikotoba_login_status=isset($keep_aikotoba_login_status) ? $keep_aikotoba_login_status : false;
 $use_paintbbs_neo=isset($use_paintbbs_neo) ? $use_paintbbs_neo : true;
 $use_chickenpaint=isset($use_chickenpaint) ? $use_chickenpaint : true;
+$max_file_size_in_png_format_paint = isset($max_file_size_in_png_format_paint) ? $max_file_size_in_png_format_paint : 1024;
+$max_file_size_in_png_format_upload = isset($max_file_size_in_png_format_upload) ? $max_file_size_in_png_format_upload : 800;
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
@@ -147,7 +149,7 @@ switch($mode){
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb,$mark_sensitive_image;
 	global $allow_comments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
-	global $usercode;
+	global $usercode,$max_file_size_in_png_format_upload,$max_file_size_in_png_format_paint;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -470,9 +472,9 @@ function post(){
 		}	
 		clearstatcache();
 		$filesize=filesize($upfile);
-		if(($filesize > 1024 * 1024) ||($is_upload && $filesize > 800 * 1024)){//指定サイズを超えていたら
+		if(($filesize > $max_file_size_in_png_format_paint * 1024) || ($is_upload && $filesize > $max_file_size_in_png_format_upload * 1024)){//指定サイズを超えていたら
 			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
-
+				clearstatcache();
 				if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
 					rename($im_jpg,$upfile);//JPEGで保存
 					chmod($upfile,0606);
@@ -1100,7 +1102,7 @@ function download_app_dat(){
 function img_replace(){
 
 	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image;
-	global $admin_pass;
+	global $admin_pass,$max_file_size_in_png_format_upload,$max_file_size_in_png_format_paint;
 
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
@@ -1292,11 +1294,11 @@ if(!is_file($upfile)){
 		$max_px=isset($max_px) ? $max_px : 1024;
 		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
 	}	
-
+	clearstatcache();
 	$filesize=filesize($upfile);
-	if(($filesize > 1024 * 1024) ||($is_upload && $filesize > 800 * 1024)){//指定サイズを超えていたら
+	if(($filesize > $max_file_size_in_png_format_paint * 1024) || ($is_upload && $filesize > $max_file_size_in_png_format_upload * 1024)){//指定サイズを超えていたら
 		if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
-
+			clearstatcache();
 			if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
 				rename($im_jpg,$upfile);//JPEGで保存
 				chmod($upfile,0606);
