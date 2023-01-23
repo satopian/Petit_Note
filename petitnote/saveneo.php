@@ -70,8 +70,9 @@ if($sendheader){
 	$stime = isset($u['stime']) ? $u['stime'] : '';
 	$count = isset($u['count']) ? $u['count'] : 0;
 	$timer = isset($u['timer']) ? ($u['timer']/1000) : 0;
+	$hide_animation = isset($u['hide_animation']) ? $u['hide_animation'] : '';
 	//usercode 差し換え認識コード 描画開始 完了時間 レス先 を追加
-	$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool";
+	$userdata .= "\t$usercode\t$repcode\t$stime\t$time\t$resto\t$tool\t$hide_animation";
 }
 $userdata .= "\n";
 
