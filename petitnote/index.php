@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.56.0';
+$petit_ver='v0.56.1';
 $petit_lot='lot.230123';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -220,10 +220,11 @@ function post(){
 		$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
 		$userdata = fread($fp, 1024);
 		fclose($fp);
-		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t\t");
+		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t");
 		if(($ucode != $usercode) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
 		$tool= in_array($tool,['neo','chi','klecks']) ? $tool : '???';
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
+		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
 		check_open_no($resto);
 		$resto=(string)$resto;//(string)厳密な型
@@ -798,6 +799,7 @@ function paint(){
 		}
 	}
 	$repcode='';
+	$hide_animation=false;
 	if($mode==="contpaint"){
 
 		$imgfile = basename((string)filter_input(INPUT_POST,'imgfile'));
@@ -843,6 +845,8 @@ function paint(){
 				$img_klecks =IMG_DIR.$time.'.psd';
 			}
 		}
+		$hide_animation = (bool)filter_input(INPUT_POST,'hide_animation',FILTER_VALIDATE_BOOLEAN);
+		$hide_animation = $hide_animation ? 'true' : 'false';
 		if($type==='rep'){//画像差し換え
 			$rep=true;
 			$pwd = t((string)filter_input(INPUT_POST, 'pwd'));
@@ -925,24 +929,28 @@ function paintcom(){
 	$uresto = '';
 	$handle = opendir(TEMP_DIR);
 	$tmps = [];
+	$hide_animation=false;
 	while ($file = readdir($handle)) {
 		if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
 			$file=basename($file);
 			$fp = fopen(TEMP_DIR.$file, "r");
 			$userdata = fread($fp, 1024);
 			fclose($fp);
-			list($uip,$uhost,$uagent,$imgext,$ucode,,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t\t");
+			list($uip,$uhost,$uagent,$imgext,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t");
+			$hide_animation=($u_hide_animation==='true');
 			$imgext=basename($imgext);
 			$file_name = pathinfo($file, PATHINFO_FILENAME);
 			$uresto = $uresto ? 'res' :''; 
 			if(is_file(TEMP_DIR.$file_name.$imgext)){ //画像があればリストに追加
 				$pchext = check_pch_ext(TEMP_DIR . $file_name);
+				$pchext = !$hide_animation ? $pchext : ''; 
 				if($ucode === $usercode||($uip && ($uip === $userip))){
 					$tmps[$file_name] = [$file_name.$imgext,$uresto,$pchext];
 				}
 			}
 		}
 	}
+
 	closedir($handle);
 
 	if(!empty($tmps)){
@@ -1013,7 +1021,12 @@ function to_continue(){
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
 	$picfile = $thumbnail ? THUMB_DIR.$time.'s.jpg' : IMG_DIR.$imgfile;
 
+	
+	$pch_exists = in_array($_pchext,['hide_animation','.pch']);
+	$hide_animation_checkd = ($_pchext==='hide_animation');
+
 	$pchext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
+
 	$pchext=basename($pchext);
 	$select_app = false;
 	$app_to_use = false;
@@ -1163,6 +1176,7 @@ function img_replace(){
 	$starttime='';
 	$postedtime='';
 	$repfind=false;
+	$hide_animation=false;
 	if(!$is_upload){
 		/*--- テンポラリ捜査 ---*/
 		$handle = opendir(TEMP_DIR);
@@ -1172,7 +1186,9 @@ function img_replace(){
 				$fp = fopen(TEMP_DIR.$file, "r");
 				$userdata = fread($fp, 1024);
 				fclose($fp);
-				list($uip,$uhost,$uagent,$imgext,$ucode,$urepcode,$starttime,$postedtime,$uresto,$tool) = explode("\t", rtrim($userdata)."\t");//区切りの"\t"を行末に
+				list($uip,$uhost,$uagent,$imgext,$ucode,$urepcode,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t");//区切りの"\t"を行末に
+				$hide_animation = ($u_hide_animation==='true');
+			
 				$tool= in_array($tool,['neo','chi','klecks']) ? $tool : '???';
 				$file_name = pathinfo($file, PATHINFO_FILENAME );//拡張子除去
 				//画像があり、認識コードがhitすれば抜ける
@@ -1388,7 +1404,9 @@ if(!is_file($upfile)){
 				chmod($dst, 0606);
 		}
 	}
-	$pchext= ($pchext==='.pch' && $_pchext==='hide_animation') ? 'hide_animation' : $pchext; 
+	if(in_array($_pchext,['.pch','hide_animation'])){
+		$pchext= !$hide_animation ?  '.pch' : 'hide_animation'; 
+	}
 
 	list($w,$h)=getimagesize(IMG_DIR.$imgfile);
 
