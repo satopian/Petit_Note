@@ -25,9 +25,9 @@
 				document.getElementById('paintcom_sage').style.display = "none";
 			}
 			if(csvArray[2] == '.pch'){
-			document.getElementById('paintcom_not_replay').style.display = "";
+			document.getElementById('paintcom_hide_animation').style.display = "";
 			}else{
-				document.getElementById('paintcom_not_replay').style.display = "none";
+				document.getElementById('paintcom_hide_animation').style.display = "none";
 			}
 		}
 	}
@@ -101,8 +101,8 @@
 				<?php endforeach;?>
 			</select>
 
-	<span id="paintcom_not_replay">
-		<input type="checkbox" name="not_replay" value="on" id="not_replay"><label for="not_replay">動画を表示しない</label>	
+	<span id="paintcom_hide_animation">
+		<input type="checkbox" name="hide_animation" value="on" id="hide_animation"><label for="hide_animation">動画を表示しない</label>	
 	</span>	
 			<br>
 		</div>

@@ -169,7 +169,7 @@ function post(){
 	$pwd=t((string)filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$sage = $sage_all ? true : (bool)filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
 	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
-	$not_replay=(bool)filter_input(INPUT_POST,'	',FILTER_VALIDATE_BOOLEAN);
+	$hide_animation=(bool)filter_input(INPUT_POST,'hide_animation',FILTER_VALIDATE_BOOLEAN);
 	$check_elapsed_days=false;
 
 	//NGワードがあれば拒絶
@@ -538,7 +538,7 @@ function post(){
 				chmod($dst,0606);
 		}
 	}
-	$pchext= ($pchext==='.pch' && $not_replay) ? 'not_replay' : $pchext; 
+	$pchext= ($pchext==='.pch' && $hide_animation) ? 'hide_animation' : $pchext; 
 
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
@@ -1388,7 +1388,7 @@ if(!is_file($upfile)){
 				chmod($dst, 0606);
 		}
 	}
-	$pchext= ($pchext==='.pch' && $_pchext==='not_replay') ? 'not_replay' : $pchext; 
+	$pchext= ($pchext==='.pch' && $_pchext==='hide_animation') ? 'hide_animation' : $pchext; 
 
 	list($w,$h)=getimagesize(IMG_DIR.$imgfile);
 
@@ -1676,8 +1676,8 @@ function edit_form($id='',$no=''){
 
 	$com=h(str_replace('"\n"',"\n",$com));
 
-	$pch_exists = in_array($pchext,['not_replay','.pch']);
-	$not_replay_checkd = ($pchext==='not_replay');
+	$pch_exists = in_array($pchext,['hide_animation','.pch']);
+	$hide_animation_checkd = ($pchext==='hide_animation');
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	$hide_thumb_checkd = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
@@ -1708,7 +1708,7 @@ function edit(){
 	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
-	$not_replay=(bool)filter_input(INPUT_POST,'not_replay',FILTER_VALIDATE_BOOLEAN);
+	$hide_animation=(bool)filter_input(INPUT_POST,'hide_animation',FILTER_VALIDATE_BOOLEAN);
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
@@ -1788,8 +1788,8 @@ function edit(){
 	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
 	$thumbnail =  $mark_sensitive_image ? $hide_thumbnail.$thumbnail : $_thumbnail;
 
-	if(in_array($_pchext,['.pch','not_replay'])){
-		$pchext= $not_replay ? 'not_replay' : '.pch'; 
+	if(in_array($_pchext,['.pch','hide_animation'])){
+		$pchext= $hide_animation ? 'hide_animation' : '.pch'; 
 	}
 
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
