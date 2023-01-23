@@ -69,6 +69,11 @@
 		<?php endif;?> 
 	</div>
 		<?php if($res['img']):?>
+				<?php if($res['anime']):?>
+				<div class="imginfo_wrap">
+				<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>&no=<?=h($res['no'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
+				</div>
+				<?php endif;?>
 
 			<div class="posted_image" <?php if($res['_w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
 				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">

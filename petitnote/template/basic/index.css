@@ -102,6 +102,11 @@ input.form_button {
 input.pchup_button {
     margin: 0 0 10px;
 }
+/* お絵かきコメント */
+span#paintcom_hide_animation {
+    display: inline-block;
+    margin: 10px 0 0;
+}
 
 /* 投稿者名から検索文字列にリンク */
 

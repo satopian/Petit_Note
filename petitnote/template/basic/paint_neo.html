@@ -34,7 +34,7 @@ return;
 		}
 	}
 
-	console.log(isPinchZooming ());
+	
 
 	function neo_disable_touch_move (e) {//NEOの網目でスワイプしない
 		let screenwidth = Number(screen.width);
@@ -162,6 +162,9 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <?php endif;?>
 <param name="send_header" value="usercode=<?=h($usercode)?>&stime=<?=time();?>&tool=<?=h($tool)?>
 <?php if($resto):?>&resto=<?=h($resto)?><?php endif;?>
+<?php if($hide_animation):?>
+&hide_animation=<?=h($hide_animation)?>
+<?php endif;?>
 <?php if($rep):?>
 &repcode=<?=h($repcode)?>
 <?php endif;?>

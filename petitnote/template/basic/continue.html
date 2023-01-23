@@ -55,15 +55,20 @@
    <option value="pch"><?php if($en):?>from animation<?php else:?>動画から続きを描く<?php endif;?></option>
    <?php endif;?>
    <option value="img"><?php if($en):?>from picture<?php else:?>画像から続きを描く<?php endif;?></option>
- </select>
- <span class="continue_menu">
- <?php if($en):?>The image is a<?php else:?>画像は<?php endif;?> <select name="type" class="paint_select">
-<option value="rep"><?php if($en):?>replace<?php else:?>差し換え<?php endif;?></option>
-<?php if(!$use_diary || $adminpost):?>
-<option value="new"><?php if($en):?>new post<?php else:?>新規投稿<?php endif;?></option>
-<?php endif;?>
 </select>
-  </span>
+<span class="continue_menu">
+<?php if($en):?>The image is a<?php else:?>画像は<?php endif;?> <select name="type" class="paint_select">
+<option value="rep"><?php if($en):?>replace<?php else:?>差し換え<?php endif;?></option>
+	<?php if(!$use_diary || $adminpost):?>
+		<option value="new"><?php if($en):?>new post<?php else:?>新規投稿<?php endif;?></option>
+	<?php endif;?>
+</select>
+</span>
+<span class="continue_menu">
+<?php if($pch_exists):?>
+<input type="checkbox" name="hide_animation" id="hide_animation" value="on" <?php if($hide_animation_checkd):?>checked="checked"<?php endif;?>><label for="hide_animation"><?php if($en):?>Hide Animation<?php else:?>動画を表示しない<?php endif;?></label>	
+<?php endif;?>
+</span>
  <br>
 
 <?php if($select_app):?>
