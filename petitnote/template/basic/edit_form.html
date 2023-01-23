@@ -114,6 +114,9 @@
 <input type="hidden" name="no" value="<?=h($no)?>">
 <input type="hidden" name="mode" value="edit">
 <input type="hidden" name="token" value="<?=h($token)?>">
+<?php if($pch_exists):?>
+<input type="checkbox" name="not_replay" id="not_replay" <?php if($not_replay_checkd):?>checked="checked"<?php endif;?>><label for="not_replay">動画を表示しない</label>	
+<?php endif;?>
 <?php if($imgfile && $mark_sensitive_image):?>
 <input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" <?php if($hide_thumb_checkd):?>checked="checked"<?php endif;?>><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
 <?php endif;?>

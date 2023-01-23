@@ -169,6 +169,7 @@ function post(){
 	$pwd=t((string)filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$sage = $sage_all ? true : (bool)filter_input(INPUT_POST,'sage',FILTER_VALIDATE_BOOLEAN);
 	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
+	$not_replay=(bool)filter_input(INPUT_POST,'	',FILTER_VALIDATE_BOOLEAN);
 	$check_elapsed_days=false;
 
 	//NGワードがあれば拒絶
@@ -537,6 +538,7 @@ function post(){
 				chmod($dst,0606);
 		}
 	}
+	$pchext= ($pchext==='.pch' && $not_replay) ? 'not_replay' : $pchext; 
 
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
@@ -934,8 +936,9 @@ function paintcom(){
 			$file_name = pathinfo($file, PATHINFO_FILENAME);
 			$uresto = $uresto ? 'res' :''; 
 			if(is_file(TEMP_DIR.$file_name.$imgext)){ //画像があればリストに追加
+				$pchext = check_pch_ext(TEMP_DIR . $file_name);
 				if($ucode === $usercode||($uip && ($uip === $userip))){
-					$tmps[$file_name] = [$file_name.$imgext,$uresto];
+					$tmps[$file_name] = [$file_name.$imgext,$uresto,$pchext];
 				}
 			}
 		}
@@ -946,13 +949,14 @@ function paintcom(){
 		$pictmp = 2;
 		ksort($tmps);
 		foreach($tmps as $tmp){
-			list($tmpfile,$resto)=$tmp;
+			list($tmpfile,$resto,$pchext)=$tmp;
+			$tmpfile=basename($tmpfile);
 			list($w,$h)=getimagesize(TEMP_DIR.$tmpfile);
 			$tmp_img['w']=$w;
 			$tmp_img['h']=$h;
 			$tmp_img['src'] = TEMP_DIR.$tmpfile;
 			$tmp_img['srcname'] = $tmpfile;
-			$tmp_img['slect_src_val'] = $tmpfile.','.$resto;
+			$tmp_img['slect_src_val'] = $tmpfile.','.$resto.','.$pchext;
 			$tmp_img['date'] = date("Y/m/d H:i", filemtime($tmp_img['src']));
 			$out['tmp'][] = $tmp_img;
 		}
@@ -993,7 +997,7 @@ function to_continue(){
 			if(!trim($line)){
 				continue;
 			}
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id===$time && $no===$_no){
 				$flag=true;
 				break;
@@ -1009,17 +1013,18 @@ function to_continue(){
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
 	$picfile = $thumbnail ? THUMB_DIR.$time.'s.jpg' : IMG_DIR.$imgfile;
 
+	$pchext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
+	$pchext=basename($pchext);
 	$select_app = false;
 	$app_to_use = false;
 	$ctype_pch = false;
 	$download_app_dat=true;
-	if(($pchext==='.pch')&&is_file(IMG_DIR.$time.'.pch')){
+	if($pchext==='.pch'){
 		$ctype_pch = true;
 		$app_to_use = "neo";
-		
-	}elseif(($pchext==='.chi')&&is_file(IMG_DIR.$time.'.chi')){
+	}elseif($pchext==='.chi'){
 		$app_to_use = 'chi';
-	}elseif(($pchext==='.psd')&&is_file(IMG_DIR.$time.'.psd')){
+	}elseif($pchext==='.psd'){
 		$app_to_use = 'klecks';
 	}else{
 		$select_app = true;
@@ -1073,7 +1078,7 @@ function download_app_dat(){
 		if(!trim($line)){
 			continue;
 		}
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 		if($id===$time && $no===$_no){
 			if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
 				return error($en?'Password is incorrect.':'パスワードが違います。');
@@ -1084,10 +1089,12 @@ function download_app_dat(){
 		} 
 	}
 	closeFile ($rp);
+	
 	$time=basename($time);
+	$pchext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
 	$pchext=basename($pchext);
-	$filepath= ($flag && is_file(IMG_DIR.$time.$pchext)) ? IMG_DIR.$time.$pchext : '';
-	if(!$filepath){
+	$filepath= IMG_DIR.$time.$pchext;
+	if(!$pchext){
 		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	$mime_type = mime_content_type($filepath);
@@ -1381,6 +1388,8 @@ if(!is_file($upfile)){
 				chmod($dst, 0606);
 		}
 	}
+	$pchext= ($pchext==='.pch' && $_pchext==='not_replay') ? 'not_replay' : $pchext; 
+
 	list($w,$h)=getimagesize(IMG_DIR.$imgfile);
 
 	//縮小表示 
@@ -1471,16 +1480,36 @@ function pchview(){
 
 	$imagefile = basename((string)filter_input(INPUT_GET, 'imagefile'));
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
-	$pch = pathinfo($imagefile, PATHINFO_FILENAME);
-	$pchext = check_pch_ext(IMG_DIR . $pch);
-	if(!$pchext||!is_file(IMG_DIR.$imagefile)){
+	$id = pathinfo($imagefile, PATHINFO_FILENAME);
+	check_open_no($no);
+	if(!is_file(LOG_DIR."{$no}.log")){
+		return error($en? 'The article does not exist.':'記事がありません。');
+	}
+	$rp=fopen(LOG_DIR."{$no}.log","r");
+	$flag=false;
+	while ($line = fgets($rp)) {
+		if(!trim($line)){
+			continue;
+		}
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+		if($id===$time && $no===$_no){
+			$flag=true;
+			break;
+		} 
+	}
+	closeFile ($rp);
+
+	$pchext=basename($pchext);
+
+	$view_replay = ($pchext==='.pch') && check_pch_ext(IMG_DIR . $time) ;
+	if(!$view_replay||!is_file(IMG_DIR.$imagefile)){
 		return error('ファイルがありません。');
 	}
-	$pchfile = IMG_DIR.$pch.$pchext;
+	$pch=$time;
+	$pchfile = IMG_DIR.$time.$pchext;
 	list($picw, $pich) = getimagesize(IMG_DIR.$imagefile);
 	$appw = $picw < 200 ? 200 : $picw;
 	$apph = $pich < 200 ? 200 : $pich + 26;
-
 	// HTML出力
 	$templete='pch_view.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -1647,6 +1676,8 @@ function edit_form($id='',$no=''){
 
 	$com=h(str_replace('"\n"',"\n",$com));
 
+	$pch_exists = in_array($pchext,['not_replay','.pch']);
+	$not_replay_checkd = ($pchext==='not_replay');
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	$hide_thumb_checkd = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
@@ -1677,7 +1708,7 @@ function edit(){
 	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
-	
+	$not_replay=(bool)filter_input(INPUT_POST,'not_replay',FILTER_VALIDATE_BOOLEAN);
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
@@ -1757,16 +1788,20 @@ function edit(){
 	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
 	$thumbnail =  $mark_sensitive_image ? $hide_thumbnail.$thumbnail : $_thumbnail;
 
+	if(in_array($_pchext,['.pch','not_replay'])){
+		$pchext= $not_replay ? 'not_replay' : '.pch'; 
+	}
+
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 
-	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
+	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 	
 	$r_arr[$i] = $r_line;
 
 	if($_oya==='oya'){
 	//コメントを120バイトに短縮
 	$strcut_com=mb_strcut($com,0,120);
-	$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$_pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
+	$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
 
 		$alllog_arr=[];
 		while ($_line = fgets($fp)) {
