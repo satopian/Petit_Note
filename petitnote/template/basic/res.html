@@ -279,7 +279,7 @@
 <br>
 <?php if($mark_sensitive_image):?>
 <span>
-<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする
+<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする
 	<?php endif;?>
 </label>
 </span>
@@ -287,7 +287,7 @@
 <?php endif;?>
 <?php if(!$sage_all):?>
 	<span>
-	<input type="checkbox" name="sage" value="on" id="sage"><label for="sage">sage</label>
+	<input type="checkbox" name="sage" id="sage" value="on"><label for="sage">sage</label>
 	</span>
 <?php endif;?>
 <input type="submit" value="<?php if($en):?>Reply<?php else:?>返信<?php endif;?>" class="form_button">

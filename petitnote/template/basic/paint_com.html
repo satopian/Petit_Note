@@ -102,7 +102,7 @@
 			</select>
 
 	<span id="paintcom_hide_animation">
-		<input type="checkbox" name="hide_animation" value="on" id="hide_animation"><label for="hide_animation">動画を表示しない</label>	
+		<input type="checkbox" name="hide_animation" id="hide_animation" value="on"><label for="hide_animation"><?php if($en):?>Hide Animation<?php else:?>動画を表示しない<?php endif;?></label>	
 	</span>	
 			<br>
 		</div>
@@ -110,12 +110,12 @@
 	
 	<?php if(!$sage_all):?>
 	<span id="paintcom_sage">
-	<input type="checkbox" name="sage" value="on" id="sage"><label for="sage">sage</label>	
+	<input type="checkbox" name="sage" id="sage" value="on"><label for="sage">sage</label>	
 	</span>
 	<?php endif;?>
 	<?php if($mark_sensitive_image):?>
 	<span>
-	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
+	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
 	</span>
 	<?php endif;?>
 </form>
