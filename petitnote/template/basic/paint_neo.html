@@ -48,12 +48,12 @@ return;
 	}
 
 	function neo_add_disable_touch_move() {
-		document.querySelector('#NEO').addEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
+		document.getElementById('NEO').addEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
 	}
 	document.addEventListener('touchmove', function(e) {
 		neo_add_disable_touch_move()
 		if(isPinchZooming ()){//ピンチズーム使用時はNEOの網目でスワイプする
-			document.querySelector('#NEO').removeEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
+			document.getElementById('NEO').removeEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
 		}
 	});
 	window.addEventListener('DOMContentLoaded',neo_add_disable_touch_move,false);
