@@ -81,6 +81,71 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
 
+##  23/01/20 v0.56.3
+
+### PNG形式で投稿できるファイルサイズの上限をconfig.phpで設定できるようになりました。  
+これまでは、アップロード画像は800kb、お絵かきアプレットからの投稿は1MB以上の時はJPEGへの変換を試行して、
+JPEGに変換したあとの画像のほうが小さくなる時だけ、JPEGに変換していました。  
+しかしながら、比較的ファイルサイズが大きな場合でもPNG形式で保存したい。  
+逆にJPEGで保存したいという要望に応えるため、PNG形式のまま投稿可能なファイルサイズの上限を設定できるようにしました。  
+
+> //アップロード時にpng形式で保存する最大ファイルサイズ
+> // このファイルサイズを超える時はJPEGに変換(単位kb)
+> $max_file_size_in_png_format_upload = 800;
+> 
+> // ペイント時にpng形式で保存する最大ファイルサイズ
+> // このファイルサイズを超える時はJPEGに変換(単位kb)
+> $max_file_size_in_png_format_paint = 1024;
+> 
+
+この設定項目の数値が小さいほどPNG画像がJPEGに変換されやすくなります。    
+この設定項目の数値が大きければPNG画像がJPEGに変換されなくなります。   
+
+### PaintBBS NEOの動画ファイルを表示するしないを投稿者が選択できるようになりました  
+
+![image](https://user-images.githubusercontent.com/44894014/214510060-230c8ac9-c6d4-4a94-994a-12384a7bfffd.png)  
+↑  
+お絵かきコメントの時に｢動画を表示しない｣を選択すると、動画のリンクがでません。  
+また動画のURLを呼び出してもエラーになります。  
+
+![image](https://user-images.githubusercontent.com/44894014/214510437-dbda3098-a310-480a-acd4-adc91c931ebd.png)  
+↑  
+編集画面で、｢動画を表示しない｣のチェックを外すと、動画が表示されるようになります。  
+編集画面で、｢動画を表示しない｣にチェックをいれると、動画が表示されなくなります。  
+
+![image](https://user-images.githubusercontent.com/44894014/214510255-6b2785dc-9f88-4fc7-871c-afd56decee80.png)  
+↑  
+｢続きを描く｣画面で｢動画を表示しない｣を選択すると、｢差し換え｣でも｢新規投稿でも｣動画のリンクがでなくなります。  
+
+PaintBBS NEOの動画は描いた手順を記録しているだけでなく、レイヤー情報も保存しているため続きを描く時に必要になります。  
+そのため、｢動画を保存しない｣というオプションはPetit Noteでは採用していません。  
+しかし、どうしても動画を完全にサーバから消してしまいたい時もあるかもしれません。  
+その場合は、｢動画から続きを描く｣となっている箇所を｢画像から続きを描く｣に変更して描くと、これまで記録されていた動画ファイルが削除されます。  
+
+### PaintBBS NEOでコピー、レイヤー結合などキャンバス周辺を含む操作で画面が上下に動かないようにする工夫
+
+コピーやレイヤー結合などの時にキャンバス周辺の紫の網目のところをスワイプしても画面が上下に動かなくする工夫を行っていましたが、その事が原因でモバイル端末で操作不能になるケースもありました。  
+今回の更新で、開いたキャンバスサイズと端末の横幅に余裕がある時だけ、NEOのキャンバスの周囲の網目のところでスワイプしない形に変更になりました。  
+NEOの網目のところをつかんでスクロールできるようにしておかなければ操作不能になるからです。  
+キャンバスサイズと比較して、端末の横幅に余裕がある時は、NEOの網目のところをつかんでもスクロールしなくなります。  
+コピーやレイヤー結合、Bz曲線の操作の時に画面が上下に動いてしまうからです。  
+
+また、ピンチズームで拡大している時も網目のところをつかんでスクロールできるようになりました。  
+操作不能になるのを回避するためです。  
+これらは、NEOのペイント画面のインラインのJavaScriptで実装していますので、ペイント画面のテンプレートの更新が必要です。 
+  
+![230124_001_NEO_issue](https://user-images.githubusercontent.com/44894014/214514745-a61a60f5-f51a-43fd-9cd1-8c5aa4498b12.gif)  
+
+### Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true
+
+Chromeに上記の警告が表示されるようになったため、PaintBBS NEOを独自に修正しました。  
+[HTMLCanvasElement.getContext() - Web APIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext)
+
+> willReadFrequently
+> 多くのリードバック操作が計画されているかどうかを示すブール値。[getImageData()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData) これにより、(ハードウェア アクセラレーションではなく) ソフトウェア 2D キャンバスの使用が強制され、頻繁 に呼び出すときにメモリを節約できます。
+> 
+
+
 ##  23/01/19 v0.55.2
 ### バグ修正
 - 新方式のPaintBBS NEOのデータを受信する`saveneo.php`に大きなバグが見つかりました。
