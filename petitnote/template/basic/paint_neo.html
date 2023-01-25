@@ -34,8 +34,6 @@ return;
 		}
 	}
 
-	
-
 	function neo_disable_touch_move (e) {//NEOの網目でスワイプしない
 		let screenwidth = Number(screen.width);
 		let appw = Number(<?=h($appw)?>);
@@ -51,7 +49,7 @@ return;
 		document.getElementById('NEO').addEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
 	}
 	document.addEventListener('touchmove', function(e) {
-		neo_add_disable_touch_move()
+		neo_add_disable_touch_move();
 		if(isPinchZooming ()){//ピンチズーム使用時はNEOの網目でスワイプする
 			document.getElementById('NEO').removeEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
 		}
