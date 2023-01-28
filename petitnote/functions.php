@@ -815,7 +815,7 @@ function calc_remaining_time_to_close_thread ($sec) {
 
 	if($en){
 			if($D){
-				return $D.'days ';
+				return $D.'days';
 			}
 			return  (int)$H.'hours';
 	}
