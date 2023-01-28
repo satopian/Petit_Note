@@ -178,8 +178,27 @@
 	<?php endforeach;?>
 <!-- 返信フォーム -->
 <div class="clear"></div>
-
 <?php if($aikotoba && (!$userdel && !$admindel)):?>
+<!-- 返信可能な数の表示 -->
+<div class="res_notice_wrap">
+<?php $maxres_current=(int)$max_res-(int)$i;?>
+<?php if(($maxres_current<=20) && !$adminpost && $resform):?>
+	<hr>
+		<?php if($en):?>
+			You can reply <?=h($maxres_current)?> more times to this thread.
+		<?php else:?>
+			あと<?=h($maxres_current)?>件返信できます。
+		<?php endif;?>
+<?php endif;?>
+<?php if($ress[0]['time_left_to_close_the_thread']&& !$adminpost && $resform):?>
+	<hr>
+		<?php if($en):?>
+			This thread will be closed after <?=h($ress[0]['time_left_to_close_the_thread'])?>.
+		<?php else:?>
+			このスレッドは<?=h($ress[0]['time_left_to_close_the_thread'])?>後に閉じられます。
+	<?php endif;?>
+<?php endif;?>
+</div>
 <?php if($use_sns_button):?>
 <div class="res_button_wrap">
 	<?php if($resform && $resname):?>

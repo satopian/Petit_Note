@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230125;
+$functions_ver=20230128;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -257,9 +257,10 @@ function check_cont_pass(){
 }
 
 //ログ出力の前処理 行から情報を取り出す
-function create_res($line){
+function create_res($line,$options=[]){
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+	$isset_catalog = isset($options['catalog']) ? true : false;
 	$res=[];
 
 	$continue = true;
@@ -300,14 +301,14 @@ function create_res($line){
 
 	$thumbnail = ($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail') ? $time.'s.jpg' : false; 
 	$link_thumbnail= ($thumbnail || $hide_thumbnail);  
-	$painttime = is_numeric($painttime) ? calcPtime($painttime) : false;  
+	$painttime = (!$isset_catalog && is_numeric($painttime)) ? calcPtime($painttime) : false;  
 	$_time=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 	$first_posted_time=(strlen($first_posted_time)>15) ? substr($first_posted_time,0,-6) : substr($first_posted_time,0,-3);
 	$datetime = $do_not_change_posts_time ? $first_posted_time : $_time;
 	$date=$datetime ? date('y/m/d',(int)$datetime):'';
 
-	$check_elapsed_days = check_elapsed_days($time);
-
+	$check_elapsed_days = !$isset_catalog ? check_elapsed_days($time) : true;//念のためtrueに
+	$time_left_to_close_the_thread = (!$isset_catalog && ($oya==='oya')) ? time_left_to_close_the_thread($time) : false;
 	$verified = ($verified==='adminpost');
 	$three_point_sub=(mb_strlen($sub)>15) ? '…' :'';
 
@@ -318,7 +319,7 @@ function create_res($line){
 		'name' => $name,
 		'verified' => $verified,
 		'com' => $com,
-		'descriptioncom' => $com ? s(mb_strcut(str_replace('"\n"'," ",$com),0,300)) : '',
+		'descriptioncom' => (!$isset_catalog && ($oya==='oya') && $com) ? s(mb_strcut(str_replace('"\n"'," ",$com),0,300)) : '',
 		'url' => $url ? filter_var($url,FILTER_VALIDATE_URL) : '',
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail,
@@ -337,6 +338,7 @@ function create_res($line){
 		'host' => $host,
 		'userid' => $userid,
 		'check_elapsed_days' => $check_elapsed_days,
+		'time_left_to_close_the_thread' => $time_left_to_close_the_thread,
 		'encoded_boardname' => urlencode($boardname),
 		'encoded_name' => urlencode($name),
 		'encoded_no' => urlencode('['.$no.']'),
@@ -348,7 +350,7 @@ function create_res($line){
 		'link_thumbnail' => $link_thumbnail, //サムネイルにリンクがある時
 	];
 
-	$res['com']=str_replace('"\n"',"\n",$res['com']);
+	$res['com']= !$isset_catalog ? str_replace('"\n"',"\n",$res['com']) :'';
 
 	foreach($res as $key=>$val){
 		$res[$key]=h($val);
@@ -800,6 +802,29 @@ function calcPtime ($psec) {
 			. ($M ? $M.'分' : '')
 			. ($S ? $S.'秒' : '');
 }
+/**
+ * 残り時間を計算
+ * @param $starttime
+ * @return string
+ */
+function calc_remaining_time_to_close_thread ($sec) {
+	global $en;
+
+	$D = floor($sec / 86400);
+	$H = floor($sec % 86400 / 3600);
+
+	if($en){
+			if($D){
+				return $D.'days ';
+			}
+			return  (int)$H.'hours';
+	}
+
+	if($D){
+		return $D.'日';
+	}
+		return (int)$H.'時間';
+}
 
 /**
  * pchかchiかpsdか、それともファイルが存在しないかチェック
@@ -862,6 +887,18 @@ function check_elapsed_days ($postedtime) {
 		? ((time() - (int)$postedtime) <= ((int)$elapsed_days * 86400)) // 指定日数以内なら許可
 		: true; // フォームを閉じる日数が未設定なら許可
 }
+// スレッドを閉じるまでの残り時間
+function time_left_to_close_the_thread ($postedtime) {
+	global $elapsed_days;
+	if(!$elapsed_days){
+		return false;
+	}
+	$postedtime=(strlen($postedtime)>15) ? substr($postedtime,0,-6) : substr($postedtime,0,-3);
+	$timeleft=((int)$elapsed_days * 86400)-(time() - (int)$postedtime);
+	//残り時間が60日を切ったら表示
+	return ($timeleft<(60 * 86400)) ? 
+	calc_remaining_time_to_close_thread(((int)$elapsed_days * 86400)-(time() - (int)$postedtime)) : false;
+}	
 //POSTされた値をログファイルに格納する書式にフォーマット
 function create_formatted_text_from_post($name,$sub,$url,$com){
 global $en;

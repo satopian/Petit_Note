@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.56.3';
-$petit_lot='lot.230125';
+$petit_ver='v0.56.5';
+$petit_lot='lot.230128';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -17,7 +17,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230125){
+if(!isset($functions_ver)||$functions_ver<20230128){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -2057,7 +2057,7 @@ function catalog($page=0,$q=''){
 		if(!is_file(LOG_DIR."{$_no}.log")){
 		continue;
 		}	
-		$out[$oya][] = create_res($line);//$lineから、情報を取り出す
+		$out[$oya][] = create_res($line,['catalog'=>true]);//$lineから、情報を取り出す
 		if(empty($out[$oya])){
 			unset($out[$oya]);
 		}
@@ -2264,8 +2264,8 @@ function res ($resno){
 	}
 	$next=isset($articles[$i+1])? rtrim($articles[$i+1]) :'';
 	$prev=isset($articles[$i-1])? rtrim($articles[$i-1]) :'';
-	$next=$next ? (create_res(explode("\t",trim($next)))):[];
-	$prev=$prev ? (create_res(explode("\t",trim($prev)))):[];
+	$next=$next ? (create_res(explode("\t",trim($next)),['catalog'=>true])):[];
+	$prev=$prev ? (create_res(explode("\t",trim($prev)),['catalog'=>true])):[];
 	$next=(!empty($next) && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
 	$prev=(!empty($prev) && is_file(LOG_DIR."{$prev['no']}.log"))?$prev:[];
 
@@ -2275,7 +2275,7 @@ function res ($resno){
 		$start_view=(($i-7)>=0) ? ($i-7) : 0;
 		$other_articles=array_slice($articles,$start_view,17,false);
 		foreach($other_articles as $val){
-			$b=create_res(explode("\t",trim($val)));
+			$b=create_res(explode("\t",trim($val)),['catalog'=>true]);
 			if(!empty($b)&&$b['img']&&$b['no']!==$resno){
 				$a[]=$b;
 			}

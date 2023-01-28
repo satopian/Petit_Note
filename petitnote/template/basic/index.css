@@ -263,6 +263,9 @@ span.txtnon {
     text-align: right;
 	margin: 16px 0 0;
 }
+.res_notice_wrap {
+    text-align: right;
+}
 form.res_button {
 	text-align: right;
 	margin: 0;
