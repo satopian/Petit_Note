@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.56.5';
+$petit_ver='v0.56.6';
 $petit_lot='lot.230128';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2214,6 +2214,8 @@ function res ($resno){
 	$rresname = [];
 	$resname = '';
 	$oyaname='';
+	$_res['time_left_to_close_the_thread']=false;
+	$_res['descriptioncom']='';
 	check_open_no($resno);
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 		$out[0]=[];
@@ -2224,6 +2226,10 @@ function res ($resno){
 			$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
 
 			if($_res['oya']==='oya'){
+
+				$_res['time_left_to_close_the_thread'] = time_left_to_close_the_thread($_res['time']);
+				$_res['descriptioncom']= $_res['com'] ? h(s(mb_strcut(str_replace('"\n"'," ",$_res['com']),0,300))) : '';
+
 				$oyaname = $_res['name'];
 			} 
 			// 投稿者名を配列にいれる

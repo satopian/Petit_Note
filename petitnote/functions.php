@@ -308,7 +308,6 @@ function create_res($line,$options=[]){
 	$date=$datetime ? date('y/m/d',(int)$datetime):'';
 
 	$check_elapsed_days = !$isset_catalog ? check_elapsed_days($time) : true;//念のためtrueに
-	$time_left_to_close_the_thread = (!$isset_catalog && ($oya==='oya')) ? time_left_to_close_the_thread($time) : false;
 	$verified = ($verified==='adminpost');
 	$three_point_sub=(mb_strlen($sub)>15) ? '…' :'';
 
@@ -319,7 +318,6 @@ function create_res($line,$options=[]){
 		'name' => $name,
 		'verified' => $verified,
 		'com' => $com,
-		'descriptioncom' => (!$isset_catalog && ($oya==='oya') && $com) ? s(mb_strcut(str_replace('"\n"'," ",$com),0,300)) : '',
 		'url' => $url ? filter_var($url,FILTER_VALIDATE_URL) : '',
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail,
@@ -338,7 +336,6 @@ function create_res($line,$options=[]){
 		'host' => $host,
 		'userid' => $userid,
 		'check_elapsed_days' => $check_elapsed_days,
-		'time_left_to_close_the_thread' => $time_left_to_close_the_thread,
 		'encoded_boardname' => urlencode($boardname),
 		'encoded_name' => urlencode($name),
 		'encoded_no' => urlencode('['.$no.']'),
