@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230128;
+$functions_ver=20230130;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -309,12 +309,12 @@ function create_res($line,$options=[]){
 
 	$check_elapsed_days = !$isset_catalog ? check_elapsed_days($time) : true;//念のためtrueに
 	$verified = ($verified==='adminpost');
-	$three_point_sub=(mb_strlen($sub)>15) ? '…' :'';
+	$three_point_sub = ($isset_catalog && (mb_strlen($sub)>15)) ? '…' :'';
 
 	$res=[
 		'no' => $no,
 		'sub' => $sub,
-		'substr_sub' => mb_substr($sub,0,15).$three_point_sub,
+		'substr_sub' => $isset_catalog ? mb_substr($sub,0,15).$three_point_sub : $sub,
 		'name' => $name,
 		'verified' => $verified,
 		'com' => $com,
