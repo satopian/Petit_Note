@@ -7,8 +7,8 @@
 
 ##  動作環境
 - PHP5.6以上の環境が必要です。  
-PHP5.6,PHP7.2,PHP8.1, PHP8.2.0RC6で動作確認しています。  
-PHP7.4～PHP8.1での使用を推奨します。
+PHP5.6,PHP7.2,PHP8.1, PHP8.2で動作確認しています。  
+PHP7.4～PHP8.2での使用を推奨します。
 
 # ダウンロードと設置
 
@@ -22,7 +22,7 @@ PHP7.4～PHP8.1での使用を推奨します。
 - [リリース](https://github.com/satopian/Petit_Note/releases/latest)のページの一番下からzipファイルをダウンロードします。
 - `petitnote`フォルダ内の`config.php`の管理者パスワードを他の人にはわからないパスワードに変更します。
 - `petitnote`フォルダをアップロードします。
-- サーバ上の`petitnote`ディレクトリを開くと設置が完了します。
+- サーバ上の`petitnote`ディレクトリにブラウザでアクセスすると設置が完了します。
 
 #### 設置しても動作しない場合
 
@@ -89,13 +89,13 @@ JPEGに変換したあとの画像のほうが小さくなる時だけ、JPEGに
 しかしながら、比較的ファイルサイズが大きな場合でもPNG形式で保存したい。  
 逆にJPEGで保存したいという要望に応えるため、PNG形式のまま投稿可能なファイルサイズの上限を設定できるようにしました。  
 
-> //アップロード時にpng形式で保存する最大ファイルサイズ
-> // このファイルサイズを超える時はJPEGに変換(単位kb)
-> $max_file_size_in_png_format_upload = 800;
-> 
-> // ペイント時にpng形式で保存する最大ファイルサイズ
-> // このファイルサイズを超える時はJPEGに変換(単位kb)
-> $max_file_size_in_png_format_paint = 1024;
+> //アップロード時にpng形式で保存する最大ファイルサイズ  
+> // このファイルサイズを超える時はJPEGに変換(単位kb)  
+> $max_file_size_in_png_format_upload = 800;  
+>   
+> // ペイント時にpng形式で保存する最大ファイルサイズ  
+> // このファイルサイズを超える時はJPEGに変換(単位kb)  
+> $max_file_size_in_png_format_paint = 1024;  
 > 
 
 この設定項目の数値が小さいほどPNG画像がJPEGに変換されやすくなります。    
@@ -125,24 +125,24 @@ PaintBBS NEOの動画は描いた手順を記録しているだけでなく、�
 ### PaintBBS NEOでコピー、レイヤー結合などキャンバス周辺を含む操作で画面が上下に動かないようにする工夫
 
 コピーやレイヤー結合などの時にキャンバス周辺の紫の網目のところをスワイプしても画面が上下に動かなくする工夫を行っていましたが、その事が原因でモバイル端末で操作不能になるケースもありました。  
-今回の更新で、開いたキャンバスサイズと端末の横幅に余裕がある時だけ、NEOのキャンバスの周囲の網目のところでスワイプしない形に変更になりました。  
+今回の更新で、開いたキャンバスサイズの幅に対して端末の横幅に余裕がある時だけ、NEOのキャンバスの周囲の網目のところでスワイプしない形に変更になりました。  
 NEOの網目のところをつかんでスクロールできるようにしておかなければ操作不能になるからです。  
 キャンバスサイズと比較して、端末の横幅に余裕がある時は、NEOの網目のところをつかんでもスクロールしなくなります。  
-コピーやレイヤー結合、Bz曲線の操作の時に画面が上下に動いてしまうからです。  
+コピーやレイヤー結合、Bz曲線の操作の時に画面が上下に動いてしまうからです。
 
 また、ピンチズームで拡大している時も網目のところをつかんでスクロールできるようになりました。  
-操作不能になるのを回避するためです。  
-これらは、NEOのペイント画面のインラインのJavaScriptで実装していますので、ペイント画面のテンプレートの更新が必要です。 
-  
-![230124_001_NEO_issue](https://user-images.githubusercontent.com/44894014/214514745-a61a60f5-f51a-43fd-9cd1-8c5aa4498b12.gif)  
+操作不能になるのを回避するためです。
+これらは、NEOのペイント画面のインラインのJavaScriptで実装していますので、ペイント画面のテンプレートの更新が必要です。  
+
+![230124_001_NEO_issue](https://user-images.githubusercontent.com/44894014/214514745-a61a60f5-f51a-43fd-9cd1-8c5aa4498b12.gif)
 
 ### Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true
 
 Chromeに上記の警告が表示されるようになったため、PaintBBS NEOを独自に修正しました。  
 [HTMLCanvasElement.getContext() - Web APIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext)
 
-> willReadFrequently
-> 多くのリードバック操作が計画されているかどうかを示すブール値。[getImageData()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData) これにより、(ハードウェア アクセラレーションではなく) ソフトウェア 2D キャンバスの使用が強制され、頻繁 に呼び出すときにメモリを節約できます。
+> willReadFrequently  
+> 多くのリードバック操作が計画されているかどうかを示すブール値。[getImageData()](https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/getImageData) これにより、(ハードウェア アクセラレーションではなく) ソフトウェア 2D キャンバスの使用が強制され、頻繁 に呼び出すときにメモリを節約できます。  
 > 
 
 
@@ -211,15 +211,15 @@ formDataで送信するモードに切り替えるためのパラメータが追
 
 ### 最低限必要な描画時間の設定ができるようになりました。
 
-> //お絵かきアプリで投稿する時の必要最低限の描画時間
-> //(単位:秒)。この設定が不要な時は : 0 
-> // 指定した秒数に達しない場合は、描画に必要な秒数を知らせるアラートが開きます。
-> 
-> $security_timer = 0;
-> // $security_timer = 60;
-> 
+> //お絵かきアプリで投稿する時の必要最低限の描画時間  
+> //(単位:秒)。この設定が不要な時は : 0   
+> // 指定した秒数に達しない場合は、描画に必要な秒数を知らせるアラートが開きます。  
+>   
+> $security_timer = 0;  
+> // $security_timer = 60;  
+>   
 
-描画時間が指定秒数より短い時はPaintBBS NEO、ChickenPaint、Klecksすべてのアプリで、｢"描画時間が短すぎます。あと30秒。｣というアラートが開きます。
+描画時間が指定秒数より短い時はPaintBBS NEO、ChickenPaint、Klecksすべてのアプリで、｢"描画時間が短すぎます。あと30秒。｣というアラートが開きます。  
 
 ### お絵かきデータ送信エラーの時のエラーメッセージを細かく表示できるようになりました
 
