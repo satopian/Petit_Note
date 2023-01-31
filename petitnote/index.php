@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.57.0';
-$petit_lot='lot.230130';
+$petit_ver='v0.57.1';
+$petit_lot='lot.230131';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -257,6 +257,7 @@ function post(){
 	$r_no='';
 	$rp=false;
 	$r_arr=[];
+	$chk_resto='';
 	if($resto){//レスの時はファイルロックしてレスファイルを開く
 		check_open_no($resto);
 		$rp=fopen(LOG_DIR."{$resto}.log","r+");
@@ -280,15 +281,17 @@ function post(){
 
 		//レス先のログファイルを再確認
 		if($resto && ($r_no!==$resto || $r_oya!=='oya')){
-		if(!$pictmp2){
-			return error($en? 'The article does not exist.':'記事がありません。');
-		}
-		$resto='';
+			if(!$pictmp2){
+				return error($en? 'The article does not exist.':'記事がありません。');
+			}
+			$chk_resto=$resto;
+			$resto='';
 		}
 		if($pictmp2){//お絵かきの時は新規投稿にする
 			//お絵かきの時に日数を経過していたら新規投稿。
 			//お絵かきの時に最大レス数を超過していたら新規投稿。
 			if($resto && !$adminpost && (!$check_elapsed_days || $count_r_arr>$max_res)){
+				$chk_resto=$resto;
 				$resto='';
 			}
 		}
@@ -404,9 +407,11 @@ function post(){
 	}
 	$_chk_lines=[];
 	$chk_lines=[];
+	//条件分岐で新規投稿に変更になった時のエラー回避
+	$chk_resto=$chk_resto ? $chk_resto : $resto; 
 	foreach($chk_resnos as $chk_resno){
 
-		if(($chk_resno!==$resto)&&is_file(LOG_DIR."{$chk_resno}.log")){
+		if(($chk_resno!==$chk_resto)&&is_file(LOG_DIR."{$chk_resno}.log")){
 			check_open_no($chk_resno);
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
 			while($line=fgets($cp)){
