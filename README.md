@@ -48,6 +48,7 @@ PHPのバージョンが切り替え可能な場合はPHP5.6以上への変更�
 お絵かきとアップロード。
 - [お絵かき掲示板交流サイトPetit Note](https://paintbbs.sakura.ne.jp/)  
 お絵かきのみ。
+
 ## DEMO
 - [Petit Note サンプル掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
   
@@ -83,7 +84,7 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 
 ##  23/01/31 v0.57.3
 
-### スレッドを閉じる前に事前に知らせる機能を追加
+### スレッドを閉じる前に事前に知らせる機能を追加しました
 ![image](https://user-images.githubusercontent.com/44894014/215757890-4f14469b-7492-4295-8c15-e5faedad7139.png)
 
 - 古いスレッドが閉じられる60日前に残り日数を表示する機能を追加しました。
