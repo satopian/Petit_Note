@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.57.1';
+$petit_ver='v0.57.3';
 $petit_lot='lot.230131';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -271,7 +271,11 @@ function post(){
 		if(empty($r_arr)){
 			closeFile($rp);
 			closeFile($fp);
-			return error($en?'This operation has failed.':'失敗しました。');
+			if(!$pictmp2){
+				return error($en?'This operation has failed.':'失敗しました。');
+			}
+			$chk_resto=$resto;
+			$resto = '';
 		}
 
 		list($r_no,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$r_oya)=explode("\t",trim($r_arr[0]));
