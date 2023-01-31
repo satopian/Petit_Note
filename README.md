@@ -165,7 +165,7 @@ NEOの網目のところをつかんでスクロールできるようにして�
 操作不能になるのを回避するためです。
 これらは、NEOのペイント画面のインラインのJavaScriptで実装していますので、ペイント画面のテンプレートの更新が必要です。  
 
-![230124_001_NEO_issue](https://user-images.githubusercontent.com/44894014/214514745-a61a60f5-f51a-43fd-9cd1-8c5aa4498b12.gif)
+![NEO_issue_230201](https://user-images.githubusercontent.com/44894014/215820026-161d0248-c18b-4278-bd2a-185f1cea0057.gif)
 
 ### Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true
 
