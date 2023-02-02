@@ -48,6 +48,7 @@ PHPのバージョンが切り替え可能な場合はPHP5.6以上への変更�
 お絵かきとアップロード。
 - [お絵かき掲示板交流サイトPetit Note](https://paintbbs.sakura.ne.jp/)  
 お絵かきのみ。
+
 ## DEMO
 - [Petit Note サンプル掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
   
@@ -80,6 +81,36 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 ## PitNoteとは
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
+
+##  23/01/31 v0.57.3
+
+### スレッドを閉じる前に事前に知らせる機能を追加しました
+![image](https://user-images.githubusercontent.com/44894014/215757890-4f14469b-7492-4295-8c15-e5faedad7139.png)
+
+- 古いスレッドが閉じられる60日前に残り日数を表示する機能を追加しました。  
+- 返信可能な残り件数が20件以下になった時に返信可能件数を表示する機能を追加しました。  
+
+たとえば漫画などの連載ものの投稿時に途中でスレッドが閉じて、複数のスレッドに分割されてしまうといった事がありました。    
+スレッドがもうすぐ閉じられる事を事前に表示する事でそれらの問題を回避できるようにしました。  
+
+### テンプレートの著作リンクを外部化
+
+著作リンクを外部化しました。    
+`parts/copyright.htmk`が著作リンクです。  
+そのHTML部分を著作リンクを表示するその他のテンプレートで読み込みます。    
+またPetit Noteの著作リンクのリンク先を、https://paintbbs.sakura.ne.jp/ に変更しています。    
+これは、作者のサイト｢[お絵かき掲示板Petit Note](https://paintbbs.sakura.ne.jp/)｣のSEO対策のための変更です。  
+ご理解いただければ幸いです。    
+
+### 負荷削減 
+掲示板のトップページの時には必要がない、返信画面のための計算を他の画面でも行っていました。  
+各モードで必要な処理を振り分ける事で表示時の負荷を削減しました。  
+
+### バグ修正
+
+閉じたスレッドには返信できませんが、お絵かきでレスを描いているうちにスレッドが閉じてしまう事もあります。    
+その場合はスレッドが閉じていても新しいスレッドへの投稿として投稿を受け付けます。  
+この時に、ファイルロックがかかったレス先のログファイルを二重に開こうとしてパーミッションエラーが発生する事があったのを修正しました。  
 
 ##  23/01/20 v0.56.3
 
@@ -134,7 +165,7 @@ NEOの網目のところをつかんでスクロールできるようにして�
 操作不能になるのを回避するためです。
 これらは、NEOのペイント画面のインラインのJavaScriptで実装していますので、ペイント画面のテンプレートの更新が必要です。  
 
-![230124_001_NEO_issue](https://user-images.githubusercontent.com/44894014/214514745-a61a60f5-f51a-43fd-9cd1-8c5aa4498b12.gif)
+![NEO_issue_230201](https://user-images.githubusercontent.com/44894014/215820026-161d0248-c18b-4278-bd2a-185f1cea0057.gif)
 
 ### Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true
 
@@ -235,27 +266,27 @@ formDataで送信するモードに切り替えるためのパラメータが追
 
 従来の｢投稿する時に合言葉が必要｣に加え、｢掲示板の閲覧に合言葉が必要｣という設定項目が追加されました。
 
-> /*合言葉設定*/
-> 
-> // 投稿に合言葉を必須にする
-> // する: trueで投稿に合言葉が必要になります。
-> // する: true しない: false
-> 
-> // $use_aikotoba = true;
-> $use_aikotoba=false;
-> 
-> // 掲示板の閲覧に合言葉を必須にする
-> // する: true しない: false
-> // する: trueで掲示板のすべてのコンテンツの閲覧に合言葉が必要になります。
-> 
-> // $aikotoba_required_to_view=true;
-> $aikotoba_required_to_view=false;
-> 
-> //合言葉
-> //上記の合言葉機能のどちらか、あいるは両方が true の時に入力する秘密の答え。
-> // 必要に応じて変更してください。
-> $aikotoba = "ひみつ";
-> 
+> /*合言葉設定*/  
+>   
+> // 投稿に合言葉を必須にする  
+> // する: trueで投稿に合言葉が必要になります。  
+> // する: true しない: false  
+>   
+> // $use_aikotoba = true;  
+> $use_aikotoba=false;  
+>   
+> // 掲示板の閲覧に合言葉を必須にする  
+> // する: true しない: false  
+> // する: trueで掲示板のすべてのコンテンツの閲覧に合言葉が必要になります。  
+>   
+> // $aikotoba_required_to_view=true;  
+> $aikotoba_required_to_view=false;  
+>   
+> //合言葉  
+> //上記の合言葉機能のどちらか、あいるは両方が true の時に入力する秘密の答え。  
+> // 必要に応じて変更してください。  
+> $aikotoba = "ひみつ";  
+>   
 
  config.phpの合言葉設定の箇所を整理して合言葉の項目を新たに追加しました。
 
