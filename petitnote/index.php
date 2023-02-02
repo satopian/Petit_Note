@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.57.3';
-$petit_lot='lot.230131';
+$petit_ver='v0.57.5';
+$petit_lot='lot.230202';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1785,7 +1785,7 @@ function edit(){
 	$flag=false;
 	foreach($r_arr as $i => $line){
 
-		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
+		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id===$_time && $no===$_no){
 
 			if($admindel||(check_elapsed_days($_time)&&$pwd&&password_verify($pwd,$_hash))){
@@ -1811,7 +1811,7 @@ function edit(){
 	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
 	$thumbnail =  $mark_sensitive_image ? $hide_thumbnail.$thumbnail : $_thumbnail;
 
-	if(in_array($_pchext,['.pch','hide_animation'])){
+	if(in_array($pchext,['.pch','hide_animation'])){
 		$pchext= $hide_animation ? 'hide_animation' : '.pch'; 
 	}
 
