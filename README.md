@@ -82,6 +82,11 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
 
+##  23/01/31 v0.57.5
+### バグ修正
+- 記事の編集時に変数 `$pchext`が未定義エラーになる場合があったのを修正しました。  
+この問題は、v0.56.3で発生し、v0.57.5で修正されました。  
+
 ##  23/01/31 v0.57.3
 
 ### スレッドを閉じる前に事前に知らせる機能を追加しました
@@ -96,7 +101,7 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 ### テンプレートの著作リンクを外部化
 
 著作リンクを外部化しました。    
-`parts/copyright.htmk`が著作リンクです。  
+`parts/copyright.html`が著作リンクです。  
 そのHTML部分を著作リンクを表示するその他のテンプレートで読み込みます。    
 またPetit Noteの著作リンクのリンク先を、https://paintbbs.sakura.ne.jp/ に変更しています。    
 これは、作者のサイト｢[お絵かき掲示板Petit Note](https://paintbbs.sakura.ne.jp/)｣のSEO対策のための変更です。  
