@@ -82,7 +82,7 @@
 							return alert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
 						}
 						if(response_status!==200){
-							return alert(<?php if($en):?>'Server or line is unstable.\nPlease try again!'<?php else:?>'投稿に失敗\n時間をおいて再度投稿してみてください。'<?php endif;?>);
+							return alert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗\n時間をおいて再度投稿してみてください。'<?php endif;?>);
 						}
 						if (response.ok) {
 							response.text().then((text) => {
