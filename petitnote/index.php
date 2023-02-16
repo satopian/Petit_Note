@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.57.5';
-$petit_lot='lot.230202';
+$petit_ver='v0.58.0';
+$petit_lot='lot.230216';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -17,7 +17,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230130){
+if(!isset($functions_ver)||$functions_ver<20230216){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -2071,8 +2071,6 @@ function search(){
 					}
 					
 				}
-
-
 			}
 			fclose($cp);
 		}
@@ -2210,7 +2208,6 @@ function search(){
 
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	
-	// $imgsearch=$imgsearch ? 'on' : 'off';
 	//HTML出力
 	$templete='search.html';
 	return include __DIR__.'/'.$skindir.$templete;

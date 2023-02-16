@@ -5,26 +5,24 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--SNS-->
-<?php foreach($out as $ress) : ?>
-	<?php if($use_sns_button):?>
-	<meta name="Description" content="<?= h(s($ress[0]['descriptioncom']))?>">
-	<meta name="twitter:card" content="summary">
-	<meta property="og:title" content="[<?= h(s($ress[0]['no']))?>] <?= h(s($ress[0]['sub']))?> by <?= h(s($ress[0]['name']))?> - <?=h(s($boardname))?>">
-	<meta property="og:type" content="article">
-	<meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($ress[0]['no'])?>">
-	<!-- 閲覧注意 またはNSFWが設定されている時は ogp imageを表示しない -->
-	<?php if(!((isset($set_nsfw)&&$set_nsfw)||$ress[0]['hide_thumbnail'])):?>
-	<!-- thumbnail -->
-	<?php if($ress[0]['thumbnail']):?>
-	<meta property="og:image" content="<?=h($root_url)?>thumbnail/<?=h($ress[0]['thumbnail'])?>">
-	<?php else:?>
-	<meta property="og:image" content="<?php if($ress[0]['img']):?><?=h($root_url)?>src/<?=h($ress[0]['img'])?><?php endif;?>">
-	<?php endif;?>
-	<?php endif;?>
-	<meta property="og:site_name"  content="<?=h($boardname)?>">
-	<meta property="og:description" content="<?=h(s($ress[0]['descriptioncom']))?>">
-	<?php endif;?>
-<?php endforeach;?>
+<?php if($use_sns_button):?>
+<meta name="Description" content="<?= h(s($out[0][0]['descriptioncom']))?>">
+<meta name="twitter:card" content="summary">
+<meta property="og:title" content="[<?= h(s($out[0][0]['no']))?>] <?= h(s($out[0][0]['sub']))?> by <?= h(s($out[0][0]['name']))?> - <?=h(s($boardname))?>">
+<meta property="og:type" content="article">
+<meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($out[0][0]['no'])?>">
+<!-- 閲覧注意 またはNSFWが設定されている時は ogp imageを表示しない -->
+<?php if(!((isset($set_nsfw)&&$set_nsfw)||$out[0][0]['hide_thumbnail'])):?>
+<!-- thumbnail -->
+<?php if($out[0][0]['thumbnail']):?>
+<meta property="og:image" content="<?=h($root_url)?>thumbnail/<?=h($out[0][0]['thumbnail'])?>">
+<?php else:?>
+<meta property="og:image" content="<?php if($out[0][0]['img']):?><?=h($root_url)?>src/<?=h($out[0][0]['img'])?><?php endif;?>">
+<?php endif;?>
+<?php endif;?>
+<meta property="og:site_name"  content="<?=h($boardname)?>">
+<meta property="og:description" content="<?=h(s($out[0][0]['descriptioncom']))?>">
+<?php endif;?>
 <!--/SNS-->
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
 <link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
@@ -35,7 +33,7 @@
 	<!-- センシティブコンテンツにブラーをかける -->
 	<style>img {filter:blur(15px);}</style>
 <?php endif;?>
-<title>[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?> by <?= h($ress[0]['name'])?> -  <?=h($boardname)?></title>
+<title>[<?= h($out[0][0]['no'])?>] <?= h($out[0][0]['sub'])?> by <?= h($out[0][0]['name'])?> -  <?=h($boardname)?></title>
 </head>
 <body>
 <div class="container" id="top">
