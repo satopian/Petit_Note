@@ -2091,7 +2091,7 @@ function catalog($page=0,$q=''){
 
 	//ページング
 	$start_page=$page-$pagedef*8;
-	$end_page=$page+($pagedef*8)	;
+	$end_page=$page+($pagedef*8);
 	if($page<$pagedef*17){
 		$start_page=0;
 		$end_page=$pagedef*17;
