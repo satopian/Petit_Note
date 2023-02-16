@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="<?=h($skindir)?>index.css">
+<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
+<?php if($set_nsfw && !$nsfwc):?>
+	<!-- センシティブコンテンツにブラーをかける -->
+	<style>img {filter:blur(15px);}</style>
+<?php endif;?>
+
+<link rel="stylesheet" href="<?=h($skindir)?>search.css">
+</style>
+<title>
+	<?php if($en):?>	
+			Displaying <?=h($pageno)?> <?=h($result_subject)?> 
+			<?php else:?>
+			<?=h($result_subject)?><?=h($pageno)?>
+			<?php endif;?>
+		</title>
+</head>
+<body>
+<div class="container" id="top">
+	<?php if($set_nsfw && !$nsfwc):?>
+	<h2><?php if($en):?>View NSFW images?<?php else:?>年齢制限付きのコンテンツを表示してもよろしいでしょうか?<?php endif;?></h2>
+	<form action="./" method="post">
+	<input type="hidden" name="mode" value="view_nsfw">
+	<input type="hidden" name="view_nsfw" value="on">
+	<input type="hidden" name="search" value="on">
+	<input type="hidden" name="postpage" value="<?=h($page)?>">
+	<input type="hidden" name="q" value="<?=h($en_q)?>">
+	<input type="hidden" name="imgsearch" value="<?=h($imgsearch)?>">
+	<input type="hidden" name="radio" value="<?=h($radio)?>">
+	<input type="submit" value="<?php if($en):?>Yes<?php else:?>はい表示します。<?php endif;?>">
+
+	</form>
+	<?php endif;?>
+
+	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+		<nav class="menu_wrap">
+				[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]
+				<?php if($imgsearch):?>
+				[<a href="?mode=search&page=0&imgsearch=off&q=<?=h($en_q)?>&radio=<?=h($radio)?>"><?php if($en):?>Comments<?php else:?>コメント<?php endif;?></a>]
+				<?php else:?>
+				[<a href="?mode=search&page=0&imgsearch=on&q=<?=h($en_q)?>&radio=<?=h($radio)?>"><?php if($en):?>Images<?php else:?>イラスト<?php endif;?></a>]
+				<?php endif;?>
+		</nav>
+		<hr>
+			<h2 class="search_h2">
+				<?php if($en):?>	
+				<span class="title_wrap">Displaying <?=h($pageno)?></span>	<?=h($result_subject)?> 
+				<?php else:?>
+				<?=h($result_subject)?><span class="title_wrap"><?=h($img_or_com)?><?=h($pageno)?></span>
+				<?php endif;?>
+			</h2>
+		<nav>
+			
+			<form method="get" action="./" class="searchform">
+			<span class="radio">
+			<input type="hidden" name="mode" value="search">
+			<input type="radio" name="radio" id="author" value="1" <?php if($radio_chk1):?>checked="checked"<?php endif;?>><label for="author"
+			class="label">
+			<?php if($en):?>Name<?php else:?>名前<?php endif;?>
+			</label>
+				<input type="radio" name="radio" id="exact" value="2" <?php if($radio_chk2):?>checked="checked"<?php endif;?>><label for="exact"
+			class="label">
+			<?php if($en):?>Exact<?php else:?>完全一致<?php endif;?>
+			</label>
+			<input type="radio" name="radio" id="fulltext" value="3" <?php if($radio_chk3):?>checked="checked"<?php endif;?>><label for="fulltext"
+				class="label">
+				<?php if($en):?>Body<?php else:?>本文題名<?php endif;?>	
+			</label>
+			</span>
+			<br>
+			<?php if($imgsearch):?>
+			<input type="hidden" name="imgsearch" value="on">
+			<?php else:?>
+			<input type="hidden" name="imgsearch" value="off">
+			<?php endif;?>
+
+			<input type="text" name="q" placeholder="<?php if($en):?>Search<?php else:?>検索<?php endif;?>" value="<?=h($q)?>">
+			<input type="submit" value="<?php if($en):?>Search<?php else:?>検索<?php endif;?>">
+		</form>
+		<p></p>
+
+		</nav>
+		<!-- 反復 -->
+		<?php if($comments):?>
+		<?php if($imgsearch):?>
+		<div class="s_newimg">
+			<?php foreach($comments as $res):?><span class="s_catalog <?php if($res['hidethumb']):?>hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><img
+							src="<?=h($res['img'])?>"
+							alt="<?=h($res['sub'])?>by <?=h($res['name'])?> <?=h($res['postedtime'])?>"
+							title="<?=h($res['sub'])?>by <?=h($res['name'])?> <?=h($res['postedtime'])?>"
+							loading="lazy" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>"><?php if($res['hidethumb']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></span><?php endforeach;?></div>
+		<?php else:?>
+		<?php foreach($comments as $res):?>
+		<article>
+			<div class="s_article">
+				<div class="s_comments_title_wrap">
+					<h3><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><?=h($res['sub'])?></a></h3>
+					<?=h($res['postedtime'])?><br><span class="info_name"><a
+							href="?mode=search&page=0&q=<?=h($res['encoded_name'])?>&radio=2"
+							target="_blank"><?=h($res['name'])?></a></span>
+				</div>
+				<?php if($res['img']):?>
+				<div class="s_posted_image<?php if($res['hidethumb']):?> hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><img src="<?=h($res['img'])?>"
+						alt="<?=h($res['sub'])?>by <?=h($res['name'])?> <?=h($res['postedtime'])?>"
+						title="<?=h($res['sub'])?>by <?=h($res['name'])?> <?=h($res['postedtime'])?>"
+						loading="lazy" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>"><?php if($res['hidethumb']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></div><br>
+				<?php endif;?>
+				<?=h($res['com'])?>
+				<div class="res_button_wrap">
+					<form action="./?resno=<?=h($res['no'])?>" method="post" target="_blank"><input type="submit" value="<?php if($en):?>View thread<?php else:?>スレッドを表示<?php endif;?>"
+						class="form_button"></form>
+				</div>
+			</div>
+		</article>
+		<?php endforeach;?>
+		<?php endif;?>
+		<?php endif;?>
+		<p></p>
+		<?php if($imgsearch):?>
+			<p><?php if($en):?>new arrival images.<?php else:?>掲示板から新規投稿順にイラストを呼び出しています。<?php endif;?></p>
+			<?php else:?>
+			<p><?php if($en):?>new arrival comments.<?php else:?>掲示板から新規投稿順にコメントを呼び出しています。<?php endif;?></p>
+		<?php endif;?>
+		<!-- 最終更新日時 -->
+		<?php if($lastmodified):?>
+		<p>last modified: <?=h($lastmodified)?></p>
+		<?php endif;?>
+
+
+<nav>
+
+<!-- ページング -->
+	<div class="pagelink">
+		
+	<span class="prev">
+			<?php if($prev!==false):?>
+			<a href="?mode=search&page=<?=h($prev)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>
+			">≪prev</a>
+	<?php endif;?>
+	</span>
+	| <a href="./">top</a> |
+	<span class="next">
+	<?php if($next):?>
+	<a href="?mode=search&page=<?=h($next)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>
+	">next≫</a>
+	<?php endif;?>
+	</span>
+</div>
+
+<div class="pagination leftbox">
+<?php if($prev):?>
+<a href="?mode=search&page=0&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">start</a> |
+<?php endif;?>
+
+	<?php for($i = $start_page; ($i < $countarr && $i <= $end_page) ; $i+=$pagedef) :?>
+	<?php if($page==($i)):?>
+			[<strong><?=h($i/$pagedef)?></strong>]
+		<?php else: ?>
+			<?php if($i===0):?>
+				[<a href="?mode=search&page=0&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">0</a>]
+			<?php else:?>	
+			<?php if($i === $end_page):?>
+			<!-- 特定のページに代入される記号 エンド -->
+				[<a href="?mode=search&page=<?=h($i)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">≫</a>]
+				<?php elseif($i === $start_page):?>
+				[<a href="?mode=search&page=<?=h($i)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">≪</a>]
+					<?php else:?>
+			[<a href="?mode=search&page=<?=h($i)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>"><?=h($i/$pagedef)?></a>]
+			<?php endif;?>
+			<?php endif;?>
+		<?php endif;?>
+		<?php endfor ;?>
+		<?php if($next):?>
+		| <a href="?mode=search&page=<?=h(ceil(($countarr/$pagedef)-1)*$pagedef)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">end</a>
+		<?php endif;?>
+
+</div>
+</nav>
+
+<div class="copy">
+<div class="left_wrap">
+	[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&search=on&page=<?=h($page)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+</div>
+<div class="righit_wrap">
+<?php include(__DIR__.'/parts/copyright.html');?>
+</div>
+</div>
+</div>
+<div id="bottom"></div>
+<div id="page_top"><a class="icon-angles-up-solid"></a></div>
+<script src="lib/<?=h(JQUERY)?>"></script>
+<script>
+	jQuery(function() {
+		// https://cotodama.co/pagetop/
+		var pagetop = $('#page_top');   
+		pagetop.hide();
+		$(window).scroll(function () {
+			if ($(this).scrollTop() > 100) {  //100pxスクロールしたら表示
+				pagetop.fadeIn();
+			} else {
+				pagetop.fadeOut();
+			}
+		});
+		pagetop.click(function () {
+			$('body,html').animate({
+				scrollTop: 0
+			}, 500); //0.5秒かけてトップへ移動
+			return false;
+		});
+	});
+</script>
+</body>
+</html>
+	

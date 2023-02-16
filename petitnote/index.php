@@ -132,6 +132,8 @@ switch($mode){
 		return logout_admin();
 	case 'logout':
 		return logout();
+	case 'search':
+		return search();
 	case 'catalog':
 		return catalog($page);
 	case 'download':
@@ -1993,6 +1995,226 @@ function del(){
 	return header('Location: ./?page='.(int)filter_input(INPUT_POST,'postpage'));
 }
 
+//検索画面
+function search(){
+	global $use_aikotoba,$home,$skindir;
+	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en; 
+
+	aikotoba_required_to_view();
+
+	$max_search=300;
+
+	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
+	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$en_q=(string)filter_input(INPUT_GET,'q');
+	$q=urldecode($en_q);
+	$q=mb_convert_kana($q, 'rn', 'UTF-8');
+	$q=str_replace(array(" ", "　"), "", $q);
+	$q=str_replace("〜","～",$q);//波ダッシュを全角チルダに
+	$radio =(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
+
+	if($imgsearch){
+		$disp_count_of_page=20;//画像検索の時の1ページあたりの表示件数
+	}
+	else{
+		$disp_count_of_page=30;//通常検索の時の1ページあたりの表示件数
+	}
+	//ログの読み込み
+	$arr=[];
+	$i=0;
+	$j=0;
+	$fp=fopen("log/alllog.log","r");
+	while ($log = fgets($fp)) {
+
+		list($resno)=explode("\t",$log);
+		$resno=basename($resno);
+			if(is_file("log/{$resno}.log")){
+				$cp=fopen("log/{$resno}.log","r");
+			while($line=fgets($cp)){
+
+					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
+
+				$continue_to_search=true;
+				if($imgsearch){//画像検索の場合
+					$continue_to_search=($imgfile&&is_file(IMG_DIR.$imgfile));//画像があったら
+				}
+
+				if($continue_to_search){
+					if($radio===1||$radio===2||$radio===0){
+						$s_name=mb_convert_kana($name, 'rn', 'UTF-8');//全角英数を半角に
+						$s_name=str_replace(array(" ", "　"), "", $s_name);
+						$s_name=str_replace("〜","～", $s_name);//波ダッシュを全角チルダに
+					}
+					else{
+						$s_sub=mb_convert_kana($sub, 'rn', 'UTF-8');//全角英数を半角に
+						$s_sub=str_replace(array(" ", "　"), "", $s_sub);
+						$s_sub=str_replace("〜","～", $s_sub);//波ダッシュを全角チルダに
+						$s_com=mb_convert_kana($com, 'rn', 'UTF-8');//全角英数を半角に
+						$s_com=str_replace(array(" ", "　"), "", $s_com);
+						$s_com=str_replace("〜","～", $s_com);//波ダッシュを全角チルダに
+					}
+					
+					//ログとクエリを照合
+					if($q===''||//空白なら
+							$q!==''&&$radio===3&&stripos($s_com,$q)!==false||//本文を検索
+							$q!==''&&$radio===3&&stripos($s_sub,$q)!==false||//題名を検索
+							$q!==''&&($radio===1||$radio===0)&&stripos($s_name,$q)===0||//作者名が含まれる
+							$q!==''&&($radio===2&&$s_name===$q)//作者名完全一致
+					){
+						$hidethumb = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
+
+						$thumb= ($thumbnail==='hide_thumbnail'||$thumbnail==='thumbnail');
+
+						$arr[]=[$no,$name,$sub,$com,$imgfile,$w,$h,$time,$hidethumb,$thumb];
+						++$i;
+						if($i>=$max_search){break 2;}//1掲示板あたりの最大検索数
+					}
+					
+				}
+
+
+			}
+			fclose($cp);
+		}
+		if($j>=5000){break;}//1掲示板あたりの最大行数
+		++$j;
+	}
+	fclose($fp);
+
+	//検索結果の出力
+	$j=0;
+	$comments=[];
+	if($arr){
+		foreach($arr as $i => $val){
+			if($i >= $page){//$iが表示するページになるまで待つ
+				list($no,$name,$sub,$com,$imgfile,$w,$h,$time,$hidethumb,$thumb)=$val;
+				$img='';
+				if($imgfile){
+					if($thumb&&is_file(THUMB_DIR.$time.'s.jpg')){//サムネイルはあるか？
+						$img=THUMB_DIR.$time.'s.jpg';
+					}
+					elseif($imgsearch||is_file(IMG_DIR.$imgfile)){
+						$img=IMG_DIR.$imgfile;
+						}
+					}
+
+				$postedtime=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
+
+				$postedtime =$postedtime ? (date("Y/m/d G:i", (int)$postedtime)) : '';
+				$sub=h($sub);
+				$com=str_replace('<br />',' ',$com);
+				$com=str_replace('"\n"',' ',$com);
+				// マークダウン
+				$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","\\1",$com);
+				$com=h(strip_tags($com));
+				$com=mb_strcut($com,0,180);
+				$name=h($name);
+				$encoded_name=urlencode($name);
+				//変数格納
+				$w=is_numeric($w) ? $w : ''; 
+				$h=is_numeric($h) ? $h : ''; 
+				$comments[]= compact('no','name','encoded_name','sub','img','w','h','com','time','postedtime','hidethumb');
+
+			}
+				$j=$i+1;//表示件数
+				if($i >= $page+$disp_count_of_page-1){break;}
+		}
+	}
+	unset($sub,$name,$no);
+	unset($i,$val);
+	// var_dump($comments);
+
+	if($imgsearch){
+		$img_or_com=$en ? 'Images' : 'イラスト';
+		$mai_or_ken=$en ? ' ' : '枚';
+	}
+	else{
+		$img_or_com=$en ? 'Comments' : 'コメント';
+		$mai_or_ken=$en ? ' ' : '件';
+	}
+	$imgsearch= $imgsearch ? true : false;
+
+	//ラジオボタンのチェック
+	$radio_chk1=false;//作者名
+	$radio_chk2=false;//完全一致
+	$radio_chk3=false;//本文題名	
+	if($q!==''&&$radio===3){//本文題名
+		$radio_chk3=true;
+	}
+	elseif($q!==''&&$radio===2){//完全一致
+		$radio_chk2=true;	
+	}
+	elseif($q!==''&&($radio===0||$radio===1)){//作者名
+		$radio_chk1=true;
+	}
+	else{//作者名	
+		$radio_chk1=true;
+	}
+
+	$page=(int)$page;
+	$en_q=h($en_q);
+	$q=h($q);
+
+	$pageno=0;
+	if($j&&$page>=2){
+		$pageno = ($page+1).'-'.$j.$mai_or_ken;
+	}
+	else{
+		$pageno = $j.$mai_or_ken;
+	}
+	if($q!==''&&$radio===3){
+		$result_subject=($en ? $img_or_com.' of '.$en_q : $en_q."の");//h2タグに入る
+	}
+	elseif($q!==''){
+		$result_subject=$en ? 'Posts by '.$en_q : $en_q.'さんの';
+	}
+	else{
+		$result_subject=$en ? 'Recent '.$pageno.' Posts' : $boardname.'に投稿された最新の';
+		$pageno=$en ? '':$pageno;
+	}
+
+	//ページング
+
+	$nextpage=$page+$disp_count_of_page;//次ページ
+	$prevpage=$page-$disp_count_of_page;//前のページ
+	$countarr=count($arr);//配列の数
+	$prev=false;
+	$next=false;
+
+	//
+	$countarr=count($arr);//配列の数
+
+	//ページング
+	$pagedef=$disp_count_of_page;
+	$start_page=$page-$pagedef*8;
+	$end_page=$page+($pagedef*8);
+	if($page<$pagedef*17){
+		$start_page=0;
+		$end_page=$pagedef*17;
+	}
+	//prev next 
+	$next=(($page+$pagedef)<$countarr) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
+	$prev=((int)$page<=0) ? false : ($page-$pagedef) ;//ページ番号が0の時はprevのリンクを出さない
+
+	//最終更新日時を取得
+	$postedtime='';
+	$lastmodified='';
+	if(!empty($arr)){
+		list($no,$name,$sub,$com,$imgfile,$w,$h,$postedtime)=$arr[0];
+
+		$postedtime=(strlen($postedtime)>15) ? substr($postedtime,0,-6) : substr($postedtime,0,-3);
+		$lastmodified=date("Y/m/d G:i", (int)$postedtime);
+	}
+
+	unset($arr);
+
+	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	
+	// $imgsearch=$imgsearch ? 'on' : 'off';
+	//HTML出力
+	$templete='search.html';
+	return include __DIR__.'/'.$skindir.$templete;
+}
 //カタログ表示
 function catalog($page=0,$q=''){
 	global $use_aikotoba,$home,$catalog_pagedef,$skindir;

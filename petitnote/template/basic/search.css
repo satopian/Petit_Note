@@ -1,0 +1,167 @@
+@charset "utf-8";
+
+form.searchform {
+    margin: 1em 0 0;
+}
+
+/* 閲覧注意 */
+.s_newimg .s_catalog , .s_posted_image {
+	position: relative;
+}
+.s_newimg .s_catalog p, .s_posted_image p  {
+	position: absolute;
+	top: 0;
+	left: 15px;
+	display: inline-block;
+	background-color: #555;
+	color: white;
+	padding: 5px;
+	border-radius: 5px;
+	font-weight: 600;
+	font-size: 18px;
+	line-height: initial;
+}
+
+
+.s_newimg .s_catalog {
+	/* margin: 0; */
+	padding: 0;
+	display: inline-block;
+}
+
+.s_newimg {
+	margin: 19px 0 10px 0;
+	line-height: 1;
+}
+
+.s_catalog {
+	width: 19.3%;
+	max-height: 300px;
+	margin: 0 0.8% 0.8% 0;
+	overflow: hidden;
+	vertical-align: text-top;
+}
+
+.s_catalog img {
+	max-width: 100%;
+	vertical-align: text-top;
+	border: none;
+	height:auto;
+}
+
+.s_newimg span:nth-of-type(5n) {
+	margin-right: 0
+}
+
+.s_article .s_posted_image{
+	overflow: hidden;
+	display: inline-block;
+	max-width: 160px;
+	max-height: 350px;
+	height: auto;
+	float: none;
+}
+
+.s_article {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding: 3px 0;
+	border-bottom: 1px dashed #555;
+	line-height: 3em;
+}
+
+
+.s_posted_image img {
+    max-width: 100%;
+    height: auto;
+}
+
+
+.s_article h3 {
+	font-size: 16px;
+	font-weight: 400;
+	margin: 0 0 3px;
+	display: inline-block;
+}
+
+.s_comments_title_wrap {
+	display: block;
+	line-height: 2em;
+	margin: 0 0 5px;
+}
+.s_comments_title_wrap a {
+	text-decoration: none;
+}
+
+.searchform input[type=text] {
+	height: 1.6em;
+	width: 180px;
+	border: 1px solid #888;
+	vertical-align: middle;
+}
+
+.searchform input[type="submit"] {
+    height: 1.9em;
+}
+
+.searchform input[type=radio] {
+	display: none
+}
+
+.searchform .label {
+	color: #6f6f6f;
+	display: inline-block;
+	padding: 0 10px;
+	text-align: center;
+	cursor: pointer;
+	border: 2px solid #ffe6e6;
+	border-radius: 15px;
+	margin: 0 3px 0 0;
+}
+
+.searchform input[type=radio]:checked+label {
+	color: #626262;
+	background: #ffe6e6;
+}
+
+.searchform .label:hover {
+	background-color: #ffe6e6;
+}
+
+.searchform .radio {
+	display: inline-block;
+	margin: 0 0 16px 0
+}
+
+@media screen and (max-width:767px) {
+	.s_newimg {
+		padding: 5px 0 0 0
+	}
+
+	.s_catalog {
+		width: 24.2%;
+		max-height: 220px;
+
+	}
+
+	.s_catalog {
+		margin: 0 1.0666% 1.0666% 0
+	}
+
+	.s_newimg span:nth-of-type(5n) {
+		margin-right: 1.0666%
+	}
+
+	.s_newimg span:nth-of-type(4n) {
+		margin-right: 0
+	}
+
+}
+@media screen and (max-width:610px) {
+
+	.s_newimg .s_catalog p, .s_posted_image p{
+		display: none;
+	}
+
+}
