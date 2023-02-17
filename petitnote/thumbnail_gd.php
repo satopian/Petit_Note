@@ -20,7 +20,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 		return;
 	}
 
-	if(isset($options['webp']) && !function_exists("ImageWEBP")){
+	if(isset($options['webp']) &&!function_exists("ImageWEBP")){
 		return;
 	}
 

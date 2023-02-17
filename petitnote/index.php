@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.58.2';
+$petit_ver='v0.58.5';
 $petit_lot='lot.230217';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1404,6 +1404,7 @@ function img_replace(){
 	}
 	chmod(IMG_DIR.$imgfile,0606);
 	$src='';
+	$pchext='';
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
 	if (!$is_upload && $repfind && ($pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true]))) {
@@ -2004,13 +2005,14 @@ function search(){
 	global $use_aikotoba,$home,$skindir;
 	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en; 
 	global $max_search,$search_images_pagedef,$search_comments_pagedef; 
+
 	aikotoba_required_to_view();
 
 	//検索可能最大数
 	$max_search= isset($max_search) ? $max_search : 300;
 
 	//画像検索の時の1ページあたりの表示件数
-	$search_images_pagedef = isset($search_images_pagedef) ? $search_images_pagedef : 20;
+	$search_images_pagedef = isset($search_images_pagedef) ? $search_images_pagedef : 60;
 	//通常検索の時の1ページあたりの表示件数
 	$search_comments_pagedef = isset($search_comments_pagedef) ? $search_comments_pagedef : 30;
 
@@ -2102,24 +2104,25 @@ function search(){
 	//ページ番号から1ページ分のスレッド分とりだす
 	$articles=array_slice($arr,(int)$page,$pagedef,false);
 
-	foreach($articles as $i => $r_line){
+	foreach($articles as $i => $line){
 		list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$r_line;
 
-			$out[$i] = create_res($r_line,['catalog'=>true]);//$lineから、情報を取り出す
+			$out[$i] = create_res($line,['catalog'=>true]);//$lineから、情報を取り出す
 
 			$com=str_replace('"\n"',' ',$com);
 			// マークダウン
 			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","\\1",$com);
 			$com=h(strip_tags($com));
 			$com=mb_strcut($com,0,180);
+			$datetime = $time ? (date("m/d G:i", $time)) : '';
 
 			$out[$i]['com']=$com;
+			$out[$i]['datetime']=$datetime;
 
 			$j=$page+$i+1;//表示件数
 		}
 	}
-	unset($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya);
-	unset($i,$val,$postedtime,$hidethumb);
+	unset($i,$val,$datetime,$hidethumb);
 
 	if($imgsearch){
 		$img_or_com=$en ? 'Images' : 'イラスト';
@@ -2196,13 +2199,14 @@ function search(){
 	$postedtime='';
 	$lastmodified='';
 	if(!empty($arr)){
-		list($no,$name,$sub,$com,$imgfile,$w,$h,$postedtime)=$arr[0];
+		list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$arr[0];
 
-		$postedtime=(strlen($postedtime)>15) ? substr($postedtime,0,-6) : substr($postedtime,0,-3);
+		$postedtime=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 		$lastmodified=date("Y/m/d G:i", (int)$postedtime);
 	}
 
 	unset($arr);
+	unset($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya);
 
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	
