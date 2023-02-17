@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.58.0';
-$petit_lot='lot.230216';
+$petit_ver='v0.58.1';
+$petit_lot='lot.230217';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1999,11 +1999,19 @@ function del(){
 function search(){
 	global $use_aikotoba,$home,$skindir;
 	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en; 
-
+	global $max_search,$search_images_pagedef,$search_comments_pagedef; 
 	aikotoba_required_to_view();
 
-	$max_search=300;
+	//検索可能最大数
+	$max_search= isset($max_search) ? $max_search : 300;
 
+	//画像検索の時の1ページあたりの表示件数
+	$search_images_pagedef = isset($search_images_pagedef) ? $search_images_pagedef : 20;
+	//通常検索の時の1ページあたりの表示件数
+	$search_comments_pagedef = isset($search_comments_pagedef) ? $search_comments_pagedef : 30;
+
+	$disp_count_of_images=isset($disp_count_of_images);//画像検索の時の1ページあたりの表示件数
+	$disp_count_of_comments;//通常検索の時の1ページあたりの表示件数
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$en_q=(string)filter_input(INPUT_GET,'q');
@@ -2014,10 +2022,10 @@ function search(){
 	$radio =(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 
 	if($imgsearch){
-		$disp_count_of_page=20;//画像検索の時の1ページあたりの表示件数
+		$disp_count_of_page=$search_images_pagedef;//画像検索の時の1ページあたりの表示件数
 	}
 	else{
-		$disp_count_of_page=30;//通常検索の時の1ページあたりの表示件数
+		$disp_count_of_page=$search_comments_pagedef;//通常検索の時の1ページあたりの表示件数
 	}
 	//ログの読み込み
 	$arr=[];
@@ -2025,55 +2033,60 @@ function search(){
 	$j=0;
 	$fp=fopen("log/alllog.log","r");
 	while ($log = fgets($fp)) {
-
+		if(!trim($log)){
+			continue;
+		}
 		list($resno)=explode("\t",$log);
 		$resno=basename($resno);
-			if(is_file("log/{$resno}.log")){
-				$cp=fopen("log/{$resno}.log","r");
-			while($line=fgets($cp)){
-
-					list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
-
-				$continue_to_search=true;
-				if($imgsearch){//画像検索の場合
-					$continue_to_search=($imgfile&&is_file(IMG_DIR.$imgfile));//画像があったら
-				}
-
-				if($continue_to_search){
-					if($radio===1||$radio===2||$radio===0){
-						$s_name=mb_convert_kana($name, 'rn', 'UTF-8');//全角英数を半角に
-						$s_name=str_replace(array(" ", "　"), "", $s_name);
-						$s_name=str_replace("〜","～", $s_name);//波ダッシュを全角チルダに
-					}
-					else{
-						$s_sub=mb_convert_kana($sub, 'rn', 'UTF-8');//全角英数を半角に
-						$s_sub=str_replace(array(" ", "　"), "", $s_sub);
-						$s_sub=str_replace("〜","～", $s_sub);//波ダッシュを全角チルダに
-						$s_com=mb_convert_kana($com, 'rn', 'UTF-8');//全角英数を半角に
-						$s_com=str_replace(array(" ", "　"), "", $s_com);
-						$s_com=str_replace("〜","～", $s_com);//波ダッシュを全角チルダに
-					}
-					
-					//ログとクエリを照合
-					if($q===''||//空白なら
-							$q!==''&&$radio===3&&stripos($s_com,$q)!==false||//本文を検索
-							$q!==''&&$radio===3&&stripos($s_sub,$q)!==false||//題名を検索
-							$q!==''&&($radio===1||$radio===0)&&stripos($s_name,$q)===0||//作者名が含まれる
-							$q!==''&&($radio===2&&$s_name===$q)//作者名完全一致
-					){
-						$hidethumb = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
-
-						$thumb= ($thumbnail==='hide_thumbnail'||$thumbnail==='thumbnail');
-
-						$arr[]=[$no,$name,$sub,$com,$imgfile,$w,$h,$time,$hidethumb,$thumb];
-						++$i;
-						if($i>=$max_search){break 2;}//1掲示板あたりの最大検索数
-					}
-					
-				}
-			}
-			fclose($cp);
+		//個別スレッドのループ
+		if(!is_file(LOG_DIR."{$resno}.log")){
+			continue;	
 		}
+
+		$cp=fopen("log/{$resno}.log","r");
+		while($line=fgets($cp)){
+
+				list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
+
+			$continue_to_search=true;
+			if($imgsearch){//画像検索の場合
+				$continue_to_search=(bool)$imgfile;//画像があったら
+			}
+
+			if($continue_to_search){
+				if($radio===1||$radio===2||$radio===0){
+					$s_name=mb_convert_kana($name, 'rn', 'UTF-8');//全角英数を半角に
+					$s_name=str_replace(array(" ", "　"), "", $s_name);
+					$s_name=str_replace("〜","～", $s_name);//波ダッシュを全角チルダに
+				}
+				else{
+					$s_sub=mb_convert_kana($sub, 'rn', 'UTF-8');//全角英数を半角に
+					$s_sub=str_replace(array(" ", "　"), "", $s_sub);
+					$s_sub=str_replace("〜","～", $s_sub);//波ダッシュを全角チルダに
+					$s_com=mb_convert_kana($com, 'rn', 'UTF-8');//全角英数を半角に
+					$s_com=str_replace(array(" ", "　"), "", $s_com);
+					$s_com=str_replace("〜","～", $s_com);//波ダッシュを全角チルダに
+				}
+				
+				//ログとクエリを照合
+				if($q===''||//空白なら
+						$q!==''&&$radio===3&&stripos($s_com,$q)!==false||//本文を検索
+						$q!==''&&$radio===3&&stripos($s_sub,$q)!==false||//題名を検索
+						$q!==''&&($radio===1||$radio===0)&&stripos($s_name,$q)===0||//作者名が含まれる
+						$q!==''&&($radio===2&&$s_name===$q)//作者名完全一致
+				){
+					$hidethumb = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
+
+					$thumb= ($thumbnail==='hide_thumbnail'||$thumbnail==='thumbnail');
+
+					$arr[]=[$no,$name,$sub,$com,$imgfile,$w,$h,$time,$hidethumb,$thumb];
+					++$i;
+					if($i>=$max_search){break 2;}//1掲示板あたりの最大検索数
+				}
+				
+			}
+		}
+		fclose($cp);
 		if($j>=5000){break;}//1掲示板あたりの最大行数
 		++$j;
 	}
@@ -2083,18 +2096,23 @@ function search(){
 	$j=0;
 	$comments=[];
 	if($arr){
+
 		foreach($arr as $i => $val){
 			if($i >= $page){//$iが表示するページになるまで待つ
 				list($no,$name,$sub,$com,$imgfile,$w,$h,$time,$hidethumb,$thumb)=$val;
 				$img='';
+				$webp_img='';
 				if($imgfile){
-					if($thumb&&is_file(THUMB_DIR.$time.'s.jpg')){//サムネイルはあるか？
+					if((bool)$thumb){//サムネイルはあるか？
 						$img=THUMB_DIR.$time.'s.jpg';
 					}
-					elseif($imgsearch||is_file(IMG_DIR.$imgfile)){
+					else{
 						$img=IMG_DIR.$imgfile;
 						}
+					if(is_file('webp/'.$time.'t.webp')){
+						$webp_img='webp/'.$time.'t.webp';
 					}
+				}
 
 				$postedtime=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 
@@ -2118,7 +2136,7 @@ function search(){
 				if($i >= $page+$disp_count_of_page-1){break;}
 		}
 	}
-	unset($sub,$name,$no);
+	unset($no,$name,$encoded_name,$sub,$img,$w,$h,$com,$time,$postedtime,$hidethumb);
 	unset($i,$val);
 	// var_dump($comments);
 
@@ -2130,7 +2148,7 @@ function search(){
 		$img_or_com=$en ? 'Comments' : 'コメント';
 		$mai_or_ken=$en ? ' ' : '件';
 	}
-	$imgsearch= $imgsearch ? true : false;
+	$imgsearch= (bool)$imgsearch;
 
 	//ラジオボタンのチェック
 	$radio_chk1=false;//作者名
