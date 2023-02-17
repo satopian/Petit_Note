@@ -293,7 +293,7 @@ function create_res($line,$options=[]){
 	$check_elapsed_days = !$isset_catalog ? check_elapsed_days($time) : true;//念のためtrueに
 	$verified = ($verified==='adminpost');
 	$three_point_sub = ($isset_catalog && (mb_strlen($sub)>15)) ? '…' :'';
-
+	$webpimg = $isset_catalog ? is_file('webp/'.$time.'t.webp') : false;
 	$res=[
 		'no' => $no,
 		'sub' => $sub,
@@ -326,6 +326,7 @@ function create_res($line,$options=[]){
 		'encoded_u' => urlencode($root_url.'?resno='.$no),//tweet
 		'encoded_t' => urlencode('['.$no.']'.$sub.' by '.$name.' - '.$boardname),
 		'oya' => $oya,
+		'webpimg' => $webpimg ? 'webp/'.$time.'t.webp' :false,
 		'hide_thumbnail' => $hide_thumbnail, //サムネイルにぼかしをかける時
 		'link_thumbnail' => $link_thumbnail, //サムネイルにリンクがある時
 	];
@@ -442,6 +443,7 @@ function delete_files ($imgfile, $time) {
 	$time=basename($time);
 	safe_unlink(IMG_DIR.$imgfile);
 	safe_unlink(THUMB_DIR.$time.'s.jpg');
+	safe_unlink('webp/'.$time.'t.webp');
 	safe_unlink(IMG_DIR.$time.'.pch');
 	safe_unlink(IMG_DIR.$time.'.spch');
 	safe_unlink(IMG_DIR.$time.'.chi');
@@ -689,6 +691,7 @@ function init(){
 	check_dir(__DIR__."/temp");
 	check_dir(__DIR__."/thumbnail");
 	check_dir(__DIR__."/log");
+	check_dir(__DIR__."/webp");
 	if(!is_file(LOG_DIR.'alllog.log')){
 	file_put_contents(LOG_DIR.'alllog.log','',FILE_APPEND|LOCK_EX);
 	chmod(LOG_DIR.'alllog.log',0600);	
@@ -877,7 +880,7 @@ function time_left_to_close_the_thread ($postedtime) {
 	$timeleft=((int)$elapsed_days * 86400)-(time() - (int)$postedtime);
 	//残り時間が60日を切ったら表示
 	return ($timeleft<(60 * 86400)) ? 
-	calc_remaining_time_to_close_thread(((int)$elapsed_days * 86400)-(time() - (int)$postedtime)) : false;
+	calc_remaining_time_to_close_thread($timeleft) : false;
 }	
 //POSTされた値をログファイルに格納する書式にフォーマット
 function create_formatted_text_from_post($name,$sub,$url,$com){

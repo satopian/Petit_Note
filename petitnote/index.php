@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.58.1';
+$petit_ver='v0.58.2';
 $petit_lot='lot.230217';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -567,6 +567,8 @@ function post(){
 		}
 	$hide_thumbnail=$hide_thumbnail ? 'hide_' : '';
 	$thumbnail =  $hide_thumbnail.$thumbnail;
+		//webpサムネイル
+		thumb(IMG_DIR,$imgfile,$time,300,800,['webp'=>true]);
 	}
 	//ログの番号の最大値
 	$no_arr = [];
@@ -1430,6 +1432,8 @@ function img_replace(){
 			$thumbnail='thumbnail';
 		}
 	}
+	//webpサムネイル
+	thumb(IMG_DIR,$imgfile,$time,300,800,['webp'=>true]);
 	$hide_thumbnail = ($_imgfile && ($_thumbnail==='hide_thumbnail'||$_thumbnail==='hide_')) ? 'hide_' : '';
 
 	$thumbnail =  $hide_thumbnail.$thumbnail;
@@ -2022,10 +2026,10 @@ function search(){
 	$radio =(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 
 	if($imgsearch){
-		$disp_count_of_page=$search_images_pagedef;//画像検索の時の1ページあたりの表示件数
+		$pagedef=$search_images_pagedef;//画像検索の時の1ページあたりの表示件数
 	}
 	else{
-		$disp_count_of_page=$search_comments_pagedef;//通常検索の時の1ページあたりの表示件数
+		$pagedef=$search_comments_pagedef;//通常検索の時の1ページあたりの表示件数
 	}
 	//ログの読み込み
 	$arr=[];
@@ -2042,7 +2046,6 @@ function search(){
 		if(!is_file(LOG_DIR."{$resno}.log")){
 			continue;	
 		}
-
 		$cp=fopen("log/{$resno}.log","r");
 		while($line=fgets($cp)){
 
@@ -2079,7 +2082,7 @@ function search(){
 
 					$thumb= ($thumbnail==='hide_thumbnail'||$thumbnail==='thumbnail');
 
-					$arr[]=[$no,$name,$sub,$com,$imgfile,$w,$h,$time,$hidethumb,$thumb];
+					$arr[]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
 					++$i;
 					if($i>=$max_search){break 2;}//1掲示板あたりの最大検索数
 				}
@@ -2096,49 +2099,27 @@ function search(){
 	$j=0;
 	$comments=[];
 	if($arr){
+	//ページ番号から1ページ分のスレッド分とりだす
+	$articles=array_slice($arr,(int)$page,$pagedef,false);
 
-		foreach($arr as $i => $val){
-			if($i >= $page){//$iが表示するページになるまで待つ
-				list($no,$name,$sub,$com,$imgfile,$w,$h,$time,$hidethumb,$thumb)=$val;
-				$img='';
-				$webp_img='';
-				if($imgfile){
-					if((bool)$thumb){//サムネイルはあるか？
-						$img=THUMB_DIR.$time.'s.jpg';
-					}
-					else{
-						$img=IMG_DIR.$imgfile;
-						}
-					if(is_file('webp/'.$time.'t.webp')){
-						$webp_img='webp/'.$time.'t.webp';
-					}
-				}
+	foreach($articles as $i => $r_line){
+		list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$r_line;
 
-				$postedtime=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
+			$out[$i] = create_res($r_line,['catalog'=>true]);//$lineから、情報を取り出す
 
-				$postedtime =$postedtime ? (date("Y/m/d G:i", (int)$postedtime)) : '';
-				$sub=h($sub);
-				$com=str_replace('<br />',' ',$com);
-				$com=str_replace('"\n"',' ',$com);
-				// マークダウン
-				$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","\\1",$com);
-				$com=h(strip_tags($com));
-				$com=mb_strcut($com,0,180);
-				$name=h($name);
-				$encoded_name=urlencode($name);
-				//変数格納
-				$w=is_numeric($w) ? $w : ''; 
-				$h=is_numeric($h) ? $h : ''; 
-				$comments[]= compact('no','name','encoded_name','sub','img','w','h','com','time','postedtime','hidethumb');
+			$com=str_replace('"\n"',' ',$com);
+			// マークダウン
+			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","\\1",$com);
+			$com=h(strip_tags($com));
+			$com=mb_strcut($com,0,180);
 
-			}
-				$j=$i+1;//表示件数
-				if($i >= $page+$disp_count_of_page-1){break;}
+			$out[$i]['com']=$com;
+
+			$j=$page+$i+1;//表示件数
 		}
 	}
-	unset($no,$name,$encoded_name,$sub,$img,$w,$h,$com,$time,$postedtime,$hidethumb);
-	unset($i,$val);
-	// var_dump($comments);
+	unset($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya);
+	unset($i,$val,$postedtime,$hidethumb);
 
 	if($imgsearch){
 		$img_or_com=$en ? 'Images' : 'イラスト';
@@ -2191,8 +2172,8 @@ function search(){
 
 	//ページング
 
-	$nextpage=$page+$disp_count_of_page;//次ページ
-	$prevpage=$page-$disp_count_of_page;//前のページ
+	$nextpage=$page+$pagedef;//次ページ
+	$prevpage=$page-$pagedef;//前のページ
 	$countarr=count($arr);//配列の数
 	$prev=false;
 	$next=false;
@@ -2201,7 +2182,6 @@ function search(){
 	$countarr=count($arr);//配列の数
 
 	//ページング
-	$pagedef=$disp_count_of_page;
 	$start_page=$page-$pagedef*8;
 	$end_page=$page+($pagedef*8);
 	if($page<$pagedef*17){

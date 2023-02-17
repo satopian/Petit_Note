@@ -24,7 +24,8 @@
 <body>
 <div class="container" id="top">
 	<?php if($set_nsfw && !$nsfwc):?>
-	<h2><?php if($en):?>View NSFW images?<?php else:?>年齢制限付きのコンテンツを表示してもよろしいでしょうか?<?php endif;?></h2>
+	<div class="view_nsfw">
+	<span><?php if($en):?>View NSFW images?<?php else:?>年齢制限付きのコンテンツを表示してもよろしいでしょうか?<?php endif;?></span>
 	<form action="./" method="post">
 	<input type="hidden" name="mode" value="view_nsfw">
 	<input type="hidden" name="view_nsfw" value="on">
@@ -34,8 +35,8 @@
 	<input type="hidden" name="imgsearch" value="<?=h($imgsearch)?>">
 	<input type="hidden" name="radio" value="<?=h($radio)?>">
 	<input type="submit" value="<?php if($en):?>Yes<?php else:?>はい表示します。<?php endif;?>">
-
 	</form>
+	</div>
 	<?php endif;?>
 
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
@@ -87,29 +88,48 @@
 
 		</nav>
 		<!-- 反復 -->
-		<?php if($comments):?>
+		<?php if($out):?>
 		<?php if($imgsearch):?>
 		<div class="s_newimg">
-			<?php foreach($comments as $res):?><span class="s_catalog <?php if($res['hidethumb']):?>hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><img
-							src="<?=h($res['img'])?>"
-							alt="<?=h($res['sub'])?>by <?=h($res['name'])?> <?=h($res['postedtime'])?>"
-							title="<?=h($res['sub'])?>by <?=h($res['name'])?> <?=h($res['postedtime'])?>"
-							loading="lazy" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>"><?php if($res['hidethumb']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></span><?php endforeach;?></div>
+			<?php foreach($out as $i => $res):?><span class="s_catalog <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
+				<?php if($res['webpimg']):?>
+				<picture>
+				<source srcset="<?=h($res['webpimg'])?>" type="image/webp">
+
+				<?php endif;?>
+				<?php if($res['thumbnail']):?>
+					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>10):?>loading="lazy"<?php endif;?>>
+				<?php else:?>
+					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>10):?>loading="lazy"<?php endif;?>>
+				<?php endif;?>
+				<?php if($res['webpimg']):?>
+				</picture>
+				<?php endif;?>
+					<?php if($res['hide_thumbnail']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></span><?php endforeach;?></div>
 		<?php else:?>
-		<?php foreach($comments as $res):?>
+		<?php foreach($out as $i => $res):?>
 		<article>
 			<div class="s_article">
 				<div class="s_comments_title_wrap">
 					<h3><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><?=h($res['sub'])?></a></h3>
-					<?=h($res['postedtime'])?><br><span class="info_name"><a
+					<?=h($res['date'])?><br><span class="info_name"><a
 							href="?mode=search&page=0&q=<?=h($res['encoded_name'])?>&radio=2"
 							target="_blank"><?=h($res['name'])?></a></span>
 				</div>
 				<?php if($res['img']):?>
-				<div class="s_posted_image<?php if($res['hidethumb']):?> hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><img src="<?=h($res['img'])?>"
-						alt="<?=h($res['sub'])?>by <?=h($res['name'])?> <?=h($res['postedtime'])?>"
-						title="<?=h($res['sub'])?>by <?=h($res['name'])?> <?=h($res['postedtime'])?>"
-						loading="lazy" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>"><?php if($res['hidethumb']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></div><br>
+				<div class="s_posted_image<?php if($res['hide_thumbnail']):?> hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
+					<?php if($res['webpimg']):?>
+					<picture>
+						<source srcset="<?=h($res['webpimg'])?>">
+					<?php endif;?>
+						<?php if($res['thumbnail']):?>
+						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>4):?>loading="lazy"<?php endif;?>>
+					<?php else:?>
+						<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>4):?>loading="lazy"<?php endif;?>>
+					<?php if($res['webpimg']):?>
+					</picture>	
+					<?php endif;?>
+					<?php endif;?></picture>						<?php if($res['hide_thumbnail']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></div><br>
 				<?php endif;?>
 				<?=h($res['com'])?>
 				<div class="res_button_wrap">

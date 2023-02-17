@@ -1,11 +1,12 @@
 <?php
-// thumbnail_gd.php for PetitNote (C)さとぴあ 2021 - 2022   
+// thumbnail_gd.php for PetitNote (C)さとぴあ 2021 - 2023
 // originalscript (C)SakaQ 2005 >> http://www.punyu.net/php/
+//230217 webpサムネイル作成オプションを追加。
 //220729 処理が成功した時の返り値をtrueに変更。
 //220321 透過GIF、透過PNGの時は透明を出力、または透明色を白に変換。
 //220320 本体画像のリサイズにPNG→PNG、GIF→PNG、WEBP→JPEGの各処理を追加。
 //210920 PetitNote版。
-$thumbnail_gd_ver=20221213;
+$thumbnail_gd_ver=20230217;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$path=basename($path).'/';
@@ -18,11 +19,16 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	if(!gd_check()||!function_exists("ImageCreate")||!function_exists("ImageCreateFromJPEG")){
 		return;
 	}
+
+	if(isset($options['webp']) && !function_exists("ImageWEBP")){
+		return;
+	}
+
 	$fsize = filesize($fname);    // ファイルサイズを取得
 	list($w,$h) = GetImageSize($fname); // 画像の幅と高さとタイプを取得
 	$w_h_size_over=($w > $max_w || $h > $max_h);
 	$f_size_over=!isset($options['toolarge']) ? ($fsize>1024*1024) : false;
-
+	$w_h_size_over = isset($options['webp']) ? true : $w_h_size_over; 
 	if(!$w_h_size_over && !$f_size_over){
 		return;
 	}
@@ -67,7 +73,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$exists_ImageCopyResampled = false;
 	if(function_exists("ImageCreateTrueColor")&&get_gd_ver()=="2"){
 		$im_out = ImageCreateTrueColor($out_w, $out_h);
-		if(isset($options['toolarge'])&&(in_array($mime_type,["image/png","image/gif","image/webp"]))){
+		if((isset($options['toolarge'])||isset($options['webp'])) && in_array($mime_type,["image/png","image/gif","image/webp"])){
 			if(function_exists("imagealphablending") && function_exists("imagesavealpha")){
 				imagealphablending($im_out, false);
 				imagesavealpha($im_out, true);//透明
@@ -117,6 +123,10 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 
 			default : return;
 		}
+
+	}elseif(isset($options['webp'])){
+		$outfile='webp/'.$time.'t.webp';
+		ImageWEBP($im_out, $outfile,90);
 
 	}else{
 		$outfile=THUMB_DIR.$time.'s.jpg';
