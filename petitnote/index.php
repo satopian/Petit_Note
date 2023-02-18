@@ -12,12 +12,11 @@ if (version_compare(PHP_VERSION, '5.6.0', '<')) {
 		"エラー。本プログラムの動作には PHPバージョン 5.6.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
 	);
 }
-
 if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230216){
+if(!isset($functions_ver)||$functions_ver<20230218){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -38,7 +37,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20221213){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20230218){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
 
@@ -2051,9 +2050,6 @@ function search(){
 		while($line=fgets($cp)){
 
 			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
-			if(!is_numeric($time)){
-				continue;
-			}
 		
 			$continue_to_search=true;
 			if($imgsearch){//画像検索の場合
@@ -2099,7 +2095,6 @@ function search(){
 	fclose($fp);
 
 	krsort($arr);
-
 
 	//検索結果の出力
 	$j=0;

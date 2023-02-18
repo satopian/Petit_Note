@@ -54,7 +54,7 @@ form.searchform {
 
 .s_article .s_posted_image{
 	overflow: hidden;
-	display: inline-block;
+	display: block;
 	max-width: 160px;
 	max-height: 350px;
 	height: auto;
