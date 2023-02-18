@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.60.6';
+$petit_ver='v0.60.8';
 $petit_lot='lot.230218';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2050,8 +2050,11 @@ function search(){
 		$cp=fopen("log/{$resno}.log","r");
 		while($line=fgets($cp)){
 
-				list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
-
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
+			if(!is_numeric($time)){
+				continue;
+			}
+		
 			$continue_to_search=true;
 			if($imgsearch){//画像検索の場合
 				$continue_to_search=(bool)$imgfile;//画像があったら
@@ -2082,7 +2085,7 @@ function search(){
 					$hidethumb = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 
 					$thumb= ($thumbnail==='hide_thumbnail'||$thumbnail==='thumbnail');
-					$arr[(int)$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
+					$arr[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
 					++$i;
 					if($i>=$max_search){break 2;}//1掲示板あたりの最大検索数
 				}
@@ -2097,13 +2100,14 @@ function search(){
 
 	krsort($arr);
 
+
 	//検索結果の出力
 	$j=0;
 	$out=[];
 	if(!empty($arr)){
 	//ページ番号から1ページ分のスレッド分とりだす
 	$articles=array_slice($arr,(int)$page,$pagedef,false);
-
+	$articles = array_values($articles);//php5.6対応
 	foreach($articles as $i => $line){
 
 			$out[$i] = create_res($line,['catalog'=>true]);//$lineから、情報を取り出す
