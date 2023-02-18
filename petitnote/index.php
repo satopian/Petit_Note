@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.60.3';
+$petit_ver='v0.60.5';
 $petit_lot='lot.230218';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -67,6 +67,7 @@ $use_chickenpaint=isset($use_chickenpaint) ? $use_chickenpaint : true;
 $max_file_size_in_png_format_paint = isset($max_file_size_in_png_format_paint) ? $max_file_size_in_png_format_paint : 1024;
 $max_file_size_in_png_format_upload = isset($max_file_size_in_png_format_upload) ? $max_file_size_in_png_format_upload : 800;
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
+$display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_back_to_home : true;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -2016,8 +2017,6 @@ function search(){
 	//通常検索の時の1ページあたりの表示件数
 	$search_comments_pagedef = isset($search_comments_pagedef) ? $search_comments_pagedef : 30;
 
-	$disp_count_of_images=isset($disp_count_of_images);//画像検索の時の1ページあたりの表示件数
-	$disp_count_of_comments;//通常検索の時の1ページあたりの表示件数
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$en_q=(string)filter_input(INPUT_GET,'q');
