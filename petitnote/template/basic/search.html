@@ -4,14 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css">
+<link rel="stylesheet" href="<?=h($skindir)?>search.css">
 <link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 <?php if($set_nsfw && !$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
 	<style>img {filter:blur(15px);}</style>
 <?php endif;?>
-
-<link rel="stylesheet" href="<?=h($skindir)?>search.css">
 </style>
 <title>
 	<?php if($en):?>	
@@ -129,7 +128,7 @@
 					<?php if($res['webpimg']):?>
 					</picture>	
 					<?php endif;?>
-					<?php endif;?></picture><?php if($res['hide_thumbnail']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></div><br>
+					<?php endif;?></picture><?php if($res['hide_thumbnail']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></div>
 				<?php endif;?>
 				<?=h($res['com'])?>
 				<div class="res_button_wrap">
@@ -173,7 +172,7 @@
 	</span>
 </div>
 
-<div class="pagination leftbox">
+<div class="pagination">
 <?php if($prev):?>
 <a href="?mode=search&page=0&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">start</a> |
 <?php endif;?>

@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.58.5';
-$petit_lot='lot.230217';
+$petit_ver='v0.60.3';
+$petit_lot='lot.230218';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2083,8 +2083,7 @@ function search(){
 					$hidethumb = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 
 					$thumb= ($thumbnail==='hide_thumbnail'||$thumbnail==='thumbnail');
-
-					$arr[]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
+					$arr[(int)$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
 					++$i;
 					if($i>=$max_search){break 2;}//1掲示板あたりの最大検索数
 				}
@@ -2097,32 +2096,29 @@ function search(){
 	}
 	fclose($fp);
 
+	krsort($arr);
+
 	//検索結果の出力
 	$j=0;
-	$comments=[];
-	if($arr){
+	$out=[];
+	if(!empty($arr)){
 	//ページ番号から1ページ分のスレッド分とりだす
 	$articles=array_slice($arr,(int)$page,$pagedef,false);
 
 	foreach($articles as $i => $line){
-		list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$r_line;
 
 			$out[$i] = create_res($line,['catalog'=>true]);//$lineから、情報を取り出す
 
-			$com=str_replace('"\n"',' ',$com);
 			// マークダウン
-			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","\\1",$com);
+			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","\\1",$out[$i]['com']);
 			$com=h(strip_tags($com));
 			$com=mb_strcut($com,0,180);
-			$datetime = $time ? (date("m/d G:i", $time)) : '';
-
 			$out[$i]['com']=$com;
-			$out[$i]['datetime']=$datetime;
+			$out[$i]['date']=$out[$i]['datetime'] ? (date("y/m/d G:i", $out[$i]['datetime'])) : '';
 
 			$j=$page+$i+1;//表示件数
 		}
 	}
-	unset($i,$val,$datetime,$hidethumb);
 
 	if($imgsearch){
 		$img_or_com=$en ? 'Images' : 'イラスト';
@@ -2199,8 +2195,8 @@ function search(){
 	$postedtime='';
 	$lastmodified='';
 	if(!empty($arr)){
-		list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$arr[0];
-
+		
+		$time= key($arr);
 		$postedtime=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 		$lastmodified=date("Y/m/d G:i", (int)$postedtime);
 	}

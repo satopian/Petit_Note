@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230216;
+$functions_ver=20230218;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -131,7 +131,6 @@ function admin_del(){
 	session_regenerate_id(true);
 
 	$_SESSION['aikotoba']='aikotoba';
-	
 	$_SESSION['admindel']=$second_pass;
 
 	return branch_destination_of_location();
@@ -316,6 +315,7 @@ function create_res($line,$options=[]){
 		'continue' => $check_elapsed_days ? $continue : ((adminpost_valid()||admindel_valid()) ? $continue :''),
 		'time' => $time,
 		'date' => $date,
+		'datetime' => $datetime,
 		'host' => $host,
 		'userid' => $userid,
 		'check_elapsed_days' => $check_elapsed_days,
@@ -331,7 +331,7 @@ function create_res($line,$options=[]){
 		'link_thumbnail' => $link_thumbnail, //サムネイルにリンクがある時
 	];
 
-	$res['com']= !$isset_catalog ? str_replace('"\n"',"\n",$res['com']) :'';
+	$res['com']= !$isset_catalog ? str_replace('"\n"',"\n",$res['com']) : str_replace('"\n"'," ",$res['com']);
 
 	foreach($res as $key=>$val){
 		$res[$key]=h($val);

@@ -22,7 +22,6 @@ form.searchform {
 	line-height: initial;
 }
 
-
 .s_newimg .s_catalog {
 	/* margin: 0; */
 	padding: 0;
@@ -73,11 +72,10 @@ form.searchform {
 
 
 .s_posted_image img {
-    max-width: 100%;
-    height: auto;
-    margin: 12px 0 0;
+	max-width: 100%;
+	height: auto;
+	margin: 12px 0 0;
 }
-
 
 .s_article h3 {
 	font-size: 16px;
