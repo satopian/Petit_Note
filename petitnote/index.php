@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.60.5';
+$petit_ver='v0.60.6';
 $petit_lot='lot.230218';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2211,7 +2211,7 @@ function search(){
 }
 //カタログ表示
 function catalog($page=0,$q=''){
-	global $use_aikotoba,$home,$catalog_pagedef,$skindir;
+	global $use_aikotoba,$home,$catalog_pagedef,$skindir,$display_link_back_to_home;
 	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en; 
 
 	aikotoba_required_to_view();
@@ -2326,7 +2326,7 @@ function catalog($page=0,$q=''){
 function view($page=0){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home;
 
 	aikotoba_required_to_view();
 
@@ -2424,7 +2424,7 @@ function view($page=0){
 function res ($resno){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home;
 
 	aikotoba_required_to_view();
 
