@@ -386,7 +386,8 @@ span.continue_menu {
     display: inline-block;
     overflow: hidden;
     vertical-align: top;
-	position: relative;
+    position: relative;
+    max-height: 500px;
 }
 .catalog_image p {
     position: absolute;
@@ -481,6 +482,7 @@ span.continue_menu {
 		width: 48.8%;
 		margin: 0.8% 0.8% 0.8% 0;
 		display: inline-block;
+		max-height: 380px;
 	}
 	
 	.catalog_desc_wrap div:nth-of-type(3n){

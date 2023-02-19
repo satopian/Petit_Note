@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 $petit_ver='v0.60.8';
-$petit_lot='lot.230218';
+$petit_lot='lot.230219';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2018,8 +2018,8 @@ function search(){
 
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$en_q=(string)filter_input(INPUT_GET,'q');
-	$q=urldecode($en_q);
+	$q=(string)filter_input(INPUT_GET,'q');
+	$q=urldecode($q);
 	$q=mb_convert_kana($q, 'rn', 'UTF-8');
 	$q=str_replace(array(" ", "　"), "", $q);
 	$q=str_replace("〜","～",$q);//波ダッシュを全角チルダに
@@ -2102,7 +2102,7 @@ function search(){
 	if(!empty($arr)){
 	//ページ番号から1ページ分のスレッド分とりだす
 	$articles=array_slice($arr,(int)$page,$pagedef,false);
-	$articles = array_values($articles);//php5.6対応
+	$articles = array_values($articles);//php5.6 32bit 対応
 	foreach($articles as $i => $line){
 
 			$out[$i] = create_res($line,['catalog'=>true]);//$lineから、情報を取り出す
@@ -2146,7 +2146,7 @@ function search(){
 	}
 
 	$page=(int)$page;
-	$en_q=h($en_q);
+	$en_q=h(urlencode($q));
 	$q=h($q);
 
 	$pageno=0;
@@ -2157,10 +2157,10 @@ function search(){
 		$pageno = $j.$mai_or_ken;
 	}
 	if($q!==''&&$radio===3){
-		$result_subject=($en ? $img_or_com.' of '.$en_q : $en_q."の");//h2タグに入る
+		$result_subject=($en ? $img_or_com.' of '.$q : $q."の");//h2タグに入る
 	}
 	elseif($q!==''){
-		$result_subject=$en ? 'Posts by '.$en_q : $en_q.'さんの';
+		$result_subject=$en ? 'Posts by '.$q : $q.'さんの';
 	}
 	else{
 		$result_subject=$en ? 'Recent '.$pageno.' Posts' : $boardname.'に投稿された最新の';

@@ -323,6 +323,7 @@ $max_search= 300;
 
 //画像検索の時の1ページあたりの表示件数
 $search_images_pagedef = 60;
+
 //通常検索の時の1ページあたりの表示件数
 $search_comments_pagedef = 30;
 
