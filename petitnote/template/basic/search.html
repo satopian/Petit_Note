@@ -122,11 +122,11 @@
 					<?php endif;?>
 						<?php if($res['thumbnail']):?>
 						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>4):?>loading="lazy"<?php endif;?>>
-					<?php else:?>
+						<?php else:?>
 						<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>4):?>loading="lazy"<?php endif;?>>
+						<?php endif;?>
 					<?php if($res['webpimg']):?>
 					</picture>	
-					<?php endif;?>
 					<?php endif;?><?php if($res['hide_thumbnail']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></div>
 				<?php endif;?>
 				<?=h($res['com'])?>
