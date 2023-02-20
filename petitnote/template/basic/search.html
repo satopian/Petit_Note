@@ -11,7 +11,6 @@
 	<!-- センシティブコンテンツにブラーをかける -->
 	<style>img {filter:blur(15px);}</style>
 <?php endif;?>
-</style>
 <title>
 	<?php if($en):?>	
 			Displaying <?=h($pageno)?> <?=h($result_subject)?> 
@@ -110,8 +109,8 @@
 		<article>
 			<div class="s_article">
 				<div class="s_comments_title_wrap">
-					<h3><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><?=h($res['sub'])?></a></h3>
-					<?=h($res['datetime'])?><br><span class="info_name"><a
+				<a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><h3><?=h($res['sub'])?></h3>
+					<?=h($res['date'])?></a><br><span class="info_name"><a
 							href="?mode=search&page=0&q=<?=h($res['encoded_name'])?>&radio=2"
 							target="_blank"><?=h($res['name'])?></a></span>
 				</div>
@@ -128,7 +127,7 @@
 					<?php if($res['webpimg']):?>
 					</picture>	
 					<?php endif;?>
-					<?php endif;?></picture><?php if($res['hide_thumbnail']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></div>
+					<?php endif;?><?php if($res['hide_thumbnail']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></div>
 				<?php endif;?>
 				<?=h($res['com'])?>
 				<div class="res_button_wrap">
