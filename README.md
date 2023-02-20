@@ -106,8 +106,7 @@ POTI-boardで使っている外部PHPスクリプト、search.phpのコードを
 そのままでは、Petit Noteのその他の処理と異なったコードになってしまうため、最終的な出力だけでなく、内部コードの整理と再構築を行いました。  
 この作業だけでまる一週間を費やしましたが、できる事はPOTI-boardの検索機能とほとんど同じです。  
 ページ送り機能はPetit Noteのほうが高機能です。  
-
-![230219_001_検索機能を追加](https://user-images.githubusercontent.com/44894014/219948197-eab83f6e-6158-4efb-8aef-95cad391e2b1.gif)
+![230220_002_検索機能を追加](https://user-images.githubusercontent.com/44894014/220083319-6affd14d-739a-4dca-95ac-8868d06a7eae.gif)
 
 Petit Noteには日本語と英語の自動切り替え機能があります。  
 ブラウザの言語が日本語以外の時にはUIを英語表示します。  
