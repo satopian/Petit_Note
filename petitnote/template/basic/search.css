@@ -5,10 +5,10 @@ form.searchform {
 }
 
 /* 閲覧注意 */
-.s_newimg .s_catalog , .s_posted_image {
+.s_posted_image {
 	position: relative;
 }
-.s_newimg .s_catalog p, .s_posted_image p  {
+.s_posted_image p  {
 	position: absolute;
 	top: 0;
 	left: 15px;
@@ -22,43 +22,16 @@ form.searchform {
 	line-height: initial;
 }
 
-.s_newimg .s_catalog {
-	/* margin: 0; */
-	padding: 0;
-	display: inline-block;
-}
 
-.s_newimg {
-	margin: 19px 0 10px 0;
-	line-height: 1;
-}
 
-.s_catalog {
-	width: 19.3%;
-	max-height: 300px;
-	margin: 0 0.85% 0.85% 0;
-	overflow: hidden;
-	vertical-align: text-top;
-}
-
-.s_catalog img {
-	max-width: 100%;
-	vertical-align: text-top;
-	border: none;
-	height:auto;
-}
-
-.s_newimg span:nth-of-type(5n) {
-	margin-right: 0
-}
-
-.s_article .s_posted_image{
+ .s_posted_image{
 	overflow: hidden;
 	display: block;
 	max-width: 160px;
 	max-height: 350px;
 	height: auto;
 	float: none;
+	margin: 12px 0 0;
 }
 
 .s_article {
@@ -74,7 +47,6 @@ form.searchform {
 .s_posted_image img {
 	max-width: 100%;
 	height: auto;
-	margin: 12px 0 0;
 }
 
 .s_article h3 {
@@ -133,33 +105,9 @@ form.searchform {
 	margin: 0 0 16px 0
 }
 
-@media screen and (max-width:767px) {
-	.s_newimg {
-		padding: 5px 0 0 0
-	}
-
-	.s_catalog {
-		width: 24.2%;
-		max-height: 220px;
-
-	}
-
-	.s_catalog {
-		margin: 0 1.0666% 1.0666% 0
-	}
-
-	.s_newimg span:nth-of-type(5n) {
-		margin-right: 1.0666%
-	}
-
-	.s_newimg span:nth-of-type(4n) {
-		margin-right: 0
-	}
-
-}
 @media screen and (max-width:610px) {
 
-	.s_newimg .s_catalog p, .s_posted_image p{
+	.s_posted_image p{
 		display: none;
 	}
 

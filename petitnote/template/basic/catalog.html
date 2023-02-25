@@ -4,7 +4,7 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="<?=h($skindir)?>index.css">
+<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
 <link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 <?php if($set_nsfw && !$nsfwc):?>
@@ -37,12 +37,10 @@
 <a href="#bottom">▽</a>
 </nav>
 <hr>
-<div class="catalog_desc_wrap">
+<div class="catalog_wrap">
 	<!-- 親のループ -->
 <?php if(isset($out)):?>
-<?php foreach($out as $t => $ress):?>
-	<?php foreach($ress as  $res):?>
-		<div class="catalog_image <?php if($res['hide_thumbnail'] && !$admindel):?>hide_thumbnail<?php endif;?>">	
+<?php foreach($out as $t => $ress):?><?php foreach($ress as  $res):?><span class="catalog_image <?php if($res['hide_thumbnail'] && !$admindel):?>hide_thumbnail<?php endif;?>">	
 		<?php if($res['img']):?>
 			<a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
 			<?php if($res['webpimg']):?>
@@ -65,12 +63,8 @@
 			<?php else:?>
 				<a href="./?resno=<?= h($res['no'])?>" target="_blank"><?php if($en):?>No image.<?php else:?>画像なし<?php endif;?></a>
 		<?php endif;?>
-	</div>
-	
-	<?php endforeach; ?>
-	<?php endforeach; ?>
+				</span><?php endforeach; ?><?php endforeach; ?>
 </div>
-
 
 <hr>
 
