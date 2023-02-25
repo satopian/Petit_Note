@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.60.9';
-$petit_lot='lot.230220';
+$petit_ver='v0.60.10';
+$petit_lot='lot.230225';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -897,6 +897,8 @@ function paint(){
 
 		case 'neo'://PaintBBS NEO
 
+			global $petit_lot;
+
 			$tool='neo';
 			$appw = $picw + 150;//NEOの幅
 			$apph = $pich + 172;//NEOの高さ
@@ -933,7 +935,7 @@ function paint(){
 // お絵かきコメント 
 function paintcom(){
 	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
-	global $usercode; 
+	global $usercode,$petit_lot; 
 
 	aikotoba_required_to_view();
 	$token=get_csrf_token();
@@ -998,7 +1000,7 @@ function paintcom(){
 function to_continue(){
 
 	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$petit_lot;
 
 	aikotoba_required_to_view();
 
@@ -1504,7 +1506,7 @@ function img_replace(){
 // 動画表示
 function pchview(){
 
-	global $boardname,$skindir,$en;
+	global $boardname,$skindir,$en,$petit_lot;
 
 	aikotoba_required_to_view();
 

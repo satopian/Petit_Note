@@ -47,7 +47,7 @@ function aikotoba(){
 }
 //記事の表示に合言葉を必須にする
 function aikotoba_required_to_view(){
-global $aikotoba_required_to_view,$skindir,$en;
+global $aikotoba_required_to_view,$skindir,$en,$petit_lot;
 	if(!$aikotoba_required_to_view){
 	return;
 	}
@@ -482,7 +482,7 @@ function png2jpg ($src) {
 }
 
 function error($str){
-	global $boardname,$skindir,$en,$aikotoba_required_to_view;
+	global $boardname,$skindir,$en,$aikotoba_required_to_view,$petit_lot;
 	$boardname = ($aikotoba_required_to_view && !aikotoba_valid()) ? '' : $boardname; 
 	$templete='error.html';
 	include __DIR__.'/'.$skindir.$templete;
