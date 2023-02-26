@@ -76,7 +76,7 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
 
-##  23/02/20 v0.60.10
+##  23/02/26 v0.60.10
 
 ### Klecksを最新版にアップデート
 
