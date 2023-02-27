@@ -47,11 +47,9 @@
 			<picture><source srcset="<?=h($res['webpimg'])?>" type="image/webp">
 			<?php endif;?>
 			<?php if($res['thumbnail']):?>
-				
-					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
-				
+				<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
 			<?php else:?>
-			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
+				<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
 			<?php endif;?>
 			<?php if($res['webpimg']):?>
 			</picture>
