@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230225;
+$functions_ver=20230227;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -312,7 +312,7 @@ function create_res($line,$options=[]){
 		'upload_image' => $upload_image,
 		'pchext' => $pchext,
 		'anime' => $anime,
-		'continue' => $check_elapsed_days ? $continue : ((adminpost_valid()||admindel_valid()) ? $continue :''),
+		'continue' => $check_elapsed_days ? $continue : (adminpost_valid() ? $continue : false),
 		'time' => $time,
 		'date' => $date,
 		'datetime' => $datetime,
@@ -642,7 +642,7 @@ function Reject_if_NGword_exists_in_the_post(){
 
 	// 使えない名前チェック
 	if (is_ngword($badname, $chk_name)) {
-		return error($en?'This name cannot be used.':'その名前は使えません。');
+		return error($en?'This name cannot be used.':'この名前は使えません。');
 	}
 	// 使えないurlチェック
 	if (is_ngword($badurl, $chk_url)) {

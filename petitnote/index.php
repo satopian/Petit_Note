@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.60.10';
-$petit_lot='lot.230225';
+$petit_ver='v0.61.2';
+$petit_lot='lot.230227';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230225){
+if(!isset($functions_ver)||$functions_ver<20230227){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -820,21 +820,10 @@ function paint(){
 		$type = (string)filter_input(INPUT_POST, 'type');
 		$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 		$time = basename((string)filter_input(INPUT_POST, 'time'));
+		$cont_paint_same_thread=(bool)filter_input(INPUT_POST, 'cont_paint_same_thread',FILTER_VALIDATE_BOOLEAN);
 
 		if(($type!=='rep') && is_file(LOG_DIR."{$no}.log")){
-			check_open_no($no);
-			$rp=fopen(LOG_DIR."{$no}.log","r");
-			while ($line = fgets($rp)) {
-				if(!trim($line)){
-					continue;
-				}
-				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($line));
-				if($time===$time_ && $no===$no_){
-					$resto=(trim($oya_)==='res') ? $no_ : '';
-					break;
-				}
-			}
-			closeFile ($rp);
+			$resto = $cont_paint_same_thread ? $no : '';
 		}
 		if(!is_file(IMG_DIR.$imgfile)){
 			return error($en? 'The article does not exist.':'記事がありません。');
@@ -1030,6 +1019,10 @@ function to_continue(){
 	if(!$flag || !$imgfile || !is_file(IMG_DIR.$imgfile)){//画像が無い時は処理しない
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+	if(!check_elapsed_days($time)&&!adminpost_valid()){
+		return error($en? 'The article does not exist.':'記事がありません。');
+	}
+
 	$hidethumbnail = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 	$thumbnail=($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail');
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
@@ -2083,6 +2076,7 @@ function search(){
 					$hidethumb = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 
 					$thumb= ($thumbnail==='hide_thumbnail'||$thumbnail==='thumbnail');
+
 					$arr[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
 					++$i;
 					if($i>=$max_search){break 2;}//1掲示板あたりの最大検索数

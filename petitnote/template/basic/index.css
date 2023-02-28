@@ -364,7 +364,9 @@ span.continue_menu {
 .continue_post_form {
     line-height: 2.2;
 }
-
+#span_cont_paint_same_thread {
+    display: none;
+}
 /* エラー画面 */
 .error{font-size: 18px;
 	line-height: 2;
