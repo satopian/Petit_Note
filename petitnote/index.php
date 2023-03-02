@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.61.2';
-$petit_lot='lot.230227';
+$petit_ver='v0.61.6';
+$petit_lot='lot.230302';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -67,6 +67,7 @@ $max_file_size_in_png_format_paint = isset($max_file_size_in_png_format_paint) ?
 $max_file_size_in_png_format_upload = isset($max_file_size_in_png_format_upload) ? $max_file_size_in_png_format_upload : 800;
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
 $display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_back_to_home : true;
+$password_require_to_continue = isset($password_require_to_continue) ? (bool)$password_require_to_continue : false;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -104,7 +105,9 @@ switch($mode){
 		return to_continue();
 	case 'contpaint':
 		$type = (string)filter_input(INPUT_POST, 'type');
-		if($type==='rep') check_cont_pass();
+		if($type==='rep'||$password_require_to_continue){
+			check_cont_pass();
+		} 
 		return paint();
 	case 'picrep':
 		return img_replace();
@@ -726,7 +729,7 @@ return header('Location: ./');
 function paint(){
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$en;
-	global $usercode;
+	global $usercode,$password_require_to_continue;
 
 	check_same_origin();
 
@@ -822,8 +825,13 @@ function paint(){
 		$time = basename((string)filter_input(INPUT_POST, 'time'));
 		$cont_paint_same_thread=(bool)filter_input(INPUT_POST, 'cont_paint_same_thread',FILTER_VALIDATE_BOOLEAN);
 
-		if(($type!=='rep') && is_file(LOG_DIR."{$no}.log")){
-			$resto = $cont_paint_same_thread ? $no : '';
+		if(is_file(LOG_DIR."{$no}.log")){
+			if(($type==='rep' || $password_require_to_continue)){
+				check_cont_pass();
+			}
+			if($type!=='rep'){
+				$resto = $cont_paint_same_thread ? $no : '';
+			}
 		}
 		if(!is_file(IMG_DIR.$imgfile)){
 			return error($en? 'The article does not exist.':'記事がありません。');
@@ -988,7 +996,7 @@ function paintcom(){
 //コンティニュー前画面
 function to_continue(){
 
-	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en;
+	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en,$password_require_to_continue;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$petit_lot;
 
 	aikotoba_required_to_view();

@@ -91,16 +91,20 @@
 <?php endif;?>
 
 <span class="non"><input type="text" value="" autocomplete="username"></span>
-<span class="continue_menu"><?php if($en):?>Password<?php else:?>パスワード<?php endif;?>:<input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
+<span class="continue_menu" id="span_cont_pass"><?php if($en):?>Password<?php else:?>パスワード<?php endif;?>:<input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
 <input type="submit" value="<?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?>">
 </form>
 </div>
 <!--  コンティニュー説明  -->
 <?php if(!$use_diary || $adminpost):?>
 <div class="howtocontinue">
-   <ul id="up_desc">
-<li><?php if($en):?>If it is a new post, you can draw the continuation without a password.<?php else:?>新規投稿ならパスワードがなくても続きを描く事ができます。<?php endif;?></li>
-</ul>
+	<ul id="up_desc">
+		<?php if($password_require_to_continue):?>
+			<li><?php if($en):?>To draw the continuation, you need the password when you drew it.<?php else:?>続きを描くには描いたときのパスワードが必要です。<?php endif;?></li>
+		<?php else:?>
+			<li><?php if($en):?>If it is a new post, you can draw the continuation without a password.<?php else:?>新規投稿ならパスワードがなくても続きを描く事ができます。<?php endif;?></li>
+		<?php endif;?>
+	</ul>
 </div>
 <?php endif;?>
 <?php endif;?>
@@ -108,20 +112,30 @@
 </div>
 <script>
 // 新規投稿時にのみ、同じスレッドに投稿するボタンを表示
-	var obj = document.getElementById('select_post');
-	if(obj){
-		obj.addEventListener('change', function() {
-			var idx=obj.selectedIndex;
-			var style_obj=document.getElementById('span_cont_paint_same_thread');
-			if(style_obj){
-				if(idx === 1){
-				style_obj.style.display = "inline-block";
-				}else{
-					style_obj.style.display = "none";
+	document.getElementById('select_post').addEventListener('change', function() {
+		var idx=document.getElementById('select_post').selectedIndex;
+		var obj2style_1=document.getElementById('span_cont_paint_same_thread');
+		var obj2style_2=document.getElementById('span_cont_pass');
+			if(idx === 1){
+				if(obj2style_1){
+					obj2style_1.style.display = "inline-block";
 				}
+				<?php if(!$password_require_to_continue):?>
+				if(obj2style_2){
+				obj2style_2.style.display = "none";
+				}
+				<?php endif;?>
+			}else{
+				if(obj2style_1){
+					obj2style_1.style.display = "none";
+				}
+				<?php if(!$password_require_to_continue):?>
+				if(obj2style_2){
+					obj2style_2.style.display = "inline-block";
+				}
+				<?php endif;?>
 			}
-		});
-	}
+	});
 </script>
 </body>
 </html>
