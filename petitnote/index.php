@@ -2377,6 +2377,8 @@ function view($page=0){
 		}
 	}
 
+	// 禁止ホスト
+	$is_badhost=is_badhost();
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
@@ -2417,8 +2419,6 @@ function view($page=0){
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
-	// 禁止ホスト
-	$is_badhost=is_badhost();
 	// HTML出力
 	$templete='main.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -2519,13 +2519,15 @@ function res ($resno){
 		$view_other_works=array_slice($a,$c,6,false);
 	}
 
+	//禁止ホスト
+	$is_badhost=is_badhost();
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
-	$resform = ((!$deny_all_posts && !$only_admin_can_reply)||$adminpost);
+	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$is_badhost)||$adminpost);
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
@@ -2547,8 +2549,6 @@ function res ($resno){
 
 	//token
 	$token=get_csrf_token();
-	//禁止ホスト
-	$is_badhost=is_badhost();
 	$templete='res.html';
 	return include __DIR__.'/'.$skindir.$templete;
 

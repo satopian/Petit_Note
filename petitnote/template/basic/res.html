@@ -48,7 +48,6 @@
 	</form>
 	</div>
 	<?php endif;?>
-
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<?php if($aikotoba):?>
 <nav class="menu_wrap">
@@ -186,7 +185,7 @@
 		<?php if($en):?>
 			This thread will be closed with <?=h($maxres_current)?> more posts.
 		<?php else:?>
-			あと<?=h($maxres_current)?>件返信できます。
+			あと<?=h($maxres_current)?>件投稿できます。
 		<?php endif;?>
 <?php endif;?>
 <?php if($ress[0]['time_left_to_close_the_thread']&& !$adminpost && $resform):?>
@@ -308,7 +307,7 @@
 	<input type="checkbox" name="sage" id="sage" value="on"><label for="sage">sage</label>
 	</span>
 <?php endif;?>
-<input type="submit" value="<?php if($en):?>Reply<?php else:?>返信<?php endif;?>" class="form_button">
+<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>" class="form_button">
 
 </form>
 <?php endif;?>
