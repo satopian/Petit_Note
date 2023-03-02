@@ -587,6 +587,7 @@ function deltemp(){
 // NGワードがあれば拒絶
 function Reject_if_NGword_exists_in_the_post(){
 	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass,$max_com,$en,$badhost;
+	
 
 	//ホスト取得
 	$userip = get_uip();
@@ -605,6 +606,10 @@ function Reject_if_NGword_exists_in_the_post(){
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$pwd = t((string)filter_input(INPUT_POST,'pwd'));
+
+	if($adminpost || ($admin_pass && $pwd === $admin_pass)){
+		return;
+	}
 
 	$com_len=strlen((string)$com);
 	$name_len=strlen((string)$name);
@@ -631,7 +636,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	}
 
 	//本文へのURLの書き込みを禁止
-	if(!$allow_comments_url && !$adminpost && (!$admin_pass||$pwd !== $admin_pass)){
+	if(!$allow_comments_url){
 		if($com_len && preg_match('/:\/\/|\.co|\.ly|\.gl|\.net|\.org|\.cc|\.ru|\.su|\.ua|\.gd/i', $com)) return error($en?'This URL can not be used in text.':'URLの記入はできません。');
 	}
 
