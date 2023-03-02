@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.61.6';
+$petit_ver='v0.61.7';
 $petit_lot='lot.230302';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -833,7 +833,7 @@ function paint(){
 				$resto = $cont_paint_same_thread ? $no : '';
 			}
 		}
-		if(!is_file(IMG_DIR.$imgfile)){
+	if(!is_file(IMG_DIR.$imgfile)){
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
@@ -2417,7 +2417,8 @@ function view($page=0){
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
-
+	// 禁止ホスト
+	$is_badhost=is_badhost();
 	// HTML出力
 	$templete='main.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -2546,6 +2547,8 @@ function res ($resno){
 
 	//token
 	$token=get_csrf_token();
+	//禁止ホスト
+	$is_badhost=is_badhost();
 	$templete='res.html';
 	return include __DIR__.'/'.$skindir.$templete;
 

@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230227;
+$functions_ver=20230302;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -586,19 +586,8 @@ function deltemp(){
 
 // NGワードがあれば拒絶
 function Reject_if_NGword_exists_in_the_post(){
-	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass,$max_com,$en,$badhost;
-	
+	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass,$max_com,$en;
 
-	//ホスト取得
-	$userip = get_uip();
-	$host = $userip ? gethostbyaddr($userip) :'';
-	//拒絶ホスト
-	foreach($badhost as $value){
-		if (preg_match("/$value\z/i",$host)) {
-			return error($en?'Post was rejected.':'拒絶されました。');
-		}
-	}
-	
 	$adminpost=adminpost_valid();
 
 	$name = t((string)filter_input(INPUT_POST,'name'));
@@ -609,6 +598,9 @@ function Reject_if_NGword_exists_in_the_post(){
 
 	if($adminpost || ($admin_pass && $pwd === $admin_pass)){
 		return;
+	}
+	if(is_badhost()){
+		return error($en?'Post was rejected.':'拒絶されました。');
 	}
 
 	$com_len=strlen((string)$com);
@@ -681,9 +673,24 @@ function is_ngword ($ngwords, $strs) {
 	}
 	foreach ($strs as $str) {
 		foreach($ngwords as $ngword){//拒絶する文字列
-			if ($ngword !== '' && preg_match("/{$ngword}/ui", $str)){
+			if ($ngword && preg_match("/{$ngword}/ui", $str)){
 				return true;
 			}
+		}
+	}
+	return false;
+}
+
+/* 禁止ホストチェック */
+function is_badhost(){
+	global $badhost;
+	//ホスト取得
+	$userip = get_uip();
+	$host = $userip ? gethostbyaddr($userip) :'';
+	//禁止ホスト
+	foreach($badhost as $value){
+		if (preg_match("/$value\z/i",$host)) {
+			return true;
 		}
 	}
 	return false;
