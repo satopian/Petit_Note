@@ -151,7 +151,7 @@ Size:
 <input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
 <br>
 <?php endif;?>
-<input type="submit" value="<?php if($en):?>New Thread<?php else:?>スレッドを立てる<?php endif;?>" class="form_button">
+<input type="submit" value="<?php if($en):?>Start a new thread<?php else:?>スレッドを立てる<?php endif;?>" class="form_button">
 	<span>
 	<?php if($mark_sensitive_image):?>
 	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
@@ -297,9 +297,12 @@ Size:
 	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a></span>
 	<?php endif; ?>
 	<?php endif; ?>
-
-		<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button">
-		<input type="submit" value="<?php if($en):?>View thread<?php else:?>スレッドを表示<?php endif;?>"></form>
+	<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button">
+	<?php if($resform && !$userdel && !$admindel):?>
+			<input type="submit" value="<?php if($en):?>Post to this thread<?php else:?>このスレッドに投稿<?php endif;?>"></form>
+		<?php else:?>
+			<input type="submit" value="<?php if($en):?>View this thread<?php else:?>このスレッドを表示<?php endif;?>"></form>
+		<?php endif;?>
 	</div>
 
 	<hr>
@@ -323,7 +326,6 @@ Size:
 <?php if($prev!==false):?>
 <a href="?page=0">start</a> |
 <?php endif;?>
-
 <?php for($i = $start_page; ($i < $count_alllog && $i <= $end_page) ; $i+=$pagedef) :?>
 	<?php if($page==$i):?>
 			[<strong><?=h($i/$pagedef)?></strong>]
