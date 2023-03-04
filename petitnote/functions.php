@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230302;
+$functions_ver=20230305;
 //編集モードログアウト
 function logout(){
 	$resno=filter_input(INPUT_GET,'resno');
@@ -687,13 +687,22 @@ function is_badhost(){
 	//ホスト取得
 	$userip = get_uip();
 	$host = $userip ? gethostbyaddr($userip) :'';
-	//禁止ホスト
-	foreach($badhost as $value){
-		if (preg_match("/$value\z/i",$host)) {
-			return true;
+
+	if($host === $userip){//ホスト名がipアドレスになる場合は
+		foreach($badhost as $value){
+			if (preg_match("/\A$value/i",$host)) {//前方一致
+				return true;
+			}
 		}
+		return false;
+	}else{
+		foreach($badhost as $value){
+			if (preg_match("/$value\z/i",$host)) {
+				return true;
+			}
+		}
+		return false;
 	}
-	return false;
 }
 
 //初期化
