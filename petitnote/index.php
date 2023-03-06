@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.61.8';
+$petit_ver='v0.61.9';
 $petit_lot='lot.230305';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -826,9 +826,6 @@ function paint(){
 		$cont_paint_same_thread=(bool)filter_input(INPUT_POST, 'cont_paint_same_thread',FILTER_VALIDATE_BOOLEAN);
 
 		if(is_file(LOG_DIR."{$no}.log")){
-			if(($type==='rep' || $password_require_to_continue)){
-				check_cont_pass();
-			}
 			if($type!=='rep'){
 				$resto = $cont_paint_same_thread ? $no : '';
 			}
