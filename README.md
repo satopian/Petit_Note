@@ -76,6 +76,31 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
 
+##  23/02/26 v0.60.10
+
+### Klecksを最新版にアップデート
+
+![image](https://user-images.githubusercontent.com/44894014/221393538-22d0a2b5-d725-4bc9-9e97-7dd7e15fdf3b.png)
+
+- ダークテーマが選択可能になりました。  
+- フランス語に対応しました。
+- iPhone、iPadのタッチジェスチャーでフリーズする問題が修正されました。
+
+### カタログ画面の表示が検索画面と同じ表示になりました。
+- 大き目のディスプレイを使用時3列、スマホ2列だった表示を5列、スマホ4列に変更しました。
+- 検索画面と共通のCSSを使用する形に変更になりました。  
+`<div class="catalog_desc_wrap">`が、`<div class="catalog_wrap">`に変更されていたり、divがspanに変更になっていたりします。  
+また検索画面のテンプレートは大幅に変更になりました。  
+
+`index.css`と`search.css`と`catalog.html`と`search.html`をセットで更新して頂く形になります。
+従来通りの表示のほうが良い場合は、CSSと上記テンプレートのHTML部分を変更しないようにしてください。
+
+### スタイルシートが確実に適用されるようにするため、cssファイルのurlにロット番号のクエリを追加しました。
+
+`<link rel="stylesheet" href="template/basic/index.css?lot.230225">`
+`?lot.230225`の部分が今回追加されたクエリです。  
+CSSを変更してもブラウザのキャッシュのCSSが読み込まれてしまい画面が変更されない問題を解消するため、Petit Noteのロット番号をクエリに追加しました。
+Petit Noteを更新すれば新しいCSSをブラウザが読み込みます。
 
 ##  23/02/20 v0.60.9
 ### バグ修正
