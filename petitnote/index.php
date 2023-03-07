@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.61.9';
-$petit_lot='lot.230305';
+$petit_ver='v0.61.11';
+$petit_lot='lot.230307';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1073,6 +1073,7 @@ function to_continue(){
 	// nsfw
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
+	$is_badhost=is_badhost();
 	// HTML出力
 	$templete='continue.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -2382,7 +2383,7 @@ function view($page=0){
 	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
-	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$use_diary)||$adminpost);
+	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$use_diary && !$is_badhost)||$adminpost);
 
 	if(!$use_aikotoba){
 		$aikotoba=true;

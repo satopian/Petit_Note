@@ -254,7 +254,7 @@ Size:
 				<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
 					$resform=false;//最大レス数を超えている時はレスフォームを閉じる
 				}?>
-				<?php if($aikotoba && ($userdel || $admindel)):?>
+				<?php if($aikotoba && !$deny_all_posts && ($userdel || $admindel)):?>
 					<div>
 						<!-- 編集削除のためのボタン -->
 						<form action="./" method="POST" class="aikotoba">
@@ -264,7 +264,7 @@ Size:
 							<input type="hidden" name="id" value="<?=h($res['time'])?>">
 							<input type="hidden" name="no" value="<?=h($res['no'])?>">
 							<input type="hidden" name="postpage" value="<?=h($page)?>">
-							<?php if($res['check_elapsed_days']||$admindel):?>
+							<?php if($res['check_elapsed_days']&&!$is_badhost||$admindel):?>
 							<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
 							<?php endif;?>
 						</form>
