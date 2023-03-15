@@ -1,8 +1,8 @@
 <?php
-$functions_ver=20230305;
+$functions_ver=20230310;
 //編集モードログアウト
 function logout(){
-	$resno=filter_input(INPUT_GET,'resno');
+	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	session_sta();
 	unset($_SESSION['admindel']);
 	unset($_SESSION['userdel']);
@@ -33,6 +33,9 @@ function aikotoba(){
 	if(!$aikotoba || $aikotoba!==(string)filter_input(INPUT_POST,'aikotoba')){
 		if(isset($_SESSION['aikotoba'])){
 			unset($_SESSION['aikotoba']);
+		}
+		if((string)filter_input(INPUT_COOKIE,'aikotoba')){
+			setcookie('aikotoba', '', time() - 3600);
 		} 
 		return error($en?'The secret words is wrong':'合言葉が違います。');
 	}
@@ -100,7 +103,7 @@ function adminpost(){
 	check_same_origin();
 	check_password_input_error_count();
 	session_sta();
-	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
+	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==(string)filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['adminpost'])){
 			unset($_SESSION['adminpost']);
 		} 
@@ -122,7 +125,7 @@ function admin_del(){
 	check_password_input_error_count();
 
 	session_sta();
-	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
+	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==(string)filter_input(INPUT_POST,'adminpass')){
 		if(isset($_SESSION['admindel'])){
 			unset($_SESSION['admindel']);
 		} 
@@ -164,7 +167,7 @@ function admindel_valid(){
 function aikotoba_valid(){
 	global $keep_aikotoba_login_status,$aikotoba;
 	session_sta();
-	$keep=$keep_aikotoba_login_status ? ($aikotoba && ($aikotoba===filter_input(INPUT_COOKIE,'aikotoba'))
+	$keep=$keep_aikotoba_login_status ? ($aikotoba && ($aikotoba===(string)filter_input(INPUT_COOKIE,'aikotoba'))
 	) : false;
 	return ($keep||isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba'));
 }
@@ -197,10 +200,10 @@ function branch_destination_of_location(){
 		return header('Location: ./?mode=catalog&page='.h($page));
 	}
 	if($search){
-		$radio=filter_input(INPUT_POST,'radio',FILTER_VALIDATE_INT);
+		$radio=(int)filter_input(INPUT_POST,'radio',FILTER_VALIDATE_INT);
 		$imgsearch=(bool)filter_input(INPUT_POST,'imgsearch',FILTER_VALIDATE_BOOLEAN);
 		$imgsearch=$imgsearch ? 'on' : 'off';
-		$q=filter_input(INPUT_POST,'q');
+		$q=(string)filter_input(INPUT_POST,'q');
 		
 		return header('Location: ./?mode=search&page='.h($page).'&imgsearch='.h($imgsearch).'&q='.h($q).'&radio='.h($radio));
 	}
@@ -505,8 +508,8 @@ function check_csrf_token(){
 	} 
 	check_same_origin();
 	session_sta();
-	$token=filter_input(INPUT_POST,'token');
-	$session_token=isset($_SESSION['token']) ? $_SESSION['token'] : '';
+	$token=(string)filter_input(INPUT_POST,'token');
+	$session_token=isset($_SESSION['token']) ? (string)$_SESSION['token'] : '';
 	if(!$session_token||$token!==$session_token){
 		return error($en?'CSRF token mismatch.':'CSRFトークンが一致しません。');
 	}
@@ -991,7 +994,7 @@ function check_password_input_error_count(){
 	if(count($arr_err)>=5){
 		error($en?'Rejected.':'拒絶されました。');
 	}
-if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==filter_input(INPUT_POST,'adminpass')){
+if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==(string)filter_input(INPUT_POST,'adminpass')){
 		$errlog=$userip."\n";
 		file_put_contents(__DIR__.'/template/errorlog/error.log',$errlog,FILE_APPEND);
 		chmod(__DIR__.'/template/errorlog/error.log',0600);

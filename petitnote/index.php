@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.61.11';
-$petit_lot='lot.230307';
+$petit_ver='v0.62.1';
+$petit_lot='lot.230310';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230305){
+if(!isset($functions_ver)||$functions_ver<20230310){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -386,7 +386,9 @@ function post(){
 
 
 	//ユーザーid
-	$userid = t(getId($userip));
+	$userid=(isset($_SESSION['userid'])&&$_SESSION['userid'])
+	 ? $_SESSION['userid'] : t(getId($userip));
+	$_SESSION['userid'] = $userid;
 
 	$verified = $adminpost ? 'adminpost' : ''; 
 
@@ -1998,7 +2000,7 @@ function del(){
 		}
 		return header('Location: ./?resno='.$resno);
 	}
-	return header('Location: ./?page='.(int)filter_input(INPUT_POST,'postpage'));
+	return header('Location: ./?page='.(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT));
 }
 
 //検索画面
@@ -2218,7 +2220,7 @@ function catalog($page=0,$q=''){
 	aikotoba_required_to_view();
 
 	$pagedef=$catalog_pagedef;
-	
+
 	$q=(string)filter_input(INPUT_GET,'q');
 
 	$fp=fopen(LOG_DIR."alllog.log","r");

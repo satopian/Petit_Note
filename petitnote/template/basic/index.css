@@ -300,13 +300,11 @@ span.prev {
 }
 span.res_next {
     display: inline-block;
-    width: 305px;
     text-align: left;
 }
 
 span.res_prev {
 	display: inline-block;
-    width: 305px;
     text-align: right;
 }
 
