@@ -1622,6 +1622,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	}
 	// nsfw
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$count_r_arr=count($r_arr);
 
 	if($edit_mode==='delmode'){
 		$templete='before_del.html';
@@ -1902,6 +1903,7 @@ function del(){
 	if($id_and_no){
 		list($id,$no)=explode(",",trim($id_and_no));
 	}
+	$delete_thread=(bool)filter_input(INPUT_POST,'delete_thread',FILTER_VALIDATE_BOOL);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
@@ -1936,7 +1938,7 @@ function del(){
 					return error($en?'This operation has failed.':'失敗しました。');
 				}
 			}
-			if($oya==='oya'){//スレッド削除
+			if($oya==='oya'){//スレッド削除?
 				$alllog_arr=[];
 				while ($_line = fgets($fp)) {
 					if(!trim($_line)){
@@ -1950,37 +1952,52 @@ function del(){
 					return error($en?'This operation has failed.':'失敗しました。');
 				}
 				$flag=false;
-				foreach($alllog_arr as $i =>$_val){//全体ログ
+				foreach($alllog_arr as $j =>$_val){//全体ログ
 					list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
 					if(($id===$time_ && $no===$no_) &&
 					($admindel || ($pwd && password_verify($pwd,$hash_)))){
-
-						unset($alllog_arr[$i]);
 						$flag=true;
 						break;
 					}
 				}
+
 				if(!$flag){
 					closeFile ($rp);
 					closeFile($fp);
 					return error($en?'This operation has failed.':'失敗しました。');
 				}
+				$count_r_arr=count($r_arr);
+				if($count_r_arr===1 || $delete_thread){
 
-				foreach($r_arr as $r_line) {//レスファイル
-					list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
+					unset($alllog_arr[$j]);
+					foreach($r_arr as $r_line) {//スレッドの一連のファイルを削除
+						list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
+						
+						delete_files ($_imgfile, $_time);//一連のファイルを削除
+						
+					}
+					closeFile ($rp);
+					safe_unlink(LOG_DIR.$no.'.log');
 					
-					delete_files ($_imgfile, $_time);//一連のファイルを削除
-					
+				}else{
+					delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
+					$newline="$no\t\t\t\t\t\t\t\t\t\t\t\t\t\t$time_\t$first_posted_time_\t$host_\t\t$hash_\toya\n";
+					$alllog_arr[$j]=$newline;
+					$r_arr[$i]=$newline;
+					writeFile ($rp,implode("",$r_arr));
+					closeFile ($rp);
+
 				}
 				writeFile($fp,implode("",$alllog_arr));
-				closeFile ($rp);
-				safe_unlink(LOG_DIR.$no.'.log');
 		
 			}else{
+				
 				unset($r_arr[$i]);
 				delete_files ($imgfile, $time);//一連のファイルを削除
 				writeFile ($rp,implode("",$r_arr));
+
 				closeFile ($rp);
+
 			}
 			$find=true;
 			break;

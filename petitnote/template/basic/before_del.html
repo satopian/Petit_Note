@@ -39,6 +39,7 @@
 <?php if($admindel):?>
 	<?php if($en):?>Check the article you want to delete and press the delete button.<?php else:?>削除したい記事をチェックして削除ボタンを押してください。<?php endif;?>: 
 <?php endif;?>
+
 <?php if($userdel&&!$admindel):?>
 	<?php if($en):?>Check the article you want to delete and enter the password.<?php else:?>削除したい記事をチェックしてパスワードを入力してください。<?php endif;?>: 
 
@@ -54,6 +55,9 @@
 <input type="hidden" name="postresno" value="<?=h($postresno)?>">
 <input type="hidden" name="postpage" value="<?=h($postpage)?>">
 <input type="hidden" name="token" value="<?=h($token)?>">
+<?php if($oya==='oya' && $count_r_arr>1 && $admindel):?>
+	<input type="checkbox" name="delete_thread" id="delete_thread" value="on"><label for="delete_thread"><?php if($en):?>Delete thread<?php else:?>スレッドを削除する<?php endif;?></label>
+<?php endif;?>
 <input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
 </form>
 <?php endif;?>

@@ -198,6 +198,7 @@ Size:
 		<div class="res_wrap">
 		<?php endif;?>
 			<div class="imginfo_wrap">
+			<?php if($res['disp_article']):?>
 				<span class="info_name"><a href="./?mode=search&radio=2&imgsearch=on&q=<?=h($res['encoded_name'])?>" target="_blank"><?= h($res['name'])?></a></span>
 				<?php if($res['verified']):?>
 				<span class="icon-checkmark2"></span>
@@ -225,6 +226,7 @@ Size:
 				<br>
 				HOST:<?=h($res['host'])?>
 				<?php endif;?> 
+			<?php endif;?>
 			</div>
 			<?php if($res['img']):?>
 				<?php if($res['continue']||$res['anime']):?>
@@ -251,10 +253,13 @@ Size:
 				</div>
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?>
+			<?php if(!$res['disp_article']):?>
+			<?php if($en):?>This article does not exist.<?php else:?>この記事はありません。<?php endif;?>
+			<?php endif;?>
 				<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
 					$resform=false;//最大レス数を超えている時はレスフォームを閉じる
 				}?>
-				<?php if($aikotoba && !$deny_all_posts && ($userdel || $admindel)):?>
+				<?php if($aikotoba && !$deny_all_posts && (($res['disp_article'] && $userdel) || $admindel)):?>
 					<div>
 						<!-- 編集削除のためのボタン -->
 						<form action="./" method="POST" class="aikotoba">
