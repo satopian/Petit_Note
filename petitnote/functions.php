@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230310;
+$functions_ver=20230325;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -37,7 +37,7 @@ function aikotoba(){
 		if((string)filter_input(INPUT_COOKIE,'aikotoba')){
 			setcookie('aikotoba', '', time() - 3600);
 		} 
-		return error($en?'The secret words is wrong':'合言葉が違います。');
+		return error($en?'The secret word is wrong':'合言葉が違います。');
 	}
 	if($keep_aikotoba_login_status){
 		setcookie("aikotoba",$aikotoba, time()+(86400*30),"","",false,true);//1ヶ月
@@ -92,7 +92,7 @@ function admin_in(){
 function check_aikotoba(){
 	global $en;
 	if(!aikotoba_valid()){
-		return error($en?'The secret words is wrong.':'合言葉が違います。');
+		return error($en?'The secret word is wrong.':'合言葉が違います。');
 	}
 	return true;
 }
@@ -403,14 +403,14 @@ function com($str){
 }
 //マークダウン記法のリンクをHTMLに変換
 function md_link($str){
-	$str= preg_replace('{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}','<a href="$2" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
+	$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)\)}",'<a href="$2" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
 	return $str;
 }
 
 // 自動リンク
 function auto_link($str){
 	if(strpos($str,'<a')===false){//マークダウン記法がなかった時
-		$str= preg_replace('{(https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)}','<a href="$1" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
+		$str= preg_replace("{(https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)}",'<a href="$1" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
 	}
 	return $str;
 }
