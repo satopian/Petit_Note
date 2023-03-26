@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.62.3';
-$petit_lot='lot.230325';
+$petit_ver='v0.63.1';
+$petit_lot='lot.230326';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1938,7 +1938,13 @@ function del(){
 					return error($en?'This operation has failed.':'失敗しました。');
 				}
 			}
-			if($oya==='oya'){//スレッド削除?
+
+			$count_r_arr=count($r_arr);
+			list($d_no,$d_sub,$d_name,$s_verified,$d_com,$d_url,$d_imgfile,$d_w,$d_h,$d_thumbnail,$d_painttime,$d_log_md5,$d_tool,$d_pchext,$d_time,$d_first_posted_time,$d_host,$d_userid,$d_hash,$d_oya)=explode("\t",trim($r_arr[0]));
+			$res_oya_deleted=(!$d_name && !$d_com && !$d_imgfile && !$d_userid && ($d_oya==='oya'));
+
+
+			if(($oya==='oya')||(($count_r_arr===2) && $res_oya_deleted)){//スレッド削除?
 				$alllog_arr=[];
 				while ($_line = fgets($fp)) {
 					if(!trim($_line)){
@@ -1954,8 +1960,10 @@ function del(){
 				$flag=false;
 				foreach($alllog_arr as $j =>$_val){//全体ログ
 					list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
-					if(($id===$time_ && $no===$no_) &&
-					($admindel || ($pwd && password_verify($pwd,$hash_)))){
+					$alllog_oya_deleted=($no===$no_&& !$name_ && !$com_ && !$_imgfile_ && !$userid_ && ($oya_==='oya'));
+
+					if($alllog_oya_deleted||((($id===$time_) && $no===$no_) &&
+					( $admindel || ($pwd && password_verify($pwd,$hash_))))){
 						$flag=true;
 						break;
 					}
@@ -1966,8 +1974,7 @@ function del(){
 					closeFile($fp);
 					return error($en?'This operation has failed.':'失敗しました。');
 				}
-				$count_r_arr=count($r_arr);
-				if($count_r_arr===1 || $delete_thread){
+				if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){
 
 					unset($alllog_arr[$j]);
 					foreach($r_arr as $r_line) {//スレッドの一連のファイルを削除
