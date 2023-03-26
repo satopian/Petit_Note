@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.63.1';
+$petit_ver='v0.63.3';
 $petit_lot='lot.230326';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230325){
+if(!isset($functions_ver)||$functions_ver<20230326){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -1798,7 +1798,12 @@ function edit(){
 	foreach($r_arr as $i => $line){
 
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
+			
 		if($id===$_time && $no===$_no){
+
+			if(!$_name && !$_com && !$_imgfile && !$_userid && ($_oya==='oya')){//削除ずみのoyaの時
+				return error($en?'This operation has failed.':'失敗しました。');
+			}
 
 			if($admindel||(check_elapsed_days($_time)&&$pwd&&password_verify($pwd,$_hash))){
 				$flag=true;
@@ -1988,7 +1993,8 @@ function del(){
 					
 				}else{
 					delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
-					$newline="$no\t\t\t\t\t\t\t\t\t\t\t\t\t\t$time_\t$first_posted_time_\t$host_\t\t$hash_\toya\n";
+					$deleted_sub = $en? 'No subject':'無題';
+					$newline="$no\t$deleted_sub\t\t\t\t\t\t\t\t\t\t\t\t\t$time_\t$first_posted_time_\t$host_\t\t$hash_\toya\n";
 					$alllog_arr[$j]=$newline;
 					$r_arr[$i]=$newline;
 					writeFile ($rp,implode("",$r_arr));
