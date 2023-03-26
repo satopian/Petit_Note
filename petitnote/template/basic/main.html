@@ -198,7 +198,7 @@ Size:
 		<div class="res_wrap">
 		<?php endif;?>
 			<div class="imginfo_wrap">
-			<?php if(!isset($res['not_deleted']) || $res['not_deleted']):?>
+			<?php if(!isset($res['not_deleted'])||$res['not_deleted']):?>
 				<span class="info_name"><a href="./?mode=search&radio=2&imgsearch=on&q=<?=h($res['encoded_name'])?>" target="_blank"><?= h($res['name'])?></a></span>
 				<?php if($res['verified']):?>
 				<span class="icon-checkmark2"></span>
@@ -253,13 +253,13 @@ Size:
 				</div>
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?>
-			<?php if(isset($res['not_deleted']) && !$res['not_deleted']):?>
-			<?php if($en):?>This post does not exist<?php else:?>この記事はありません。<?php endif;?>
+			<?php if(isset($res['not_deleted'])&&!$res['not_deleted']):?>
+			<?php if($en):?>This post does not exist.<?php else:?>この記事はありません。<?php endif;?>
 			<?php endif;?>
 				<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
 					$resform=false;//最大レス数を超えている時はレスフォームを閉じる
 				}?>
-				<?php if($aikotoba && !$deny_all_posts && (($res['not_deleted'] && $userdel) || $admindel)):?>
+			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
 					<div>
 						<!-- 編集削除のためのボタン -->
 						<form action="./" method="POST" class="aikotoba">
@@ -269,7 +269,7 @@ Size:
 							<input type="hidden" name="id" value="<?=h($res['time'])?>">
 							<input type="hidden" name="no" value="<?=h($res['no'])?>">
 							<input type="hidden" name="postpage" value="<?=h($page)?>">
-							<?php if(($res['check_elapsed_days']&&!$is_badhost||$admindel)&&$res['not_deleted']):?>
+							<?php if(($res['check_elapsed_days']&&!$is_badhost||$admindel)&&(!isset($res['not_deleted'])||$res['not_deleted'])):?>
 							<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
 							<?php endif;?>
 						</form>
