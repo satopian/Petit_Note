@@ -86,7 +86,7 @@
 		<?php endif;?>
 
 			<div class="imginfo_wrap">
-			<?php if($res['not_deleted']):?>
+			<?php if(!isset($res['not_deleted']) || $res['not_deleted']):?>
 				<span class="info_name"><a href="./?mode=search&radio=2&imgsearch=on&q=<?=h($res['encoded_name'])?>" target="_blank"><?= h($res['name'])?></a></span>
 				<?php if($res['verified']):?>
 				<span class="icon-checkmark2"></span>
@@ -141,8 +141,8 @@
 				</div>
 			<?php endif;?>
 			<div class="comment"><?=com(h($res['com']))?>
-			<?php if(!$res['not_deleted']):?>
-			<?php if($en):?>This article does not exist.<?php else:?>この記事はありません。<?php endif;?>
+			<?php if(isset($res['not_deleted']) && !$res['not_deleted']):?>
+			<?php if($en):?>This post does not exist.<?php else:?>この記事はありません。<?php endif;?>
 			<?php endif;?>
 
 				<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){

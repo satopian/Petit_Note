@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.63.3';
+$petit_ver='v0.63.5';
 $petit_lot='lot.230326';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1908,7 +1908,7 @@ function del(){
 	if($id_and_no){
 		list($id,$no)=explode(",",trim($id_and_no));
 	}
-	$delete_thread=(bool)filter_input(INPUT_POST,'delete_thread',FILTER_VALIDATE_BOOL);
+	$delete_thread=(bool)filter_input(INPUT_POST,'delete_thread',FILTER_VALIDATE_BOOLEAN);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
@@ -1947,7 +1947,6 @@ function del(){
 			$count_r_arr=count($r_arr);
 			list($d_no,$d_sub,$d_name,$s_verified,$d_com,$d_url,$d_imgfile,$d_w,$d_h,$d_thumbnail,$d_painttime,$d_log_md5,$d_tool,$d_pchext,$d_time,$d_first_posted_time,$d_host,$d_userid,$d_hash,$d_oya)=explode("\t",trim($r_arr[0]));
 			$res_oya_deleted=(!$d_name && !$d_com && !$d_imgfile && !$d_userid && ($d_oya==='oya'));
-
 
 			if(($oya==='oya')||(($count_r_arr===2) && $res_oya_deleted)){//スレッド削除?
 				$alllog_arr=[];
@@ -2001,6 +2000,7 @@ function del(){
 					closeFile ($rp);
 
 				}
+
 				writeFile($fp,implode("",$alllog_arr));
 		
 			}else{
@@ -2008,9 +2008,7 @@ function del(){
 				unset($r_arr[$i]);
 				delete_files ($imgfile, $time);//一連のファイルを削除
 				writeFile ($rp,implode("",$r_arr));
-
 				closeFile ($rp);
-
 			}
 			$find=true;
 			break;

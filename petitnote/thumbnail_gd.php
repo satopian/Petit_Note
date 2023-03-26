@@ -7,7 +7,7 @@
 //220321 透過GIF、透過PNGの時は透明を出力、または透明色を白に変換。
 //220320 本体画像のリサイズにPNG→PNG、GIF→PNG、WEBP→JPEGの各処理を追加。
 //210920 PetitNote版。
-$thumbnail_gd_ver=20230220;
+$thumbnail_gd_ver=20230226;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$path=basename($path).'/';
@@ -20,7 +20,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	if(!gd_check()||!function_exists("ImageCreate")||!function_exists("ImageCreateFromJPEG")){
 		return;
 	}
-	if(isset($options['webp']) &&!function_exists("ImageWEBP")){
+	if(isset($options['webp']) &&(!function_exists("ImageWEBP")||version_compare(PHP_VERSION, '7.0.0', '<'))){
 		return;
 	}
 
