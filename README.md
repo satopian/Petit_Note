@@ -75,7 +75,7 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 ## PitNoteとは
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
 - HTML5+JavaScriptの新しいアプリPaintBBS NEO、ChickenPaint、Klecksが使えるお絵かき掲示板です。
-##  23/03/07 v0.63.5
+##  23/03/27 v0.63.5
 
 ### スレッドが削除される条件が変わりました
 
