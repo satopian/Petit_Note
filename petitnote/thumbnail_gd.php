@@ -113,7 +113,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 				}
 				break;
 			case "image/webp";
-				if(function_exists("ImageWEBP")){
+				if(function_exists("ImageWEBP")&&version_compare(PHP_VERSION, '7.0.0', '>=')){
 					ImageWEBP($im_out, $outfile,98);
 				}else{
 					ImageJPEG($im_out, $outfile,98);
