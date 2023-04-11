@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230410;
+$functions_ver=20230411;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -327,7 +327,7 @@ function create_res($line,$options=[]){
 		'encoded_no' => urlencode('['.$no.']'),
 		'encoded_sub' => urlencode($sub),
 		'encoded_u' => urlencode($root_url.'?resno='.$no),//tweet
-		'encoded_t' => urlencode('['.$no.']'.$sub.' by '.$name.' - '.$boardname),
+		'encoded_t' => urlencode('['.$no.']'.$sub.($name ? ' by '.$name : '').' - '.$boardname),
 		'oya' => $oya,
 		'webpimg' => $webpimg ? 'webp/'.$time.'t.webp' :false,
 		'hide_thumbnail' => $hide_thumbnail, //サムネイルにぼかしをかける時
