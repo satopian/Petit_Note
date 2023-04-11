@@ -1801,7 +1801,7 @@ function edit(){
 			
 		if($id===$_time && $no===$_no){
 
-			if(!$_name && !$_com && !$_imgfile && !$_userid && ($_oya==='oya')){//削除ずみのoyaの時
+			if(!$_name && !$_com && !$_url && !$_imgfile && !$_userid && ($_oya==='oya')){//削除ずみのoyaの時
 				return error($en?'This operation has failed.':'失敗しました。');
 			}
 
@@ -1946,7 +1946,7 @@ function del(){
 
 			$count_r_arr=count($r_arr);
 			list($d_no,$d_sub,$d_name,$s_verified,$d_com,$d_url,$d_imgfile,$d_w,$d_h,$d_thumbnail,$d_painttime,$d_log_md5,$d_tool,$d_pchext,$d_time,$d_first_posted_time,$d_host,$d_userid,$d_hash,$d_oya)=explode("\t",trim($r_arr[0]));
-			$res_oya_deleted=(!$d_name && !$d_com && !$d_imgfile && !$d_userid && ($d_oya==='oya'));
+			$res_oya_deleted=(!$d_name && !$d_com && !$d_url && !$d_imgfile && !$d_userid && ($d_oya==='oya'));
 
 			if(($oya==='oya')||(($count_r_arr===2) && $res_oya_deleted)){//スレッド削除?
 				$alllog_arr=[];
@@ -1966,7 +1966,7 @@ function del(){
 					list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
 					$alllog_oya_deleted=($no===$no_ && !$name_ && !$com_ && !$url_ && !$_imgfile_ && !$userid_ && ($oya_==='oya'));
 
-					if($alllog_oya_deleted||((($id===$time_) && $no===$no_) &&
+					if(($alllog_oya_deleted && ($no===$no_))||((($id===$time_) && $no===$no_) &&
 					( $admindel || ($pwd && password_verify($pwd,$hash_))))){
 						$flag=true;
 						break;
