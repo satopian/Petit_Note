@@ -139,6 +139,11 @@
 					<?php endif;?>
 						</a>
 				</div>
+				<?php endif;?>
+			<?php if(isset($res['not_deleted']) && !$res['not_deleted']):?>
+				<div class="imginfo_wrap">
+				HOST:<?=h($res['host'])?>
+				</div>
 			<?php endif;?>
 			<div class="comment"><?=com(h($res['com']))?>
 			<?php if(isset($res['not_deleted']) && !$res['not_deleted']):?>
