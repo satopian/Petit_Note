@@ -256,9 +256,10 @@ Size:
 			<?php if(isset($res['not_deleted'])&&!$res['not_deleted']):?>
 			<?php if($en):?>This post does not exist.<?php else:?>この記事はありません。<?php endif;?>
 			<?php endif;?>
-				<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
-					$resform=false;//最大レス数を超えている時はレスフォームを閉じる
-				}?>
+			<?php $res_max_over=false;?>
+			<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
+				$res_max_over=true;//最大レス数を超えている時はレスフォームを閉じる
+			}?>
 			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
 					<div>
 						<!-- 編集削除のためのボタン -->
@@ -298,12 +299,12 @@ Size:
 	<?php if($aikotoba && (!$userdel && !$admindel)):?>
 	<?php if($use_sns_button):?>
 	<span class="share_button">
-
-	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a></span>
+	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a>
+	</span>
 	<?php endif; ?>
 	<?php endif; ?>
 	<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button">
-	<?php if($resform && !$userdel && !$admindel):?>
+	<?php if($resform && !$res_max_over && !$userdel && !$admindel):?>
 			<input type="submit" value="<?php if($en):?>Post to this thread<?php else:?>このスレッドに投稿<?php endif;?>"></form>
 		<?php else:?>
 			<input type="submit" value="<?php if($en):?>View this thread<?php else:?>このスレッドを表示<?php endif;?>"></form>
