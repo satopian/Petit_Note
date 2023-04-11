@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230326;
+$functions_ver=20230410;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -332,7 +332,7 @@ function create_res($line,$options=[]){
 		'webpimg' => $webpimg ? 'webp/'.$time.'t.webp' :false,
 		'hide_thumbnail' => $hide_thumbnail, //サムネイルにぼかしをかける時
 		'link_thumbnail' => $link_thumbnail, //サムネイルにリンクがある時
-		'not_deleted' => !(!$name && !$com && !$imgfile && !$userid), //表示する記事がある親
+		'not_deleted' => !(!$name && !$com && !$url&& !$imgfile && !$userid), //表示する記事がある親
 	];
 
 	$res['com']= !$isset_catalog ? str_replace('"\n"',"\n",$res['com']) : str_replace('"\n"'," ",$res['com']);

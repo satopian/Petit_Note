@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.63.6';
-$petit_lot='lot.230409';
+$petit_ver='v0.63.8';
+$petit_lot='lot.230411';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230326){
+if(!isset($functions_ver)||$functions_ver<20230410){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -1964,7 +1964,7 @@ function del(){
 				$flag=false;
 				foreach($alllog_arr as $j =>$_val){//全体ログ
 					list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
-					$alllog_oya_deleted=($no===$no_&& !$name_ && !$com_ && !$_imgfile_ && !$userid_ && ($oya_==='oya'));
+					$alllog_oya_deleted=($no===$no_ && !$name_ && !$com_ && !$url_ && !$_imgfile_ && !$userid_ && ($oya_==='oya'));
 
 					if($alllog_oya_deleted||((($id===$time_) && $no===$no_) &&
 					( $admindel || ($pwd && password_verify($pwd,$hash_))))){
@@ -2082,7 +2082,10 @@ function search(){
 		while($line=fgets($cp)){
 
 			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
-		
+	
+			if(!$name && !$com && !$url && !$imgfile && !$userid){//この記事はありませんの時は表示しない
+				continue;
+			}
 			$continue_to_search=true;
 			if($imgsearch){//画像検索の場合
 				$continue_to_search=(bool)$imgfile;//画像があったら
