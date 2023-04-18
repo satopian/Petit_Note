@@ -141,8 +141,6 @@ switch($mode){
 		return catalog($page);
 	case 'download':
 		return download_app_dat();
-	case 'get_token':
-		return get_csrf_token(true);
 	case '':
 		if($resno){
 			return res($resno);

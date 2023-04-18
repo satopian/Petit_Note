@@ -23,7 +23,7 @@ function res_form_submit(event){
 				form.querySelector('input[type="submit"]').disabled = false; 
 				response.text().then((text) => {
 				console.log(text);		
-				return document.getElementById('error_message').innerHTML=text;	
+				return document.getElementById('error_message').innerHTML='<div>'+text+'</div>';	
 				})
 				return 
 			}

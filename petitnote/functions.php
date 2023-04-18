@@ -500,13 +500,11 @@ function error($str){
 	exit;
 }
 //csrfトークンを作成
-function get_csrf_token($e=''){
+function get_csrf_token(){
 	session_sta();
 	$token=hash('sha256', session_id(), false);
 	$_SESSION['token']=$token;
-	if($e){
-		echo $token;
-	}
+
 	return $token;
 }
 //csrfトークンをチェック	
@@ -521,7 +519,7 @@ function check_csrf_token(){
 	$token=(string)filter_input(INPUT_POST,'token');
 	$session_token=isset($_SESSION['token']) ? (string)$_SESSION['token'] : '';
 	if(!$session_token||$token!==$session_token){
-		return error($en?'CSRF token mismatch.':"CSRFトークンが一致しません。\nリロードしてください。");
+		return error($en?"CSRF token mismatch.\nPlease reload.":"CSRFトークンが一致しません。\nリロードしてください。");
 	}
 }
 //session開始
