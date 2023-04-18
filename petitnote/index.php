@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.63.10';
-$petit_lot='lot.230411';
+$petit_ver='v0.65.0';
+$petit_lot='lot.230418';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230411){
+if(!isset($functions_ver)||$functions_ver<20230418){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -141,6 +141,8 @@ switch($mode){
 		return catalog($page);
 	case 'download':
 		return download_app_dat();
+	case 'get_token':
+		return get_csrf_token(true);
 	case '':
 		if($resno){
 			return res($resno);
@@ -319,7 +321,7 @@ function post(){
 	//ファイルアップロード
 	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
+		return error($en? "Upload failed.\nThe file size is too big.":"アップロードに失敗しました。\nファイルサイズが大きすぎます。");
 	} 
 	$is_upload=false;
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
@@ -508,7 +510,7 @@ function post(){
 				closeFile($fp);
 				closeFile($rp);
 				safe_unlink($upfile);
-			return error($en? "Upload failed. File size exceeds {$max_kb}kb.":"アップロードに失敗しました。ファイル容量が{$max_kb}kbを超えています。");
+			return error($en? "Upload failed.\nFile size exceeds {$max_kb}kb.":"アップロードに失敗しました。\nファイル容量が{$max_kb}kbを超えています。");
 			}
 		}
 
@@ -1166,7 +1168,7 @@ function img_replace(){
 		return error($en?'Please attach an image.':'画像を添付してください。');
 	} 
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		return error($en? "Upload failed.The file size is too big.":"アップロードに失敗しました。ファイルサイズが大きすぎます。");
+		return error($en? "Upload failed.\nThe file size is too big.":"アップロードに失敗しました。\nファイルサイズが大きすぎます。");
 	} 
 	$is_upload=false;
 	$tool = '';
