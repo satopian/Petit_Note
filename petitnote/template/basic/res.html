@@ -29,6 +29,8 @@
 <link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
 <link rel="preload" as="script" href="lib/luminous/luminous.min.js">
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
+<link rel="preload" as="script" href="template/basic/js/common.js?<?=h($petit_lot)?>">
+
 <?php if($set_nsfw && !$nsfwc):?>
 	<!-- センシティブコンテンツにブラーをかける -->
 	<style>img {filter:blur(15px);}</style>
@@ -279,8 +281,8 @@
 <?php endif;?>
 <?php endif;?>
 
-<form action="./" method="POST" enctype="multipart/form-data" class="resform">
-
+<form action="./" method="POST" enctype="multipart/form-data" class="resform" id="res_form" onsubmit="return res_form_submit(event)">
+<div id="error_message"></div>
 	<table class="resform">
 		<tr>
 			<td><?php if($en):?>Name<?php else:?>名前<?php endif;?></td>
@@ -383,43 +385,7 @@
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
 <script src="lib/<?=h(JQUERY)?>"></script>
 <script src="lib/luminous/luminous.min.js"></script>
-<script>
-	jQuery(function() {
-		window.onpageshow = function(){
-			var $btn = $('[type="submit"]');
-			//disbledを解除
-			$btn.prop("disabled", false);
-			$btn.click(function(){//送信ボタン2度押し対策
-				$(this).prop('disabled',true);
-				$(this).closest('form').submit();
-			});
-		}
-		// https://cotodama.co/pagetop/
-		var pagetop = $('#page_top');   
-		pagetop.hide();
-		$(window).scroll(function () {
-			if ($(this).scrollTop() > 100) {  //100pxスクロールしたら表示
-				pagetop.fadeIn();
-			} else {
-				pagetop.fadeOut();
-			}
-		});
-		pagetop.click(function () {
-			$('body,html').animate({
-				scrollTop: 0
-			}, 500); //0.5秒かけてトップへ移動
-			return false;
-		});
-		// https://www.webdesignleaves.com/pr/plugins/luminous-lightbox.html
-		const luminousElems = document.querySelectorAll('.luminous');
-		//取得した要素の数が 0 より大きければ
-		if( luminousElems.length > 0 ) {
-			luminousElems.forEach( (elem) => {
-			new Luminous(elem);
-			});
-		}
-	});
-</script>
+<script src="template/basic/js/common.js?<?=h($petit_lot)?>"></script>
 </body>
 </html>
 	

@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
 	<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
 	<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
+	<link rel="preload" as="script" href="template/basic/js/common.js?<?=h($petit_lot)?>">
 	<title><?=h($boardname)?></title> 
 
 	<script>
@@ -64,7 +65,8 @@
 				<?php endforeach;?>
 	</div>
 <?php if($aikotoba):?>
-<form action="./" method="POST" enctype="multipart/form-data" class="postform">
+<form action="./" method="POST" enctype="multipart/form-data" class="postform" id="res_form" onsubmit="return res_form_submit(event)">
+<div id="error_message"></div>
 	<table>
 		<tr>
 			<td><?php if($en):?>Name<?php else:?>名前<?php endif;?></td>
@@ -139,34 +141,7 @@
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
 <script src="lib/<?=h(JQUERY)?>"></script>
-<script>
-	jQuery(function() {
-	window.onpageshow = function(){
-		var $btn = $('[type="submit"]');
-		//disbledを解除
-		$btn.prop("disabled", false);
-		$btn.click(function(){//送信ボタン2度押し対策
-			$(this).prop('disabled',true);
-			$(this).closest('form').submit();
-		});
-		}
-		// https://cotodama.co/pagetop/
-		var pagetop = $('#page_top');   
-		pagetop.hide();
-		$(window).scroll(function () {
-			if ($(this).scrollTop() > 100) {  //100pxスクロールしたら表示
-				pagetop.fadeIn();
-			} else {
-				pagetop.fadeOut();
-			}
-		});
-		pagetop.click(function () {
-			$('body,html').animate({
-				scrollTop: 0
-			}, 500); //0.5秒かけてトップへ移動
-			return false;
-		});
-	});
-</script>
+<script src="lib/luminous/luminous.min.js"></script>
+<script src="template/basic/js/common.js?<?=h($petit_lot)?>"></script>
 </body>
 </html>

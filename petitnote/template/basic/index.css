@@ -559,3 +559,9 @@ span.continue_menu {
 .hide_thumbnail img {
 	filter: blur(15px);
 }
+/* エラーメッセージ */
+div#error_message {
+    background-color: hsl(56 100% 88% / 1);
+    font-size: 20px;
+    padding: 1px 4px 1px;
+}
