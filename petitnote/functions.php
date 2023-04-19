@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230418;
+$functions_ver=20230419;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -654,7 +654,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	}
 	// 使えないurlチェック
 	if (is_ngword($badurl, $chk_url)) {
-		return error($en?'There is an inappropriate url.':'不適切なurlがあります。');
+		return error($en?'There is an inappropriate URL.':'不適切なURLがあります。');
 	}
 
 	//指定文字列が2つあると拒絶

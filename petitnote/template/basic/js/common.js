@@ -13,7 +13,6 @@ function res_form_submit(event){
 		body: formData
 		})
 		.then(response => {
-			let response_status = response.status; 
 			if (response.ok) {
 				console.log(response.url); 
 				console.log(response.redirected); 
@@ -23,14 +22,11 @@ function res_form_submit(event){
 				form.querySelector('input[type="submit"]').disabled = false; 
 				response.text().then((text) => {
 				console.log(text);		
-				return document.getElementById('error_message').innerHTML='<div>'+text+'</div>';	
+				return document.getElementById('error_message').innerHTML='<div>'+text+'</div>';
 				})
 				return 
 			}
 			throw new Error("Network response was not ok.");
-		})
-		.then(data => {
-			console.log(data);
 		})
 		.catch(error => {
 			form.querySelector('input[type="submit"]').disabled = false; 
@@ -41,6 +37,13 @@ function res_form_submit(event){
 
 jQuery(function() {
 	window.onpageshow = function(){
+		//URLクエリからresidを取得して指定idへページ内を移動
+		const urlParams = new URLSearchParams(window.location.search);
+		const resid = urlParams.get('resid');
+		const document_res_id = document.getElementById(resid);
+		if(document_res_id){
+			document_res_id.scrollIntoView();
+		}
 		var $btn = $('[type="submit"]');
 		//disbledを解除
 		$btn.prop("disabled", false);
