@@ -565,7 +565,7 @@ div#error_message {
     margin: 0;
 }
 div#error_message div {
-    background-color: hsl(56 100% 88% / 1);
+    background-color: hsl(60 100% 88% / 1);
     font-size: 20px;
     padding: 1px 4px 1px;
     margin: 2px 0 2px;
