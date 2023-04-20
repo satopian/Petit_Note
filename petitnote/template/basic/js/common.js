@@ -18,6 +18,7 @@ function res_form_submit(event){
 				console.log(response.url); 
 				console.log(response.redirected); 
 				if(response.redirected){
+					submitBtn.disabled = true;
 					return window.location.href=response.url;
 				}
 				submitBtn.disabled = false; 
@@ -25,8 +26,7 @@ function res_form_submit(event){
 				console.log(text);		
 				return document.getElementById('error_message').innerHTML='<div>'+text+'</div>';
 				})
-				submitBtn.disabled = false;
-				return 
+				return; 
 			}
 			let response_status = response.status; 
 			let resp_error_msg = '';
@@ -46,6 +46,9 @@ function res_form_submit(event){
 				case 500:
 				  resp_error_msg = "Internal Server Error";
 				  break;
+				case 502:
+					resp_error_msg = "bad gateway";
+					break;
 				case 503:
 				  resp_error_msg = "Service Unavailable";
 				  break;
@@ -54,7 +57,7 @@ function res_form_submit(event){
 				  break;
 			  }
 			submitBtn.disabled = false;
-			return document.getElementById('error_message').innerHTML='<div>'+response_status+resp_error_msg+'</div>';
+			return document.getElementById('error_message').innerHTML='<div>'+response_status+' '+resp_error_msg+'</div>';
 
 		})
 		.catch(error => {
