@@ -1,5 +1,6 @@
 function res_form_submit(event){
 	const form = document.getElementById("res_form");
+	const submitBtn = form.querySelector('input[type="submit"]');
 	if(form){
 		event.preventDefault(); // フォームの送信を中断
 		const formData = new FormData(form);
@@ -19,18 +20,46 @@ function res_form_submit(event){
 				if(response.redirected){
 					return window.location.href=response.url;
 				}
-				form.querySelector('input[type="submit"]').disabled = false; 
+				submitBtn.disabled = false; 
 				response.text().then((text) => {
 				console.log(text);		
 				return document.getElementById('error_message').innerHTML='<div>'+text+'</div>';
 				})
+				submitBtn.disabled = false;
 				return 
 			}
-			throw new Error("Network response was not ok.");
+			let response_status = response.status; 
+			let resp_error_msg = '';
+			switch (response_status) {
+				case 400:
+				resp_error_msg = "Bad Request";
+				  break;
+				case 401:
+				  resp_error_msg = "Unauthorized";
+				  break;
+				case 403:
+				  resp_error_msg = "Forbidden";
+				  break;
+				case 404:
+				  resp_error_msg = "Not Found";
+				  break;
+				case 500:
+				  resp_error_msg = "Internal Server Error";
+				  break;
+				case 503:
+				  resp_error_msg = "Service Unavailable";
+				  break;
+				default:
+				  resp_error_msg = "Unknown Error";
+				  break;
+			  }
+			submitBtn.disabled = false;
+			return document.getElementById('error_message').innerHTML='<div>'+response_status+resp_error_msg+'</div>';
+
 		})
 		.catch(error => {
-			form.querySelector('input[type="submit"]').disabled = false; 
-			console.error("There was a problem with the fetch operation:", error);
+			submitBtn.disabled = false;
+			return document.getElementById('error_message').innerHTML='<div>There was a problem with the fetch operation:</div>';
 		});
 	}
 }
