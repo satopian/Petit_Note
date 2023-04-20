@@ -23,8 +23,11 @@ function res_form_submit(event){
 				}
 				submitBtn.disabled = false; 
 				response.text().then((text) => {
-				console.log(text);		
-				return document.getElementById('error_message').innerHTML='<div>'+text+'</div>';
+					console.log(text);
+					if (text.startsWith("error\n")) {
+						const error_message = text.split("\n")[1];
+						return document.getElementById('error_message').innerHTML = '<div>' + error_message + '</div>';
+					}
 				})
 				return; 
 			}
