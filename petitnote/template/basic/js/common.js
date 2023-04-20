@@ -1,72 +1,88 @@
-function res_form_submit(event){
-	const form = document.getElementById("res_form");
+function res_form_submit(event, formId = 'res_form') {//第二引数が未指定の時はformId = 'res_form'
+	if (formId !== "res_form" && formId !== "image_rep") {
+		console.error("Invalid form ID specified!");
+		return;
+	}
+	let error_message_Id;
+	if (formId === "res_form") {
+		error_message_Id = "error_message";//エラーメッセージを表示する箇所のidを指定
+	} else if (formId === "image_rep") {
+		error_message_Id = "error_message_imgrep";
+	}
+
+	const form = document.getElementById(formId);
 	const submitBtn = form.querySelector('input[type="submit"]');
-	if(form){
-		event.preventDefault(); // フォームの送信を中断
+	if (form) {
+		event.preventDefault(); // 通常フォームの送信を中断
 		const formData = new FormData(form);
-		fetch("./", {
+		let fetchReq = fetch("./", {
 			method: "POST",
 			mode: 'same-origin',
-		headers: {
-			'X-Requested-With': 'validate'
-			,
-		},
-		body: formData
+			headers: {
+				'X-Requested-With': 'validate',
+			},
+			body: formData
 		})
-		.then(response => {
+		fetchReq.then(response => {
 			if (response.ok) {
-				console.log(response.url); 
-				console.log(response.redirected); 
-				if(response.redirected){
+				console.log(response.url);
+				console.log(response.redirected);
+				if (response.redirected) {
 					submitBtn.disabled = true;
-					return window.location.href=response.url;
+					return window.location.href = response.url;
 				}
-				submitBtn.disabled = false; 
+				submitBtn.disabled = false;
 				response.text().then((text) => {
 					console.log(text);
 					if (text.startsWith("error\n")) {
 						const error_message = text.split("\n")[1];
-						return document.getElementById('error_message').innerHTML = '<div>' + error_message + '</div>';
+
+						return document.getElementById(error_message_Id).innerHTML = '<div>' + error_message + '</div>';
+					}
+					if (formId === "image_rep") {
+						//画像差し換え時はヘッダX-Requested-Withをチェックしてfetchでの投稿をPHP側で中断し、
+						//エラーメッセージが返ってこなければ
+						return form.submit(); // 通常のフォームの送信を実行
 					}
 				})
-				return; 
+				return;
 			}
-			let response_status = response.status; 
+			let response_status = response.status;
 			let resp_error_msg = '';
 			switch (response_status) {
 				case 400:
-				resp_error_msg = "Bad Request";
-				  break;
+					resp_error_msg = "Bad Request";
+					break;
 				case 401:
-				  resp_error_msg = "Unauthorized";
-				  break;
+					resp_error_msg = "Unauthorized";
+					break;
 				case 403:
-				  resp_error_msg = "Forbidden";
-				  break;
+					resp_error_msg = "Forbidden";
+					break;
 				case 404:
-				  resp_error_msg = "Not Found";
-				  break;
+					resp_error_msg = "Not Found";
+					break;
 				case 500:
-				  resp_error_msg = "Internal Server Error";
-				  break;
+					resp_error_msg = "Internal Server Error";
+					break;
 				case 502:
 					resp_error_msg = "bad gateway";
 					break;
 				case 503:
-				  resp_error_msg = "Service Unavailable";
-				  break;
+					resp_error_msg = "Service Unavailable";
+					break;
 				default:
-				  resp_error_msg = "Unknown Error";
-				  break;
-			  }
+					resp_error_msg = "Unknown Error";
+					break;
+			}
 			submitBtn.disabled = false;
-			return document.getElementById('error_message').innerHTML='<div>'+response_status+' '+resp_error_msg+'</div>';
+			return document.getElementById(error_message_Id).innerHTML = '<div>' + response_status + ' ' + resp_error_msg + '</div>';
 
 		})
-		.catch(error => {
-			submitBtn.disabled = false;
-			return document.getElementById('error_message').innerHTML='<div>There was a problem with the fetch operation:</div>';
-		});
+			.catch(error => {
+				submitBtn.disabled = false;
+				return document.getElementById(error_message_Id).innerHTML = '<div>There was a problem with the fetch operation:</div>';
+			});
 	}
 }
 

@@ -561,10 +561,10 @@ span.continue_menu {
 }
 /* エラーメッセージ */
 
-div#error_message {
+div#error_message , div#error_message_imgrep {
     margin: 0;
 }
-div#error_message div {
+div#error_message div , div#error_message_imgrep div {
     background-color: hsl(60 100% 88% / 1);
     font-size: 20px;
     padding: 1px 4px 1px;
