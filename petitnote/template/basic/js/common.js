@@ -15,15 +15,16 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 	if (form) {
 		event.preventDefault(); // 通常フォームの送信を中断
 		const formData = new FormData(form);
-		let fetchReq = fetch("./", {
+		formData.append('asyncflag', 'true'); //画像差し換えそのものは非同期通信で行わない。
+		fetch("./", {
 			method: "POST",
 			mode: 'same-origin',
 			headers: {
-				'X-Requested-With': 'validate',
+				'X-Requested-With': 'asyncflag',
 			},
 			body: formData
 		})
-		fetchReq.then(response => {
+		.then(response => {
 			if (response.ok) {
 				console.log(response.url);
 				console.log(response.redirected);

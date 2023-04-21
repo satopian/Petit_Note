@@ -490,8 +490,9 @@ function error($str){
 	global $boardname,$skindir,$en,$aikotoba_required_to_view,$petit_lot;
 
 	$str=nl2br(h($str));
-	$http_x_requested_with= (isset($_SERVER['HTTP_X_REQUESTED_WITH']));
-	if($http_x_requested_with){
+	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
+	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
+	if($http_x_requested_with||$asyncflag){
 		return die("error\n{$str}");
 	}
 	$boardname = ($aikotoba_required_to_view && !aikotoba_valid()) ? '' : $boardname; 

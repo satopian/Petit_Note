@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.66.0';
+$petit_ver='v0.66.2';
 $petit_lot='lot.230421';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1400,8 +1400,10 @@ function img_replace(){
 			return error($en?'Image already exists.':'同じ画像がありました。');
 		}
 	}
-	$http_x_requested_with= (isset($_SERVER['HTTP_X_REQUESTED_WITH']));
-	if($http_x_requested_with){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
+	//ヘッダーが確認できなかった時の保険
+	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
+	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
+	if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
 		return;
 	}
 
