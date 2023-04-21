@@ -36,9 +36,10 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 				response.text().then((text) => {
 					console.log(text);
 					if (text.startsWith("error\n")) {
-						const error_message = text.split("\n")[1];
-
-						return document.getElementById(error_message_Id).innerHTML = '<div>' + error_message + '</div>';
+						if (text.startsWith("error\n")) {
+							const error_message = text.split("\n").slice(1).join("\n");
+							return document.getElementById(error_message_Id).innerHTML = '<div>' + error_message + '</div>';
+						  }
 					}
 					if (formId === "image_rep") {
 						//画像差し換え時はヘッダX-Requested-Withをチェックしてfetchでの投稿をPHP側で中断し、
