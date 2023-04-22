@@ -95,7 +95,7 @@ jQuery(function() {
 		const resid = urlParams.get('resid');
 		const document_res_id = document.getElementById(resid);
 		if(document_res_id){
-			document_res_id.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+			document_res_id.scrollIntoView();
 		}
 		var $btn = $('[type="submit"]');
 		//disbledを解除
