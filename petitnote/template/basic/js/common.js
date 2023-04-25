@@ -68,7 +68,7 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 					resp_error_msg = "Internal Server Error";
 					break;
 				case 502:
-					resp_error_msg = "bad gateway";
+					resp_error_msg = "Bad gateway";
 					break;
 				case 503:
 					resp_error_msg = "Service Unavailable";
