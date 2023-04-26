@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.67.0';
+$petit_ver='v0.67.3';
 $petit_lot='lot.230426';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -882,7 +882,6 @@ function paint(){
 		return;
 	}
 
-
 	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
 
 	switch($app){
@@ -1131,6 +1130,13 @@ function download_app_dat(){
 	if(!$pchext){
 		return error($en?'This operation has failed.':'失敗しました。');
 	}
+	//ヘッダーが確認できなかった時の保険
+	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
+	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
+	if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
+		return;
+	}
+
 	$mime_type = mime_content_type($filepath);
 	header('Content-Type: '.$mime_type);
 	header('Content-Length: '.filesize($filepath));
@@ -1664,11 +1670,15 @@ function edit_form($id='',$no=''){
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
 	
-	if(!($admindel||($userdel&&$pwd))){
-		return error($en?'This operation has failed.':'失敗しました。');
+	if(!($admindel||$userdel)){
+		return error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
 	}
-	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
+	if(!$admindel&&!$pwd){
+		return error($en?'Password is incorrect.':'パスワードが違います。');
+	}
 
+	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
+	$id=$no='';
 	if($id_and_no){
 		list($id,$no)=explode(",",trim($id_and_no));
 	}
@@ -1699,7 +1709,10 @@ function edit_form($id='',$no=''){
 		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 		if($id===$time && $no===$_no){
 		
-			if($admindel||(check_elapsed_days($time)&&$pwd&&password_verify($pwd,$hash))){
+			if(!$admindel&&(!$pwd||!password_verify($pwd,$hash))){
+				return error($en?'Password is incorrect.':'パスワードが違います。');
+			}
+			if($admindel||check_elapsed_days($time)){
 				$flag=true;
 				break;
 			}
@@ -1711,6 +1724,13 @@ function edit_form($id='',$no=''){
 		return error($en?'This operation has failed.':'失敗しました。');
 	}
 	closeFile($rp);
+
+	//ヘッダーが確認できなかった時の保険
+	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
+	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
+	if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
+		return;
+	}
 
 	$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
@@ -1904,14 +1924,18 @@ function del(){
 
 	check_csrf_token();
 
+	$admindel=admindel_valid();
+	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
-	session_sta();
-	$admindel=admindel_valid();
-	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-	if(!($admindel||($userdel&&$pwd))){
-		return error($en?'This operation has failed.':'失敗しました。');
+
+	if(!($admindel||$userdel)){
+		return error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
+	}
+	if(!$admindel&&!$pwd){
+		return error($en?'Password is incorrect.':'パスワードが違います。');
 	}
 	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
 	if(!$id_and_no){
@@ -1953,7 +1977,7 @@ function del(){
 				if(!$pwd||!password_verify($pwd,$hash)){
 					closeFile ($rp);
 					closeFile($fp);
-					return error($en?'This operation has failed.':'失敗しました。');
+					return error($en?'Password is incorrect.':'パスワードが違います。');
 				}
 			}
 
@@ -1979,8 +2003,10 @@ function del(){
 					list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
 					$alllog_oya_deleted=($no===$no_ && !$name_ && !$com_ && !$url_ && !$_imgfile_ && !$userid_ && ($oya_==='oya'));
 
-					if(($alllog_oya_deleted && ($no===$no_))||((($id===$time_) && $no===$no_) &&
-					( $admindel || ($pwd && password_verify($pwd,$hash_))))){
+					if(($alllog_oya_deleted && ($no===$no_))||($id===$time_ && $no===$no_)){
+						if(!$admindel&&(!$pwd||!password_verify($pwd,$hash_))){
+							return error($en?'Password is incorrect.':'パスワードが違います。');
+						}
 						$flag=true;
 						break;
 					}
@@ -1991,6 +2017,14 @@ function del(){
 					closeFile($fp);
 					return error($en?'This operation has failed.':'失敗しました。');
 				}
+
+				//ヘッダーが確認できなかった時の保険
+				$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
+				$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
+				if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
+					return;
+				}
+
 				if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){
 
 					unset($alllog_arr[$j]);
@@ -2002,7 +2036,7 @@ function del(){
 					}
 					closeFile ($rp);
 					safe_unlink(LOG_DIR.$no.'.log');
-					
+		
 				}else{
 					delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
 					$deleted_sub = $en? 'No subject':'無題';
@@ -2015,10 +2049,10 @@ function del(){
 				}
 
 				writeFile($fp,implode("",$alllog_arr));
-		
+
 			}else{
-				
-				unset($r_arr[$i]);
+
+			unset($r_arr[$i]);
 				delete_files ($imgfile, $time);//一連のファイルを削除
 				writeFile ($rp,implode("",$r_arr));
 				closeFile ($rp);
@@ -2095,7 +2129,7 @@ function search(){
 		while($line=fgets($cp)){
 
 			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
-	
+
 			if(!$name && !$com && !$url && !$imgfile && !$userid){//この記事はありませんの時は表示しない
 				continue;
 			}

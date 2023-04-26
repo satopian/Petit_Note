@@ -37,6 +37,7 @@
 </nav>
 <h2 class="article_title"><?php if($en):?>You are trying to delete an article. Do you really want to delete this?<?php else:?>記事を削除しようとしています。本当に削除しますか?<?php endif;?></h2>
 
+<div id="error_message_beforedelete"></div>
 <?php if($admindel):?>
 	<?php if($en):?>Check the article you want to delete and press the delete button.<?php else:?>削除したい記事をチェックして削除ボタンを押してください。<?php endif;?>: 
 <?php endif;?>
@@ -46,7 +47,7 @@
 
 <?php endif;?>
 <?php if( $admindel || $aikotoba && $userdel):?>
-<form action="./" method="POST" id="delete" class="aikotoba">
+<form action="./" method="POST" id="before_delete" class="aikotoba" onsubmit="return res_form_submit(event,'before_delete')">
 <?php if(!$admindel):?>
 	<span class="non"><input type="text" value="" autocomplete="username"></span>
 	<input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
@@ -73,7 +74,7 @@
 	<?php foreach($ress as $i => $res) : ?>
 	<hr>
 	<div class="imginfo_wrap">
-	<label><input type="radio" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+	<label><input type="radio" name="id_and_no" form="before_delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
 	<span><?= h($res['name'])?></span>
 	<?php if($res['verified']):?>
 	<span class="icon-checkmark2"></span>

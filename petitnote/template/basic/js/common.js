@@ -6,6 +6,10 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 		error_message_Id = "error_message_imgrep";
 	} else if (formId === "paint_forme") {
 		error_message_Id = "error_message_paintform";
+	} else if (formId === "download_forme") {
+		error_message_Id = "error_message_download";
+	} else if (formId === "before_delete") {
+		error_message_Id = "error_message_beforedelete";
 	} else {
 		console.error("Invalid form ID specified!");
 		return;
@@ -36,11 +40,12 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 				submitBtn.disabled = false;
 				response.text().then((text) => {
 					if (text.startsWith("error\n")) {
+							console.log(text);
 							const error_message = text.split("\n").slice(1).join("\n");
 							return document.getElementById(error_message_Id).innerHTML = '<div>' + error_message + '</div>';
 					}
-					if (formId === "image_rep"||formId === "paint_forme") {
-						//画像差し換え時はヘッダX-Requested-Withをチェックしてfetchでの投稿をPHP側で中断し、
+					if (formId !== "res_form") {
+						//ヘッダX-Requested-Withをチェックしてfetchでの投稿をPHP側で中断し、
 						//エラーメッセージが返ってこなければ
 						return form.submit(); // 通常のフォームの送信を実行
 					}

@@ -37,6 +37,7 @@
 </nav>
 <h2 class="article_title"><?php if($en):?>Edit mode<?php else:?>編集モード<?php endif;?></h2>
 
+<div id="error_message_beforedelete"></div>
 <?php if($admindel):?>
 	<?php if($en):?>Edit this article. Press the edit button.<?php else:?>この記事を編集します。編集ボタンを押してください。<?php endif;?>: 
 <?php endif;?>
@@ -44,7 +45,8 @@
 	<?php if($en):?>Edit this article. Please enter password.<?php else:?>この記事を編集します。パスワードを入力してください。<?php endif;?>: 
 <?php endif;?>
 <?php if( $admindel || $aikotoba && $userdel):?>
-<form action="./" method="POST" id="delete" class="aikotoba">
+<form action="./" method="POST" id="before_delete" class="aikotoba" onsubmit="return res_form_submit(event,'before_delete')">
+
 <?php if(!$admindel):?>
 
 <span class="non"><input type="text" value="" autocomplete="username"></span>
@@ -68,7 +70,7 @@
 	<?php foreach($ress as $i => $res) : ?>
 	<hr>
 	<div class="imginfo_wrap">
-	<input type="hidden" name="id_and_no" form="delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+	<input type="hidden" name="id_and_no" form="before_delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
 	<span><?= h($res['name'])?></span>
 	<?php if($res['verified']):?>
 	<span class="icon-checkmark2"></span>

@@ -39,7 +39,8 @@
 <!-- ダウンロード -->
 <div class="continue_post_form">
 <?php if($download_app_dat):?>
-<form action="./" method="post">
+<form action="./" method="post" id="download_forme" onsubmit="return res_form_submit(event,'download_forme')">
+	<div id="error_message_download"></div>
 		<input type="hidden" name="mode" value="download">
 		<input type="hidden" name="id" value="<?=h($time)?>">
 		<input type="hidden" name="no" value="<?=h($no)?>">
