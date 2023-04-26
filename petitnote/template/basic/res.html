@@ -229,7 +229,8 @@
 
 <?php if($use_res_upload || $adminpost):?>
 <?php if($use_paint):?>
-<form action="./" method="post" enctype="multipart/form-data" class="res_form">
+	<form action="./" method="post" enctype="multipart/form-data" class="res_form" id="paint_forme" onsubmit="return res_form_submit(event,'paint_forme')">
+		<div id="error_message_paintform"></div>
 	<?php if($adminpost):?>
 	<span>
 	<input type="file" name="pchup" size="35" accept="image/*,.pch,.chi,.psd" class="pchup_button">
@@ -284,7 +285,7 @@
 <?php endif;?>
 
 <form action="./" method="POST" enctype="multipart/form-data" class="resform" id="res_form" onsubmit="return res_form_submit(event)">
-<div id="error_message"></div>
+	<div id="error_message"></div>
 	<table class="resform">
 		<tr>
 			<td><?php if($en):?>Name<?php else:?>名前<?php endif;?></td>

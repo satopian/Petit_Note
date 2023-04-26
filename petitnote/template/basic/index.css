@@ -561,12 +561,13 @@ span.continue_menu {
 }
 /* エラーメッセージ */
 
-div#error_message , div#error_message_imgrep {
+div#error_message , div#error_message_imgrep , div#error_message_paintform {
     margin: 0;
+	line-height: initial;
 }
-div#error_message div , div#error_message_imgrep div {
+div#error_message div , div#error_message_imgrep div , div#error_message_paintform div {
     background-color: hsl(60 100% 88% / 1);
     font-size: 20px;
     padding: 1px 4px 1px;
-    margin: 2px 0 2px;
+    margin: 5px 0 5px;
 }

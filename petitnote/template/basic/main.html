@@ -68,7 +68,9 @@
 
 <?php if($use_paint):?>
 <!-- ペイントフォーム -->
-<form action="./" method="post" enctype="multipart/form-data" class="paint_form">
+<form action="./" method="post" enctype="multipart/form-data" class="paint_form" id="paint_forme" onsubmit="return res_form_submit(event,'paint_forme')">
+	<div id="error_message_paintform"></div>
+
 	<?php if($adminpost):?>
 	<span>
 	<input type="file" name="pchup" size="35" accept="image/*,.pch,.chi,.psd" class="pchup_button">
