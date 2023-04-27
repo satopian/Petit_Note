@@ -1,3 +1,5 @@
+//Petit Note 2022-2023 (c)satopian MIT LICENCE
+//https://paintbbs.sakura.ne.jp/
 function res_form_submit(event, formId = 'res_form') {//第二引数が未指定の時はformId = 'res_form'
 	let error_message_Id;
 	if (formId === "res_form") {
@@ -90,6 +92,7 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 			});
 	}
 }
+// (c)satopian MIT LICENCE ここまで
 
 jQuery(function() {
 	window.onpageshow = function(){
