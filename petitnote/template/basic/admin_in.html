@@ -5,6 +5,11 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
+<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="script" href="lib/luminous/luminous.min.js">
+<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
+<link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
 	<title><?=h($boardname)?></title> 
 </head>
 <body>
@@ -51,8 +56,9 @@
 
 	<?php if(!$adminpost || !$admindel):?>
 
-	<form action="./" method="post" class="admin">
-		<?php if(!$admindel):?>
+	<form action="./" method="post" class="admin" id="res_form" onsubmit="return res_form_submit(event)">
+	<div id="error_message"></div>
+	<?php if(!$admindel):?>
 		
 		<label><input type="radio" name="mode" value="admin_del" checked>
 		<?php if($en):?>[Admin edit mode]<?php else:?>[管理者編集モード]<?php endif;?></label>
@@ -93,6 +99,11 @@
 </div>
 </div>
 </div>
+<div id="bottom"></div>
+<div id="page_top"><a class="icon-angles-up-solid"></a></div>
+<script src="lib/<?=h(JQUERY)?>"></script>
+<script src="lib/luminous/luminous.min.js"></script>
+<script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
 </body>
 </html>
 		
