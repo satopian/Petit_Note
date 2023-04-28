@@ -44,7 +44,7 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 					if (text.startsWith("error\n")) {
 							console.log(text);
 							const error_message = text.split("\n").slice(1).join("\n");
-							return document.getElementById(error_message_Id).innerHTML = '<div>' + error_message + '</div>';
+							return document.getElementById(error_message_Id).innerText = error_message;
 					}
 					if (formId !== "res_form") {
 						//ヘッダX-Requested-Withをチェックしてfetchでの投稿をPHP側で中断し、
@@ -83,12 +83,12 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 					break;
 			}
 			submitBtn.disabled = false;
-			return document.getElementById(error_message_Id).innerHTML = '<div>' + response_status + ' ' + resp_error_msg + '</div>';
+			return document.getElementById(error_message_Id).innerText = response_status + ' ' + resp_error_msg;
 
 		})
 			.catch(error => {
 				submitBtn.disabled = false;
-				return document.getElementById(error_message_Id).innerHTML = '<div>There was a problem with the fetch operation:</div>';
+				return document.getElementById(error_message_Id).innerText = 'There was a problem with the fetch operation:';
 			});
 	}
 }

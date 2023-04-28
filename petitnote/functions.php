@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230426;
+$functions_ver=20230428;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -492,8 +492,7 @@ function error($str){
 	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
 	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
 	if($http_x_requested_with||$asyncflag){
-		$str=nl2br(h($str),false);
-		return die("error\n{$str}");
+		return die(h("error\n{$str}"));
 	}
 	$boardname = ($aikotoba_required_to_view && !aikotoba_valid()) ? '' : $boardname; 
 	$templete='error.html';
