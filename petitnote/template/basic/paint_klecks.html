@@ -73,17 +73,6 @@
 						body: data,
 					})
 					.then((response) => {
-						let response_status = response.status; 
-
-						if(response_status===403){
-							return alert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
-						}
-						if(response_status===404){
-							return alert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
-						}
-						if(response_status!==200){
-							return alert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗\n時間をおいて再度投稿してみてください。'<?php endif;?>);
-						}
 						if (response.ok) {
 							response.text().then((text) => {
 							console.log(text)
@@ -92,8 +81,17 @@
 								}
 								return alert(text);
 							})
-						}
+						}else{
+							let response_status = response.status; 
 
+							if(response_status===403){
+								return alert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
+							}
+							if(response_status===404){
+								return alert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
+							}
+							return alert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗\n時間をおいて再度投稿してみてください。'<?php endif;?>);
+						}
 					})
 					.catch((error) => {
 						return alert(<?php if($en):?>'Server or line is unstable.\nPlease try again!'<?php else:?>'サーバまたは回線が不安定です。\n時間をおいて再度投稿してみてください。'<?php endif;?>);	
@@ -105,7 +103,7 @@
 					formData.append("psd", psd,'blob');
 					formData.append("usercode", "<?=h($usercode)?>");
 					<?php if($rep):?>formData.append("repcode", "<?=h($repcode)?>");<?php endif;?>
-					formData.append("tool", "<?=h($tool)?>");
+					formData.append("tool", "klecks");
 					formData.append("stime", <?=time();?>);
 					formData.append("resto", "<?=h($resto)?>");
 					postData("saveklecks.php", formData);
