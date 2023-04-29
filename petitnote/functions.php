@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230428;
+$functions_ver=20230429;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -762,8 +762,8 @@ return $msg;
 // 一括書き込み（上書き）
 function writeFile ($fp, $data) {
 	ftruncate($fp,0);
-	set_file_buffer($fp, 0);
 	rewind($fp);
+	stream_set_write_buffer($fp, 0);
 	fwrite($fp, $data);
 }
 //fpクローズ
