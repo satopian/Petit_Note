@@ -389,7 +389,7 @@ function post(){
 	$userid=(isset($_SESSION['userid'])&&$_SESSION['userid'])
 	? $_SESSION['userid'] : getId($userip);
 	$userid=t($userid);//タブ除去
-	$_SESSION['userid'] = $userid; 
+	$_SESSION['userid'] = $userid;
 
 	$verified = $adminpost ? 'adminpost' : ''; 
 
@@ -833,7 +833,7 @@ function paint(){
 				$resto = $cont_paint_same_thread ? $no : '';
 			}
 		}
-	if(!is_file(IMG_DIR.$imgfile)){
+		if(!is_file(IMG_DIR.$imgfile)){
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
@@ -1831,7 +1831,7 @@ function edit(){
 	foreach($r_arr as $i => $line){
 
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
-			
+
 		if($id===$_time && $no===$_no){
 
 			if(!$_name && !$_com && !$_url && !$_imgfile && !$_userid && ($_oya==='oya')){//削除ずみのoyaの時
@@ -2276,7 +2276,7 @@ function search(){
 	$postedtime='';
 	$lastmodified='';
 	if(!empty($arr)){
-		
+
 		$time= key($arr);
 		$postedtime=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 		$lastmodified=date("Y/m/d G:i", (int)$postedtime);
