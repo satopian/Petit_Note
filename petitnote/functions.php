@@ -46,7 +46,7 @@ function aikotoba(){
 	$_SESSION['aikotoba']='aikotoba';
 
 	return branch_destination_of_location();
-	
+
 }
 //記事の表示に合言葉を必須にする
 function aikotoba_required_to_view(){
@@ -180,7 +180,7 @@ function view_nsfw(){
 		setcookie("nsfwc",'on',time()+(60*60*24*30),"","",false,true);
 	}
 
-return branch_destination_of_location();
+	return branch_destination_of_location();
 }
 
 //ログイン・ログアウト時のLocationを分岐
