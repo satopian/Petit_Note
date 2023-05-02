@@ -71,6 +71,12 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 その他の機能追加が特に必要ではない方もアップデートをお願いします。    
 
 ## 履歴
+
+##  23/05/02 v0.68.5.1
+### klecks更新
+ブラウザsafariのバグを回避するための修正作業が行われています。  
+https://github.com/bitbof/klecks/issues/68
+
 ##  23/05/02 v0.68.5
 
 ### 改善
