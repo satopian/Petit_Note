@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.68.3';
+$petit_ver='v0.68.5';
 $petit_lot='lot.230502';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2298,32 +2298,29 @@ function catalog($page=0){
 	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en; 
 
 	aikotoba_required_to_view();
-
 	$pagedef=$catalog_pagedef;
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
-	$alllog_arr=[];
+	$articles=[];
+	$count_alllog=0;
 	while ($_line = fgets($fp)) {
 		if(!trim($_line)){
 			continue;
 		}
-		$alllog_arr[]=$_line;	
+		if($page <= $count_alllog && $count_alllog < $page+$pagedef){
+			$articles[]=$_line;	
+		}
+		++$count_alllog;
 	}
 	fclose($fp);
-
-	$count_alllog=count($alllog_arr);
-
-	//ページ番号から1ページ分のスレッド分とりだす
-	$articles=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
+	$_res=[];
+	$out=[];
 	foreach($articles as $oya => $line){
-		$out[$oya]=[];
+
 		$line=explode("\t",trim($line));
-		list($_no)=$line;
-		if(!is_file(LOG_DIR."{$_no}.log")){
-		continue;
-		}	
-		$out[$oya][] = create_res($line,['catalog'=>true]);//$lineから、情報を取り出す
+		$_res = create_res($line,['catalog'=>true]);//$lineから、情報を取り出す
+		$out[$oya][] = $_res;//$lineから、情報を取り出す
 		if(empty($out[$oya])){
 			unset($out[$oya]);
 		}
@@ -2377,23 +2374,23 @@ function view($page=0){
 	$allow_coments_only=$allow_comments_only;//互換性
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
-	$alllog_arr=[];
+	$article_nos=[];
+	$count_alllog=0;
 	while ($_line = fgets($fp)) {
 		if(!trim($_line)){
 			continue;
 		}
-		$alllog_arr[]=$_line;	
+		if($page <= $count_alllog && $count_alllog < $page+$pagedef){
+			list($_no)=explode("\t",trim($_line));
+			$article_nos[]=$_no;	
+		}
+		++$count_alllog;
 	}
 	fclose($fp);
-	$count_alllog=count($alllog_arr);
 
-
-	//ページ番号から1ページ分のスレッドをとりだす
-	$articles=array_slice($alllog_arr,(int)$page,$pagedef,false);
 	//oyaのループ
-	foreach($articles as $oya => $alllog){
+	foreach($article_nos as $oya => $no){
 
-		list($no)=explode("\t",trim($alllog));
 		//個別スレッドのループ
 		if(!is_file(LOG_DIR."{$no}.log")){
 			continue;	
