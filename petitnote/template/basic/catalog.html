@@ -75,21 +75,21 @@
 		
 	<span class="prev">
 			<?php if($prev!==false):?>
-			<a href="?mode=catalog&page=<?=h($prev)?><?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>
+				<a href="?mode=catalog&page=<?=h($prev)?>
 			">≪prev</a>
 	<?php endif;?>
 	</span>
 	| <a href="./">top</a> |
 	<span class="next">
 	<?php if($next):?>
-	<a href="?mode=catalog&page=<?=h($next)?><?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>
+		<a href="?mode=catalog&page=<?=h($next)?>
 	">next≫</a>
 	<?php endif;?>
 	</span>
 </div>
 <div class="pagination">
 <?php if($prev!==false):?>
-<a href="?mode=catalog&page=0<?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">start</a> |
+<a href="?mode=catalog&page=0">start</a> |
 <?php endif;?>
 
 <?php for($i = $start_page; ($i < $count_alllog && $i <= $end_page) ; $i+=$pagedef) :?>
@@ -97,21 +97,21 @@
 			[<strong><?=h($i/$pagedef)?></strong>]
 		<?php else: ?>
 			<?php if($i===0):?>
-				[<a href="?mode=catalog&page=0<?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">0</a>]
+				[<a href="?mode=catalog&page=0">0</a>]
 			<?php else:?>	
 			<?php if($i === $end_page):?>
 			<!-- 特定のページに代入される記号 エンド -->
-				[<a href="?mode=catalog&page=<?=h($i)?><?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">≫</a>]
+				[<a href="?mode=catalog&page=<?=h($i)?>">≫</a>]
 				<?php elseif($i === $start_page):?>
-				[<a href="?mode=catalog&page=<?=h($i)?><?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">≪</a>]
+				[<a href="?mode=catalog&page=<?=h($i)?>">≪</a>]
 					<?php else:?>
-			[<a href="?mode=catalog&page=<?=h($i)?><?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>"><?=h($i/$pagedef)?></a>]
+			[<a href="?mode=catalog&page=<?=h($i)?>"><?=h($i/$pagedef)?></a>]
 			<?php endif;?>
 			<?php endif;?>
 		<?php endif;?>
 		<?php endfor ;?>
 		<?php if($next):?>
-		| <a href="?mode=catalog&page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?><?php if($encoded_q):?>&q=<?=h($encoded_q)?><?php endif;?>">end</a>
+		| <a href="?mode=catalog&page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?>">end</a>
 		<?php endif;?>
 </div>
 </nav>
