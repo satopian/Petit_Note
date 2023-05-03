@@ -129,33 +129,40 @@
 		klecks.openProject({
 		width: <?=h($picw)?>,
 		height: <?=h($pich)?>,
-
-			layers: [{
-				name: 'Background',
+		layers: [{
+			name: <?php if($en):?>'Background'<?php else:?>'背景'<?php endif;?>,
 				opacity: 1,
 				mixModeStr: 'source-over',
-
 				image: (() => {
 					const canvas = document.createElement('canvas');
 					canvas.width = <?=h($picw)?>;
 					canvas.height = <?=h($pich)?>;
 					const ctx = canvas.getContext('2d');
-					//PSDがなく画像だけの時はcanvasに読み込む
 					<?php if($imgfile):?>
-						var img = new Image();
-						img.src = "<?=h($imgfile)?>";
-						img.onload = function(){
-							ctx.drawImage(img, 0, 0);
-						}
+					var img = new Image();
+					img.src = "<?=h($imgfile)?>";
+					img.onload = function(){
+					ctx.drawImage(img, 0, 0);
+					}
 					<?php endif;?>
 					ctx.save();
 					ctx.fillStyle = '#fff';
 					ctx.fillRect(0, 0, canvas.width, canvas.height);
 					ctx.restore();
 					return canvas;
-				})(),
-			}]
-		});
+				})()
+			},{
+				name: <?php if($en):?>'Layer 1'<?php else:?>'レイヤー 1'<?php endif;?>,
+				opacity: 1,
+				mixModeStr: 'source-over',
+				image: (() => {
+					const canvas = document.createElement('canvas');
+					canvas.width = <?=h($picw)?>;
+					canvas.height = <?=h($pich)?>;
+					return canvas;
+				})()
+			}
+		]});
 	}
 </script>
 <!-- embed end -->
