@@ -121,7 +121,7 @@ jQuery(function() {
 			pagetop.fadeOut();
 		}
 	});
-	pagetop.click(function () {
+	pagetop.on('click', function () {
 		$('body,html').animate({
 			scrollTop: 0
 		}, 500); //0.5秒かけてトップへ移動

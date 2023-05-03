@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.68.5';
-$petit_lot='lot.230502';
+$petit_ver='v0.68.6';
+$petit_lot='lot.230503';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -70,9 +70,7 @@ $display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_b
 $password_require_to_continue = isset($password_require_to_continue) ? (bool)$password_require_to_continue : false;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
-$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
-
 $usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
 $userip = get_uip();
 //user-codeの発行
@@ -138,17 +136,17 @@ switch($mode){
 	case 'search':
 		return search();
 	case 'catalog':
-		return catalog($page);
+		return catalog();
 	case 'download':
 		return download_app_dat();
 	case '':
 		if($resno){
-			return res($resno);
+			return res();
 		}
-		return view($page);
+		return view();
 	default:
-		return header('Location: ./');
-	}
+		return view();
+}
 
 //投稿処理
 function post(){
@@ -2069,7 +2067,7 @@ function del(){
 	}
 
 	unset($_SESSION['userdel']);
-	$resno=(string)filter_input(INPUT_POST,'postresno');
+	$resno=(string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 	//多重送信防止
 	if((string)filter_input(INPUT_POST,'resmode')==='true'){
 		if(!is_file(LOG_DIR.$resno.'.log')){
@@ -2293,11 +2291,13 @@ function search(){
 	return include __DIR__.'/'.$skindir.$templete;
 }
 //カタログ表示
-function catalog($page=0){
+function catalog(){
 	global $use_aikotoba,$home,$catalog_pagedef,$skindir,$display_link_back_to_home;
 	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en; 
 
 	aikotoba_required_to_view();
+
+	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$pagedef=$catalog_pagedef;
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
@@ -2362,12 +2362,14 @@ function catalog($page=0){
 }
 
 //通常表示
-function view($page=0){
+function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home;
 
 	aikotoba_required_to_view();
+
+	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 
 	$max_byte = $max_kb * 1024*2;
 	$denny_all_posts=$deny_all_posts;//互換性
@@ -2461,7 +2463,7 @@ function view($page=0){
 
 }
 //レス画面
-function res ($resno){
+function res (){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home;
