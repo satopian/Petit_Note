@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.68.6';
+$petit_ver='v0.68.8';
 $petit_lot='lot.230503';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2303,28 +2303,24 @@ function catalog(){
 	$fp=fopen(LOG_DIR."alllog.log","r");
 	$articles=[];
 	$count_alllog=0;
-	while ($_line = fgets($fp)) {
-		if(!trim($_line)){
+	$_res=[];
+	$out=[];
+	$oya=0;
+	while ($line = fgets($fp)) {
+		if(!trim($line)){
 			continue;
 		}
 		if($page <= $count_alllog && $count_alllog < $page+$pagedef){
-			$articles[]=$_line;	
+			$_res = create_res(explode("\t",trim($line)),['catalog'=>true]);//$lineから、情報を取り出す
+			$out[$oya][] = $_res;//$lineから、情報を取り出す
+			if(empty($out[$oya])){
+				unset($out[$oya]);
+			}
+			++$oya;
 		}
 		++$count_alllog;
 	}
 	fclose($fp);
-	//oyaのループ
-	$_res=[];
-	$out=[];
-	foreach($articles as $oya => $line){
-
-		$line=explode("\t",trim($line));
-		$_res = create_res($line,['catalog'=>true]);//$lineから、情報を取り出す
-		$out[$oya][] = $_res;//$lineから、情報を取り出す
-		if(empty($out[$oya])){
-			unset($out[$oya]);
-		}
-	}
 
 	//管理者判定処理
 	session_sta();
