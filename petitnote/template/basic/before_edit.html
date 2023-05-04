@@ -20,7 +20,6 @@
 <body>
 <div class="container" id="top">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
-	<?php if($aikotoba):?>
 	<nav class="menu_wrap">
 		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 <?php if($userdel || $admindel):?>
@@ -114,7 +113,6 @@
 			<div class="comment"><?= com(h($res['com']))?></div>
 			<?php endforeach;?>
 			<?php endforeach;?>
-			<?php endif;?>
 			<?php endif;?>
 <div class="clear"></div>
 <hr>

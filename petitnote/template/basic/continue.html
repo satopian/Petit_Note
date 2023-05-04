@@ -29,7 +29,6 @@
 		<a href="#bottom">▽</a>
 		</nav>
 	<hr>
-	<?php if($aikotoba):?>
 	<?php if($use_paint):?>
 
 <!--  画像と描画時間  -->
@@ -114,34 +113,33 @@
 </div>
 <?php endif;?>
 <?php endif;?>
-<?php endif;?>
 </div>
 <script>
-// 新規投稿時にのみ、同じスレッドに投稿するボタンを表示
-document.getElementById('select_post').addEventListener('change', function() {
-
-	var idx=document.getElementById('select_post').selectedIndex;
-	var obj2style_1=document.getElementById('span_cont_paint_same_thread');
-	var obj2style_2=document.getElementById('span_cont_pass');
-	if(idx === 1){
-		if(obj2style_1){
-			obj2style_1.style.display = "inline-block";
-		}
-		<?php if(!$password_require_to_continue):?>
-		if(obj2style_2){
-		obj2style_2.style.display = "none";
-		}
-		<?php endif;?>
-	}else{
-		if(obj2style_1){
+	// 新規投稿時にのみ、同じスレッドに投稿するボタンを表示
+	document.getElementById('select_post').addEventListener('change', function() {
+		
+		var idx=document.getElementById('select_post').selectedIndex;
+		var obj2style_1=document.getElementById('span_cont_paint_same_thread');
+		var obj2style_2=document.getElementById('span_cont_pass');
+		if(idx === 1){
+			if(obj2style_1){
+				obj2style_1.style.display = "inline-block";
+			}
+			<?php if(!$password_require_to_continue):?>
+				if(obj2style_2){
+					obj2style_2.style.display = "none";
+				}
+				<?php endif;?>
+			}else{
+				if(obj2style_1){
 			obj2style_1.style.display = "none";
 		}
 		<?php if(!$password_require_to_continue):?>
-		if(obj2style_2){
-			obj2style_2.style.display = "inline-block";
+			if(obj2style_2){
+				obj2style_2.style.display = "inline-block";
+			}
+			<?php endif;?>
 		}
-		<?php endif;?>
-	}
 });
 </script>
 <script src="lib/<?=h(JQUERY)?>"></script>

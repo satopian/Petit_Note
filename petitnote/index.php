@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.69.3';
-$petit_lot='lot.230505';
+$petit_ver='v0.69.5';
+$petit_lot='lot.230506';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230505){
+if(!isset($functions_ver)||$functions_ver<20230506){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -997,9 +997,6 @@ function to_continue(){
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$petit_lot;
 
 	aikotoba_required_to_view();
-	if($use_aikotoba && !aikotoba_valid()){
-		return error($en?'This operation has failed.':'失敗しました。');
-	}
 
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
@@ -1574,9 +1571,6 @@ function confirmation_before_deletion ($edit_mode=''){
 	$aikotoba=aikotoba_valid();
 
 	aikotoba_required_to_view();
-	if($use_aikotoba && !aikotoba_valid()){
-		return error($en?'This operation has failed.':'失敗しました。');
-	}
 
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$resmode = ((string)filter_input(INPUT_POST,'resmode')==='true');
