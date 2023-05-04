@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.68.8';
-$petit_lot='lot.230503';
+$petit_ver='v0.69.3';
+$petit_lot='lot.230505';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230429){
+if(!isset($functions_ver)||$functions_ver<20230505){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -68,6 +68,7 @@ $max_file_size_in_png_format_upload = isset($max_file_size_in_png_format_upload)
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
 $display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_back_to_home : true;
 $password_require_to_continue = isset($password_require_to_continue) ? (bool)$password_require_to_continue : false;
+$subject_input_required = isset($subject_input_required) ? $subject_input_required : false;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -314,6 +315,13 @@ function post(){
 
 	}
 
+	//POSTされた値をログファイルに格納する書式にフォーマット
+	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
+	$name = $formatted_post['name'];
+	$sub = $formatted_post['sub'];
+	$url = $formatted_post['url'];
+	$com = $formatted_post['com'];
+
 	//ファイルアップロード
 	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
@@ -351,21 +359,6 @@ function post(){
 			return error($en?'This operation has failed.':'失敗しました。');
 		}
 		$is_file_upfile=true;
-	}
-	//POSTされた値をログファイルに格納する書式にフォーマット
-	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
-	$name = $formatted_post['name'];
-	$sub = $formatted_post['sub'];
-	$url = $formatted_post['url'];
-	$com = $formatted_post['com'];
-
-	if(!$name){
-		if($name_input_required){
-			safe_unlink($upfile);
-			return error($en?'Please enter your name.':'名前がありません。');
-		}else{
-			$name='anonymous';
-		}
 	}
 
 	if(!$is_file_upfile&&!$com){
@@ -1796,13 +1789,6 @@ function edit(){
 	$url = $formatted_post['url'];
 	$com = $formatted_post['com'];
 
-	if(!$name){
-		if($name_input_required){
-			return error($en?'Please enter your name.':'名前がありません。');
-		}else{
-			$name='anonymous';
-		}
-	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
@@ -1854,16 +1840,16 @@ function edit(){
 		return error($en?'Please write something.':'何か書いて下さい。');
 	}
 
-	$sub=($_oya==='res') ? $_sub : $sub; 
-
+	
 	$thumbnail=is_file(THUMB_DIR.$_time.'s.jpg') ? 'thumbnail': '';
 	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
 	$thumbnail =  $mark_sensitive_image ? $hide_thumbnail.$thumbnail : $_thumbnail;
-
+	
 	if(in_array($pchext,['.pch','hide_animation'])){
 		$pchext= $hide_animation ? 'hide_animation' : '.pch'; 
 	}
-
+	
+	$sub=($_oya==='res') ? $_sub : $sub; 
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 
 	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
@@ -2214,13 +2200,13 @@ function search(){
 	$radio_chk1=false;//作者名
 	$radio_chk2=false;//完全一致
 	$radio_chk3=false;//本文題名	
-	if($q!==''&&$radio===3){//本文題名
+	if($radio===3){//本文題名
 		$radio_chk3=true;
 	}
-	elseif($q!==''&&$radio===2){//完全一致
+	elseif($radio===2){//完全一致
 		$radio_chk2=true;	
 	}
-	elseif($q!==''&&($radio===0||$radio===1)){//作者名
+	elseif($radio===0||$radio===1){//作者名
 		$radio_chk1=true;
 	}
 	else{//作者名	
@@ -2301,7 +2287,6 @@ function catalog(){
 	$pagedef=$catalog_pagedef;
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
-	$articles=[];
 	$count_alllog=0;
 	$_res=[];
 	$out=[];

@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230429;
+$functions_ver=20230505;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -50,8 +50,13 @@ function aikotoba(){
 }
 //記事の表示に合言葉を必須にする
 function aikotoba_required_to_view(){
-global $aikotoba_required_to_view,$skindir,$en,$petit_lot;
-	if(!$aikotoba_required_to_view){
+
+	global $aikotoba_required_to_view,$skindir,$en,$petit_lot;
+
+	$mode = (string)filter_input(INPUT_POST,'mode');
+	$mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
+
+	if(!$aikotoba_required_to_view && $mode!=='search'){
 	return;
 	}
 	if(!aikotoba_valid()){
@@ -916,26 +921,39 @@ function time_left_to_close_the_thread ($postedtime) {
 }	
 //POSTされた値をログファイルに格納する書式にフォーマット
 function create_formatted_text_from_post($name,$sub,$url,$com){
-global $en;
+	global $en,$name_input_required,$subject_input_required;
 
-if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
-if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
-if(!$url||!(string)filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)||preg_match("/\A\s*\z/u",$url)) $url="";
-if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
-$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
-$com=str_replace(["\r\n","\r"],"\n",$com);
-$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
-$com=str_replace("\n",'"\n"',$com);
-$formatted_post=[
-	'name'=>$name,
-	'sub'=>$sub,
-	'url'=>$url,
-	'com'=>$com,
-];
-foreach($formatted_post as $key => $val){
-	$formatted_post[$key]=str_replace(["\r\n","\n","\r","\t"],"",$val);//改行コード一括除去
-}
-return $formatted_post;
+	if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
+	if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
+	if(!$url||!(string)filter_var($url,FILTER_VALIDATE_URL)||!preg_match('{\Ahttps?://}', $url)||preg_match("/\A\s*\z/u",$url)) $url="";
+	if(!$com||preg_match("/\A\s*\z/u",$com)) $com="";
+	$com=str_replace(["\r\n","\r"],"\n",$com);
+	$com = preg_replace("/(\s*\n){4,}/u","\n",$com); //不要改行カット
+	$com=str_replace("\n",'"\n"',$com);
+	if(!$name){
+		if($name_input_required){
+			return error($en?'Please enter your name.':'名前がありません。');
+		}else{
+			$name='anonymous';
+		}
+	}
+	if(!$sub){
+		if($subject_input_required){
+			return error($en?'Please enter subject.':'題名がありません。');
+		}else{
+			$sub= $en ? 'No subject':'無題';
+		}
+	}
+		$formatted_post=[
+		'name'=>$name,
+		'sub'=>$sub,
+		'url'=>$url,
+		'com'=>$com,
+	];
+	foreach($formatted_post as $key => $val){
+		$formatted_post[$key]=str_replace(["\r\n","\n","\r","\t"],"",$val);//改行コード一括除去
+	}
+	return $formatted_post;
 
 }
 //PaintBBS NEOのpchかどうか調べる

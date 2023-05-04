@@ -20,7 +20,7 @@ $home = "./"; //相対パス、絶対パス、URLどれでもOK
 
 //最大スレッド保存件数 この数値以上のスレッドは削除されます
 //最低500スレッド。
-$max_log = 3000;
+$max_log = 5000;
 
 //メール通知のほか、シェアボタンなどで使用
 // 設置場所のurl `/`まで。
@@ -32,6 +32,12 @@ $root_url = "http://example.com/oekaki/";
 
 $name_input_required = true;
 // $name_input_required = false;
+
+//スレッドの題名を必須にする
+// する: true しない: false
+
+// $subject_input_required = true;
+$subject_input_required = false;
 
 //本文の制限文字数。半角で
 $max_com=1000;
