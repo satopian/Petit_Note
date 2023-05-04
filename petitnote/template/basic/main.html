@@ -36,21 +36,21 @@
 
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <!-- ナビゲーション -->
-<?php if($aikotoba):?>
 <nav class="menu_wrap">
 	<?php if($display_link_back_to_home):?>
 		<span>[<a href="<?=h($home)?>"><?php if($en):?>Home<?php else:?>ホーム<?php endif;?></a>]</span>
-	<?php endif;?>
-	<span>[<a href="./?mode=catalog"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
+			<?php endif;?>
+			<span>[<a href="./?mode=catalog"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
+	<?php if($aikotoba):?>
 	<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
 	<?php if($userdel || $admindel):?>
 		<span>[<a href="./?mode=logout&page=<?=h($page)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
 	<?php else:?>
 		<span>[<a href="./?mode=userdel&page=<?=h($page)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
 	<?php endif;?>
+	<?php endif;?>
 	<a href="#bottom">▽</a>
 </nav>
-<?php endif;?>
 
 <?php if($aikotoba && !$userdel && !$admindel && !$is_badhost):?>
 <!-- 掲示板の説明文 -->
@@ -168,13 +168,15 @@ Size:
 <?php endif;?>
 
 <?php if(!$aikotoba):?>
+<div>
 <?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
 <form action="./" method="post" class="aikotoba">
 	<input type="text" name="aikotoba" class="input_txt">
 	<input type="hidden" name="mode" value="aikotoba">
 	<input type="hidden" name="postpage" value="<?=h($page)?>">
 	<input type="submit" value="<?php if($en):?>Answer<?php else:?>秘密の答え<?php endif;?>">
-</form><br>
+</form>
+</div>
 <?php endif;?>
 <hr>
 <!-- スレッド -->

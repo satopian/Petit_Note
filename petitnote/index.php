@@ -997,6 +997,9 @@ function to_continue(){
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$petit_lot;
 
 	aikotoba_required_to_view();
+	if($use_aikotoba && !aikotoba_valid()){
+		return error($en?'This operation has failed.':'失敗しました。');
+	}
 
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
@@ -1569,6 +1572,12 @@ function confirmation_before_deletion ($edit_mode=''){
 	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba=aikotoba_valid();
+
+	aikotoba_required_to_view();
+	if($use_aikotoba && !aikotoba_valid()){
+		return error($en?'This operation has failed.':'失敗しました。');
+	}
+
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$resmode = ((string)filter_input(INPUT_POST,'resmode')==='true');
 	$resmode = $resmode ? 'true' : 'false';

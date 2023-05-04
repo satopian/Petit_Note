@@ -347,7 +347,7 @@ form.paint_form {
 }
 form.aikotoba {
 	text-align: right;
-	margin: 5px 0 0 0;
+	margin: 0;
 	display: inline-block;
 }
 select {

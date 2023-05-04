@@ -53,10 +53,7 @@ function aikotoba_required_to_view(){
 
 	global $aikotoba_required_to_view,$skindir,$en,$petit_lot;
 
-	$mode = (string)filter_input(INPUT_POST,'mode');
-	$mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
-
-	if(!$aikotoba_required_to_view && $mode!=='search'){
+	if(!$aikotoba_required_to_view){
 	return;
 	}
 	if(!aikotoba_valid()){
