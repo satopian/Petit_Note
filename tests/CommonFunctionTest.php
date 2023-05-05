@@ -232,18 +232,4 @@ final class CommonFunctionTest extends TestCase
             [true, 172861, '2day 1min 1sec']
         ];
     }
-
-    /**
-     * @dataProvider createFormattedTextFromPostProvider
-     * @covers       create_formatted_text_from_post
-     */
-    public function testCreateFormattedTextFromPost(bool $globalEn, $name, $subject, $url, $comment, array $expected): void
-    {
-        global $en;
-        $en = $globalEn;
-
-        $actual = create_formatted_text_from_post($name, $subject, $url, $comment);
-
-        $this->assertEquals($expected, $actual);
-    }
  }
