@@ -106,13 +106,13 @@ jQuery(function() {
 		var $btn = $('[type="submit"]');
 		//disbledを解除
 		$btn.prop("disabled", false);
-		$btn.click(function(){//送信ボタン2度押し対策
+		$btn.on('click', function (){//送信ボタン2度押し対策
 			$(this).prop('disabled',true);
 			$(this).closest('form').submit();
 		});
 	}
 	// https://cotodama.co/pagetop/
-	var pagetop = $('#page_top');   
+	var pagetop = $('#page_top');
 	pagetop.hide();
 	$(window).scroll(function () {
 		if ($(this).scrollTop() > 100) {  //100pxスクロールしたら表示
