@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.69.5';
+$petit_ver='v0.69.6';
 $petit_lot='lot.230506';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -977,10 +977,8 @@ function paintcom(){
 			$out['tmp'][] = $tmp_img;
 		}
 	}
-	$aikotoba=aikotoba_valid();
-	if(!$use_aikotoba){
-		$aikotoba=true;
-	}
+	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+
 	$namec = (string)filter_input(INPUT_COOKIE,'namec');
 	$pwdc = (string)filter_input(INPUT_COOKIE,'pwdc');
 	$urlc = (string)filter_input(INPUT_COOKIE,'urlc');
@@ -1059,11 +1057,7 @@ function to_continue(){
 	session_sta();
 	$adminpost=adminpost_valid();
 	$adminmode = ($adminpost||admindel_valid());
-	$aikotoba=aikotoba_valid();
-
-	if(!$use_aikotoba){
-	$aikotoba=true;
-	}
+	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 
 	$arr_apps=app_to_use();
 	$count_arr_apps=count($arr_apps);
@@ -1568,8 +1562,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	check_same_origin();
 	session_sta();
 	$admindel=admindel_valid();
-	$aikotoba=aikotoba_valid();
-
+	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	aikotoba_required_to_view();
 
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
@@ -1631,9 +1624,6 @@ function confirmation_before_deletion ($edit_mode=''){
 
 	$token=get_csrf_token();
 
-	if(!$use_aikotoba){
-		$aikotoba=true;
-	}
 	// nsfw
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$count_r_arr=count($r_arr);
@@ -2313,13 +2303,10 @@ function catalog(){
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
-	$aikotoba=aikotoba_valid();
+	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
-
-	if(!$use_aikotoba){
-		$aikotoba=true;
-	}
 
 	$encoded_q='';//旧バージョンのテンプレート用
 
@@ -2404,15 +2391,10 @@ function view(){
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
-	$aikotoba=aikotoba_valid();
+	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
-	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$use_diary && !$is_badhost)||$adminpost);
-
-	if(!$use_aikotoba){
-		$aikotoba=true;
-	}
-
+	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$use_diary && !$is_badhost && $aikotoba)||$adminpost);
 	//Cookie
 	$namec=h((string)filter_input(INPUT_COOKIE,'namec'));
 	$pwdc=h((string)filter_input(INPUT_COOKIE,'pwdc'));
@@ -2546,13 +2528,10 @@ function res (){
 	//管理者判定処理
 	session_sta();
 	$admindel=admindel_valid();
-	$aikotoba=aikotoba_valid();
+	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
 	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$is_badhost)||$adminpost);
-	if(!$use_aikotoba){
-		$aikotoba=true;
-	}
 
 	//Cookie
 	$namec=h((string)filter_input(INPUT_COOKIE,'namec'));
