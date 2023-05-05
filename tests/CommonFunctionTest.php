@@ -232,4 +232,84 @@ final class CommonFunctionTest extends TestCase
             [true, 172861, '2day 1min 1sec']
         ];
     }
- }
+
+    /**
+     * @dataProvider createFormattedTextFromPostProvider
+     * @covers       create_formatted_text_from_post
+     */
+    public function testCreateFormattedTextFromPost(bool $globalEn, $name, $subject, $url, $comment, array $expected): void
+    {
+        global $en,$name_input_required,$subject_input_required;
+        $en = $globalEn;
+		$name_input_required=false;
+		$subject_input_required=false;
+
+        $actual = create_formatted_text_from_post($name, $subject, $url, $comment);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function createFormattedTextFromPostProvider(): array
+    {
+        return [
+            [false, '', '', '', '', ['name' => 'anonymous', 'sub' => '無題', 'url' => '', 'com' => '']],
+            [
+                false,
+                'foo',
+                'bar',
+                'baz',
+                'qux',
+                ['name' => 'foo', 'sub' => 'bar', 'url' => '', 'com' => 'qux']
+            ],
+            [
+                false,
+                'foo',
+                'bar',
+                'https://example.com/baz',
+                'qux',
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'https://example.com/baz', 'com' => 'qux']
+            ],
+            [
+                false,
+                'foo',
+                'bar',
+                'https;//example.com/baz',
+                'qux',
+                ['name' => 'foo', 'sub' => 'bar', 'url' => '', 'com' => 'qux']
+            ],
+            [
+                false,
+                "f\no\no",
+                "b\nar",
+                "https://example.com/ba\nz",
+                "q\nux",
+                ['name' => 'foo', 'sub' => 'bar', 'url' => '', 'com' => 'q"\n"ux']
+            ],
+            [
+                false,
+                'foo',
+                'bar',
+                'https://example.com/baz',
+                "qux\nquux\ncorge",
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'https://example.com/baz', 'com' => 'qux"\n"quux"\n"corge']
+            ],
+            [
+                false,
+                'foo',
+                'bar',
+                'https://example.com/baz',
+                "qux\r\nquux\r\ncorge",
+                ['name' => 'foo', 'sub' => 'bar', 'url' => 'https://example.com/baz', 'com' => 'qux"\n"quux"\n"corge']
+            ],
+            [
+                false,
+                "fo\to",
+                "ba\tr",
+				"https://example.com/ba\tz",
+                "qux\tquuxcorge",
+                ['name' => 'foo', 'sub' => 'bar', 'url' => '', 'com' => 'quxquuxcorge']
+            ],
+            [true, '', '', '', '', ['name' => 'anonymous', 'sub' => 'No subject', 'url' => '', 'com' => '']],
+        ];
+    }
+}
