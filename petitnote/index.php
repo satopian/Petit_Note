@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.69.6';
+$petit_ver='v0.69.8';
 $petit_lot='lot.230506';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2488,19 +2488,28 @@ function res (){
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
 	$articles=[];
+	$count_alllog=0;
+	$i=0;$j=0;
+	$flag=false;
 	while ($line = fgets($fp)) {
 		if(!trim($line)){
 			continue;
 		}
-		$articles[] = $line;//$_lineから、情報を取り出す
-	}
-	fclose($fp);
-	$i=0;
-	foreach($articles as $i =>$article){//現在のスレッドのキーを取得
-		if (strpos(trim($article), $resno . "\t") === 0) {
+		if (strpos(trim($line), $resno . "\t") === 0) {
+			$flag=true;//現在のスレッドが見つかったら
+			$i=$count_alllog;//$iに配列のキーをセット
+		}
+		if (!$flag) {//見つからなければカウントを続ける
+			$j = $count_alllog;
+		} 
+		$articles[$count_alllog]=$line;
+		if($j+100<$count_alllog){//+100件でbreak
 			break;
 		}
+		++$count_alllog;
 	}
+	fclose($fp);
+
 	$next=isset($articles[$i+1])? rtrim($articles[$i+1]) :'';
 	$prev=isset($articles[$i-1])? rtrim($articles[$i-1]) :'';
 	$next=$next ? (create_res(explode("\t",trim($next)),['catalog'=>true])):[];
