@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.70.0';
+$petit_ver='v0.70.1';
 $petit_lot='lot.230506';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -69,6 +69,7 @@ $use_klecs=isset($use_klecs) ? $use_klecs : true;
 $display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_back_to_home : true;
 $password_require_to_continue = isset($password_require_to_continue) ? (bool)$password_require_to_continue : false;
 $subject_input_required = isset($subject_input_required) ? $subject_input_required : false;
+$display_search_nav = isset($display_search_nav) ? $display_search_nav : false;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -2336,7 +2337,7 @@ function catalog(){
 function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home,$display_search_nav;
 
 	aikotoba_required_to_view();
 
@@ -2432,7 +2433,7 @@ function view(){
 function res (){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home,$display_search_nav;
 
 	aikotoba_required_to_view();
 

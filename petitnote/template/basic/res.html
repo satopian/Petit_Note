@@ -52,8 +52,11 @@
 	<?php endif;?>
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<nav class="menu_wrap">
-		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
-	<?php if($aikotoba):?>
+	<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
+		<?php if($display_search_nav):?>
+		<span> [<a href="./?mode=search">検索</a>]</span>
+		<?php endif;?>
+<?php if($aikotoba):?>
 		<?php if($use_paint):?>
 		<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
 		<?php endif;?>

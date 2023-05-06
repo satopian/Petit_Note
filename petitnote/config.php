@@ -113,21 +113,25 @@ $badhost =["example.com","example.org"];
 // ホームページへ戻るリンクを上段のメニューに表示する
 // ホームページへのリンクが必要ない場合は 表示しない:false
 // 表示する:true 表示しない:false
+
 $display_link_back_to_home = true;
 // $display_link_back_to_home = false;
 
 // PaintBBS NEOを使う
 // 使う:true 使わない:false
+
 $use_paintbbs_neo= true;
 // $use_paintbbs_neo= false;
 
 // ChickenPaintを使う
 // 使う:true 使わない:false
+
 $use_chickenpaint= true;
 // $use_chickenpaint= false;
 
 // Klecksを使う
 // 使う:true 使わない:false
+
 $use_klecs= true;
 // $use_klecs= false;
 
@@ -336,6 +340,12 @@ $aikotoba = "ひみつ";
 $keep_aikotoba_login_status=false;
 
 /*検索機能*/
+
+// 検索のリンクを上段のメニューに表示する
+// 表示する:true 表示しない:false
+
+// $display_search_nav = true;
+$display_search_nav = false;
 
 //検索可能最大数
 //この値を大きくすれば検索可能件数が増えますが、サーバの負荷が大きくなります。

@@ -41,6 +41,9 @@
 		<span>[<a href="<?=h($home)?>"><?php if($en):?>Home<?php else:?>ホーム<?php endif;?></a>]</span>
 			<?php endif;?>
 			<span>[<a href="./?mode=catalog"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
+			<?php if($display_search_nav):?>
+			<span> [<a href="./?mode=search">検索</a>]</span>
+			<?php endif;?>
 	<?php if($aikotoba):?>
 		<?php if($use_paint):?>
 		<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
