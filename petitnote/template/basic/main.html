@@ -42,7 +42,9 @@
 			<?php endif;?>
 			<span>[<a href="./?mode=catalog"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
 	<?php if($aikotoba):?>
-	<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
+		<?php if($use_paint):?>
+		<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
+		<?php endif;?>
 	<?php if($userdel || $admindel):?>
 		<span>[<a href="./?mode=logout&page=<?=h($page)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
 	<?php else:?>
