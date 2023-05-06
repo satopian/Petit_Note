@@ -39,21 +39,21 @@
 <nav class="menu_wrap">
 	<?php if($display_link_back_to_home):?>
 		<span>[<a href="<?=h($home)?>"><?php if($en):?>Home<?php else:?>ホーム<?php endif;?></a>]</span>
-			<?php endif;?>
-			<span>[<a href="./?mode=catalog"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
-			<?php if($display_search_nav):?>
-			<span> [<a href="./?mode=search&radio=3">検索</a>]</span>
-			<?php endif;?>
-	<?php if($aikotoba):?>
-		<?php if($use_paint):?>
+	<?php endif;?>
+		<span>[<a href="./?mode=catalog"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
+	<?php if($display_search_nav):?>
+		<span> [<a href="./?mode=search&radio=3"><?php if($en):?>Search<?php else:?>検索<?php endif;?></a>]</span>
+	<?php endif;?>
+<?php if($aikotoba):?>
+	<?php if($use_paint):?>
 		<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
-		<?php endif;?>
+	<?php endif;?>
 	<?php if($userdel || $admindel):?>
 		<span>[<a href="./?mode=logout&page=<?=h($page)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
 	<?php else:?>
 		<span>[<a href="./?mode=userdel&page=<?=h($page)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
 	<?php endif;?>
-	<?php endif;?>
+<?php endif;?>
 	<a href="#bottom">▽</a>
 </nav>
 
