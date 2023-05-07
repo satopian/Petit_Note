@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230506;
+$functions_ver=20230508;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -253,6 +253,7 @@ function create_res($line,$options=[]){
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 	$isset_catalog = isset($options['catalog']);
+	$isset_search = isset($options['search']);
 	$res=[];
 
 	$continue = true;
@@ -303,6 +304,8 @@ function create_res($line,$options=[]){
 	$verified = ($verified==='adminpost');
 	$three_point_sub = ($isset_catalog && (mb_strlen($sub)>15)) ? '…' :'';
 	$webpimg = $isset_catalog ? is_file('webp/'.$time.'t.webp') : false;
+	$com = (!$isset_catalog || $isset_search) ? $com : '';
+
 	$res=[
 		'no' => $no,
 		'sub' => $sub,
@@ -342,7 +345,7 @@ function create_res($line,$options=[]){
 		'not_deleted' => !(!$name && !$com && !$url&& !$imgfile && !$userid), //表示する記事がある親
 	];
 
-	$res['com']= !$isset_catalog ? str_replace('"\n"',"\n",$res['com']) : str_replace('"\n"'," ",$res['com']);
+	$res['com']= $com ? (!$isset_search ? str_replace('"\n"',"\n",$res['com']) : str_replace('"\n"'," ",$res['com'])) : '';
 
 	foreach($res as $key=>$val){
 		$res[$key]=h($val);

@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.70.1';
-$petit_lot='lot.230506';
+$petit_ver='v0.70.6';
+$petit_lot='lot.230508';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230506){
+if(!isset($functions_ver)||$functions_ver<20230508){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -226,7 +226,7 @@ function post(){
 		$userdata = fread($fp, 1024);
 		fclose($fp);
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
-		if(($ucode != $usercode) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
+		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
 		$tool= in_array($tool,['neo','chi','klecks']) ? $tool : '???';
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
@@ -954,7 +954,7 @@ function paintcom(){
 			if(is_file(TEMP_DIR.$file_name.$imgext)){ //画像があればリストに追加
 				$pchext = check_pch_ext(TEMP_DIR . $file_name);
 				$pchext = !$hide_animation ? $pchext : ''; 
-				if($ucode === $usercode||($uip && ($uip === $userip))){
+				if(($ucode && ($ucode === $usercode))||($uip && ($uip === $userip))){
 					$tmps[$file_name] = [$file_name.$imgext,$uresto,$pchext];
 				}
 			}
@@ -1205,7 +1205,7 @@ function img_replace(){
 				$file_name = pathinfo($file, PATHINFO_FILENAME );//拡張子除去
 				//画像があり、認識コードがhitすれば抜ける
 				$imgext=basename($imgext);
-				if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $urepcode === $repcode){
+				if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $urepcode && ($urepcode === $repcode)){
 					$repfind=true;
 					break;
 				}
@@ -2167,7 +2167,7 @@ function search(){
 	$articles = array_values($articles);//php5.6 32bit 対応
 	foreach($articles as $i => $line){
 
-			$out[$i] = create_res($line,['catalog'=>true]);//$lineから、情報を取り出す
+		$out[$i] = create_res($line,['search'=>true,'catalog'=>true]);//$lineから、情報を取り出す
 
 			// マークダウン
 			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","\\1",$out[$i]['com']);
@@ -2373,7 +2373,6 @@ function view(){
 		$out[$oya]=[];
 		check_open_no($no);
 		$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
-			$s=0;
 			while ($line = fgets($rp)) {
 				if(!trim($line)){
 					continue;
@@ -2504,7 +2503,7 @@ function res (){
 			$j = $count_alllog;
 		} 
 		$articles[$count_alllog]=$line;
-		if($j+50<$count_alllog){//+50件でbreak
+		if($j+20<$count_alllog){//+20件でbreak
 			break;
 		}
 		++$count_alllog;
