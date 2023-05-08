@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.70.6';
+$petit_ver='v0.70.8';
 $petit_lot='lot.230508';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2165,9 +2165,11 @@ function search(){
 	//ページ番号から1ページ分のスレッド分とりだす
 	$articles=array_slice($arr,(int)$page,$pagedef,false);
 	$articles = array_values($articles);//php5.6 32bit 対応
+
+	$txt_search = !$imgsearch ? ['search' => true] : [];//本文の検索の時にtrue
 	foreach($articles as $i => $line){
 
-		$out[$i] = create_res($line,['search'=>true,'catalog'=>true]);//$lineから、情報を取り出す
+		$out[$i] = create_res($line,(['catalog' => true] + $txt_search));//$lineから、情報を取り出す
 
 			// マークダウン
 			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[[:alnum:]\+\$\;\?\.%,!#~*/:@&=_-]+)\)}","\\1",$out[$i]['com']);
