@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.70.8';
-$petit_lot='lot.230508';
+$petit_ver='v0.71.0';
+$petit_lot='lot.230510';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230508){
+if(!isset($functions_ver)||$functions_ver<20230510){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -867,12 +867,8 @@ function paint(){
 			$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno");
 		}
 	}
-	//ヘッダーが確認できなかった時の保険
-	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
-	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
-	if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
-		return;
-	}
+
+	is_AsyncRequest();//Asyncリクエストの時は処理を中断
 
 	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
 
@@ -1116,12 +1112,8 @@ function download_app_dat(){
 	if(!$pchext){
 		return error($en?'This operation has failed.':'失敗しました。');
 	}
-	//ヘッダーが確認できなかった時の保険
-	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
-	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
-	if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
-		return;
-	}
+
+	is_AsyncRequest();//Asyncリクエストの時は処理を中断
 
 	$mime_type = mime_content_type($filepath);
 	header('Content-Type: '.$mime_type);
@@ -1399,14 +1391,9 @@ function img_replace(){
 			return error($en?'Image already exists.':'同じ画像がありました。');
 		}
 	}
-	//ヘッダーが確認できなかった時の保険
-	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
-	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
-	if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
-		safe_unlink($upfile);
-		return;
-	}
 
+	is_AsyncRequest($upfile);//Asyncリクエストの時は処理を中断
+	
 	$imgfile = $time.$imgext;
 	rename($upfile,IMG_DIR.$imgfile);
 	if(!is_file(IMG_DIR.$imgfile)){
@@ -1711,12 +1698,7 @@ function edit_form($id='',$no=''){
 	}
 	closeFile($rp);
 
-	//ヘッダーが確認できなかった時の保険
-	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
-	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
-	if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
-		return;
-	}
+	is_AsyncRequest();//Asyncリクエストの時は処理を中断
 
 	$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
@@ -1997,13 +1979,8 @@ function del(){
 					return error($en?'This operation has failed.':'失敗しました。');
 				}
 
-				//ヘッダーが確認できなかった時の保険
-				$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
-				$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
-				if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
-					return;
-				}
-
+				is_AsyncRequest();//Asyncリクエストの時は処理を中断
+			
 				if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){
 
 					unset($alllog_arr[$j]);

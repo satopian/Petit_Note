@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230508;
+$functions_ver=20230510;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -573,6 +573,17 @@ function check_open_no($no){
 
 function getId ($userip) {
 	return substr(hash('sha256', $userip, false),-8);
+}
+
+//Asyncリクエストの時は処理を中断
+function is_AsyncRequest($upfile='') {
+	//ヘッダーが確認できなかった時の保険
+	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
+	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
+	if($http_x_requested_with || $asyncflag){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
+		safe_unlink($upfile);
+		exit;
+	}
 }
 
 // テンポラリ内のゴミ除去 
