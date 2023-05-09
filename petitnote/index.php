@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.71.0';
-$petit_lot='lot.230510';
+$petit_ver='v0.71.1';
+$petit_lot='lot.230511';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230510){
+if(!isset($functions_ver)||$functions_ver<20230511){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -868,7 +868,7 @@ function paint(){
 		}
 	}
 
-	is_AsyncRequest();//Asyncリクエストの時は処理を中断
+	check_AsyncRequest();//Asyncリクエストの時は処理を中断
 
 	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
 
@@ -1113,7 +1113,7 @@ function download_app_dat(){
 		return error($en?'This operation has failed.':'失敗しました。');
 	}
 
-	is_AsyncRequest();//Asyncリクエストの時は処理を中断
+	check_AsyncRequest();//Asyncリクエストの時は処理を中断
 
 	$mime_type = mime_content_type($filepath);
 	header('Content-Type: '.$mime_type);
@@ -1392,7 +1392,7 @@ function img_replace(){
 		}
 	}
 
-	is_AsyncRequest($upfile);//Asyncリクエストの時は処理を中断
+	check_AsyncRequest($upfile);//Asyncリクエストの時は処理を中断
 	
 	$imgfile = $time.$imgext;
 	rename($upfile,IMG_DIR.$imgfile);
@@ -1698,7 +1698,7 @@ function edit_form($id='',$no=''){
 	}
 	closeFile($rp);
 
-	is_AsyncRequest();//Asyncリクエストの時は処理を中断
+	check_AsyncRequest();//Asyncリクエストの時は処理を中断
 
 	$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
@@ -1979,7 +1979,7 @@ function del(){
 					return error($en?'This operation has failed.':'失敗しました。');
 				}
 
-				is_AsyncRequest();//Asyncリクエストの時は処理を中断
+				check_AsyncRequest();//Asyncリクエストの時は処理を中断
 			
 				if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){
 

@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230510;
+$functions_ver=20230511;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -576,7 +576,7 @@ function getId ($userip) {
 }
 
 //Asyncリクエストの時は処理を中断
-function is_AsyncRequest($upfile='') {
+function check_AsyncRequest($upfile='') {
 	//ヘッダーが確認できなかった時の保険
 	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
 	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
