@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.71.1';
-$petit_lot='lot.230511';
+$petit_ver='v0.71.3';
+$petit_lot='lot.230512';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -611,12 +611,14 @@ function post(){
 		chmod(LOG_DIR.$resto.'.log',0600);
 		if(!$sage){
 			foreach($alllog_arr as $i =>$val){
+				if (strpos(trim($val), $resto . "\t") === 0) {//全体ログで$noが一致したら
+					break;
+				}
+			}	
 			list($_no)=explode("\t",$val);
 			if($resto==$_no){
 				$newline = $val;//レスが付いたスレッドを$newlineに保存。あとから全体ログの先頭に追加して上げる
 				unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
-				break;
-				}
 			}
 		}
 
@@ -1455,16 +1457,19 @@ function img_replace(){
 
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
-			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
-
-			if(($id===$time_ && $no===$no_) &&
-			(($admindel && $is_upload ||
-			($pwd && password_verify($pwd,$hash_))))){
-				$alllog_arr[$i] = $newline;
-				$flag=true;
+			if (strpos(trim($val), $no . "\t") === 0) {//全体ログで$noが一致したら
 				break;
 			}
 		}
+		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
+		if(($id===$time_ && $no===$no_) &&
+		(($admindel && $is_upload ||
+		($pwd && password_verify($pwd,$hash_))))){
+			$alllog_arr[$i] = $newline;
+			$flag=true;
+		}
+
+
 		if(!$flag){
 			closeFile($rp);
 			closeFile($fp);
@@ -1752,7 +1757,7 @@ function edit(){
 	$admindel=admindel_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	if(!($admindel||($userdel&&$pwd))){
-		return error($en?'This operation has failed.':'失敗しました。');
+		return error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
 	}
 
 	//NGワードがあれば拒絶
@@ -1851,14 +1856,16 @@ function edit(){
 		}
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
-			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
-			if(($id===$time_ && $no===$no_) &&
-			($admindel || ($pwd && password_verify($pwd,$hash_)))){
-
-				$alllog_arr[$i] = $newline;
-				$flag=true;
+			if (strpos(trim($val), $no . "\t") === 0) {//全体ログで$noが一致したら
 				break;
 			}
+		}
+		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
+		if(($id===$time_ && $no===$no_) &&
+		($admindel || ($pwd && password_verify($pwd,$hash_)))){
+
+			$alllog_arr[$i] = $newline;
+			$flag=true;
 		}
 		if(!$flag){
 			closeFile($rp);
@@ -1933,7 +1940,6 @@ function del(){
 	foreach($r_arr as $i =>$val){
 		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
 		if($id===$time && $no===$_no){
-		
 			if(!$admindel){
 				if(!$pwd||!password_verify($pwd,$hash)){
 					closeFile ($rp);
@@ -1941,87 +1947,88 @@ function del(){
 					return error($en?'Password is incorrect.':'パスワードが違います。');
 				}
 			}
-
-			$count_r_arr=count($r_arr);
-			list($d_no,$d_sub,$d_name,$s_verified,$d_com,$d_url,$d_imgfile,$d_w,$d_h,$d_thumbnail,$d_painttime,$d_log_md5,$d_tool,$d_pchext,$d_time,$d_first_posted_time,$d_host,$d_userid,$d_hash,$d_oya)=explode("\t",trim($r_arr[0]));
-			$res_oya_deleted=(!$d_name && !$d_com && !$d_url && !$d_imgfile && !$d_userid && ($d_oya==='oya'));
-
-			if(($oya==='oya')||(($count_r_arr===2) && $res_oya_deleted)){//スレッド削除?
-				$alllog_arr=[];
-				while ($_line = fgets($fp)) {
-					if(!trim($_line)){
-						continue;
-					}
-					$alllog_arr[]=$_line;	
-				}
-				if(empty($alllog_arr)){
-					closeFile ($rp);
-					closeFile($fp);
-					return error($en?'This operation has failed.':'失敗しました。');
-				}
-				$flag=false;
-				foreach($alllog_arr as $j =>$_val){//全体ログ
-					list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
-					$alllog_oya_deleted=($no===$no_ && !$name_ && !$com_ && !$url_ && !$_imgfile_ && !$userid_ && ($oya_==='oya'));
-
-					if(($alllog_oya_deleted && ($no===$no_))||($id===$time_ && $no===$no_)){
-						if(!$alllog_oya_deleted && !$admindel && (!$pwd||!password_verify($pwd,$hash_))){
-							return error($en?'Password is incorrect.':'パスワードが違います。');
-						}
-						$flag=true;
-						break;
-					}
-				}
-
-				if(!$flag){
-					closeFile ($rp);
-					closeFile($fp);
-					return error($en?'This operation has failed.':'失敗しました。');
-				}
-
-				check_AsyncRequest();//Asyncリクエストの時は処理を中断
-			
-				if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){
-
-					unset($alllog_arr[$j]);
-					foreach($r_arr as $r_line) {//スレッドの一連のファイルを削除
-						list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
-						
-						delete_files ($_imgfile, $_time);//一連のファイルを削除
-						
-					}
-					closeFile ($rp);
-					safe_unlink(LOG_DIR.$no.'.log');
-		
-				}else{
-					delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
-					$deleted_sub = $en? 'No subject':'無題';
-					$newline="$no\t$deleted_sub\t\t\t\t\t\t\t\t\t\t\t\t\t$time_\t$first_posted_time_\t$host_\t\t$hash_\toya\n";
-					$alllog_arr[$j]=$newline;
-					$r_arr[$i]=$newline;
-					writeFile ($rp,implode("",$r_arr));
-					closeFile ($rp);
-
-				}
-
-				writeFile($fp,implode("",$alllog_arr));
-
-			}else{
-
-			unset($r_arr[$i]);
-				delete_files ($imgfile, $time);//一連のファイルを削除
-				writeFile ($rp,implode("",$r_arr));
-				closeFile ($rp);
-			}
 			$find=true;
 			break;
 		}
 	}
-	closeFile($fp);
-
 	if(!$find){
 		return error($en?'The article was not found.':'記事が見つかりません。');
 	}
+
+	$count_r_arr=count($r_arr);
+	list($d_no,$d_sub,$d_name,$s_verified,$d_com,$d_url,$d_imgfile,$d_w,$d_h,$d_thumbnail,$d_painttime,$d_log_md5,$d_tool,$d_pchext,$d_time,$d_first_posted_time,$d_host,$d_userid,$d_hash,$d_oya)=explode("\t",trim($r_arr[0]));
+	$res_oya_deleted=(!$d_name && !$d_com && !$d_url && !$d_imgfile && !$d_userid && ($d_oya==='oya'));
+
+	if(($oya==='oya')||(($count_r_arr===2) && $res_oya_deleted)){//スレッド削除?
+		$alllog_arr=[];
+		while ($_line = fgets($fp)) {
+			if(!trim($_line)){
+				continue;
+			}
+			$alllog_arr[]=$_line;	
+		}
+		if(empty($alllog_arr)){
+			closeFile ($rp);
+			closeFile($fp);
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
+		$flag=false;
+		foreach($alllog_arr as $j =>$_val){//全体ログ
+			if (strpos(trim($_val), $no . "\t") === 0) {//全体ログで$noが一致したら
+				break;
+			}
+		}
+
+		list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
+		$alllog_oya_deleted=($no===$no_ && !$name_ && !$com_ && !$url_ && !$_imgfile_ && !$userid_ && ($oya_==='oya'));
+
+		if(($alllog_oya_deleted && ($no===$no_))||($id===$time_ && $no===$no_)){
+			if(!$alllog_oya_deleted && !$admindel && (!$pwd||!password_verify($pwd,$hash_))){
+				return error($en?'Password is incorrect.':'パスワードが違います。');//親削除ずみ、管理者では無い時はパスワードの一致を確認
+			}
+			$flag=true;
+		}
+		if(!$flag){
+			closeFile ($rp);
+			closeFile($fp);
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
+
+		check_AsyncRequest();//Asyncリクエストの時は処理を中断
+	
+		if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){//スレッドを削除する?
+
+				unset($alllog_arr[$j]);
+				foreach($r_arr as $r_line) {//スレッドの一連のファイルを削除
+					list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
+					
+					delete_files ($_imgfile, $_time);//一連のファイルを削除
+					
+				}
+				closeFile ($rp);
+				safe_unlink(LOG_DIR.$no.'.log');
+
+		}else{
+				delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
+				$deleted_sub = $en? 'No subject':'無題';
+				$newline="$no\t$deleted_sub\t\t\t\t\t\t\t\t\t\t\t\t\t$time_\t$first_posted_time_\t$host_\t\t$hash_\toya\n";
+				$alllog_arr[$j]=$newline;
+				$r_arr[0]=$newline;
+				writeFile ($rp,implode("",$r_arr));
+				closeFile ($rp);
+		}
+
+		writeFile($fp,implode("",$alllog_arr));
+
+	}else{//レスの削除のみ
+
+		unset($r_arr[$i]);
+		delete_files ($imgfile, $time);//一連のファイルを削除
+		writeFile ($rp,implode("",$r_arr));
+		closeFile ($rp);
+	}
+	closeFile($fp);
+
 
 	unset($_SESSION['userdel']);
 	$resno=(string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
