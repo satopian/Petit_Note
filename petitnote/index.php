@@ -1395,7 +1395,7 @@ function img_replace(){
 	}
 
 	check_AsyncRequest($upfile);//Asyncリクエストの時は処理を中断
-	
+
 	$imgfile = $time.$imgext;
 	rename($upfile,IMG_DIR.$imgfile);
 	if(!is_file(IMG_DIR.$imgfile)){
@@ -1468,8 +1468,6 @@ function img_replace(){
 			$alllog_arr[$i] = $newline;
 			$flag=true;
 		}
-
-
 		if(!$flag){
 			closeFile($rp);
 			closeFile($fp);
@@ -1821,15 +1819,15 @@ function edit(){
 		return error($en?'Please write something.':'何か書いて下さい。');
 	}
 
-	
+
 	$thumbnail=is_file(THUMB_DIR.$_time.'s.jpg') ? 'thumbnail': '';
 	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
 	$thumbnail =  $mark_sensitive_image ? $hide_thumbnail.$thumbnail : $_thumbnail;
-	
+
 	if(in_array($pchext,['.pch','hide_animation'])){
 		$pchext= $hide_animation ? 'hide_animation' : '.pch'; 
 	}
-	
+
 	$sub=($_oya==='res') ? $_sub : $sub; 
 	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 
@@ -1995,7 +1993,7 @@ function del(){
 		}
 
 		check_AsyncRequest();//Asyncリクエストの時は処理を中断
-	
+
 		if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){//スレッドを削除する?
 
 				unset($alllog_arr[$j]);
@@ -2028,7 +2026,6 @@ function del(){
 		closeFile ($rp);
 	}
 	closeFile($fp);
-
 
 	unset($_SESSION['userdel']);
 	$resno=(string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
@@ -2321,7 +2318,7 @@ function catalog(){
 
 //通常表示
 function view(){
-	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb;
+	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home,$display_search_nav;
 
