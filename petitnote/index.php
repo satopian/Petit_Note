@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.71.3';
+$petit_ver='v0.71.5';
 $petit_lot='lot.230512';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1270,11 +1270,14 @@ function img_replace(){
 				return error($en?'This operation has failed.':'失敗しました。');
 			}
 
-			if(($is_upload && $admindel) || ($pwd && password_verify($pwd,$_hash))){
-				$flag=true;
-				break;
+			if((!$admindel || !$is_upload) &&
+			(!$pwd && !password_verify($pwd,$_hash))){
+				return error($en?'Password is incorrect.':'パスワードが違います。');
 			}
+			$flag=true;
+			break;
 		}
+
 	}
 	if(!check_elapsed_days($_time)&&(!$adminpost && !$admindel)){//指定日数より古い画像差し換えは新規投稿にする
 
@@ -1462,9 +1465,12 @@ function img_replace(){
 			}
 		}
 		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
-		if(($id===$time_ && $no===$no_) &&
-		(($admindel && $is_upload ||
-		($pwd && password_verify($pwd,$hash_))))){
+		if($id===$time_ && $no===$no_) {
+
+			if((!$admindel || !$is_upload) &&
+			(!$pwd && !password_verify($pwd,$hash_))){
+				return error($en?'Password is incorrect.':'パスワードが違います。');
+			}
 			$alllog_arr[$i] = $newline;
 			$flag=true;
 		}
@@ -1859,9 +1865,10 @@ function edit(){
 			}
 		}
 		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
-		if(($id===$time_ && $no===$no_) &&
-		($admindel || ($pwd && password_verify($pwd,$hash_)))){
-
+		if($id===$time_ && $no===$no_){
+			if(!$admindel && (!$pwd && !password_verify($pwd,$hash_))){
+				return error($en?'Password is incorrect.':'パスワードが違います。');
+			}
 			$alllog_arr[$i] = $newline;
 			$flag=true;
 		}
