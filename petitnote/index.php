@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.71.6';
+$petit_ver='v0.71.7';
 $petit_lot='lot.230513';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2212,24 +2212,12 @@ function search(){
 		$pageno=$en ? '':$pageno;
 	}
 
-	//ページング
 
-	$nextpage=$page+$pagedef;//次ページ
-	$prevpage=$page-$pagedef;//前のページ
-	$countarr=count($arr);//配列の数
-	$prev=false;
-	$next=false;
-
-	//
 	$countarr=count($arr);//配列の数
 
 	//ページング
-	$start_page=$page-$pagedef*8;
-	$end_page=$page+($pagedef*8);
-	if($page<$pagedef*17){
-		$start_page=0;
-		$end_page=$pagedef*17;
-	}
+	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
+	
 	//prev next 
 	$next=(($page+$pagedef)<$countarr) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page<=0) ? false : ($page-$pagedef) ;//ページ番号が0の時はprevのリンクを出さない
@@ -2300,12 +2288,7 @@ function catalog(){
 	$token=get_csrf_token();
 
 	//ページング
-	$start_page=$page-$pagedef*8;
-	$end_page=$page+($pagedef*8);
-	if($page<$pagedef*17){
-		$start_page=0;
-		$end_page=$pagedef*17;
-	}
+	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
@@ -2397,12 +2380,7 @@ function view(){
 	$app_to_use=($count_arr_apps===1) ? $arr_apps[0] : ''; 
 
 	//ページング
-	$start_page=$page-$pagedef*8;
-	$end_page=$page+($pagedef*8);
-	if($page<$pagedef*17){
-		$start_page=0;
-		$end_page=$pagedef*17;
-	}
+	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない

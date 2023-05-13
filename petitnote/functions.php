@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230511;
+$functions_ver=20230513;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -353,6 +353,18 @@ function create_res($line,$options=[]){
 	
 	return $res;
 }
+
+//ページング
+function calc_pagination_range($page,$pagedef){
+
+	$start_page=$page-$pagedef*8;
+	$end_page=$page+($pagedef*8);
+	if($page<$pagedef*17){
+		$start_page=0;
+		$end_page=$pagedef*17;
+	}
+	return [$start_page,$end_page];	
+}	
 
 //ユーザーip
 function get_uip(){
