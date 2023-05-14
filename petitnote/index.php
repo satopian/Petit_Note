@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.71.7';
-$petit_lot='lot.230513';
+$petit_ver='v0.72.0';
+$petit_lot='lot.230515';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230511){
+if(!isset($functions_ver)||$functions_ver<20230515){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -402,31 +402,11 @@ function post(){
 
 	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
 	$n= $is_file_upfile ? 15 : 5;
+	
 	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
-
-	$chk_resnos=[];
-	foreach($chk_log_arr as $chk_log){
-		list($chk_resno)=explode("\t",$chk_log);
-		$chk_resnos[]=$chk_resno;
-	}
-	$_chk_lines=[];
-	$chk_lines=[];
-	//条件分岐で新規投稿に変更になった時のエラー回避
 	$chk_resto=$chk_resto ? $chk_resto : $resto; 
-	foreach($chk_resnos as $chk_resno){
-
-		if(($chk_resno!==$chk_resto)&&is_file(LOG_DIR."{$chk_resno}.log")){
-			check_open_no($chk_resno);
-			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-			while($line=fgets($cp)){
-				if(!trim($line)){
-					continue;
-				}
-				$_chk_lines[]=$line;
-			}
-			closefile($cp);
-		}
-	}
+	//$n行分の全体ログをもとにスレッドのログファイルを開いて配列を作成
+	$_chk_lines = create_chk_lins($chk_log_arr,$chk_resto);//取得済みの$chk_restoの配列を除外
 	$chk_lines=array_merge($_chk_lines,$r_arr);
 
 	$chk_com=[];
@@ -439,7 +419,6 @@ function post(){
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
-			safe_unlink($upfile);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
 		if($host === $host_){
@@ -456,7 +435,7 @@ function post(){
 	foreach($chk_com as $line){
 		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
 
-		if($com && ($com === $_com_)){
+		if(!$adminpost && $com && ($com === $_com_)){
 			closeFile($fp);
 			closeFile($rp);
 			safe_unlink($upfile);
@@ -1353,26 +1332,9 @@ function img_replace(){
 	//チェックするスレッド数。 
 	$n= 15;
 	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
-	$chk_resnos=[];
-	foreach($chk_log_arr as $chk_log){
-		list($chk_resno)=explode("\t",$chk_log);
-		$chk_resnos[]=$chk_resno;
-	}
-	$chk_lines=[];
-
-	foreach($chk_resnos as $chk_resno){
-		if(($chk_resno!==$no)&&is_file(LOG_DIR."{$chk_resno}.log")){
-			check_open_no($chk_resno);
-			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-			while($line=fgets($cp)){
-				if(!trim($line)){
-					continue;
-				}
-			$chk_lines[]=$line;//画像
-			}
-			fclose($cp);
-		}
-	}
+	
+	//$n行分の全体ログをもとにスレッドのログファイルを開いて配列を作成
+	$chk_lines = create_chk_lins($chk_log_arr,$no);//取得済みの$noの配列を除外
 	$chk_images=array_merge($chk_lines,$r_arr);
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
@@ -1819,6 +1781,28 @@ function edit(){
 		return error($en?'Please write something.':'何か書いて下さい。');
 	}
 
+	$alllog_arr=[];
+	while ($_line = fgets($fp)) {
+		if(!trim($_line)){
+			continue;
+		}
+		$alllog_arr[]=$_line;	
+	}
+
+	$n= 5;
+	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
+	//$n行分の全体ログをもとにスレッドのログファイルを開いて配列を作成
+	$_chk_lines = create_chk_lins($chk_log_arr,$no);//取得済みの$chk_restoの配列を除外
+	$chk_lines=array_merge($_chk_lines,$r_arr);
+	foreach($chk_lines as $line){
+		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",trim($line));
+
+		if(!$admindel && ($host===$_host_) && ($id!==$_time_) && ($com && ($com === $_com_))){
+			closeFile($fp);
+			closeFile($rp);
+			return error($en?'Post once by this comment.':'同じコメントがありました。');
+		}
+	}
 
 	$thumbnail=is_file(THUMB_DIR.$_time.'s.jpg') ? 'thumbnail': '';
 	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
@@ -1840,13 +1824,6 @@ function edit(){
 		$strcut_com=mb_strcut($com,0,120);
 		$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
 
-		$alllog_arr=[];
-		while ($_line = fgets($fp)) {
-			if(!trim($_line)){
-				continue;
-			}
-			$alllog_arr[]=$_line;	
-		}
 		if(empty($alllog_arr)){
 			closeFile($rp);
 			closeFile($fp);

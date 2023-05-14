@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230513;
+$functions_ver=20230515;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -352,6 +352,32 @@ function create_res($line,$options=[]){
 	}
 	
 	return $res;
+}
+//重複チェックのための配列を全体ログを元に作成
+function create_chk_lins($chk_log_arr,$resno){
+
+	$chk_resnos=[];
+	foreach($chk_log_arr as $chk_log){
+		list($chk_resno)=explode("\t",$chk_log);
+		$chk_resnos[]=$chk_resno;
+	}
+	$chk_lines=[];
+	//条件分岐で新規投稿に変更になった時のエラー回避
+	foreach($chk_resnos as $chk_resno){
+		//$resnoのログファイルは開かない
+		if(($chk_resno!==$resno)&&is_file(LOG_DIR."{$chk_resno}.log")){
+			check_open_no($chk_resno);
+			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
+			while($line=fgets($cp)){
+				if(!trim($line)){
+					continue;
+				}
+				$chk_lines[]=$line;
+			}
+			closefile($cp);
+		}
+	}
+	return $chk_lines;
 }
 
 //ページング
