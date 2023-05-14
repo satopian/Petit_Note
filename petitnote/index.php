@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.72.0';
+$petit_ver='v0.72.1';
 $petit_lot='lot.230515';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -402,7 +402,6 @@ function post(){
 
 	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
 	$n= $is_file_upfile ? 15 : 5;
-	
 	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
 	$chk_resto=$chk_resto ? $chk_resto : $resto; 
 	//$n行分の全体ログをもとにスレッドのログファイルを開いて配列を作成
