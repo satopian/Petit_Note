@@ -41,8 +41,7 @@ canvasHeight: <?=h($pich)?>,
 <?php if($imgfile):?>loadImageUrl: "<?=h($imgfile)?>",<?php endif;?>
 <?php if($img_chi):?>loadChibiFileUrl: "<?=h($img_chi)?>",<?php endif;?>
 
-saveUrl: "save.php?usercode=<?=h($usercode)?>&stime=<?=time();?>&tool=chi
-<?php if($resto):?>&resto=<?=h($resto)?><?php endif;?><?php if($rep):?>&repcode=<?=h($repcode)?><?php endif;?>",
+saveUrl: "save.php?usercode=<?=h($usercode)?>&stime=<?=time();?>&tool=chi<?php if($resto):?>&resto=<?=h($resto)?><?php endif;?><?php if($rep):?>&repcode=<?=h($repcode)?><?php endif;?>",
 postUrl: "index.php?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>",
 exitUrl: "index.php",
 allowDownload: true,
