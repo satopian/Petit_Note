@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230515;
+$functions_ver=20230516;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -379,6 +379,22 @@ function create_chk_lins($chk_log_arr,$resno){
 		}
 	}
 	return $chk_lines;
+}
+
+//ログファイルを1行ずつ読み込んで配列に入れる
+function create_array_from_fp($fp){
+	global $en;
+	if(!$fp){
+		return error($en?'This operation has failed.':'失敗しました。');
+	}
+	$arr=[];
+	while ($lines = fgets($fp)) {
+		if(!trim($lines)){
+			continue;
+		}
+		$arr[]=$lines;
+	}
+	return $arr;
 }
 
 //ページング
