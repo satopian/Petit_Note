@@ -353,6 +353,7 @@ function create_res($line,$options=[]){
 	
 	return $res;
 }
+
 //重複チェックのための配列を全体ログを元に作成
 function create_chk_lins($chk_log_arr,$resno){
 

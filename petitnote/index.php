@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.72.1';
+$petit_ver='v0.72.2';
 $petit_lot='lot.230515';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -493,9 +493,9 @@ function post(){
 		}
 
 		//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
+		$img_md5=md5_file($upfile);
 		if(!$pictmp2){
 
-			$img_md5=md5_file($upfile);
 			foreach($chk_images as $line){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
 				if($log_md5 && ($log_md5 === $img_md5)){
@@ -1331,7 +1331,6 @@ function img_replace(){
 	//チェックするスレッド数。 
 	$n= 15;
 	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
-	
 	//$n行分の全体ログをもとにスレッドのログファイルを開いて配列を作成
 	$chk_lines = create_chk_lins($chk_log_arr,$no);//取得済みの$noの配列を除外
 	$chk_images=array_merge($chk_lines,$r_arr);
