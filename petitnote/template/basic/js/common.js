@@ -114,7 +114,7 @@ jQuery(function() {
 	// https://cotodama.co/pagetop/
 	var pagetop = $('#page_top');
 	pagetop.hide();
-	$(window).scroll(function () {
+	$(window).on('scroll',function () {
 		if ($(this).scrollTop() > 100) {  //100pxスクロールしたら表示
 			pagetop.fadeIn();
 		} else {
