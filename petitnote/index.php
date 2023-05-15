@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.72.5';
+$petit_ver='v0.72.7';
 $petit_lot='lot.230516';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -488,7 +488,7 @@ function post(){
 
 			foreach($chk_images as $line){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
-				if(!$adminpost && ($log_md5 && ($log_md5 === $img_md5))){
+				if(!adminpost_valid() && ($log_md5 && ($log_md5 === $img_md5))){
 					closeFile($fp);
 					closeFile($rp);
 					safe_unlink($upfile);
@@ -935,12 +935,14 @@ function paintcom(){
 			list($tmpfile,$resto,$pchext)=$tmp;
 			$tmpfile=basename($tmpfile);
 			list($w,$h)=getimagesize(TEMP_DIR.$tmpfile);
-			$tmp_img['w']=$w;
-			$tmp_img['h']=$h;
-			$tmp_img['src'] = TEMP_DIR.$tmpfile;
-			$tmp_img['srcname'] = $tmpfile;
-			$tmp_img['slect_src_val'] = $tmpfile.','.$resto.','.$pchext;
-			$tmp_img['date'] = date("Y/m/d H:i", filemtime($tmp_img['src']));
+			$tmp_img=[
+				'w'=>$w,
+				'h'=>$h,
+				'src' => TEMP_DIR.$tmpfile,
+				'srcname' => $tmpfile,
+				'slect_src_val' => $tmpfile.','.$resto.','.$pchext,
+				'date' => date("Y/m/d H:i", filemtime(TEMP_DIR.$tmpfile)),
+			];
 			$out['tmp'][] = $tmp_img;
 		}
 	}
