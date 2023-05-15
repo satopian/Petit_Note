@@ -42,11 +42,11 @@
 
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 		<nav class="menu_wrap">
-				[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]
+		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 				<?php if($imgsearch):?>
-				[<a href="?mode=search&page=0&imgsearch=off&q=<?=h($en_q)?>&radio=<?=h($radio)?>"><?php if($en):?>Comments<?php else:?>コメント<?php endif;?></a>]
+					<span>[<a href="?mode=search&page=0&imgsearch=off&q=<?=h($en_q)?>&radio=<?=h($radio)?>"><?php if($en):?>Comments<?php else:?>コメント<?php endif;?></a>]</span>
 				<?php else:?>
-				[<a href="?mode=search&page=0&imgsearch=on&q=<?=h($en_q)?>&radio=<?=h($radio)?>"><?php if($en):?>Images<?php else:?>イラスト<?php endif;?></a>]
+					<span>[<a href="?mode=search&page=0&imgsearch=on&q=<?=h($en_q)?>&radio=<?=h($radio)?>"><?php if($en):?>Images<?php else:?>イラスト<?php endif;?></a>]</span>
 				<?php endif;?>
 		</nav>
 		<hr>
