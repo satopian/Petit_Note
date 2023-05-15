@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.72.3';
+$petit_ver='v0.72.5';
 $petit_lot='lot.230516';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -424,7 +424,7 @@ function post(){
 	foreach($chk_com as $line){
 		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
 
-		if(!$adminpost && $com && ($com === $_com_)){
+		if(!$adminpost && ($com && ($com === $_com_))){
 			closeFile($fp);
 			closeFile($rp);
 			safe_unlink($upfile);
@@ -488,7 +488,7 @@ function post(){
 
 			foreach($chk_images as $line){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
-				if($log_md5 && ($log_md5 === $img_md5)){
+				if(!$adminpost && ($log_md5 && ($log_md5 === $img_md5))){
 					closeFile($fp);
 					closeFile($rp);
 					safe_unlink($upfile);
@@ -1193,7 +1193,7 @@ function img_replace(){
 
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
-	$alllog_arr=[];
+
 	$alllog_arr = create_array_from_fp($fp);
 
 	if(empty($alllog_arr)){
@@ -1232,7 +1232,7 @@ function img_replace(){
 
 			if(($is_upload && $admindel) || ($pwd && password_verify($pwd,$_hash))){
 				$flag=true;
-			break;
+				break;
 			}
 		}
 	}
@@ -1328,7 +1328,7 @@ function img_replace(){
 		if(!$is_upload && ((string)$time === (string)$chk_time)){
 			$time=(string)(substr($time,0,-6)+1).(string)substr($time,-6);
 		}
-		if($is_upload && $chk_log_md5 && ($chk_log_md5 === $img_md5)){
+		if(!$admindel && $is_upload && ($chk_log_md5 && ($chk_log_md5 === $img_md5))){
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
@@ -1407,7 +1407,7 @@ function img_replace(){
 		if(($id===$time_ && $no===$no_) &&
 		(($admindel && $is_upload ||
 		($pwd && password_verify($pwd,$hash_))))){
-		$alllog_arr[$i] = $newline;
+			$alllog_arr[$i] = $newline;
 			$flag=true;
 		}
 		if(!$flag){
@@ -2148,7 +2148,7 @@ function search(){
 
 	//ページング
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
-	
+
 	//prev next 
 	$next=(($page+$pagedef)<$countarr) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page<=0) ? false : ($page-$pagedef) ;//ページ番号が0の時はprevのリンクを出さない

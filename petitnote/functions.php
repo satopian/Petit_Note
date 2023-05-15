@@ -350,7 +350,7 @@ function create_res($line,$options=[]){
 	foreach($res as $key=>$val){
 		$res[$key]=h($val);
 	}
-	
+
 	return $res;
 }
 
@@ -857,15 +857,15 @@ function image_reduction_display($w,$h,$max_w,$max_h){
 		return ['',''];
 	}
 
-    if ($w > $max_w || $h > $max_h) {
-        $w_ratio = $max_w / $w;
-        $h_ratio = $max_h / $h;
-        $ratio = min($w_ratio, $h_ratio);
-        $w = ceil($w * $ratio);
-        $h = ceil($h * $ratio);
-    }
-    $reduced_size = [$w,$h];
-    return $reduced_size;
+	if ($w > $max_w || $h > $max_h) {
+		$w_ratio = $max_w / $w;
+		$h_ratio = $max_h / $h;
+		$ratio = min($w_ratio, $h_ratio);
+		$w = ceil($w * $ratio);
+		$h = ceil($h * $ratio);
+	}
+	$reduced_size = [$w,$h];
+	return $reduced_size;
 }
 /**
  * 描画時間を計算
