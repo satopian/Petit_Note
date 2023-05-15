@@ -108,7 +108,7 @@ jQuery(function() {
 		$btn.prop("disabled", false);
 		$btn.on('click', function (){//送信ボタン2度押し対策
 			$(this).prop('disabled',true);
-			$(this).closest('form').submit();
+			$(this).closest('form').trigger('submit');
 		});
 	}
 	// https://cotodama.co/pagetop/
