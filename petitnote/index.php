@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.72.7';
+$petit_ver='v0.72.8';
 $petit_lot='lot.230516';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!isset($functions_ver)||$functions_ver<20230516){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
-const JQUERY='jquery-3.6.0.min.js';
+const JQUERY='jquery-3.7.0.min.js';
 check_file(__DIR__.'/lib/'.JQUERY);
 // luminous
 check_file(__DIR__.'/lib/luminous/luminous.min.js');
