@@ -77,8 +77,9 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 ### 追加されたファイル
 - lib/jquery-3.7.0.min.js
 ### 変更があったファイル
-- index.php
-index.phpの内部で指定したjQueryのファイルが読み込まれるように設定しているため個別のテンプレートを修正する必要はありません。
+- index.php  
+index.phpで指定したjQueryのファイルが読み込まれるため、テンプレートを修正する必要はありません。
+
 
 ## 23/05/15 v0.72.7
 ### ChickenPaintが起動しなくなっていたバグを修正
