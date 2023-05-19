@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230516;
+$functions_ver=20230519;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -332,12 +332,12 @@ function create_res($line,$options=[]){
 		'host' => $host,
 		'userid' => $userid,
 		'check_elapsed_days' => $check_elapsed_days,
-		'encoded_boardname' => urlencode($boardname),
-		'encoded_name' => urlencode($name),
-		'encoded_no' => urlencode('['.$no.']'),
-		'encoded_sub' => urlencode($sub),
-		'encoded_u' => urlencode($root_url.'?resno='.$no),//tweet
-		'encoded_t' => urlencode('['.$no.']'.$sub.($name ? ' by '.$name : '').' - '.$boardname),
+		'encoded_boardname' => $isset_catalog ? urlencode($boardname) : '',
+		'encoded_name' => (!$isset_catalog || $isset_search) ? urlencode($name) : '',
+		'encoded_no' => !$isset_catalog ? urlencode('['.$no.']') : '',
+		'encoded_sub' => !$isset_catalog ? urlencode($sub) : '',
+		'encoded_u' => !$isset_catalog ? urlencode($root_url.'?resno='.$no) : '',//tweet
+		'encoded_t' => !$isset_catalog ? urlencode('['.$no.']'.$sub.($name ? ' by '.$name : '').' - '.$boardname) : '',
 		'oya' => $oya,
 		'webpimg' => $webpimg ? 'webp/'.$time.'t.webp' :false,
 		'hide_thumbnail' => $hide_thumbnail, //サムネイルにぼかしをかける時
