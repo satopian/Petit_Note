@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230519;
+$functions_ver=20230521;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -379,6 +379,23 @@ function create_chk_lins($chk_log_arr,$resno){
 		}
 	}
 	return $chk_lines;
+}
+
+//投稿時刻を作成。ファイルの重複があれば1秒ずらす。
+function create_post_time(){
+	$time = (string)(time().substr(microtime(),2,6));	//投稿時刻
+	//画像重複チェック
+	$testexts=['.gif','.jpg','.png','.webp'];
+	foreach($testexts as $testext){
+		if(is_file(IMG_DIR.$time.$testext)){
+			$time=(string)(substr($time,0,-6)+1).(string)substr($time,-6);
+		break;	
+		}
+	}
+	//一時ファイル重複チェック
+	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)(substr($time,0,-6)+1).(string)substr($time,-6) : $time;
+	$time=basename($time);
+	return $time;
 }
 
 //ログファイルを1行ずつ読み込んで配列に入れる

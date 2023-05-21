@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.72.9';
-$petit_lot='lot.230519';
+$petit_ver='v0.73.0';
+$petit_lot='lot.230521';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230519){
+if(!isset($functions_ver)||$functions_ver<20230521){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -193,17 +193,8 @@ function post(){
 	$w='';
 	$h='';
 	$tool='';
-	$time = (string)(time().substr(microtime(),2,6));	//投稿時刻
 
-	$testexts=['.gif','.jpg','.png','.webp'];
-	foreach($testexts as $testext){
-		if(is_file(IMG_DIR.$time.$testext)){
-			$time=(string)(substr($time,0,-6)+1).(string)substr($time,-6);
-		break;	
-		}
-	}
-	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)(substr($time,0,-6)+1).(string)substr($time,-6) : $time;
-	$time=basename($time);
+	$time=create_post_time();//投稿時刻を作成。ファイルの重複があれば1秒ずらす。
 	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
 
 	//お絵かきアップロード
@@ -1256,16 +1247,7 @@ function img_replace(){
 		} 
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
-	$time = (string)(time().substr(microtime(),2,6));
-	$testexts=['.gif','.jpg','.png','.webp'];
-	foreach($testexts as $testext){
-		if(is_file(IMG_DIR.$time.$testext)){
-			$time=(string)(substr($time,0,-6)+1).(string)substr($time,-6);
-			break;
-		}
-	}
-	$time= is_file(TEMP_DIR.$time.'.tmp') ?	(string)(substr($time,0,-6)+1).(string)substr($time,-6) : $time;
-	$time=basename($time);
+	$time=create_post_time();//投稿時刻を作成。ファイルの重複があれば1秒ずらす。
 	$upfile=TEMP_DIR.$time.'.tmp';
 
 	if($is_upload && ($_tool==='upload') && ( $use_upload || $adminpost || $admindel) && is_file($up_tempfile)){
