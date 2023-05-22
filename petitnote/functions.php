@@ -381,7 +381,7 @@ function create_chk_lins($chk_log_arr,$resno){
 	return $chk_lines;
 }
 
-//投稿時刻を作成。ファイルの重複があれば1秒ずらす。
+//ファイル名が重複しない投稿時刻を作成
 function create_post_time(){
 	$time = (string)(time().substr(microtime(),2,6));	//投稿時刻
 	//画像重複チェック

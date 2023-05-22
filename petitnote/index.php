@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.73.0';
+$petit_ver='v0.73.1';
 $petit_lot='lot.230521';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -194,7 +194,7 @@ function post(){
 	$h='';
 	$tool='';
 
-	$time=create_post_time();//投稿時刻を作成。ファイルの重複があれば1秒ずらす。
+	$time=create_post_time();//ファイル名が重複しない投稿時刻を作成
 	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
 
 	//お絵かきアップロード
@@ -1247,7 +1247,7 @@ function img_replace(){
 		} 
 		return paintcom();//該当記事が無い時は新規投稿。
 	}
-	$time=create_post_time();//投稿時刻を作成。ファイルの重複があれば1秒ずらす。
+	$time=create_post_time();//ファイル名が重複しない投稿時刻を作成
 	$upfile=TEMP_DIR.$time.'.tmp';
 
 	if($is_upload && ($_tool==='upload') && ( $use_upload || $adminpost || $admindel) && is_file($up_tempfile)){
