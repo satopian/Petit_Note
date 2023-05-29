@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.73.1';
-$petit_lot='lot.230521';
+$petit_ver='v0.73.8';
+$petit_lot='lot.230529';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230521){
+if(!isset($functions_ver)||$functions_ver<20230529){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -624,7 +624,6 @@ function post(){
 	}
 	$newline.=implode("",$alllog_arr);
 
-
 	writeFile ($fp, $newline);
 	closeFile($fp);
 
@@ -636,6 +635,7 @@ function post(){
 	safe_unlink($up_tempfile);
 	safe_unlink($upfile);
 	safe_unlink(TEMP_DIR.$picfile.".dat");
+	delete_res_cache ();
 
 	global $send_email,$to_mail,$root_url,$boardname;
 
@@ -1802,6 +1802,7 @@ function edit(){
 	closeFile($fp);
 
 	unset($_SESSION['userdel']);
+	delete_res_cache ();
 
 	return header("Location: ./?resno={$no}&resid={$_time}#{$_time}");
 
@@ -1920,7 +1921,7 @@ function del(){
 				}
 				closeFile ($rp);
 				safe_unlink(LOG_DIR.$no.'.log');
-
+			
 		}else{
 				delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
 				$deleted_sub = $en? 'No subject':'無題';
@@ -2188,7 +2189,6 @@ function catalog(){
 	fclose($fp);
 
 	//管理者判定処理
-	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 
@@ -2219,10 +2219,12 @@ function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home,$display_search_nav;
-
+	
 	aikotoba_required_to_view();
-
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+
+	//管理者判定処理
+	$admindel=admindel_valid();
 
 	$max_byte = $max_kb * 1024*2;
 	$denny_all_posts=$deny_all_posts;//互換性
@@ -2243,35 +2245,38 @@ function view(){
 	}
 	fclose($fp);
 
-	//oyaのループ
-	foreach($article_nos as $oya => $no){
-
-		//個別スレッドのループ
-		if(!is_file(LOG_DIR."{$no}.log")){
-			continue;	
-		}
-		$_res=[];
-		$out[$oya]=[];
-		check_open_no($no);
-		$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
-			while ($line = fgets($rp)) {
-				if(!trim($line)){
-					continue;
-				}
-				$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
-				$out[$oya][]=$_res;
-			}	
-		fclose($rp);
-		if(empty($out[$oya])||$out[$oya][0]['oya']!=='oya'){
-			unset($out[$oya]);
+	$out=[];
+	if($page===0 && !$admindel){
+		$out = is_file(__DIR__.'/template/cache/index_cache.json') ? json_decode(file_get_contents(__DIR__.'/template/cache/index_cache.json'),true) : [];
+	}
+	if(empty($out)){
+		//oyaのループ
+		foreach($article_nos as $oya => $no){
+	
+			//個別スレッドのループ
+			if(!is_file(LOG_DIR."{$no}.log")){
+				continue;	
+			}
+			$_res=[];
+			$out[$oya]=[];
+			check_open_no($no);
+			$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
+				while ($line = fgets($rp)) {
+					if(!trim($line)){
+						continue;
+					}
+					$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
+					$out[$oya][]=$_res;
+				}	
+			fclose($rp);
+			if(empty($out[$oya])||$out[$oya][0]['oya']!=='oya'){
+				unset($out[$oya]);
+			}
 		}
 	}
 
 	// 禁止ホスト
 	$is_badhost=is_badhost();
-	//管理者判定処理
-	session_sta();
-	$admindel=admindel_valid();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
@@ -2299,10 +2304,18 @@ function view(){
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
+	if($page===0 && !$admindel){
+
+		if($page===0 && !$admindel){
+			if(!is_file(__DIR__.'/template/cache/index_cache.json')){
+			file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
+			chmod(__DIR__.'/template/cache/index_cache.json',0600);
+			}  
+		}
+	} 
 	// HTML出力
 	$templete='main.html';
 	return include __DIR__.'/'.$skindir.$templete;
-
 }
 //レス画面
 function res (){
@@ -2411,7 +2424,6 @@ function res (){
 	//禁止ホスト
 	$is_badhost=is_badhost();
 	//管理者判定処理
-	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');

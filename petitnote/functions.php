@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230521;
+$functions_ver=20230529;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -329,7 +329,7 @@ function create_res($line,$options=[]){
 		'time' => $time,
 		'date' => $date,
 		'datetime' => $datetime,
-		'host' => $host,
+		'host' => admindel_valid() ? $host : '',
 		'userid' => $userid,
 		'check_elapsed_days' => $check_elapsed_days,
 		'encoded_boardname' => $isset_catalog ? urlencode($boardname) : '',
@@ -534,6 +534,11 @@ function delete_files ($imgfile, $time) {
 	safe_unlink(IMG_DIR.$time.'.spch');
 	safe_unlink(IMG_DIR.$time.'.chi');
 	safe_unlink(IMG_DIR.$time.'.psd');
+	safe_unlink(__DIR__.'/template/cache/index_cache.json');
+}
+
+function delete_res_cache () {
+	safe_unlink(__DIR__.'/template/cache/index_cache.json');
 }
 
 //png2jpg
@@ -816,6 +821,7 @@ function init(){
 	check_dir(__DIR__."/temp");
 	check_dir(__DIR__."/thumbnail");
 	check_dir(__DIR__."/log");
+	check_dir(__DIR__."/log/cache");
 	check_dir(__DIR__."/webp");
 	if(!is_file(LOG_DIR.'alllog.log')){
 	file_put_contents(LOG_DIR.'alllog.log','',FILE_APPEND|LOCK_EX);
