@@ -635,7 +635,7 @@ function post(){
 	safe_unlink($up_tempfile);
 	safe_unlink($upfile);
 	safe_unlink(TEMP_DIR.$picfile.".dat");
-	delete_res_cache ();
+	delete_res_cache();
 
 	global $send_email,$to_mail,$root_url,$boardname;
 
@@ -1802,7 +1802,7 @@ function edit(){
 	closeFile($fp);
 
 	unset($_SESSION['userdel']);
-	delete_res_cache ();
+	delete_res_cache();
 
 	return header("Location: ./?resno={$no}&resid={$_time}#{$_time}");
 
