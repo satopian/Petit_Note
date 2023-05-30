@@ -1,4 +1,4 @@
-<files ~ "(^config\.php$|\.(ini|log|dat|json)$)">
+<files ~ "(^config\.php$|\.(ini|log|dat|json|inc)$)">
 	order allow,deny
 	deny from all
 </files>

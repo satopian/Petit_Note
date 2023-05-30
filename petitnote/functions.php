@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230529;
+$functions_ver=20230530;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -294,7 +294,7 @@ function create_res($line,$options=[]){
 
 	$thumbnail = ($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail') ? $time.'s.jpg' : false; 
 	$link_thumbnail= ($thumbnail || $hide_thumbnail);  
-	$painttime = (!$isset_catalog && is_numeric($painttime)) ? calcPtime($painttime) : false;  
+	$painttime = (!$isset_catalog && is_numeric($painttime)) ? calcPtime($painttime) : [];  
 	$_time=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 	$first_posted_time=(strlen($first_posted_time)>15) ? substr($first_posted_time,0,-6) : substr($first_posted_time,0,-3);
 	$datetime = $do_not_change_posts_time ? $first_posted_time : $_time;
@@ -316,7 +316,8 @@ function create_res($line,$options=[]){
 		'url' => $url ? filter_var($url,FILTER_VALIDATE_URL) : '',
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail,
-		'painttime' => $painttime,
+		'painttime' => $painttime ? $painttime['ja'] : '',
+		'painttime_en' => $painttime ? $painttime['en'] : '',
 		'w' => ($w && is_numeric($w)) ? $w :'',
 		'h' => ($h && is_numeric($h)) ? $h :'',
 		'_w' => ($w && is_numeric($w)) ? $_w :'',
@@ -896,26 +897,26 @@ function image_reduction_display($w,$h,$max_w,$max_h){
  * @return string
  */
 function calcPtime ($psec) {
-	global $en;
 
 	$D = floor($psec / 86400);
 	$H = floor($psec % 86400 / 3600);
 	$M = floor($psec % 3600 / 60);
 	$S = $psec % 60;
 
-	if($en){
-		return
-			($D ? $D.'day '  : '')
-			. ($H ? $H.'hr ' : '')
-			. ($M ? $M.'min ' : '')
-			. ($S ? $S.'sec' : '');
-	}
-		return
+	$result=[
+		'ja'=>
 			($D ? $D.'日'  : '')
 			. ($H ? $H.'時間' : '')
 			. ($M ? $M.'分' : '')
-			. ($S ? $S.'秒' : '');
-}
+			. ($S ? $S.'秒' : ''),
+		'en'=>
+			($D ? $D.'day '  : '')
+			. ($H ? $H.'hr ' : '')
+			. ($M ? $M.'min ' : '')
+			. ($S ? $S.'sec' : '')
+		];
+	return $result;
+	}
 /**
  * 残り時間を計算
  * @param $starttime

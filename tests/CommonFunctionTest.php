@@ -199,11 +199,9 @@ final class CommonFunctionTest extends TestCase
      * @dataProvider calculatePaintTimeProvider
      * @covers       calcPtime
      */
-    public function testCalcPtime(bool $globalEn, $psec, string $expected): void
+    public function testCalcPtime($psec, array $expected): void
     {
-        global $en;
-        $en = $globalEn;
-
+        
         $actual = calcPtime($psec);
 
         $this->assertEquals($expected, $actual);
@@ -211,27 +209,18 @@ final class CommonFunctionTest extends TestCase
 
     public function calculatePaintTimeProvider(): array
     {
-        return [
-            [false, 0, ''],
-            [false, 1, '1秒'],
-            [false, 60, '1分'],
-            [false, 61, '1分1秒'],
-            [false, 3600, '1時間'],
-            [false, 3661, '1時間1分1秒'],
-            [false, 86400, '1日'],
-            [false, 86461, '1日1分1秒'],
-            [false, 172861, '2日1分1秒'],
-            [true, 0, ''],
-            [true, 1, '1sec'],
-            [true, 60, '1min '],
-            [true, 61, '1min 1sec'],
-            [true, 3600, '1hr '],
-            [true, 3661, '1hr 1min 1sec'],
-            [true, 86400, '1day '],
-            [true, 86461, '1day 1min 1sec'],
-            [true, 172861, '2day 1min 1sec']
-        ];
-    }
+		return [
+			[0, ['ja' => '', 'en' => '']],
+			[1, ['ja' => '1秒', 'en' => '1sec']],
+			[60, ['ja' => '1分', 'en' => '1min ']],
+			[61, ['ja' => '1分1秒', 'en' => '1min 1sec']],
+			[3600, ['ja' => '1時間', 'en' => '1hr ']],
+			[3661, ['ja' => '1時間1分1秒', 'en' => '1hr 1min 1sec']],
+			[86400, ['ja' => '1日', 'en' => '1day ']],
+			[86461, ['ja' => '1日1分1秒', 'en' => '1day 1min 1sec']],
+			[172861, ['ja' => '2日1分1秒', 'en' => '2day 1min 1sec']],
+		];
+	}
 
     /**
      * @dataProvider createFormattedTextFromPostProvider
