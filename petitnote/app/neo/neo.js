@@ -572,12 +572,12 @@ Neo.backgroundImage = function () {
 };
 
 Neo.multColor = function (c, scale) {
-  var r = Math.round(parseInt(c.substr(1, 2), 16) * scale);
-  var g = Math.round(parseInt(c.substr(3, 2), 16) * scale);
-  var b = Math.round(parseInt(c.substr(5, 2), 16) * scale);
-  r = ("0" + Math.min(Math.max(r, 0), 255).toString(16)).substr(-2);
-  g = ("0" + Math.min(Math.max(g, 0), 255).toString(16)).substr(-2);
-  b = ("0" + Math.min(Math.max(b, 0), 255).toString(16)).substr(-2);
+  var r = Math.round(parseInt(c.substring(1, 3), 16) * scale);
+  var g = Math.round(parseInt(c.substring(3, 5), 16) * scale);
+  var b = Math.round(parseInt(c.substring(5, 7), 16) * scale);
+  r = ("0" + Math.min(Math.max(r, 0), 255).toString(16)).slice(-2);
+  g = ("0" + Math.min(Math.max(g, 0), 255).toString(16)).slice(-2);
+  b = ("0" + Math.min(Math.max(b, 0), 255).toString(16)).slice(-2);
   return "#" + r + g + b;
 };
 
@@ -2146,20 +2146,20 @@ Neo.Painter.prototype._keyDownHandler = function (e) {
   this.isShiftDown = e.shiftKey;
   this.isCtrlDown = e.ctrlKey;
   this.isAltDown = e.altKey;
-  if (e.keyCode == 32) this.isSpaceDown = true;
-
+  var key=e.key.toLowerCase();
+  if (key === ' ') this.isSpaceDown = true;
+  
   if (!this.isShiftDown && this.isCtrlDown) {
-    if (!this.isAltDown) {
-      if (e.keyCode == 90 || e.keyCode == 85) this.undo(); //Ctrl+Z,Ctrl.U
-      if (e.keyCode == 89) this.redo(); //Ctrl+Y
-    } else {
-      if (e.keyCode == 90) this.redo(); //Ctrl+Alt+Z
-    }
+	if (!this.isAltDown) {
+	  if (key === 'z' || key === 'u') this.undo(); // Ctrl+Z, Ctrl+U
+	  if (key === 'y') this.redo(); // Ctrl+Y
+	} else {
+	  if (key === 'z') this.redo(); // Ctrl+Alt+Z
+	}
   }
-
   if (!this.isShiftDown && !this.isCtrlDown && !this.isAltDown) {
-    if (e.keyCode == 107) new Neo.ZoomPlusCommand(this).execute(); // +
-    if (e.keyCode == 109) new Neo.ZoomMinusCommand(this).execute(); // -
+    if (key == '+') new Neo.ZoomPlusCommand(this).execute(); // +
+    if (key == '-') new Neo.ZoomMinusCommand(this).execute(); // -
   }
 
   if (this.tool.keyDownHandler) {
@@ -2181,7 +2181,7 @@ Neo.Painter.prototype._keyUpHandler = function (e) {
   this.isShiftDown = e.shiftKey;
   this.isCtrlDown = e.ctrlKey;
   this.isAltDown = e.altKey;
-  if (e.keyCode == 32) this.isSpaceDown = false;
+  if (e.key == ' ') this.isSpaceDown = false;
 
   if (this.tool.keyUpHandler) {
     this.tool.keyUpHandler(oe);
@@ -2640,7 +2640,7 @@ Neo.Painter.prototype.dataURLtoBlob = function (dataURL) {
   if (dataURL.split(",")[0].indexOf("base64") >= 0) {
     byteString = atob(dataURL.split(",")[1]);
   } else {
-    byteString = unescape(dataURL.split(",")[1]);
+    byteString = decodeURI(dataURL.split(",")[1]);
   }
 
   // write the bytes of the string to a typed array
@@ -2867,15 +2867,15 @@ Neo.Painter.prototype.getBound = function (x0, y0, x1, y1, r) {
 
 Neo.Painter.prototype.getColor = function (c) {
   if (!c) c = this.foregroundColor;
-  var r = parseInt(c.substr(1, 2), 16);
-  var g = parseInt(c.substr(3, 2), 16);
-  var b = parseInt(c.substr(5, 2), 16);
+  var r = parseInt(c.substring(1, 3), 16);
+  var g = parseInt(c.substring(3, 5), 16);
+  var b = parseInt(c.substring(5, 7), 16);
   var a = Math.floor(this.alpha * 255);
   return (a << 24) | (b << 16) | (g << 8) | r;
 };
 
 Neo.Painter.prototype.getColorString = function (c) {
-  var rgb = ("000000" + (c & 0xffffff).toString(16)).substr(-6);
+	var rgb = ("000000" + (c & 0xffffff).toString(16)).slice(-6);
   return "#" + rgb;
 };
 
@@ -2923,14 +2923,14 @@ Neo.Painter.prototype.getAlpha = function (type) {
 };
 
 Neo.Painter.prototype.prepareDrawing = function () {
-  var r = parseInt(this.foregroundColor.substr(1, 2), 16);
-  var g = parseInt(this.foregroundColor.substr(3, 2), 16);
-  var b = parseInt(this.foregroundColor.substr(5, 2), 16);
+  var r = parseInt(this.foregroundColor.substring(1, 3), 16);
+  var g = parseInt(this.foregroundColor.substring(3, 5), 16);
+  var b = parseInt(this.foregroundColor.substring(5, 7), 16);
   var a = Math.floor(this.alpha * 255);
 
-  var maskR = parseInt(this.maskColor.substr(1, 2), 16);
-  var maskG = parseInt(this.maskColor.substr(3, 2), 16);
-  var maskB = parseInt(this.maskColor.substr(5, 2), 16);
+  var maskR = parseInt(this.maskColor.substring(1, 3), 16);
+  var maskG = parseInt(this.maskColor.substring(3, 5), 16);
+  var maskB = parseInt(this.maskColor.substring(5, 7), 16);
 
   this._currentColor = [r, g, b, a];
   this._currentMask = [maskR, maskG, maskB];
@@ -5034,7 +5034,7 @@ Neo.DrawToolBase.prototype.bezierUpMoveHandler = function (oe) {
 };
 
 Neo.DrawToolBase.prototype.bezierKeyDownHandler = function (e) {
-  if (e.keyCode == 27) {
+  if (e.key == 'Escape') {
     //Escでキャンセル
     this.step = 0;
 
@@ -5733,7 +5733,7 @@ Neo.PasteTool.prototype.moveHandler = function (oe) {
 };
 
 Neo.PasteTool.prototype.keyDownHandler = function (e) {
-  if (e.keyCode == 27) {
+  if (e.key == 'Escape') {
     //Escでキャンセル
     var oe = Neo.painter;
     oe.updateDestCanvas(0, 0, oe.canvasWidth, oe.canvasHeight, true);
@@ -5875,7 +5875,7 @@ Neo.TextTool.prototype.rollOverHandler = function (oe) {};
 Neo.TextTool.prototype.rollOutHandler = function (oe) {};
 
 Neo.TextTool.prototype.keyDownHandler = function (e) {
-  if (e.keyCode == 13) {
+  if (e.key == 'Enter') {
     // Returnで確定
     e.preventDefault();
 
