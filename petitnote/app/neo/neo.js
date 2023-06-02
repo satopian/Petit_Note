@@ -1204,69 +1204,70 @@ Neo.resizeCanvas = function () {
 	var futaba = location.hostname.match(/2chan.net/i);
 	var subtype = futaba ? "octet-binary" : "octet-stream"; // 念のため
 	var body = new Blob(array, { type: "application/" + subtype });
-  
-	var request = new XMLHttpRequest();
-	request.open("POST", url, true);
-  
-	request.onload = function (e) {
-	  console.log(request.response, "status=", request.status);
-  
-	  var errorMessage = null;
-	  if (request.status / 100 != 2) {
-	  errorMessage = request.responseURL + "\n";
-	  if (request.status == 403) {
-		  errorMessage = errorMessage + Neo.translate("投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。");
-		  } else if (request.status == 404) {
-		  errorMessage = errorMessage + Neo.translate("ファイルが見当たりません。");
-		  } else {
-		  errorMessage = errorMessage + 
-		  + Neo.translate("投稿に失敗。時間を置いて再度投稿してみてください。");
-		  }
-	  } else if (request.response.match(/^error\n/m)) {
-		errorMessage = request.response.replace(/^error\n/m, '');
-	  } else {
-		Neo.uploaded = true;
-	  }
-  
-	  var exitURL = Neo.getAbsoluteURL(board, Neo.config.url_exit);
-	  var responseURL = request.response.replace(/&amp;/g, "&");
-  
-	  // ふたばではresponseの文字列をそのままURLとして解釈する
-	  if (responseURL.match(/painttmp=/)) {
-		exitURL = responseURL;
-	  }
-	  // responseが "URL:〜" の形だった場合はそのURLへ
-	  if (responseURL.match(/^URL:/)) {
-		exitURL = responseURL.replace(/^URL:/, "");
-	  }
-  
-	  if (Neo.uploaded) {
-		location.href = exitURL;
-	  } else {
-		alert(errorMessage);
+
+	const postData = (path, data) => {
+		var errorMessage=path+"\n";
+
+		const requestOptions = {
+			method: 'post',
+			body: data,
+		  };
+		
+		  if (!futaba) {//ふたばの時は、'X-Requested-With'を追加しない
+			requestOptions.mode = 'same-origin';
+			requestOptions.headers = {
+			  'X-Requested-With': 'PaintBBS'
+			};
+		}
+
+		fetch(path, requestOptions)
+		.then((response) => {
+			if (response.ok) {
+				response.text().then((text) => {
+				console.log(text)
+				if (text.match(/^error\n/m)) {
+					Neo.submitButton.enable();
+					return alert(text.replace(/^error\n/m, ''));
+				}
+				var exitURL = Neo.getAbsoluteURL(board, Neo.config.url_exit);
+				var responseURL = text.replace(/&amp;/g, "&");
+			
+				// ふたばではresponseの文字列をそのままURLとして解釈する
+				if (responseURL.match(/painttmp=/)) {
+				  exitURL = responseURL;
+				}
+				// responseが "URL:〜" の形だった場合はそのURLへ
+				if (responseURL.match(/^URL:/)) {
+				  exitURL = responseURL.replace(/^URL:/, "");
+				}
+				Neo.uploaded = true;
+				return location.href = exitURL;
+				})
+			}else{
+				let response_status = response.status; 
+				if (response_status == 403) {
+
+					return alert(errorMessage + Neo.translate("投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。"));
+				}
+				if(response_status===404) {
+				return alert(errorMessage + Neo.translate("ファイルが見当たりません。"));
+				}
+				return alert(errorMessage + 
+				+ Neo.translate("投稿に失敗。時間を置いて再度投稿してみてください。"));
+	
+			}
+		})
+		.catch((error) => {
+			alert(errorMessage + 
+			+ Neo.translate("投稿に失敗。時間を置いて再度投稿してみてください。"));
 		Neo.submitButton.enable();
-	  }
-	};
-	request.onerror = function (e) {
-	  var errorMessage = null;
-	  errorMessage = Neo.translate("投稿に失敗。時間を置いて再度投稿してみてください。");
-	  alert(errorMessage);
-	  console.log("error");
-	  Neo.submitButton.enable();
-	};
-	request.onabort = function (e) {
-	  console.log("abort");
-	  Neo.submitButton.enable();
-	};
-	request.ontimeout = function (e) {
-	  console.log("timeout");
-	  Neo.submitButton.enable();
-	};
-	request.setRequestHeader("X-Requested-With", "PaintBBS");
+		})
+	}
+
 	if (Neo.config.neo_send_with_formdata == "true") {
-	  request.send(formData);
+		postData(url, formData);
 	}else{
-	request.send(body);
+		postData(url, body);
 	}
   };
 	
@@ -7043,19 +7044,20 @@ Neo.getFilename = function () {
 Neo.getPCH = function (filename, callback) {
   if (!filename || filename.slice(-4).toLowerCase() != ".pch") return null;
 
-  var request = new XMLHttpRequest();
-  request.open("GET", filename, true);
-  request.responseType = "arraybuffer";
-  request.onload = function () {
-    var pch = Neo.decodePCH(request.response);
+  fetch(filename)
+  .then(response => response.arrayBuffer())
+  .then(buffer => {
+    var pch = Neo.decodePCH(buffer);
     if (pch) {
       if (callback) callback(pch);
     } else {
       console.log("not a NEO animation");
     }
-  };
-  request.send();
-};
+  })
+  .catch(error => {
+    console.log(error);
+  });
+}
 
 Neo.decodePCH = function (rawdata) {
   var byteArray = new Uint8Array(rawdata);
