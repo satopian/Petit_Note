@@ -21508,7 +21508,7 @@ function CPCanvas(controller) {
     };
 
     this.keyUp = function (e) {
-      if (this.transient && panningButton != BUTTON_WHEEL && e.key === "Space") {
+      if (this.transient && panningButton != BUTTON_WHEEL && e.key === " ") {
         setCursor(CURSOR_DEFAULT);
         modeStack.pop(); // yield control to the default mode
 
@@ -22269,7 +22269,7 @@ function CPCanvas(controller) {
     };
 
     this.keyUp = function (e) {
-      if (this.transient && rotateButton != BUTTON_WHEEL && e.key === "Space") {
+      if (this.transient && rotateButton != BUTTON_WHEEL && e.key === " ") {
         setCursor(CURSOR_DEFAULT);
         modeStack.pop(); // yield control to the default mode
 
@@ -22278,7 +22278,7 @@ function CPCanvas(controller) {
     };
 
     this.keyDown = function (e) {
-      if (e.key === "Space" && e.altKey) {
+      if (e.key === " " && e.altKey) {
         // That's our hotkey, so stay in this mode (don't forward to CPDefaultMode)
         return true;
       }
