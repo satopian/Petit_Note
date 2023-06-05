@@ -32163,6 +32163,7 @@ function getKeyCodeFromKey(key) {
   // 特殊キーのマッピングにアルファベットを追加
   // 特殊キーのマッピング
   var specialKeys = {
+    'DELETE': 46,
     'BACKSPACE': 8,
     'TAB': 9,
     'ENTER': 13,
