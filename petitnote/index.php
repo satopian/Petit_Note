@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.73.10';
-$petit_lot='lot.230530';
+$petit_ver='v0.75.0';
+$petit_lot='lot.230606';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -685,7 +685,7 @@ return header('Location: ./');
 function paint(){
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$en;
-	global $usercode,$password_require_to_continue;
+	global $usercode,$password_require_to_continue,$petit_lot;
 
 	check_same_origin();
 
@@ -848,8 +848,6 @@ function paint(){
 			return include __DIR__.'/'.$skindir.$templete;
 
 		case 'neo'://PaintBBS NEO
-
-			global $petit_lot;
 
 			$tool='neo';
 			$appw = $picw + 150;//NEOの幅
@@ -1339,8 +1337,8 @@ function img_replace(){
 			chmod($dst, 0606);
 		}
 	}
-	if(in_array($_pchext,['.pch','hide_animation'])){
-		$pchext= !$hide_animation ?  '.pch' : 'hide_animation'; 
+	if($pchext === '.pch'){
+		$pchext = $hide_animation ? 'hide_animation' : '.pch'; 
 	}
 
 	list($w,$h)=getimagesize(IMG_DIR.$imgfile);
@@ -2306,12 +2304,10 @@ function view(){
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 	if($page===0 && !$admindel){
 
-		if($page===0 && !$admindel){
-			if(!is_file(__DIR__.'/template/cache/index_cache.json')){
-			file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
-			chmod(__DIR__.'/template/cache/index_cache.json',0600);
-			}  
-		}
+		if(!is_file(__DIR__.'/template/cache/index_cache.json')){
+		file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
+		chmod(__DIR__.'/template/cache/index_cache.json',0600);
+		}  
 	} 
 	// HTML出力
 	$templete='main.html';
