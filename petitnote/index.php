@@ -2303,7 +2303,6 @@ function view(){
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 	if($page===0 && !$admindel){
-
 		if(!is_file(__DIR__.'/template/cache/index_cache.json')){
 		file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
 		chmod(__DIR__.'/template/cache/index_cache.json',0600);
