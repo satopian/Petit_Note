@@ -7,24 +7,6 @@ form.searchform {
 /* 閲覧注意 */
 .s_posted_image {
 	position: relative;
-}
-.s_posted_image p  {
-	position: absolute;
-	top: 0;
-	left: 15px;
-	display: inline-block;
-	background-color: #555;
-	color: white;
-	padding: 5px;
-	border-radius: 5px;
-	font-weight: 600;
-	font-size: 18px;
-	line-height: initial;
-}
-
-
-
- .s_posted_image{
 	overflow: hidden;
 	display: block;
 	max-width: 160px;
@@ -32,6 +14,21 @@ form.searchform {
 	height: auto;
 	float: none;
 	margin: 12px 0 0;
+}
+
+.s_posted_image p  {
+    position: absolute;
+    top: 0;
+    left: 13px;
+    display: inline-block;
+    background-color: #555;
+    color: white;
+    padding: 3px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 13px;
+    opacity: 0.6;
+    line-height: 1.5;
 }
 
 .s_article {
@@ -42,7 +39,6 @@ form.searchform {
 	border-bottom: 1px dashed #555;
 	line-height: 3em;
 }
-
 
 .s_posted_image img {
 	max-width: 100%;

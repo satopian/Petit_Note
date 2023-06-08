@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230530;
+$functions_ver=230609;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -185,6 +185,19 @@ function view_nsfw(){
 	$view=(bool)filter_input(INPUT_POST,'view_nsfw',FILTER_VALIDATE_BOOLEAN);
 	if($view){
 		setcookie("nsfwc",'on',time()+(60*60*24*30),"","",false,true);
+	}
+
+	return branch_destination_of_location();
+}
+
+//閲覧注意画像を隠す隠さない
+function set_nsfw_show_hide(){
+
+	$view=(bool)filter_input(INPUT_POST,'set_nsfw_show_hide');
+	if($view){
+		setcookie("set_nsfw_show_hide",true,time()+(60*60*24*30),"","",false,true);
+	}else{
+		setcookie("set_nsfw_show_hide",false,time()+(60*60*24*30),"","",false,true);
 	}
 
 	return branch_destination_of_location();

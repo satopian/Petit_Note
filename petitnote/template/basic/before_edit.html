@@ -14,6 +14,9 @@
 	<!-- センシティブコンテンツにブラーをかける -->
 <style>img {filter:blur(15px);}</style>
 <?php endif;?>
+<?php if($admindel||$set_nsfw_show_hide):?>
+<style>.hide_thumbnail img{filter: none;}</style>
+<?php endif;?>
 
 	<title><?=h($boardname)?></title> 
 </head>
@@ -67,6 +70,9 @@
 <h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
 	<!-- スレッドのループ -->
 	<?php foreach($ress as $i => $res) : ?>
+	<!-- 縮小のかかったNSFW画像を元のサイズへ -->
+	<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
+
 	<hr>
 	<div class="imginfo_wrap">
 	<input type="hidden" name="id_and_no" form="before_delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
@@ -97,7 +103,7 @@
 		<?php endif;?> 
 	</div>
 		<?php if($res['img']):?>
-			<div class="posted_image <?php if($res['hide_thumbnail'] && !$admindel):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
+			<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
 				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
 				<?php if($res['thumbnail']):?>
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
@@ -105,7 +111,7 @@
 			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 				<?php endif;?>
 				<?php if($res['hide_thumbnail']):?>
-					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
+					<p>NSFW</p>
 						<?php endif;?>
 				</a>
 			</div>

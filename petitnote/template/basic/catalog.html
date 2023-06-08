@@ -14,6 +14,9 @@
 	<!-- センシティブコンテンツにブラーをかける -->
 <style>img {filter:blur(15px);}</style>
 <?php endif;?>
+<?php if($admindel||$set_nsfw_show_hide):?>
+<style>.hide_thumbnail img{filter: none;}</style>
+<?php endif;?>
 
 <title><?=h($boardname)?></title> 
 </head>
@@ -43,7 +46,7 @@
 <div class="catalog_wrap">
 	<!-- 親のループ -->
 <?php if(isset($out)):?>
-<?php foreach($out as $t => $ress):?><?php foreach($ress as  $res):?><span class="catalog_image <?php if($res['hide_thumbnail'] && !$admindel):?>hide_thumbnail<?php endif;?>">	
+<?php foreach($out as $t => $ress):?><?php foreach($ress as  $res):?><span class="catalog_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>">	
 		<?php if($res['img']):?>
 			<a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
 			<?php if($res['webpimg']):?>
@@ -58,7 +61,7 @@
 			</picture>
 			<?php endif;?>
 			<?php if($res['hide_thumbnail']):?>
-					<p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p>
+					<p>NSFW</p>
 			<?php endif;?>
 			</a>
 			<?php else:?>

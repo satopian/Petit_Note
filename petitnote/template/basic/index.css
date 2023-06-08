@@ -158,17 +158,18 @@ span.info_name a {
 	position: relative;
 }
 
-.posted_image p {
+.posted_image p , .catalog_image p {
     position: absolute;
     top: 0;
-    left: 15px;
+    left: 13px;
     display: inline-block;
     background-color: #555;
     color: white;
-    padding: 5px;
+    padding: 3px;
     border-radius: 5px;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 13px;
+    opacity: 0.6;
 }
 
 .posted_image img {
@@ -246,6 +247,7 @@ label {
 	border-radius: 5px;
 }
 input[type="checkbox"]:checked + label{background-color: #ffe6e6;font-weight: 600;}
+input[type="radio"]:checked + label{background-color: #ffe6e6;font-weight: 600;}
 
 select.post_select_image {
     margin: 10px 6px 0;
@@ -391,20 +393,6 @@ span.continue_menu {
 	vertical-align: text-top;
 	border: none;
 	height:auto;
-}
-
-
-.catalog_image p {
-    position: absolute;
-    top: 0;
-    left: 15px;
-    display: inline-block;
-    background-color: #555;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    font-weight: 600;
-    font-size: 18px;
 }
 
 /* お絵かき画面 */

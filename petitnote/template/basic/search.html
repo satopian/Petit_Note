@@ -14,6 +14,10 @@
 	<!-- センシティブコンテンツにブラーをかける -->
 	<style>img {filter:blur(15px);}</style>
 <?php endif;?>
+<?php if($admindel||$set_nsfw_show_hide):?>
+<style>.hide_thumbnail img{filter: none;}</style>
+<?php endif;?>
+
 <title>
 	<?php if($en):?>	
 			Displaying <?=h($pageno)?> <?=h($result_subject)?> 
@@ -106,7 +110,7 @@
 				<?php if($res['webpimg']):?>
 				</picture>
 				<?php endif;?>
-					<?php if($res['hide_thumbnail']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></span><?php endforeach;?></div>
+					<?php if($res['hide_thumbnail']):?><p>NSFW</p><?php endif;?></a></span><?php endforeach;?></div>
 		<?php else:?>
 		<?php foreach($out as $i => $res):?>
 		<article>
@@ -130,7 +134,7 @@
 						<?php endif;?>
 					<?php if($res['webpimg']):?>
 					</picture>	
-					<?php endif;?><?php if($res['hide_thumbnail']):?><p><?php if($en):?>Sensitive<br>content<?php else:?>閲覧注意<?php endif;?></p><?php endif;?></a></div>
+					<?php endif;?><?php if($res['hide_thumbnail']):?><p>NSFW</p><?php endif;?></a></div>
 				<?php endif;?>
 				<?=h($res['com'])?>
 				<div class="res_button_wrap">

@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.75.1';
-$petit_lot='lot.230606';
+$petit_ver='v0.76.1';
+$petit_lot='lot.230609';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230530){
+if(!isset($functions_ver)||$functions_ver<230609){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -131,6 +131,8 @@ switch($mode){
 		return aikotoba();
 	case 'view_nsfw':
 		return view_nsfw();
+	case 'set_nsfw_show_hide':
+		return set_nsfw_show_hide();
 	case 'logout_admin':
 		return logout_admin();
 	case 'logout':
@@ -1537,6 +1539,8 @@ function confirmation_before_deletion ($edit_mode=''){
 
 	// nsfw
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+	
 	$count_r_arr=count($r_arr);
 
 	if($edit_mode==='delmode'){
@@ -2149,8 +2153,9 @@ function search(){
 	unset($arr);
 	unset($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya);
 
+	$admindel=admindel_valid();
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
-	
+	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 	//HTML出力
 	$templete='search.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -2197,6 +2202,7 @@ function catalog(){
 
 	//Cookie
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 	//token
 	$token=get_csrf_token();
 
@@ -2287,6 +2293,7 @@ function view(){
 	$picwc=h((string)filter_input(INPUT_COOKIE,'picwc'));
 	$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
 	//token
 	$token=get_csrf_token();
@@ -2433,6 +2440,7 @@ function res (){
 	$picwc=h((string)filter_input(INPUT_COOKIE,'picwc'));
 	$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
 	$arr_apps=app_to_use();
 	$count_arr_apps=count($arr_apps);
