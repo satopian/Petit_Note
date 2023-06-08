@@ -195,9 +195,9 @@ function set_nsfw_show_hide(){
 
 	$view=(bool)filter_input(INPUT_POST,'set_nsfw_show_hide');
 	if($view){
-		setcookie("set_nsfw_show_hide",true,time()+(60*60*24*30),"","",false,true);
+		setcookie("p_n_set_nsfw_show_hide",true,time()+(60*60*24*30),"","",false,true);
 	}else{
-		setcookie("set_nsfw_show_hide",false,time()+(60*60*24*30),"","",false,true);
+		setcookie("p_n_set_nsfw_show_hide",false,time()+(60*60*24*30),"","",false,true);
 	}
 
 	return branch_destination_of_location();
