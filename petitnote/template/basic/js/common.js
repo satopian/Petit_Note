@@ -103,14 +103,23 @@ jQuery(function() {
 		if(document_res_id){
 			document_res_id.scrollIntoView();
 		}
-		var $btn = $('[type="submit"]');
-		//disbledを解除
-		$btn.prop("disabled", false);
-		$btn.on('click', function (){//送信ボタン2度押し対策
-			$(this).prop('disabled',true);
-			$(this).closest('form').trigger('submit');
+
+		$('[type="submit"]').each(function() {
+			const $btn = $(this);
+			const $form = $btn.closest('form');
+			const isTargetBlank = $form.prop('target') === '_blank';
+		
+			// ボタンが target="_blank" の場合は無効化しない
+			if (!isTargetBlank) {
+				$btn.prop('disabled', false);
+				$btn.on('click', function() {
+				$btn.prop('disabled', true);
+				$form.trigger('submit');
+				});
+			}
 		});
-	}
+	};
+
 	// https://cotodama.co/pagetop/
 	var pagetop = $('#page_top');
 	pagetop.hide();

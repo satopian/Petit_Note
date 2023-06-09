@@ -152,7 +152,7 @@
 					return canvas;
 				})()
 			},{
-				name: <?php if($en):?>'Layer 1'<?php else:?>'レイヤー 1'<?php endif;?>,
+				name: <?=h(getTranslatedLyerName())?> 1,
 				opacity: 1,
 				mixModeStr: 'source-over',
 				image: (() => {

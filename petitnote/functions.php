@@ -1,5 +1,5 @@
 <?php
-$functions_ver=230609;
+$functions_ver=20230609;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -195,9 +195,9 @@ function set_nsfw_show_hide(){
 
 	$view=(bool)filter_input(INPUT_POST,'set_nsfw_show_hide');
 	if($view){
-		setcookie("p_n_set_nsfw_show_hide",true,time()+(60*60*24*30),"","",false,true);
+		setcookie("p_n_set_nsfw_show_hide",true,time()+(60*60*24*180),"","",false,true);
 	}else{
-		setcookie("p_n_set_nsfw_show_hide",false,time()+(60*60*24*30),"","",false,true);
+		setcookie("p_n_set_nsfw_show_hide",false,time()+(60*60*24*180),"","",false,true);
 	}
 
 	return branch_destination_of_location();
@@ -1136,3 +1136,32 @@ if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!
 			safe_unlink(__DIR__.'/template/errorlog/error.log');
 		}
 }
+function getTranslatedLayerName() {
+    $acceptedLanguages = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '';
+    $languageList = explode(',', $acceptedLanguages);
+
+    foreach ($languageList as $language) {
+        $language = strtolower(trim($language));
+        if (strpos($language, 'ja') === 0) {
+            return "レイヤー";
+        }
+        if (strpos($language, 'en') === 0) {
+            return "Layer";
+        }
+        if (strpos($language, 'zh-tw') === 0) {
+            return "圖層";
+        }
+        if (strpos($language, 'zh-cn') === 0) {
+            return "图层";
+        }
+        if (strpos($language, 'fr') === 0) {
+            return "Calque";
+        }
+        if (strpos($language, 'de') === 0) {
+            return "Ebene";
+        }
+    }
+
+    return "Layer";
+}
+
