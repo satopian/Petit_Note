@@ -76,8 +76,8 @@
 <div>
 <?php if($en):?>NSFW:<?php else:?>閲覧注意画像:<?php endif;?>
 <form action="./" method="post" class="aikotoba">	
-<input type="radio" name="set_nsfw_show_hide" value="" id="nsfw_hide" <?php if(!$set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_hide"><?php if($en):?>hide<?php else:?>隠す<?php endif;?></label>
-<input type="radio" name="set_nsfw_show_hide" value="on" id="nsfw_dont_hide" <?php if($set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_dont_hide"><?php if($en):?>don't hide<?php else:?>隠さない<?php endif;?></label>
+<input type="radio" name="set_nsfw_show_hide" value="" id="nsfw_hide" <?php if(!$set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_hide"><?php if($en):?>Hide<?php else:?>隠す<?php endif;?></label>
+<input type="radio" name="set_nsfw_show_hide" value="on" id="nsfw_dont_hide" <?php if($set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_dont_hide"><?php if($en):?>Don't hide<?php else:?>隠さない<?php endif;?></label>
 <input type="hidden" name="mode" value="set_nsfw_show_hide">
 <input type="hidden" name="resno" value="<?=h($out[0][0]['no'])?>">
 <input type="submit" value="<?php if($en):?>Setting<?php else:?>設定<?php endif;?>">
