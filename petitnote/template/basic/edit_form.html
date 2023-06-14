@@ -10,10 +10,7 @@
 <link rel="preload" as="script" href="lib/luminous/luminous.min.js">
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 <link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
-<?php if(isset($set_nsfw)&&$set_nsfw&&!$nsfwc):?>
-	<!-- センシティブコンテンツにブラーをかける -->
-<style>img {filter:blur(15px);}</style>
-<?php endif;?>
+<?php include('parts/nsfw_css_control.html');?>
 <title><?=h($boardname)?></title> 
 </head>
 <body>

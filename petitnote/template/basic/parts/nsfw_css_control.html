@@ -1,0 +1,9 @@
+<!-- 個別のNSFWを隠さない時 -->
+<?php if($admindel||$set_nsfw_show_hide):?>
+<style>.hide_thumbnail img{filter: none;}</style>
+<?php endif;?>
+<?php if($set_nsfw && !$nsfwc):?>
+<!-- センシティブコンテンツにブラーをかける -->
+<style>.hide_thumbnail img{ filter:blur(15px);}</style>
+<style>img {filter:blur(15px);}</style>
+<?php endif;?>
