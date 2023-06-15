@@ -1,9 +1,8 @@
-<!-- 個別のNSFWを隠さない時 -->
 <?php if((isset($admindel) && $admindel)||(isset($set_nsfw_show_hide) && $set_nsfw_show_hide)):?>
+<!-- 個別のNSFWを隠さない時 -->
 <style>.hide_thumbnail img{filter: none;}</style>
 <?php endif;?>
 <?php if(isset($set_nsfw) && $set_nsfw && (!isset($nsfwc)||!$nsfwc)):?>
 <!-- センシティブコンテンツにブラーをかける -->
-<style>.hide_thumbnail img{ filter:blur(15px);}</style>
-<style>img {filter:blur(15px);}</style>
+<style>.hide_thumbnail img{ filter:blur(15px);} img {filter:blur(15px);}</style>
 <?php endif;?>
