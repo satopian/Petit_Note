@@ -53,6 +53,8 @@
 
 .tegaki-invis {
   visibility: hidden !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 .tegaki-replay-mode #tegaki-tools-cnt,
@@ -195,7 +197,7 @@
 }
 
 #tegaki-replay-speed-lbl {
-  width: 24px;
+  width: 28px;
   display: inline-block;
   text-align: center;
 }
