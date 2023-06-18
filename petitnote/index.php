@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.77.2';
-$petit_lot='lot.20230617';
+$petit_ver='v0.78.0';
+$petit_lot='lot.20230618';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -66,6 +66,7 @@ $use_chickenpaint=isset($use_chickenpaint) ? $use_chickenpaint : true;
 $max_file_size_in_png_format_paint = isset($max_file_size_in_png_format_paint) ? $max_file_size_in_png_format_paint : 1024;
 $max_file_size_in_png_format_upload = isset($max_file_size_in_png_format_upload) ? $max_file_size_in_png_format_upload : 800;
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
+$use_tegaki=isset($use_tegaki) ? $use_tegaki : true;
 $display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_back_to_home : true;
 $password_require_to_continue = isset($password_require_to_continue) ? (bool)$password_require_to_continue : false;
 $subject_input_required = isset($subject_input_required) ? $subject_input_required : false;
@@ -220,7 +221,7 @@ function post(){
 		fclose($fp);
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
 		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
-		$tool= in_array($tool,['neo','chi','klecks']) ? $tool : '???';
+		$tool= in_array($tool,['neo','chi','klecks','tegaki']) ? $tool : '???';
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
@@ -843,6 +844,12 @@ function paint(){
 			$templete='paint_chi.html';
 			return include __DIR__.'/'.$skindir.$templete;
 
+		case 'tegaki':
+
+			$tool ='tegaki';
+			$templete='paint_tegaki.html';
+			return include __DIR__.'/'.$skindir.$templete;
+
 		case 'klecks':
 
 			$tool ='klecks';
@@ -952,7 +959,7 @@ function paintcom(){
 function to_continue(){
 
 	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en,$password_require_to_continue;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$petit_lot;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$petit_lot;
 
 	aikotoba_required_to_view();
 
@@ -1158,7 +1165,7 @@ function img_replace(){
 				fclose($fp);
 				list($uip,$uhost,$uagent,$imgext,$ucode,$urepcode,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");//区切りの"\t"を行末に
 				$hide_animation = ($u_hide_animation==='true');
-				$tool= in_array($tool,['neo','chi','klecks']) ? $tool : '???';
+				$tool= in_array($tool,['neo','chi','klecks','tegaki']) ? $tool : '???';
 				$file_name = pathinfo($file, PATHINFO_FILENAME );//拡張子除去
 				//画像があり、認識コードがhitすれば抜ける
 				$imgext=basename($imgext);
@@ -2224,7 +2231,7 @@ function catalog(){
 function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home,$display_search_nav;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav;
 	
 	aikotoba_required_to_view();
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -2325,7 +2332,7 @@ function view(){
 function res (){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$display_link_back_to_home,$display_search_nav;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav;
 
 	aikotoba_required_to_view();
 

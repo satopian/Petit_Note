@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Tegaki</title>
+<script src="app/tegaki/tegaki.js?<?=h($parameter_day)?><?=h($petit_lot)?>"></script>
+<link rel="stylesheet" href="app/tegaki/tegaki.css?<?=h($parameter_day)?><?=h($petit_lot)?>">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<style>
+	:not(input){
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	}
+</style>
+</head>
+<body>
+<script>
+Tegaki.open({
+// when the user clicks on Finish
+  onDone: function() {
+	
+	const postData = (path, data) => {
+
+		fetch(path, {
+			method: 'post',
+			mode: 'same-origin',
+			headers: {
+				'X-Requested-With': 'tegaki'
+				,
+			},
+			body: data,
+		})
+		.then((response) => {
+			if (response.ok) {
+				response.text().then((text) => {
+				console.log(text)
+					if(text==='ok'){
+						Tegaki.hide();//｢このサイトを離れますか?｣を解除
+						return window.location.href="index.php?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>";
+					}
+					return alert(text);
+				})
+			}else{
+				let response_status = response.status; 
+
+				if(response_status===403){
+						return alert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
+				}
+				if(response_status===404){
+						return alert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
+				}
+				return alert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗\n時間をおいて再度投稿してみてください。'<?php endif;?>);
+			}
+		})
+		.catch((error) => {
+				return alert(<?php if($en):?>'Server or line is unstable.\nPlease try again!'<?php else:?>'サーバまたは回線が不安定です。\n時間をおいて再度投稿してみてください。'<?php endif;?>);	
+		})
+	}
+
+    Tegaki.flatten().toBlob(
+      function(blob) {
+        console.log(blob);
+		var formData = new FormData();
+		formData.append("picture",blob,'blob');
+		formData.append("usercode", "<?=h($usercode)?>");
+		 <?php if($rep):?>formData.append("repcode", "<?=h($repcode)?>");<?php endif;?>
+		formData.append("tool", "tegaki");
+		formData.append("stime", <?=time();?>);
+		formData.append("resto", "<?=h($resto)?>");
+		postData("saveklecks.php", formData);
+      },
+      'image/png'
+    );
+  },
+  // when the user clicks on Cancel
+  onCancel: function() {
+    console.log('Closing...')
+  },
+  // initial canvas size
+  width: <?=h($picw)?>,
+  height: <?=h($pich)?>,
+
+});
+
+<?php if($imgfile):?>
+var canvas = document.createElement('canvas');
+var context = canvas.getContext("2d");
+console.log (canvas);
+    var context = self.context;
+	var self = Tegaki;
+    var image = new Image();
+    image.onload = function() {
+		self.activeLayer.ctx.drawImage(image, 0, 0);
+		TegakiLayers.syncLayerImageData(self.activeLayer);
+		self.copyContextState(canvas, self.activeLayer.ctx);
+    };
+    image.src = "<?=h($imgfile)?>"; // image URL
+<?php endif;?>
+
+</script>
+</body>
+</html>

@@ -232,28 +232,28 @@
 <?php if($use_sns_button||($resform && $resname)):?>
 	<div class="res_button_wrap">
 		<?php if($resform && $resname):?>
-			<script>
-				function add_to_com() {
-					var textField = document.getElementById("res_com");
-					var postername = "<?=h($resname)?><?php if($en):?>-san<?php else:?>さん<?php endif;?>";
-						// テキストフィールドの現在のカーソル位置を取得
-						var startPos = textField.selectionStart;
-						var endPos = textField.selectionEnd;
-						// カーソル位置に指定した文字列を挿入
-						textField.value = textField.value.substring(0, startPos) + postername + textField.value.substring(endPos);
-						// カーソル位置を更新
-						var newCursorPosition = startPos + postername.length;
-						textField.setSelectionRange(newCursorPosition, newCursorPosition);						// テキストフィールドにフォーカスを設定
-						textField.focus();
-					}
-					</script>
-			<button class="copy_button" onclick="add_to_com()"><?php if($en):?>Copy the poster name<?php else:?>投稿者名をコピー<?php endif;?></button>
+		<script>
+		function add_to_com() {
+			var textField = document.getElementById("res_com");
+			var postername = "<?=h($resname)?><?php if($en):?>-san<?php else:?>さん<?php endif;?>";
+			// テキストフィールドの現在のカーソル位置を取得
+			var startPos = textField.selectionStart;
+			var endPos = textField.selectionEnd;
+			// カーソル位置に指定した文字列を挿入
+			textField.value = textField.value.substring(0, startPos) + postername + textField.value.substring(endPos);
+			// カーソル位置を更新
+			var newCursorPosition = startPos + postername.length;
+			textField.setSelectionRange(newCursorPosition, newCursorPosition);						// テキストフィールドにフォーカスを設定
+			textField.focus();
+		}
+		</script>
+		<button class="copy_button" onclick="add_to_com()"><?php if($en):?>Copy the poster name<?php else:?>投稿者名をコピー<?php endif;?></button>
 		<?php endif; ?>
-	<?php if($use_sns_button):?>
-		<span class="share_button">
-			<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a>
-		</span>
-	<?php endif;?>
+			<?php if($use_sns_button):?>
+				<span class="share_button">
+					<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a>
+				</span>
+			<?php endif;?>
 	</div>
 <?php endif;?>
 

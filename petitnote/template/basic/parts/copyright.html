@@ -1,6 +1,24 @@
+<?php 
+$arr_apps=app_to_use();
+$empty=(empty($arr_apps));
+// string(3) "neo" string(3) "chi" string(6) "klecks" string(6) "tegaki"
+?>
 <a href="https://paintbbs.sakura.ne.jp/" target="_blank" rel="noopener noreferrer" title="Petit Note <?=h($petit_ver)?> <?=h($petit_lot)?>">Petit Note <?=h($petit_ver)?></a> <span>Web Style by BASIC</span><br>
-<span>OekakiApp -</span> <a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a> , <a href="https://bitbof.com/"  target="_blank" rel="noopener noreferrer" title="by bitbof">Klecks</a> , <a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a>
+<?php if(!empty($arr_apps)):?>
+<span>OekakiApp -</span> 
+	<?php if(in_array('neo',$arr_apps)):?><a href="http://github.com/funige/neo/" target="_blank" rel="noopener noreferrer" title="by funige">PaintBBS NEO</a><?php endif;?>
+	<?php if(in_array('tegaki',$arr_apps)):?>
+		<?php if(in_array('neo', $arr_apps)):?>, <?php endif;?>
+		<a href="https://github.com/desuwa/tegaki" target="_blank" rel="noopener noreferrer" title="by Maxime Youdine">Tegaki</a> <?php endif;?>
+	<?php if(in_array('klecks',$arr_apps)):?>
+		<?php if(in_array('neo', $arr_apps)||in_array('tegaki', $arr_apps)):?>, <?php endif;?>
+		<a href="https://bitbof.com/"  target="_blank" rel="noopener noreferrer" title="by bitbof">Klecks</a> <?php endif;?>
+	<?php if(in_array('chi',$arr_apps)):?>
+		<?php if(in_array('neo', $arr_apps)||in_array('tegaki', $arr_apps)||in_array('klecks', $arr_apps)):?>, <?php endif;?>
+	<a href="https://github.com/thenickdude/chickenpaint" target="_blank" rel="noopener noreferrer" title="by Nicholas Sherlock">ChickenPaint</a><?php endif;?>
+
 <br>
+<?php endif;?>
 <span>UseFunction - <span title="by WonderCatStudio">DynamicPalette</span></span>
 <!--http://wondercatstudio.com/-->
 , 

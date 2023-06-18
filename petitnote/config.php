@@ -123,6 +123,12 @@ $display_link_back_to_home = true;
 $use_paintbbs_neo= true;
 // $use_paintbbs_neo= false;
 
+// Tegakiを使う
+// 使う:true 使わない:false
+
+$use_tegaki= true;
+// $use_tegaki= false;
+
 // ChickenPaintを使う
 // 使う:true 使わない:false
 

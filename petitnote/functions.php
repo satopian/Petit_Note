@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230609;
+$functions_ver=20230618;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -284,6 +284,9 @@ function create_res($line,$options=[]){
 			break;
 		case 'klecks';
 			$tool='Klecks';
+			break;
+		case 'tegaki';
+			$tool='Tegaki';
 			break;
 		case 'upload':
 			$tool=$en?'Upload':'アップロード';
@@ -1102,7 +1105,7 @@ function get_pch_size($src) {
 
 //使用するペイントアプリの配列化
 function app_to_use(){
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki;
 		$arr_apps=[];
 		if($use_paintbbs_neo){
 			$arr_apps[]='neo';
@@ -1112,6 +1115,9 @@ function app_to_use(){
 		}
 		if($use_klecs){
 			$arr_apps[]='klecks';
+		}
+		if($use_tegaki){
+			$arr_apps[]='tegaki';
 		}
 		return $arr_apps;
 	}

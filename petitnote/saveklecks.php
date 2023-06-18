@@ -52,7 +52,7 @@ $u_agent = str_replace("\t", "", $u_agent);
 $imgext='.png';
 /* ---------- 投稿者情報記録 ---------- */
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
-$tool = 'klecks';
+$tool = (string)filter_input(INPUT_POST, 'tool');
 $repcode = (string)filter_input(INPUT_POST, 'repcode');
 $stime = (string)filter_input(INPUT_POST, 'stime',FILTER_VALIDATE_INT);
 $resto = (string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT);
