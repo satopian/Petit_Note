@@ -1,3 +1,5 @@
+var browserLanguage = window.navigator.language.toLowerCase();
+var isJa = browserLanguage.startsWith('ja');
 /*! tegaki.js, MIT License */'use strict';var TegakiStrings = {
   // Messages
   badDimensions: 'Invalid dimensions.',
@@ -13,22 +15,22 @@
   confirmChangeCanvas: 'Are you sure? Changing the canvas will clear all layers and history and disable replay recording.',
   
   // Controls
-  color: 'Color',
-  size: 'Size',
-  alpha: 'Opacity',
-  flow: 'Flow',
-  zoom: 'Zoom',
-  layers: 'Layers',
-  switchPalette: 'Switch color palette',
-  paletteSlotReplace: 'Right click to replace with the current color',
+  color:isJa ? 'カラー':'Color',
+  size:isJa ? 'サイズ':'Size',
+  alpha:isJa ? '不透明度':'Opacity',
+  flow:isJa ? '流量':'Flow',
+  zoom:isJa ? 'ズーム':'Zoom',
+  layers:isJa ? 'レイヤー':'Layers',
+  switchPalette: isJa ? 'パレット切り替え':'Switch color palette',
+  paletteSlotReplace: isJa ? '現在の色を右クリックで入れ替える':'Right click to replace with the current color',
   
   // Layers
-  layer: 'Layer',
-  addLayer: 'Add layer',
-  delLayers: 'Delete layers',
-  mergeLayers: 'Merge layers',
-  moveLayerUp: 'Move up',
-  moveLayerDown: 'Move down',
+  layer:isJa ? 'レイヤー':'Layer',
+  addLayer:isJa ? 'レイヤー追加':'Add layer',
+  delLayers:isJa ? '':'Delete layers',
+  mergeLayers:isJa ?  'レイヤー結合':'Merge layers',
+  moveLayerUp:isJa ?  '上へ':'Move up',
+  moveLayerDown:isJa ?  '下へ':'Move down',
   toggleVisibility: 'Toggle visibility',
   
   // Menu bar
@@ -36,26 +38,26 @@
   open: 'Open',
   save: 'Save',
   saveAs: 'Save As',
-  export: 'Export',
-  undo: 'Undo',
-  redo: 'Redo',
+  export:isJa ? 'エクスポート':'Export',
+  undo:isJa ? '取り消し':'Undo',
+  redo: isJa ? 'やり直し':'Redo',
   close: 'Close',
-  finish: 'Finish',
+  finish:isJa ? '投稿': 'Finish',
   
   // Tool modes
   tip: 'Tip',
-  pressure: 'Pressure',
-  preserveAlpha: 'Preserve Alpha',
+  pressure:isJa ?'筆圧':'Pressure',
+  preserveAlpha:isJa ?'透明度をロック': 'Preserve Alpha',
   
   // Tools
-  pen: 'Pen',
-  pencil: 'Pencil',
-  airbrush: 'Airbrush',
-  pipette: 'Pipette',
-  blur: 'Blur',
-  eraser: 'Eraser',
-  bucket: 'Bucket',
-  tone: 'Tone',
+  pen: isJa ? 'ペン':'Pen',
+  pencil:isJa ? '鉛筆': 'Pencil',
+  airbrush:isJa ? 'エアブラシ': 'Airbrush',
+  pipette:isJa ? 'スポイト': 'Pipette',
+  blur:isJa ? '水滴': 'Blur',
+  eraser:isJa ? '消しゴム': 'Eraser',
+  bucket:isJa ? '塗りつぶし': 'Bucket',
+  tone:isJa ? 'トーン': 'Tone',
   
   // Replay
   gapless: 'Gapless',
