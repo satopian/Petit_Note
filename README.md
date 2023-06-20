@@ -72,6 +72,28 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 
 ## 履歴
 
+## 23/06/20 v0.78.2
+### ペイントアプリ tegaki.js に対応
+![image](https://github.com/satopian/Petit_Note/assets/44894014/11ccba9f-a98c-43b7-ace1-38e138dea216)
+
+英語文化圏の画像掲示板で使用されているお絵かきアプリ、tegaki.jsに対応しました。  
+本当は描画アニメの記録と再生まで対応したかったのですが、細部がどうしても調整できなかったため、PNG画像の投稿どまります。  
+PNGしか投稿されないので、続きを描くも、レイヤーが統合された画像からになります。  
+レイヤーは最大25枚まで。  
+不透明度のスライダで網の濃さがかわる塗るトーンもあります。  
+
+```
+// Tegakiを使う
+// 使う:true 使わない:false
+
+$use_tegaki= true;
+// $use_tegaki= false;
+
+```
+config.phpに設定項目を追加して、
+`$use_tegaki= true;`
+にすると、Tegakiが使用可能になります。  
+
 ## 23/06/17 v0.77.2
 ### ｢投稿者名をコピー｣機能を改善
 
