@@ -85,14 +85,11 @@ Tegaki.open({
 });
 
 <?php if($imgfile):?>
-	var canvas = document.createElement('canvas');
-	var context = canvas.getContext("2d");
 	var self = Tegaki;
     var image = new Image();
     image.onload = function() {
 		self.activeLayer.ctx.drawImage(image, 0, 0);
 		TegakiLayers.syncLayerImageData(self.activeLayer);
-		self.copyContextState(canvas, self.activeLayer.ctx);
     };
     image.src = "<?=h($imgfile)?>"; // image URL
 <?php endif;?>
