@@ -85,10 +85,8 @@ Tegaki.open({
 });
 
 <?php if($imgfile):?>
-var canvas = document.createElement('canvas');
-var context = canvas.getContext("2d");
-console.log (canvas);
-    var context = self.context;
+	var canvas = document.createElement('canvas');
+	var context = canvas.getContext("2d");
 	var self = Tegaki;
     var image = new Image();
     image.onload = function() {
