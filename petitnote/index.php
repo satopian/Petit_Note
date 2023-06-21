@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.78.2';
-$petit_lot='lot.20230620';
+$petit_ver='v0.78.3';
+$petit_lot='lot.20230621';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230620){
+if(!isset($functions_ver)||$functions_ver<20230621){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -511,6 +511,7 @@ function post(){
 		}
 	}
 	$pchext= ($pchext==='.pch' && $hide_animation) ? 'hide_animation' : $pchext; 
+	$pchext= ($pchext==='.tgkr' && $hide_animation) ? 'hide_tgkr' : $pchext; 
 
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
@@ -1466,7 +1467,7 @@ function pchview(){
 
 	$pchext=basename($pchext);
 
-	$view_replay = ($pchext==='.pch') && check_pch_ext(IMG_DIR . $time) ;
+	$view_replay = ($pchext==='.pch'||$pchext==='.tgkr') && check_pch_ext(IMG_DIR . $time);
 	if(!$view_replay||!is_file(IMG_DIR.$imagefile)){
 		return error('ファイルがありません。');
 	}
@@ -1475,8 +1476,13 @@ function pchview(){
 	list($picw, $pich) = getimagesize(IMG_DIR.$imagefile);
 	$appw = $picw < 200 ? 200 : $picw;
 	$apph = $pich < 200 ? 200 : $pich + 26;
+	$parameter_day = date("Ymd");
 	// HTML出力
-	$templete='pch_view.html';
+	if($pchext==='.pch'){
+		$templete='pch_view.html';
+	}elseif($pchext==='.tgkr'){
+		$templete='tgkr_view.html';
+	}
 	return include __DIR__.'/'.$skindir.$templete;
 
 }

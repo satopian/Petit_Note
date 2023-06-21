@@ -27,7 +27,7 @@ var isJa = browserLanguage.startsWith('ja');
   // Layers
   layer:isJa ? 'レイヤー':'Layer',
   addLayer:isJa ? 'レイヤー追加':'Add layer',
-  delLayers:isJa ? '':'Delete layers',
+  delLayers:isJa ? 'レイヤー削除':'Delete layers',
   mergeLayers:isJa ?  'レイヤー結合':'Merge layers',
   moveLayerUp:isJa ?  '上へ':'Move up',
   moveLayerDown:isJa ?  '下へ':'Move down',
@@ -41,7 +41,7 @@ var isJa = browserLanguage.startsWith('ja');
   export:isJa ? 'エクスポート':'Export',
   undo:isJa ? '取り消し':'Undo',
   redo: isJa ? 'やり直し':'Redo',
-  close: 'Close',
+  close: isJa ? '閉じる':'Close',
   finish:isJa ? '投稿': 'Finish',
   
   // Tool modes
@@ -5659,7 +5659,11 @@ var TegakiUI = {
 	  btn.id = 'tegaki-finish-btn';
 	  btn.className = 'tegaki-mb-btn';
 	  btn.textContent = TegakiStrings.close;
-	  $T.on(btn, 'click', Tegaki.onCloseViewerClick);
+	  //   ビューワーの閉じるの本来の動作を無効化して、タブを閉じるに変更する。
+	  $T.on(btn, 'click', function() {
+		window.close();
+	  });
+	//   $T.on(btn, 'click', Tegaki.onCloseViewerClick);
 	  frag.appendChild(btn);
 	  
 	  return frag;

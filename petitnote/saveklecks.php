@@ -100,6 +100,17 @@ if(isset($_FILES['psd']) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
 		}
 	}
 }
+if(isset($_FILES['tgkr']) && ($_FILES['tgkr']['error'] == UPLOAD_ERR_OK)){
+	if(mime_content_type($_FILES['tgkr']['tmp_name'])==="application/octet-stream"){
+		if(!SIZE_CHECK || ($_FILES['tgkr']['size'] < (PSD_MAX_KB * 1024))){
+			//PSDファイルのアップロードができなかった場合はエラーメッセージはださず、画像のみ投稿する。 
+			move_uploaded_file($_FILES['tgkr']['tmp_name'], TEMP_DIR.$imgfile.'.tgkr');
+			if(is_file(TEMP_DIR.$imgfile.'.tgkr')){
+				chmod(TEMP_DIR.$imgfile.'.tgkr',PERMISSION_FOR_DEST);
+			}
+		}
+	}
+}
 // 情報データをファイルに書き込む
 file_put_contents(TEMP_DIR.$imgfile.".dat",$userdata,LOCK_EX);
 

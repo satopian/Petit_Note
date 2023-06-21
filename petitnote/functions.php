@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230620;
+$functions_ver=20230621;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -299,7 +299,7 @@ function create_res($line,$options=[]){
 			break;
 	}
 
-	$anime = ($pchext==='.pch'); 
+	$anime = ($pchext==='.pch'||$pchext==='.tgkr'); 
 	$hide_thumbnail = $mark_sensitive_image ? ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_') :'';
 
 	$_w=$w;
@@ -551,6 +551,7 @@ function delete_files ($imgfile, $time) {
 	safe_unlink(IMG_DIR.$time.'.spch');
 	safe_unlink(IMG_DIR.$time.'.chi');
 	safe_unlink(IMG_DIR.$time.'.psd');
+	safe_unlink(IMG_DIR.$time.'.tgkr');
 	safe_unlink(__DIR__.'/template/cache/index_cache.json');
 }
 
@@ -964,9 +965,9 @@ function calc_remaining_time_to_close_thread ($sec) {
  */
 function check_pch_ext ($filepath,$options = []) {
 	
-	$exts=[".pch",".chi",".psd"];
+	$exts=[".pch",".tgkr",".chi",".psd"];
 
-	foreach($exts as $ext){
+	foreach($exts as $i => $ext){
 
 		if (is_file($filepath . $ext)) {
 			if(!in_array(mime_content_type($filepath . $ext),["application/octet-stream","image/vnd.adobe.photoshop"])){
@@ -974,8 +975,8 @@ function check_pch_ext ($filepath,$options = []) {
 			}
 			return $ext;
 		}
-		if(!isset($options['upload'])){
-			return '';
+		if(!isset($options['upload']) && $i === 1){
+				return '';
 		}
 	}
 	return '';
