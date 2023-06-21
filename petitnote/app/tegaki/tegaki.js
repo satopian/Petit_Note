@@ -3942,10 +3942,13 @@ var Tegaki = {
 	  TegakiUI.printMsg(TegakiStrings.errorLoadImage);
 	},
 	
-	resizeCanvas: function(width, height) {
-	return;//リサイズ機能を無効化
-	},
-	
+ resizeCanvas: function(width, height) {
+    
+    Tegaki.resetLayers();
+    Tegaki.centerLayersCnt();
+    Tegaki.updatePosOffset();
+  },
+ 	
 	copyContextState: function(src, dest) {
 	  var i, p, props = [
 		'lineCap', 'lineJoin', 'strokeStyle', 'fillStyle', 'globalAlpha',
@@ -5066,7 +5069,8 @@ class TegakiReplayViewer {
 	  
 	  this.destroyed = false;
 	  
-	  this.speedIndex = 1;
+	//   this.speedIndex = 1;
+	  this.speedIndex = 4;//デフォルトの再生速度を10.0に
 	  this.speedList = [0.5, 1.0, 2.0, 5.0, 10.0, 25.0];
 	  this.speed = this.speedList[this.speedIndex];
 	  
