@@ -976,7 +976,7 @@ function check_pch_ext ($filepath,$options = []) {
 			return $ext;
 		}
 		if(!isset($options['upload']) && $i === 1){
-				return '';
+			return '';
 		}
 	}
 	return '';
