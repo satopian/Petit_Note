@@ -60,15 +60,15 @@ var isJa = browserLanguage.startsWith('ja');
   tone:isJa ? 'トーン': 'Tone',
   
   // Replay
-  gapless: 'Gapless',
-  play: 'Play',
-  pause: 'Pause',
-  rewind: 'Rewind',
-  slower: 'Slower',
-  faster: 'Faster',
-  recordingEnabled: 'Recording replay',
-  errorLoadReplay: 'Could not load the replay: ',
-  loadingReplay: 'Loading replay…',
+  gapless:isJa ? 'ギャップレス':'Gapless',
+  play:isJa ? '再生':'Play',
+  pause:isJa ? '一時停止':'Pause',
+  rewind:isJa ? '巻き戻し':'Rewind',
+  slower:isJa ? '低速':'Slower',
+  faster:isJa ? '高速':'Faster',
+  recordingEnabled:isJa ? '録画中':'Recording replay',
+  errorLoadReplay:isJa ? '再生できません。':'Could not load the replay: ',
+  loadingReplay:'Loading replay…',
 };
 class TegakiTool {
   constructor() {
