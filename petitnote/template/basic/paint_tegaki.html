@@ -17,6 +17,12 @@
 </head>
 <body>
 <script>
+function showAlert(text) {
+  if (Tegaki.saveReplay) {
+    Tegaki.replayRecorder.start();
+  }
+  alert(text);
+}
 Tegaki.open({
 // when the user clicks on Finish
   onDone: function() {
@@ -43,39 +49,22 @@ Tegaki.open({
 						Tegaki.hide();//｢このサイトを離れますか?｣を解除
 						return window.location.href="index.php?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>";
 					}
-
-					if (Tegaki.saveReplay) {
-						Tegaki.replayRecorder.start();
-					}
-
-					return alert(text);
+					return showAlert(text);
 				})
 			}else{
 				let response_status = response.status; 
 
 				if(response_status===403){
-					if (Tegaki.saveReplay) {
-						Tegaki.replayRecorder.start();
-					}
-					return alert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
+					return showAlert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
 				}
 				if(response_status===404){
-					if (Tegaki.saveReplay) {
-						Tegaki.replayRecorder.start();
-					}
-					return alert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
+					return showAlert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
 				}
-				if (Tegaki.saveReplay) {
-						Tegaki.replayRecorder.start();
-				}
-				return alert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗\n時間をおいて再度投稿してみてください。'<?php endif;?>);
+				return showAlert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗\n時間をおいて再度投稿してみてください。'<?php endif;?>);
 			}
 		})
 		.catch((error) => {
-				if (Tegaki.saveReplay) {
-						Tegaki.replayRecorder.start();
-				}
-				return alert(<?php if($en):?>'Server or line is unstable.\nPlease try again!'<?php else:?>'サーバまたは回線が不安定です。\n時間をおいて再度投稿してみてください。'<?php endif;?>);	
+				return showAlert(<?php if($en):?>'Server or line is unstable.\nPlease try again!'<?php else:?>'サーバまたは回線が不安定です。\n時間をおいて再度投稿してみてください。'<?php endif;?>);	
 		})
 	}
 
@@ -105,7 +94,6 @@ Tegaki.open({
   // initial canvas size
   width: <?=h($picw)?>,
   height: <?=h($pich)?>,
-  
   saveReplay: <?php if($imgfile):?>false<?php else:?>true<?php endif;?>,
 
 });
