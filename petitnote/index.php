@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.78.6';
+$petit_ver='v0.78.7';
 $petit_lot='lot.20230623';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1000,6 +1000,8 @@ function to_continue(){
 	$picfile = $thumbnail ? THUMB_DIR.$time.'s.jpg' : IMG_DIR.$imgfile;
 
 	$pch_exists = in_array($_pchext,['hide_animation','.pch']);
+	$hide_animation_checkd = ($_pchext==='hide_animation');
+
 	$pchext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
 
 	$pchext=basename($pchext);
