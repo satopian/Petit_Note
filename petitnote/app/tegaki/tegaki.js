@@ -1193,7 +1193,9 @@ class TegakiPipette extends TegakiTool {
     var c, ctx;
     
     if (true) {
-      ctx = Tegaki.flatten().getContext('2d');
+      ctx = Tegaki.flatten().getContext('2d',{
+		willReadFrequently: true,
+	});
     }
     else {
 	}
@@ -1504,7 +1506,9 @@ var $T = {
       canvas = source.cloneNode(false);
     }
     
-    canvas.getContext('2d').drawImage(source, 0, 0);
+    canvas.getContext('2d',{
+		willReadFrequently: true,
+	}).drawImage(source, 0, 0);
     
     return canvas;
   },
@@ -1704,7 +1708,9 @@ var TegakiCursor = {
 	init: function(w, h) {
 	  var el;
 	  
-	  this.tmpCtx = $T.el('canvas').getContext('2d');
+	  this.tmpCtx = $T.el('canvas').getContext('2d',{
+		willReadFrequently: true,
+	});
 	  
 	  el = $T.el('canvas');
 	  el.id = 'tegaki-cursor-layer';
@@ -1712,17 +1718,23 @@ var TegakiCursor = {
 	  el.height = h;
 	  Tegaki.layersCnt.appendChild(el);
 	  
-	  this.cursorCtx = el.getContext('2d');
+	  this.cursorCtx = el.getContext('2d',{
+		willReadFrequently: true,
+	  });
 	  
 	  el = $T.el('canvas');
 	  el.width = w;
 	  el.height = h;
-	  this.flatCtxAbove = el.getContext('2d');
+	  this.flatCtxAbove = el.getContext('2d',{
+		willReadFrequently: true,
+	  });
 	  
 	  el = $T.el('canvas');
 	  el.width = w;
 	  el.height = h;
-	  this.flatCtxBelow = el.getContext('2d');
+	  this.flatCtxBelow = el.getContext('2d',{
+		willReadFrequently: true,
+	  });
 	},
 	
 	updateCanvasSize: function(w, h) {
@@ -2309,7 +2321,9 @@ var TegakiLayers = {
     var newLayer = Object.assign({}, layer);
     
     newLayer.canvas = $T.copyCanvas(layer.canvas, true);
-    newLayer.ctx = newLayer.canvas.getContext('2d');
+    newLayer.ctx = newLayer.canvas.getContext('2d',{
+		willReadFrequently: true,
+	});
     newLayer.imageData = $T.copyImageData(layer.imageData);
     
     return newLayer;
@@ -2466,7 +2480,9 @@ var TegakiLayers = {
       alpha: 1.0,
     };
     
-    ctx = canvas.getContext('2d');
+    ctx = canvas.getContext('2d',{
+		willReadFrequently: true,
+	});
     
     layer = {
       id: id,
@@ -2573,7 +2589,9 @@ var TegakiLayers = {
     canvas.width = Tegaki.baseWidth;
     canvas.height = Tegaki.baseHeight;
     
-    ctx = canvas.getContext('2d');
+    ctx = canvas.getContext('2d',{
+		willReadFrequently: true,
+	});
     
     imageDataBefore = $T.copyImageData(targetLayer.imageData);
     
@@ -3012,7 +3030,9 @@ var Tegaki = {
 	  
 	  self.canvas = canvas;
 	  
-	  self.ctx = canvas.getContext('2d');
+	  self.ctx = canvas.getContext('2d',{
+		willReadFrequently: true,
+	  });
 	  self.ctx.fillStyle = self.bgColor;
 	  self.ctx.fillRect(0, 0, self.baseWidth, self.baseHeight);
 	  
@@ -3230,7 +3250,9 @@ var Tegaki = {
 	  
 	  if (!ctx) {
 		canvas = $T.el('canvas');
-		ctx = canvas.getContext('2d');
+		ctx = canvas.getContext('2d',{
+			willReadFrequently: true,
+		});
 	  }
 	  else {
 		canvas = ctx.canvas;
@@ -5070,7 +5092,7 @@ class TegakiReplayViewer {
 	  this.destroyed = false;
 	  
 	//   this.speedIndex = 1;
-	  this.speedIndex = 4;//デフォルトの再生速度を10.0に
+	  this.speedIndex = 5;//デフォルトの再生速度を25.0に
 	  this.speedList = [0.5, 1.0, 2.0, 5.0, 10.0, 25.0];
 	  this.speed = this.speedList[this.speedIndex];
 	  
@@ -6504,7 +6526,9 @@ var TegakiUI = {
 	  ctx = TegakiUI.getLayerPreviewCtx(layer);
 	  
 	  if (!ctx) {
-		ctx = canvas.getContext('2d');
+		ctx = canvas.getContext('2d',{
+			willReadFrequently: true,
+		});
 		ctx.imageSmoothingEnabled = false;
 		TegakiUI.setLayerPreviewCtx(layer, ctx);
 	  }
