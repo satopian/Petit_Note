@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2022
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.78.3';
-$petit_lot='lot.20230621';
+$petit_ver='v0.78.6';
+$petit_lot='lot.20230623';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -66,7 +66,7 @@ $use_chickenpaint=isset($use_chickenpaint) ? $use_chickenpaint : true;
 $max_file_size_in_png_format_paint = isset($max_file_size_in_png_format_paint) ? $max_file_size_in_png_format_paint : 1024;
 $max_file_size_in_png_format_upload = isset($max_file_size_in_png_format_upload) ? $max_file_size_in_png_format_upload : 800;
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
-$use_tegaki=isset($use_tegaki) ? $use_tegaki : false;
+$use_tegaki=isset($use_tegaki) ? $use_tegaki : true;
 $display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_back_to_home : true;
 $password_require_to_continue = isset($password_require_to_continue) ? (bool)$password_require_to_continue : false;
 $subject_input_required = isset($subject_input_required) ? $subject_input_required : false;
@@ -1000,8 +1000,6 @@ function to_continue(){
 	$picfile = $thumbnail ? THUMB_DIR.$time.'s.jpg' : IMG_DIR.$imgfile;
 
 	$pch_exists = in_array($_pchext,['hide_animation','.pch']);
-	$hide_animation_checkd = ($_pchext==='hide_animation');
-
 	$pchext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
 
 	$pchext=basename($pchext);
@@ -1650,8 +1648,8 @@ function edit_form($id='',$no=''){
 
 	$com=h(str_replace('"\n"',"\n",$com));
 
-	$pch_exists = in_array($pchext,['hide_animation','.pch']);
-	$hide_animation_checkd = ($pchext==='hide_animation');
+	$pch_exists = in_array($pchext,['.pch','.tgkr','hide_animation','hide_tgkr']);
+	$hide_animation_checkd = ($pchext==='hide_animation'||$pchext==='hide_tgkr');
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	$hide_thumb_checkd = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
@@ -1773,6 +1771,9 @@ function edit(){
 
 	if(in_array($pchext,['.pch','hide_animation'])){
 		$pchext= $hide_animation ? 'hide_animation' : '.pch'; 
+	}
+	if(in_array($pchext,['.tgkr','hide_tgkr'])){
+		$pchext= $hide_animation ? 'hide_tgkr' : '.tgkr'; 
 	}
 
 	$sub=($_oya==='res') ? $_sub : $sub; 
