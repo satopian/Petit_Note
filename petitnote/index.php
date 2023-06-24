@@ -1555,7 +1555,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	// nsfw
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
-	
+
 	$count_r_arr=count($r_arr);
 
 	if($edit_mode==='delmode'){
@@ -1941,7 +1941,7 @@ function del(){
 				}
 				closeFile ($rp);
 				safe_unlink(LOG_DIR.$no.'.log');
-			
+
 		}else{
 				delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
 				$deleted_sub = $en? 'No subject':'無題';
@@ -2241,7 +2241,7 @@ function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav;
-	
+
 	aikotoba_required_to_view();
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 
@@ -2274,7 +2274,7 @@ function view(){
 	if(empty($out)){
 		//oyaのループ
 		foreach($article_nos as $oya => $no){
-	
+
 			//個別スレッドのループ
 			if(!is_file(LOG_DIR."{$no}.log")){
 				continue;	
@@ -2331,7 +2331,7 @@ function view(){
 		if(!is_file(__DIR__.'/template/cache/index_cache.json')){
 		file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
 		chmod(__DIR__.'/template/cache/index_cache.json',0600);
-		}  
+		}
 	} 
 	// HTML出力
 	$templete='main.html';

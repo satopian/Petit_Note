@@ -118,7 +118,7 @@ if(!is_file(TEMP_DIR.$imgfile.'.dat')) {
 	die($en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
 }
 chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
-	
+
 die("ok");
 /**
  * 描画時間を計算
