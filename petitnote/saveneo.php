@@ -66,7 +66,7 @@ $usercode='';
 if($sendheader){
 	$sendheader = str_replace("&amp;", "&", $sendheader);
 	parse_str($sendheader, $u);
-	$tool = 'neo';
+	$tool = isset($u['tool']) ? $u['tool'] : '';
 	$usercode = isset($u['usercode']) ? $u['usercode'] : '';
 	$resto = isset($u['resto']) ? $u['resto'] : '';
 	$repcode = isset($u['repcode']) ? $u['repcode'] : '';

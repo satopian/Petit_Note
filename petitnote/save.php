@@ -55,7 +55,7 @@ $u_agent = str_replace("\t", "", $u_agent);
 $imgext='.png';
 /* ---------- 投稿者情報記録 ---------- */
 $userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
-$tool = 'chi';
+$tool = (string)filter_input(INPUT_GET, 'tool');
 $repcode = (string)filter_input(INPUT_GET, 'repcode');
 $stime = (string)filter_input(INPUT_GET, 'stime',FILTER_VALIDATE_INT);
 $resto = (string)filter_input(INPUT_GET, 'resto',FILTER_VALIDATE_INT);
