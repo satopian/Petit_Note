@@ -31,7 +31,7 @@
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 <link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
 
-<?php include('parts/nsfw_css_control.html');?>
+<?php include(__DIR__.'/parts/nsfw_css_control.html');?>
 	<title>[<?= h($out[0][0]['no'])?>] <?= h($out[0][0]['sub'])?> by <?= h($out[0][0]['name'])?> -  <?=h($boardname)?></title>
 </head>
 <body>
