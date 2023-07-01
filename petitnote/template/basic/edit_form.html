@@ -43,7 +43,7 @@
 	<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
 	<span><?=h($res['date'])?></span>		
 <?php if($res['img']):?>
-	<span>Tool:<?=h($res['tool'])?></span>
+	<?php if($res['tool']):?><span>Tool:<?=h($res['tool'])?></span><?php endif;?>
 	<?php if($res['painttime']):?>
 		<span><?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?></span>
 	<?php endif;?>

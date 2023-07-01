@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230621;
+$functions_ver=20230702;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -294,7 +294,7 @@ function create_res($line,$options=[]){
 			$upload_image = true;
 			break;
 		default:
-			$tool='???';
+			$tool='';
 			$continue = false;
 			break;
 	}
