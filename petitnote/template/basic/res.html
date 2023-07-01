@@ -31,7 +31,7 @@
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 <link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
 
-<?php include(__DIR__.'/parts/nsfw_css_control.html');?>
+<?php include __DIR__.'/parts/nsfw_css_control.html';?>
 	<title>[<?= h($out[0][0]['no'])?>] <?= h($out[0][0]['sub'])?> by <?= h($out[0][0]['name'])?> -  <?=h($boardname)?></title>
 </head>
 <body>
@@ -412,7 +412,7 @@
 	[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 </div>
 <div class="righit_wrap">
-<?php include(__DIR__.'/parts/copyright.html');?>
+<?php include __DIR__.'/parts/copyright.html';?>
 </div>
 </div>
 </div>

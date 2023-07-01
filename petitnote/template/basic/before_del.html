@@ -10,7 +10,7 @@
 <link rel="preload" as="script" href="lib/luminous/luminous.min.js">
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 <link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
-<?php include(__DIR__.'/parts/nsfw_css_control.html');?>
+<?php include __DIR__.'/parts/nsfw_css_control.html';?>
 	<title><?=h($boardname)?></title> 
 </head>
 <body>
@@ -60,7 +60,7 @@
 <?php endif;?>
 
 <hr>
-<?php include __DIR__.'/parts/before_edit_del_res_loop.php';?>
+<?php include __DIR__.'/parts/before_edit_del_res_loop.html';?>
 <div class="clear"></div>
 <hr>
 <div class="copy">
@@ -74,7 +74,7 @@
 </div>
 
 <div class="righit_wrap">
-<?php include(__DIR__.'/parts/copyright.html');?>
+<?php include __DIR__.'/parts/copyright.html';?>
 </div>
 </div>
 </div>
