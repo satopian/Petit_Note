@@ -12,7 +12,7 @@
 	<div class="imginfo_wrap">
 
 	<?php if($edit_mode==='delmode'):?>
-		<label><input type="radio" name="id_and_no" form="before_delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+		<label><input type="checkbox" name="id_and_no" form="before_delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
 	<?php endif;?>
 	<?php if($edit_mode==='editmode'):?>
 		<input type="hidden" name="id_and_no" form="before_delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">

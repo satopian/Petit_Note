@@ -276,6 +276,9 @@ function create_res($line,$options=[]){
 		case 'neo':
 			$tool='PaintBBS NEO';
 			break;
+		case 'PaintBBS':
+			$tool='PaintBBS';
+			break;
 		case 'shi-Painter':
 			$tool='shi-Painter';
 			break;
@@ -959,7 +962,7 @@ function calc_remaining_time_to_close_thread ($sec) {
 }
 
 /**
- * pchかchiかpsdか、それともファイルが存在しないかチェック
+ * pchかtgkrかchiかpsdか、それともファイルが存在しないかチェック
  * @param $filepath
  * @return string
  */
