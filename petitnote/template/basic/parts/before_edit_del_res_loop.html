@@ -12,7 +12,8 @@
 	<div class="imginfo_wrap">
 
 	<?php if($edit_mode==='delmode'):?>
-		<label><input type="checkbox" name="id_and_no" form="before_delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+		<input type="checkbox" name="id_and_no" form="before_delete" id="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
+		<label for="id_and_no">
 	<?php endif;?>
 	<?php if($edit_mode==='editmode'):?>
 		<input type="hidden" name="id_and_no" form="before_delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
@@ -41,6 +42,7 @@
 <?php if($edit_mode==='delmode'):?>
 </label>
 <?php endif;?>
+
 <?php if($admindel):?>
 		<br>
 		HOST:<?=h($res['host'])?>
@@ -61,6 +63,7 @@
 			</div>
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>
+
 			<?php endforeach;?>
 			<?php endforeach;?>
 			<?php endif;?>
