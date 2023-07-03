@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.79.2';
-$petit_lot='lot.20230702';
+$petit_ver='v0.79.3';
+$petit_lot='lot.20230703';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1696,13 +1696,6 @@ function edit(){
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
 
-	//POSTされた値をログファイルに格納する書式にフォーマット
-	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
-	$name = $formatted_post['name'];
-	$sub = $formatted_post['sub'];
-	$url = $formatted_post['url'];
-	$com = $formatted_post['com'];
-
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
@@ -1744,6 +1737,16 @@ function edit(){
 		closeFile($fp);
 		return error($en?'This operation has failed.':'失敗しました。');
 	}
+
+	$sub=($_oya==='res') ? $_sub : $sub; 
+
+	//POSTされた値をログファイルに格納する書式にフォーマット
+	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
+	$name = $formatted_post['name'];
+	$sub = $formatted_post['sub'];
+	$url = $formatted_post['url'];
+	$com = $formatted_post['com'];
+
 	if(!$_imgfile && !$com){
 		closeFile($rp);
 		closeFile($fp);
@@ -1777,9 +1780,6 @@ function edit(){
 	if(in_array($pchext,['.tgkr','hide_tgkr'])){
 		$pchext= $hide_animation ? 'hide_tgkr' : '.tgkr'; 
 	}
-
-	$sub=($_oya==='res') ? $_sub : $sub; 
-	$sub=(!$sub) ? ($en? 'No subject':'無題') : $sub;
 
 	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 	
