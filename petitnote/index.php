@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.79.5';
+$petit_ver='v0.79.7';
 $petit_lot='lot.20230703';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -674,8 +674,6 @@ function post(){
 
 		noticemail::send($data);
 	}
-
-	unset($admin_pass);
 
 	//多重送信防止
 	if($resto){
@@ -1665,7 +1663,7 @@ function edit_form($id='',$no=''){
 
 //編集
 function edit(){
-	global $name_input_required,$max_com,$en,$mark_sensitive_image;
+	global $name_input_required,$max_com,$en,$mark_sensitive_image,$admin_pass;
 
 	check_csrf_token();
 
@@ -1687,7 +1685,8 @@ function edit(){
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
 	session_sta();
-	$admindel=admindel_valid();
+	$admindel=(admindel_valid()||($pwd && $pwd === $admin_pass));
+	
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	if(!($admindel||($userdel&&$pwd))){
 		return error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
