@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.79.7';
-$petit_lot='lot.20230703';
+$petit_ver='v0.79.8';
+$petit_lot='lot.20230705';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1977,7 +1977,7 @@ function del(){
 //検索画面
 function search(){
 	global $use_aikotoba,$home,$skindir;
-	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en; 
+	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en,$mark_sensitive_image; 
 	global $max_search,$search_images_pagedef,$search_comments_pagedef; 
 
 	aikotoba_required_to_view();
@@ -2180,7 +2180,7 @@ function search(){
 //カタログ表示
 function catalog(){
 	global $use_aikotoba,$home,$catalog_pagedef,$skindir,$display_link_back_to_home;
-	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en; 
+	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en,$mark_sensitive_image; 
 
 	aikotoba_required_to_view();
 

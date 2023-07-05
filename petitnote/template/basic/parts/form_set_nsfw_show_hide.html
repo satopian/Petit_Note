@@ -1,0 +1,10 @@
+<div>
+<?php if($en):?>NSFW:<?php else:?>閲覧注意画像:<?php endif;?>
+<form action="./" method="post" id="set_nsfw_show_hide" class="aikotoba" onsubmit="return form_submit_set_nsfw_show_hide(event)" >
+<input type="radio" name="set_nsfw_show_hide" value="" id="nsfw_hide" <?php if(!$set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_hide"><?php if($en):?>Hide<?php else:?>隠す<?php endif;?></label>
+<input type="radio" name="set_nsfw_show_hide" value="on" id="nsfw_dont_hide" <?php if($set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_dont_hide"><?php if($en):?>Don't hide<?php else:?>隠さない<?php endif;?></label>
+<input type="hidden" name="mode" value="set_nsfw_show_hide">
+<input type="hidden" name="postpage" value="<?=h($page)?>">
+<input type="submit" value="<?php if($en):?>Setting<?php else:?>設定<?php endif;?>">
+</form>
+</div>

@@ -92,7 +92,35 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 			});
 	}
 }
-// (c)satopian MIT LICENCE ここまで
+//検索画面設定項目 閲覧注意画像を隠す/隠さない
+function form_submit_set_nsfw_show_hide(event) {
+	const form = document.getElementById("set_nsfw_show_hide");	
+	const submitBtn = form.querySelector('input[type="submit"]');	
+	if (form) {
+			event.preventDefault(); // 通常フォームの送信を中断
+			const formData = new FormData(form);
+			fetch("./", {
+			method: "post",
+			mode: 'same-origin',
+			body: formData
+			})
+			.then(function(response) {
+			// レスポンスの処理
+			console.log("Data sent successfully");
+			submitBtn.disabled = false;
+			location.reload();
+			})
+			.catch(function(error) {
+			// エラーハンドリング
+			console.error("Error:", error);
+			submitBtn.disabled = false;
+			});
+			
+			return false;
+		}
+	}
+
+	// (c)satopian MIT LICENCE ここまで
 
 jQuery(function() {
 	window.onpageshow = function(){

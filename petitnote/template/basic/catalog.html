@@ -36,6 +36,10 @@
 <span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 <a href="#bottom">▽</a>
 </nav>
+<?php if($mark_sensitive_image):?>
+	<!-- 閲覧注意画像を隠す/隠さない -->
+	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
+<?php endif;?>
 <hr>
 <div class="catalog_wrap">
 	<!-- 親のループ -->
