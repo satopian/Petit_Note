@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230702;
+$functions_ver=20230706;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1175,4 +1175,33 @@ function getTranslatedLayerName() {
 	}
 
 	return "Layer";
+}
+//SNSへ共有リンクを送信
+function post_share_server(){
+	global $en;
+
+	$sns_server_radio=(string)filter_input(INPUT_POST,"sns_server_radio",FILTER_VALIDATE_URL);
+	$sns_server_radio_for_cookie=(string)filter_input(INPUT_POST,"sns_server_radio");//directを判定するためurlでバリデーションしていない
+	$sns_server_radio_for_cookie=($sns_server_radio_for_cookie === 'direct') ? 'direct' : $sns_server_radio;
+	$sns_server_direct_input=(string)filter_input(INPUT_POST,"sns_server_direct_input",FILTER_VALIDATE_URL);
+	$encoded_t=(string)filter_input(INPUT_POST,"encoded_t");
+	$encoded_t=urlencode($encoded_t);
+	$encoded_u=(string)filter_input(INPUT_POST,"encoded_u");
+	$encoded_u=urlencode($encoded_u);
+	setcookie("sns_server_radio_cookie",$sns_server_radio_for_cookie, time()+(86400*30),"","",false,true);
+	setcookie("sns_server_direct_input_cookie",$sns_server_direct_input, time()+(86400*30),"","",false,true);
+	$share_url='';
+	if($sns_server_radio==="https://twitter.com/"){
+		$share_url="https://twitter.com/intent/tweet?text=";
+	}elseif($sns_server_radio){
+		$share_url=$sns_server_radio."/share?text=";
+	}elseif($sns_server_direct_input){
+		$share_url=$sns_server_direct_input."/share?text=";
+	}
+	$share_url.=$encoded_t.'&url='.$encoded_u;
+	$share_url = filter_var($share_url, FILTER_VALIDATE_URL) ? $share_url : ''; 
+	if(!$share_url){
+		error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");
+	}
+	return header('Location:'.$share_url);
 }

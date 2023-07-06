@@ -25,7 +25,7 @@
 <?php endif;?>
 <!--/SNS-->
 <link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
-<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css?<?=h($petit_lot)?>" onload="this.rel='stylesheet'">
 <link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
 <link rel="preload" as="script" href="lib/luminous/luminous.min.js">
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
@@ -243,7 +243,12 @@
 		<?php endif; ?>
 			<?php if($use_sns_button):?>
 				<span class="share_button">
+				<?php if($switch_sns):?>
+					<a href="?mode=set_share_server&encoded_t=<?=h($ress[0]['encoded_t'])?>&amp;encoded_u=<?=h($ress[0]['encoded_u'])?>" onclick="open_sns_server_window(event)"><span class="icon-share-from-square-solid"></span>
+					<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
+				<?php else:?>
 					<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a>
+				<?php endif;?>
 				</span>
 			<?php endif;?>
 	</div>

@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.79.8';
-$petit_lot='lot.20230705';
+$petit_ver='v0.80.3';
+$petit_lot='lot.20230707';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230702){
+if(!isset($functions_ver)||$functions_ver<20230706){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 // jQueryバージョン
@@ -71,6 +71,7 @@ $display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_b
 $password_require_to_continue = isset($password_require_to_continue) ? (bool)$password_require_to_continue : false;
 $subject_input_required = isset($subject_input_required) ? $subject_input_required : false;
 $display_search_nav = isset($display_search_nav) ? $display_search_nav : false;
+$switch_sns = isset($switch_sns) ? $switch_sns : true;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -138,6 +139,10 @@ switch($mode){
 		return logout_admin();
 	case 'logout':
 		return logout();
+	case 'set_share_server':
+		return set_share_server();
+	case 'post_share_server':
+		return post_share_server();
 	case 'search':
 		return search();
 	case 'catalog':
@@ -1974,6 +1979,39 @@ function del(){
 	return header('Location: ./?page='.(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT));
 }
 
+//シェアするserverの選択画面
+function set_share_server(){
+	global $en,$skindir,$servers,$petit_lot;
+	
+	//ShareするServerの一覧
+	//｢"ラジオボタンに表示するServer名","snsのserverのurl"｣
+	$servers=isset($servers)?$servers:
+	[
+	
+		["twitter","https://twitter.com/"],
+		["mstdn.jp","https://mstdn.jp/"],
+		["pawoo.net","https://pawoo.net/"],
+		["fedibird.com","https://fedibird.com/"],
+		["misskey.io","https://misskey.io/"],
+		["misskey.design","https://misskey.design/"],
+		["nijimiss.moe","https://nijimiss.moe/"],
+		["sushi.ski","https://sushi.ski/"],
+	
+	];
+	//設定項目ここまで
+
+	$servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
+
+	$encoded_t=filter_input(INPUT_GET,"encoded_t");
+	$encoded_u=filter_input(INPUT_GET,"encoded_u");
+	$sns_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"sns_server_radio_cookie");
+	$sns_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"sns_server_direct_input_cookie");
+	
+	//HTML出力
+	$templete='set_share_server.html';
+	return include __DIR__.'/'.$skindir.$templete;
+
+}
 //検索画面
 function search(){
 	global $use_aikotoba,$home,$skindir;
@@ -2239,7 +2277,7 @@ function catalog(){
 function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns;
 
 	aikotoba_required_to_view();
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -2340,7 +2378,7 @@ function view(){
 function res (){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns;
 
 	aikotoba_required_to_view();
 
