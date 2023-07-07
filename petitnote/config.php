@@ -424,7 +424,7 @@ define("CRYPT_IV","T3pkYxNyjN7Wz3pu");//半角英数16文字
 // SNSシェア機能詳細設定
 
 //シェア機能に、Mastodon、Misskeyの各サーバを含める 
-// 含める:true 含めない:false  
+// 含める: true 含めない: false
 $switch_sns = true;
 // $switch_sns = false;
 
