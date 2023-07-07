@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.80.3';
-$petit_lot='lot.20230707';
+$petit_ver='v0.80.6';
+$petit_lot='lot.20230708';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1988,14 +1988,14 @@ function set_share_server(){
 	$servers=isset($servers)?$servers:
 	[
 	
-		["twitter","https://twitter.com/"],
-		["mstdn.jp","https://mstdn.jp/"],
-		["pawoo.net","https://pawoo.net/"],
-		["fedibird.com","https://fedibird.com/"],
-		["misskey.io","https://misskey.io/"],
-		["misskey.design","https://misskey.design/"],
-		["nijimiss.moe","https://nijimiss.moe/"],
-		["sushi.ski","https://sushi.ski/"],
+		["Twitter","https://twitter.com"],
+		["mstdn.jp","https://mstdn.jp"],
+		["pawoo.net","https://pawoo.net"],
+		["fedibird.com","https://fedibird.com"],
+		["misskey.io","https://misskey.io"],
+		["misskey.design","https://misskey.design"],
+		["nijimiss.moe","https://nijimiss.moe"],
+		["sushi.ski","https://sushi.ski"],
 	
 	];
 	//設定項目ここまで

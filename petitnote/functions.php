@@ -1191,7 +1191,7 @@ function post_share_server(){
 	setcookie("sns_server_radio_cookie",$sns_server_radio_for_cookie, time()+(86400*30),"","",false,true);
 	setcookie("sns_server_direct_input_cookie",$sns_server_direct_input, time()+(86400*30),"","",false,true);
 	$share_url='';
-	if($sns_server_radio==="https://twitter.com/"){
+	if($sns_server_radio==="https://twitter.com"){
 		$share_url="https://twitter.com/intent/tweet?text=";
 	}elseif($sns_server_radio){
 		$share_url=$sns_server_radio."/share?text=";
