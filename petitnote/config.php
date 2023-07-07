@@ -421,6 +421,30 @@ define("CRYPT_PASS","v25Xc9nZ82a5JPT");//暗号鍵初期値
 define("CRYPT_METHOD","aes-128-cbc");
 define("CRYPT_IV","T3pkYxNyjN7Wz3pu");//半角英数16文字
 
+// SNSシェア機能詳細設定
+
+//シェア機能に、Mastodon、Misskeyの各サーバを含める 
+// 含める:true 含めない:false  
+$switch_sns = true;
+// $switch_sns = false;
+
+// SNS共有の時に一覧で表示するサーバ
+//例 	["表示名","https://example.com (SNSのサーバのurl)"],(最後にカンマが必要です)
+
+$servers =
+[
+		
+	["Twitter","https://twitter.com"],
+	["mstdn.jp","https://mstdn.jp"],
+	["pawoo.net","https://pawoo.net"],
+	["fedibird.com","https://fedibird.com"],
+	["misskey.io","https://misskey.io"],
+	["misskey.design","https://misskey.design"],
+	["nijimiss.moe","https://nijimiss.moe"],
+	["sushi.ski","https://sushi.ski"],
+
+];
+
 /*変更不可*/
 
 //変更しないでください
