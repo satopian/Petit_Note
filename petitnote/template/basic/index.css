@@ -246,6 +246,11 @@ label {
 	padding: 2px;
 	border-radius: 5px;
 }
+
+.form_radio_sns_server label:hover{
+	background-color: #ffe6e6;
+}
+
 input[type="checkbox"]:checked + label{background-color: #ffe6e6;font-weight: 600;}
 input[type="radio"]:checked + label{background-color: #ffe6e6;font-weight: 600;}
 
