@@ -72,6 +72,17 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 
 ## 履歴
 
+## 23/07/07 v0.80.7
+
+### ツーイートボタンから｢Twitter｣｢Mastodon｣｢Misskey｣共有へ。
+
+v0.80.3から｢Twitter｣以外の、｢Mastodon｣｢Misskey｣等の短文投稿SNSに投稿を共有できるようになりました。
+
+![image](https://github.com/satopian/Petit_Note/assets/44894014/a34c14d6-6506-480d-8356-67490db21669)
+
+config.phpで設定すれば以前のツイートボタンに戻す事もできます。  
+また、共有するMastodon、Misskeyのサーバ一覧を編集する事もできます。
+
 ## 23/07/07 v0.80.3
 ### バグ修正
 - 題名を必須に設定した時にレス記事の編集時に題名を求められて編集できなくなるバグを修正しました。
