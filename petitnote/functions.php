@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230708;
+$functions_ver=20230710;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -718,7 +718,7 @@ function deltemp(){
 function Reject_if_NGword_exists_in_the_post(){
 	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass,$max_com,$en;
 
-	$adminpost=adminpost_valid();
+	$admin =(adminpost_valid()||admindel_valid());
 
 	$name = t((string)filter_input(INPUT_POST,'name'));
 	$sub = t((string)filter_input(INPUT_POST,'sub'));
@@ -726,7 +726,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$pwd = t((string)filter_input(INPUT_POST,'pwd'));
 
-	if($adminpost || ($admin_pass && $pwd === $admin_pass)){
+	if($admin || ($admin_pass && $pwd === $admin_pass)){
 		return;
 	}
 	if(is_badhost()){
