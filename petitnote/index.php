@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.80.9';
-$petit_lot='lot.20230710';
+$petit_ver='v0.81.1';
+$petit_lot='lot.20230711';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2032,9 +2032,10 @@ function search(){
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$q=(string)filter_input(INPUT_GET,'q');
 	$q=urldecode($q);
-	$q=mb_convert_kana($q, 'rn', 'UTF-8');
-	$q=str_replace(array(" ", "　"), "", $q);
-	$q=str_replace("〜","～",$q);//波ダッシュを全角チルダに
+	$check_q=mb_convert_kana($q, 'rn', 'UTF-8');
+	$check_q=str_replace(array(" ", "　"), "", $check_q);
+	$check_q=str_replace("〜","～",$check_q);//波ダッシュを全角チルダに
+	$check_q=strtolower($check_q);//小文字に
 	$radio =(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 
 	if($imgsearch){
@@ -2076,22 +2077,25 @@ function search(){
 					$s_name=mb_convert_kana($name, 'rn', 'UTF-8');//全角英数を半角に
 					$s_name=str_replace(array(" ", "　"), "", $s_name);
 					$s_name=str_replace("〜","～", $s_name);//波ダッシュを全角チルダに
+					$s_name=strtolower($s_name);//小文字に
 				}
 				else{
 					$s_sub=mb_convert_kana($sub, 'rn', 'UTF-8');//全角英数を半角に
 					$s_sub=str_replace(array(" ", "　"), "", $s_sub);
 					$s_sub=str_replace("〜","～", $s_sub);//波ダッシュを全角チルダに
+					$s_sub=strtolower($s_sub);//小文字に
 					$s_com=mb_convert_kana($com, 'rn', 'UTF-8');//全角英数を半角に
 					$s_com=str_replace(array(" ", "　"), "", $s_com);
 					$s_com=str_replace("〜","～", $s_com);//波ダッシュを全角チルダに
+					$s_com=strtolower($s_com);//小文字に
 				}
 				
 				//ログとクエリを照合
-				if($q===''||//空白なら
-						$q!==''&&$radio===3&&stripos($s_com,$q)!==false||//本文を検索
-						$q!==''&&$radio===3&&stripos($s_sub,$q)!==false||//題名を検索
-						$q!==''&&($radio===1||$radio===0)&&stripos($s_name,$q)===0||//作者名が含まれる
-						$q!==''&&($radio===2&&$s_name===$q)//作者名完全一致
+				if($check_q===''||//空白なら
+				$check_q!==''&&$radio===3&&strpos($s_com,$check_q)!==false||//本文を検索
+				$check_q!==''&&$radio===3&&strpos($s_sub,$check_q)!==false||//題名を検索
+				$check_q!==''&&($radio===1||$radio===0)&&strpos($s_name,$check_q)===0||//作者名が含まれる
+				$check_q!==''&&($radio===2&&$s_name===$check_q)//作者名完全一致
 				){
 					$hidethumb = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 
