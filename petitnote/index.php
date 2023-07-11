@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.81.1';
+$petit_ver='v0.81.2';
 $petit_lot='lot.20230711';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1743,7 +1743,6 @@ function edit(){
 	}
 
 	$sub=($_oya==='res') ? $_sub : $sub; 
-
 	//POSTされた値をログファイルに格納する書式にフォーマット
 	$formatted_post=create_formatted_text_from_post($name,$sub,$url,$com);
 	$name = $formatted_post['name'];
@@ -1784,6 +1783,8 @@ function edit(){
 	if(in_array($pchext,['.tgkr','hide_tgkr'])){
 		$pchext= $hide_animation ? 'hide_tgkr' : '.tgkr'; 
 	}
+
+	$host=($admindel && ($sub === $_sub) && ($url === $_url) && ($com === $_com)) ? $_host : $host;//管理者による閲覧注意への変更時は投稿者のホスト名を変更しない
 
 	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 	
