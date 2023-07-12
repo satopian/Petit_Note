@@ -8,17 +8,24 @@
 	<link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
 	<style>
 	form.form_radio_sns_server {
-    line-height: 2;
 	margin: 1em 0 0;
 	}
 	*{
 		font-size: 18px;
 	}
-	input[type="radio"]{
+	.form_radio_sns_server label{
+		display: block;
+		margin: 0 0 5px;
+	}
+	.form_radio_sns_server input[type="radio"]{
 		display: none;
+	}
+	.form_radio_sns_server input[type="text"]{
+		margin: 3px 0;
 	}
 	input.post_share_button {
     width: 100%;
+	margin: 8px 0 0;
 	}
 	:not(input){
 		-moz-user-select: none;
@@ -30,11 +37,11 @@
 	<title>Share</title>
 </head>
 <body>
-<form action="./" method="post" class="form_radio_sns_server">
+<form action="./" method="POST" class="form_radio_sns_server">
 <?php foreach($servers as $i => $server):?>
 	<input type="radio" name="sns_server_radio" value="<?=h($server[1])?>" id="<?=h($i)?>" 
 	<?php if($i===0||$server[1]===$sns_server_radio_cookie):?>checked="checked"<?php endif;?>>
-			<label for="<?=h($i)?>"><?=h($server[0])?></label><br>
+			<label for="<?=h($i)?>"><?=h($server[0])?></label>
 <?php endforeach;?>
 <input type="text" name="sns_server_direct_input" value="<?=h($sns_server_direct_input_cookie)?>">
 <br>
@@ -47,5 +54,6 @@
 <input type="submit" value="<?php if($en):?>Share<?php else:?>シェア<?php endif;?>" class="post_share_button">
 <script src="lib/<?=h(JQUERY)?>"></script>
 <script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
+</form>
 </body>
 </html>
