@@ -1,5 +1,5 @@
 <?php
-//Petit Note 2021-2023 (c)satopian MIT LICENCE
+//Petit Note 2021-2023 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 
 if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
