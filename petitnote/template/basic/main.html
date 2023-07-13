@@ -320,7 +320,7 @@ Size:
 	<?php if($use_sns_button):?>
 	<span class="share_button">
 	<?php if($switch_sns):?>
-		<a href="?mode=set_share_server&encoded_t=<?=h($ress[0]['encoded_t'])?>&amp;encoded_u=<?=h($ress[0]['encoded_u'])?>" onclick="open_sns_server_window(event)"><span class="icon-share-from-square-solid"></span>
+		<a href="?mode=set_share_server&encoded_t=<?=h($ress[0]['encoded_t'])?>&amp;encoded_u=<?=h($ress[0]['encoded_u'])?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)"><span class="icon-share-from-square-solid"></span>
 		<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
 	<?php else:?>
 	<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a>

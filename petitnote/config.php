@@ -444,6 +444,13 @@ $servers =
 	["sushi.ski","https://sushi.ski"],
 
 ];
+// SNS共有の時に開くWindowsの幅と高さ
+
+//windowの幅 初期値 350
+$sns_window_width = 350;
+
+//windowの高さ 初期値 490
+$sns_window_height = 490;
 
 /*変更不可*/
 
