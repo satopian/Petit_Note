@@ -125,15 +125,27 @@ function form_submit_set_nsfw_show_hide(event) {
 
 	function open_sns_server_window(event,width=350,height=490) {
 		event.preventDefault(); // デフォルトのリンクの挙動を中断
+
+			// 幅と高さが数値であることを確認
+			if (typeof width !== 'number' || typeof height !== 'number') {
+				width=350;//デフォルト値
+				height=490;//デフォルト値
+			}
+		
+			// 幅と高さが正の値であることを確認
+			if (width <= 0 || height <= 0) {
+				width=350;//デフォルト値
+				height=490;//デフォルト値
+			}
 		
 		var url = event.currentTarget.href;
 		var windowFeatures = "width="+width+",height="+height; // ウィンドウのサイズを指定
 		
 		if (snsWindow && !snsWindow.closed) {
 			snsWindow.focus(); // 既に開かれているウィンドウがあればフォーカスする
-		  } else {
+			} else {
 			snsWindow = window.open(url, "_blank", windowFeatures); // 新しいウィンドウを開く
-		  }
+			}
 	}
 // (c)satopian MIT LICENCE ここまで
 
