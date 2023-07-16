@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.81.5';
-$petit_lot='lot.20230713';
+$petit_ver='v0.82.0';
+$petit_lot='lot.20230717';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -143,6 +143,8 @@ switch($mode){
 		return logout();
 	case 'set_share_server':
 		return set_share_server();
+	case 'post2sns':
+		return post2sns();
 	case 'post_share_server':
 		return post_share_server();
 	case 'search':
@@ -640,14 +642,18 @@ function post(){
 
 	chmod(LOG_DIR.'alllog.log',0600);
 
+	$to_misskey = filter_input(INPUT_POST, 'to_misskey');//Misskey同時投稿
+
 	//ワークファイル削除
 	safe_unlink($src);
-	safe_unlink($tempfile);
+	if(!$to_misskey){
+		safe_unlink($tempfile);
+	}
 	safe_unlink($up_tempfile);
 	safe_unlink($upfile);
 	safe_unlink(TEMP_DIR.$picfile.".dat");
 	delete_res_cache();
-
+	$_SESSION['post_is_done']='post_is_done';
 	global $send_email,$to_mail,$root_url,$boardname;
 
 	if($send_email){
@@ -959,6 +965,60 @@ function paintcom(){
 	// HTML出力
 	$templete='paint_com.html';
 	return include __DIR__.'/'.$skindir.$templete;
+}
+function post2sns(){
+	global $en,$usercode,$root_url,$mark_sensitive_image;
+	
+	$userip =t(get_uip());
+
+	$pictmp = (int)filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
+	$com = t((string)filter_input(INPUT_POST,'com'));
+	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
+
+	$pictmp2=false;
+	if($pictmp===2){//ユーザーデータを調べる
+		list($picfile,) = explode(",",(string)filter_input(INPUT_POST, 'picfile'));
+		$picfile_name=basename($picfile);
+		$tempfile = TEMP_DIR.$picfile;
+		$picfile=basename($picfile);
+		$picfile=pathinfo($picfile, PATHINFO_FILENAME );//拡張子除去
+		//選択された絵が投稿者の絵か再チェック
+		if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat") || !is_file($tempfile)) {
+			return error($en? 'Posting failed.':'投稿に失敗しました。');
+		}
+		//ユーザーデータから情報を取り出す
+		$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
+		$userdata = fread($fp, 1024);
+		fclose($fp);
+		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
+		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
+		$tool= in_array($tool,['neo','chi','klecks','tegaki']) ? $tool : '???';
+		//描画時間を$userdataをもとに計算
+		if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
+			$painttime=(int)$postedtime-(int)$starttime;
+		}
+		$pictmp2=true;//お絵かきでエラーがなかった時にtrue;
+		
+	}
+	if(!$pictmp2){
+		error($en ? 'This operation has failed.':'失敗しました。');
+	}
+
+	$tool=switch_tool($tool);
+	
+	$painttime=calcPtime($painttime);
+	$painttime = $en ? $painttime['en'] : $painttime['ja'];
+	session_sta();
+	// セッションIDとユニークIDを結合
+	$sns_api_session_id = session_id() . uniqid();
+	// SHA256ハッシュ化
+	$sns_api_session_id=hash('sha256', $sns_api_session_id);
+
+	$_SESSION['sns_api_session_id']=$sns_api_session_id;
+	$_SESSION['sns_api_val']=[$com,$picfile_name,$tool,$painttime,$hide_thumbnail];
+	$root_url = urlencode($root_url);
+	return header("Location: https://misskey.io/miauth/{$sns_api_session_id}?name=MyApp&callback={$root_url}misskeyapi.php&permission=write:notes,write:following,read:drive,write:drive");
+
 }
 
 //コンティニュー前画面

@@ -67,6 +67,8 @@
 				<?php endforeach;?>
 	</div>
 <?php if($aikotoba):?>
+<!-- <form action="./" method="POST" enctype="multipart/form-data" class="postform" id="res_form"> -->
+<!-- <form action="./" method="POST" enctype="multipart/form-data" class="postform" id="res_form" onsubmit="return res_form_submit(event)"> -->
 <form action="./" method="POST" enctype="multipart/form-data" class="postform" id="res_form" onsubmit="return res_form_submit(event)">
 <div id="error_message"></div>
 	<table>
@@ -91,6 +93,7 @@
 <textarea name="com" class="post_com"></textarea><br>
 <?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
 <input type="hidden" name="mode" value="regist">
+<!-- <input type="hidden" name="mode" value="post2sns"> -->
 <input type="hidden" name="token" value="<?=h($token)?>">
 <input type="hidden" name="pictmp" value="<?=h($pictmp)?>">
 <div class="post_table_title"><?php if($en):?>Images<?php else:?>画像<?php endif;?>
@@ -106,11 +109,57 @@
 			</select>
 	<span id="paintcom_hide_animation">
 		<input type="checkbox" name="hide_animation" id="hide_animation" value="on"><label for="hide_animation"><?php if($en):?>Hide Animation<?php else:?>動画を表示しない<?php endif;?></label>	
-	</span>	
-			<br>
+	</span>
+	<span>
+	<input type="checkbox" name="to_misskey" id="to_misskey" value="on"><label for="to_misskey"><?php if($en):?>Misskey Dual Posting<?php else:?>Misskeyにも投稿する<?php endif;?></label>	
+	</span>
+	<br>
 		</div>
-	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>">
+	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>" onclick="to_sns_submitform()">
 	
+	<script>
+	function to_sns_submitform() {
+		// フォームの内容を取得
+		const form = document.getElementById("res_form");
+		const formData = new FormData(form);
+
+		const to_misskey = formData.get("to_misskey") || ''; 
+		if (!to_misskey) {
+		// Misskeyへの投稿オプションが存在しない場合は処理を中止
+			return;
+		}
+		
+		formData.append('mode', 'post2sns');//SNS投稿モード
+
+		// Misskeyへの投稿フォームを動的に生成
+		const sns_form = document.createElement('form');
+		sns_form.method = 'post';
+		sns_form.action = './';
+		sns_form.target = '_blank'; // フォームを新しいタブで開く
+
+		// formDataの内容をフォームに追加
+		for (const pair of formData.entries()) {
+			const input = document.createElement('input');
+			input.type = 'hidden';
+			input.name = pair[0];
+			input.value = pair[1];
+			sns_form.appendChild(input);
+	}
+
+    // フォームを送信
+    document.body.appendChild(sns_form);
+    sns_form.submit();
+}
+</script>
+
+
+
+
+
+
+
+
+
 	<?php if(!$sage_all):?>
 	<span id="paintcom_sage">
 	<input type="checkbox" name="sage" id="sage" value="on"><label for="sage">sage</label>	

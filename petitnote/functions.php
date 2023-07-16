@@ -272,35 +272,7 @@ function create_res($line,$options=[]){
 	$continue = true;
 	$upload_image = false;
 
-	switch($tool){
-		case 'neo':
-			$tool='PaintBBS NEO';
-			break;
-		case 'PaintBBS':
-			$tool='PaintBBS';
-			break;
-		case 'shi-Painter':
-			$tool='shi-Painter';
-			break;
-		case 'chi':
-			$tool='ChickenPaint';
-			break;
-		case 'klecks';
-			$tool='Klecks';
-			break;
-		case 'tegaki';
-			$tool='Tegaki';
-			break;
-		case 'upload':
-			$tool=$en?'Upload':'アップロード';
-			$continue = false;
-			$upload_image = true;
-			break;
-		default:
-			$tool='';
-			$continue = false;
-			break;
-	}
+	$tool=switch_tool($tool);
 
 	$anime = ($pchext==='.pch'||$pchext==='.tgkr'); 
 	$hide_thumbnail = $mark_sensitive_image ? ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_') :'';
@@ -372,6 +344,40 @@ function create_res($line,$options=[]){
 	}
 
 	return $res;
+}
+
+function switch_tool($tool){
+	global $en;
+	switch($tool){
+		case 'neo':
+			$tool='PaintBBS NEO';
+			break;
+		case 'PaintBBS':
+			$tool='PaintBBS';
+			break;
+		case 'shi-Painter':
+			$tool='shi-Painter';
+			break;
+		case 'chi':
+			$tool='ChickenPaint';
+			break;
+		case 'klecks';
+			$tool='Klecks';
+			break;
+		case 'tegaki';
+			$tool='Tegaki';
+			break;
+		case 'upload':
+			$tool=$en?'Upload':'アップロード';
+			$continue = false;
+			$upload_image = true;
+			break;
+		default:
+			$tool='';
+			$continue = false;
+			break;
+	}
+	return $tool;
 }
 
 //重複チェックのための配列を全体ログを元に作成
