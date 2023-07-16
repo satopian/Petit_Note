@@ -67,8 +67,6 @@
 				<?php endforeach;?>
 	</div>
 <?php if($aikotoba):?>
-<!-- <form action="./" method="POST" enctype="multipart/form-data" class="postform" id="res_form"> -->
-<!-- <form action="./" method="POST" enctype="multipart/form-data" class="postform" id="res_form" onsubmit="return res_form_submit(event)"> -->
 <form action="./" method="POST" enctype="multipart/form-data" class="postform" id="res_form" onsubmit="return res_form_submit(event)">
 <div id="error_message"></div>
 	<table>
@@ -110,14 +108,26 @@
 	<span id="paintcom_hide_animation">
 		<input type="checkbox" name="hide_animation" id="hide_animation" value="on"><label for="hide_animation"><?php if($en):?>Hide Animation<?php else:?>動画を表示しない<?php endif;?></label>	
 	</span>
-	<span>
-	<input type="checkbox" name="to_misskey" id="to_misskey" value="on"><label for="to_misskey"><?php if($en):?>Misskey Dual Posting<?php else:?>Misskeyにも投稿する<?php endif;?></label>	
-	</span>
 	<br>
 		</div>
 	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>" onclick="to_sns_submitform()">
-	
-	<script>
+
+	<?php if(!$sage_all):?>
+	<span id="paintcom_sage">
+	<input type="checkbox" name="sage" id="sage" value="on"><label for="sage">sage</label>	
+	</span>
+	<?php endif;?>
+	<?php if($mark_sensitive_image):?>
+	<span>
+	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
+	</span>
+	<?php endif;?>
+	<span>
+	<input type="checkbox" name="to_misskey" id="to_misskey" value="on"><label for="to_misskey"><?php if($en):?>Misskey Dual Posting<?php else:?>Misskeyにも投稿する<?php endif;?></label>	
+	</span>
+
+</form>
+<script>
 	function to_sns_submitform() {
 		// フォームの内容を取得
 		const form = document.getElementById("res_form");
@@ -152,25 +162,6 @@
 }
 </script>
 
-
-
-
-
-
-
-
-
-	<?php if(!$sage_all):?>
-	<span id="paintcom_sage">
-	<input type="checkbox" name="sage" id="sage" value="on"><label for="sage">sage</label>	
-	</span>
-	<?php endif;?>
-	<?php if($mark_sensitive_image):?>
-	<span>
-	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
-	</span>
-	<?php endif;?>
-</form>
 <?php else:?>
 <?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
 <form action="./" method="post" class="aikotoba">
