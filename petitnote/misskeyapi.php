@@ -141,6 +141,8 @@ if ($fileId) {
 
 			if($_SESSION['post_is_done']==='post_is_done'){
 				safe_unlink(__DIR__.'/temp/'.$picfile);
+				$datfile=pathinfo($picfile, PATHINFO_FILENAME );//拡張子除去
+				safe_unlink(TEMP_DIR.$datfile.".dat");
 			}
 			// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult);
 			return header('Location: '.$baseUrl);

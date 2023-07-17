@@ -452,6 +452,10 @@ $sns_window_width = 350;
 //windowの高さ 初期値 490
 $sns_window_height = 490;
 
+//Misskeyにも投稿する
+$postToMisskey = true;
+$postToMisskey = false;
+
 /*変更不可*/
 
 //変更しないでください
