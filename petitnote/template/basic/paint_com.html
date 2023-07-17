@@ -122,11 +122,14 @@
 	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
 	</span>
 	<?php endif;?>
+	<?php if($post2misskey):?>
 	<span>
-	<input type="checkbox" name="to_misskey" id="to_misskey" value="on"><label for="to_misskey"><?php if($en):?>Misskey Dual Posting<?php else:?>Misskeyにも投稿する<?php endif;?></label>	
-	</span>
-
+		<input type="checkbox" name="to_misskey" id="to_misskey" value="on"><label for="to_misskey"><span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Misskey Dual Posting<?php else:?>Misskeyにも投稿する<?php endif;?></label>	
+		</span>
+	<?php endif;?>
+	icon-Simpleicons-Team-Simple-Misskey
 </form>
+<?php if($post2misskey):?>
 <script>
 	function to_sns_submitform() {
 		// フォームの内容を取得
@@ -161,6 +164,7 @@
     sns_form.submit();
 }
 </script>
+<?php endif;?>
 
 <?php else:?>
 <?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
