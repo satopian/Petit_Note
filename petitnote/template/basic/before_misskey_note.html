@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
+<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css?<?=h($petit_lot)?>" onload="this.rel='stylesheet'">
+<link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="script" href="lib/luminous/luminous.min.js">
+<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
+<link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
+<?php include __DIR__.'/parts/nsfw_css_control.html';?>
+
+	<title><?=h($boardname)?></title> 
+</head>
+<body>
+<div class="container" id="top">
+	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+	<nav class="menu_wrap">
+		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
+<?php if($userdel || $admindel):?>
+	<span>
+		<?php if($postresno):?>
+		[<a href="./?mode=logout&resno=<?=h($postresno)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
+		<?php endif;?>
+		<?php if(!$postresno):?>
+		[<a href="./?mode=logout&page=<?=h($postpage)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
+		<?php endif;?>
+	</span>
+<?php endif;?>
+<a href="#bottom">▽</a>
+</nav>
+<h2 class="article_title"><?php if($en):?>Edit mode<?php else:?>編集モード<?php endif;?></h2>
+
+<div id="error_message_beforedelete"></div>
+<?php if($admindel):?>
+	<?php if($en):?>Edit this article. Press the edit button.<?php else:?>この記事を編集します。編集ボタンを押してください。<?php endif;?>: 
+<?php endif;?>
+<?php if($userdel&&!$admindel):?>
+	<?php if($en):?>Edit this article. Please enter password.<?php else:?>この記事を編集します。パスワードを入力してください。<?php endif;?>: 
+<?php endif;?>
+<?php if( $admindel || $aikotoba && $userdel):?>
+<form action="./" method="POST" id="before_delete" class="aikotoba" onsubmit="return res_form_submit(event,'before_delete')">
+
+<?php if(!$admindel):?>
+
+<span class="non"><input type="text" value="" autocomplete="username"></span>
+<input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
+<?php endif;?>
+<input type="hidden" name="mode" value="edit_form">
+<input type="hidden" name="resmode" value="<?=h($resmode)?>">
+<input type="hidden" name="postresno" value="<?=h($postresno)?>">
+<input type="hidden" name="postpage" value="<?=h($postpage)?>">
+<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
+</form>
+<?php endif;?>
+<hr>
+<?php include __DIR__.'/parts/before_edit_del_res_loop.html';?>
+<div class="clear"></div>
+<hr>
+<div class="copy">
+<div class="left_wrap">[<a href="<?=h($home)?>">HOME</a> /
+<?php if($postresno):?>
+<a href="./?mode=adminin&resno=<?=h($postresno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+<?php endif;?>
+<?php if(!$postresno && ($postpage||$postpage===0)):?>
+<a href="./?mode=adminin&page=<?=h($postpage)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+<?php endif;?>
+</div>
+
+<div class="righit_wrap">
+<?php include __DIR__.'/parts/copyright.html';?>
+</div>
+</div>
+</div>
+<div id="bottom"></div>
+<div id="page_top"><a class="icon-angles-up-solid"></a></div>
+<script src="lib/<?=h(JQUERY)?>"></script>
+<script src="lib/luminous/luminous.min.js"></script>
+<script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
+</body>
+</html>
+	
