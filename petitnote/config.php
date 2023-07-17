@@ -452,9 +452,22 @@ $sns_window_width = 350;
 //windowの高さ 初期値 490
 $sns_window_height = 490;
 
-//Misskeyにも投稿する
-$postToMisskey = true;
+//Misskeyへの同時投稿機能を有効にする
+// する: true しない: false
+
+// $postToMisskey = true;
 $postToMisskey = false;
+
+//Misskeyへの同時投稿の時に選択するMisskeyサーバ一覧
+$misskey_servers =
+[
+		
+	["misskey.io","https://misskey.io"],
+	["misskey.design","https://misskey.design"],
+	["nijimiss.moe","https://nijimiss.moe"],
+	["sushi.ski","https://sushi.ski"],
+
+];
 
 /*変更不可*/
 

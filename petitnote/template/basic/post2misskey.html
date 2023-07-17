@@ -7,20 +7,20 @@
 	<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
 	<link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
 	<style>
-	form.form_radio_misskey_server {
+	form.form_radio_sns_server {
 	margin: 1em 0 0;
 	}
 	*{
 		font-size: 18px;
 	}
-	.form_radio_misskey_server label{
+	.form_radio_sns_server label{
 		display: block;
 		margin: 0 0 5px;
 	}
-	.form_radio_misskey_server input[type="radio"]{
+	.form_radio_sns_server input[type="radio"]{
 		display: none;
 	}
-	.form_radio_misskey_server input[type="text"]{
+	.form_radio_sns_server input[type="text"]{
 		margin: 3px 0;
 	}
 	input.post_share_button {
@@ -34,10 +34,11 @@
 		user-select: none;
 	}
 	</style>
-	<title>Share</title>
+	<title><?=h($boardname)?></title>
 </head>
 <body>
-<form action="./" method="POST" class="form_radio_misskey_server">
+<div class="container">
+<form action="./" method="POST" class="form_radio_sns_server">
 <?php foreach($misskey_servers as $i => $server):?>
 	<input type="radio" name="misskey_server_radio" value="<?=h($server[1])?>" id="<?=h($i)?>" 
 	<?php if($i===0||$server[1]===$misskey_server_radio_cookie):?>checked="checked"<?php endif;?>>
@@ -48,12 +49,11 @@
 <?php if($en):?>Example<?php else:?>例<?php endif;?>
 : https://misskey.io
 <br>
-<input type="hidden" name="encoded_t" value="<?=h($encoded_t)?>">
-<input type="hidden" name="encoded_u" value="<?=h($encoded_u)?>">
 <input type="hidden" name="mode" value="post2misskey">
 <input type="submit" value="<?php if($en):?>Note<?php else:?>ノート<?php endif;?>" class="post_share_button">
 <script src="lib/<?=h(JQUERY)?>"></script>
 <script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
 </form>
+</div>
 </body>
 </html>

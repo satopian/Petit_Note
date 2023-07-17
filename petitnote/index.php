@@ -145,6 +145,8 @@ switch($mode){
 		return set_share_server();
 	case 'post2sns':
 		return post2sns();
+	case 'post2misskey':
+		return post2misskey();
 	case 'post_share_server':
 		return post_share_server();
 	case 'search':
@@ -648,12 +650,13 @@ function post(){
 	safe_unlink($src);
 	if(!$to_misskey){
 		safe_unlink($tempfile);
+		safe_unlink(TEMP_DIR.$picfile.".dat");
 	}
 	safe_unlink($up_tempfile);
 	safe_unlink($upfile);
-	safe_unlink(TEMP_DIR.$picfile.".dat");
 	delete_res_cache();
-	$_SESSION['post_is_done']='post_is_done';
+	$_SESSION['post_is_done'][]=$picfile;
+
 	global $send_email,$to_mail,$root_url,$boardname;
 
 	if($send_email){
@@ -967,7 +970,7 @@ function paintcom(){
 	return include __DIR__.'/'.$skindir.$templete;
 }
 function post2sns(){
-	global $en,$usercode,$root_url,$mark_sensitive_image;
+	global $en,$usercode,$root_url,$mark_sensitive_image,$skindir,$petit_lot,$misskey_servers,$boardname;
 	
 	$userip =t(get_uip());
 
@@ -1009,16 +1012,56 @@ function post2sns(){
 	$painttime=calcPtime($painttime);
 	$painttime = $en ? $painttime['en'] : $painttime['ja'];
 	session_sta();
+	
+	//SESSIONに投稿内容を格納
+	$_SESSION['sns_api_val']=[$com,$picfile_name,$tool,$painttime,$hide_thumbnail];
+
+	$misskey_servers=isset($misskey_servers)?$misskey_servers:
+	[
+	
+		["misskey.io","https://misskey.io"],
+		["misskey.design","https://misskey.design"],
+		["nijimiss.moe","https://nijimiss.moe"],
+		["sushi.ski","https://sushi.ski"],
+	
+	];
+	$servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
+
+	$misskey_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_radio_cookie");
+	$misskey_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_direct_input_cookie");
+
+	// HTML出力
+	$templete='post2misskey.html';
+	return include __DIR__.'/'.$skindir.$templete;
+}
+
+function post2misskey(){
+	global $root_url;
+	global $en;
+
+	$misskey_server_radio=(string)filter_input(INPUT_POST,"misskey_server_radio",FILTER_VALIDATE_URL);
+	$misskey_server_radio_for_cookie=(string)filter_input(INPUT_POST,"misskey_server_radio");//directを判定するためurlでバリデーションしていない
+	$misskey_server_radio_for_cookie=($misskey_server_radio_for_cookie === 'direct') ? 'direct' : $misskey_server_radio;
+	$misskey_server_direct_input=(string)filter_input(INPUT_POST,"misskey_server_direct_input",FILTER_VALIDATE_URL);
+	setcookie("misskey_server_radio_cookie",$misskey_server_radio_for_cookie, time()+(86400*30),"","",false,true);
+	setcookie("misskey_server_direct_input_cookie",$misskey_server_direct_input, time()+(86400*30),"","",false,true);
+	$share_url='';
+
+	if(!$misskey_server_radio){
+		error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");
+	}
+
+	session_sta();
 	// セッションIDとユニークIDを結合
 	$sns_api_session_id = session_id() . uniqid();
 	// SHA256ハッシュ化
 	$sns_api_session_id=hash('sha256', $sns_api_session_id);
 
 	$_SESSION['sns_api_session_id']=$sns_api_session_id;
-	$_SESSION['sns_api_val']=[$com,$picfile_name,$tool,$painttime,$hide_thumbnail];
-	$root_url = urlencode($root_url);
-	return header("Location: https://misskey.io/miauth/{$sns_api_session_id}?name=MyApp&callback={$root_url}misskeyapi.php&permission=write:notes,write:following,read:drive,write:drive");
 
+	$root_url = urlencode($root_url);
+
+	return header("Location: {$misskey_server_radio}/miauth/{$sns_api_session_id}?name=MyApp&callback={$root_url}misskeyapi.php&permission=write:notes,write:following,read:drive,write:drive");
 }
 
 //コンティニュー前画面
@@ -2044,7 +2087,7 @@ function del(){
 
 //シェアするserverの選択画面
 function set_share_server(){
-	global $en,$skindir,$servers,$petit_lot;
+	global $en,$skindir,$servers,$petit_lot,$boardname;
 	
 	//ShareするServerの一覧
 	//｢"ラジオボタンに表示するServer名","snsのserverのurl"｣

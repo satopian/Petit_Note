@@ -1,5 +1,5 @@
 <?php
-//Petit Note 2021-2023 (c)satopian MIT LICENCE
+//Petit Note 2021-2023 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 
 require_once(__DIR__.'/functions.php');
@@ -12,14 +12,13 @@ $en= (stripos($lang,'ja')!==0);
 
 session_sta();
 
-list($com,$picfile_name,$tool,$painttime,$hide_thumbnail)=$_SESSION['sns_api_val'];
 
 // var_dump($com,$picfile,$tool,$painttime);
 
 
 // 認証チェック
 $sns_api_session_id = $_SESSION['sns_api_session_id'];
-list($com,$picfile,$tool,$painttime) = $_SESSION['sns_api_val'];
+list($com,$picfile,$tool,$painttime,$hide_thumbnail) = $_SESSION['sns_api_val'];
 $picfile=basename($picfile);
 $checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
 
@@ -139,10 +138,17 @@ if ($fileId) {
 		$postResult = json_decode($postResponse, true);
 		if (!empty($postResult['createdNote']["fileIds"])) {
 
-			if($_SESSION['post_is_done']==='post_is_done'){
+			$post_is_dones = isset($_SESSION['post_is_done']) ? 
+			$_SESSION['post_is_done'] : [];
+			$post_is_dones = is_array($post_is_dones) ? $post_is_dones : [];
+					
+			$picfile_name = pathinfo($picfile, PATHINFO_FILENAME );//拡張子除去
+			if(in_array($picfile_name,$post_is_dones)){
+
 				safe_unlink(__DIR__.'/temp/'.$picfile);
-				$datfile=pathinfo($picfile, PATHINFO_FILENAME );//拡張子除去
-				safe_unlink(TEMP_DIR.$datfile.".dat");
+				safe_unlink(__DIR__.'/temp/'.$picfile_name.".dat");
+			$pchext = check_pch_ext(__DIR__.'/temp/'.$picfile_name,['upload'=>true]);
+			safe_unlink(__DIR__.'/temp/'.$picfile_name.$pchext);		
 			}
 			// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult);
 			return header('Location: '.$baseUrl);

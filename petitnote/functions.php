@@ -693,14 +693,30 @@ function check_AsyncRequest($upfile='') {
 // テンポラリ内のゴミ除去 
 function deltemp(){
 	$handle = opendir(TEMP_DIR);
+	session_sta();
+	//掲示板本体への投稿が完了ずみのワークファイルのタイムスタンプ
+	//Misskeyへの投稿を途中でやめた時にワークファイルが残るためファイル名を特定して10分で除去
+	$post_is_dones = isset($_SESSION['post_is_done']) ? 
+	$_SESSION['post_is_done'] : [];
+	$post_is_dones = is_array($post_is_dones) ? $post_is_dones : [];
+
+	rsort($post_is_dones);
+	foreach($post_is_dones as $i =>$post_is_done){
+		if($i>=10){//投稿完了ファイル情報は最大10件
+			unset($post_is_dones[$i]);//古いタイムスタンプから順に消える。
+		}
+	}
+	$_SESSION['post_is_done'] = $post_is_dones;
+
 	while ($file = readdir($handle)) {
 		if(!is_dir($file)) {
 			$file=basename($file);
 			//pchアップロードペイントファイル削除
 			//仮差し換えアップロードファイル削除
+			$file_name=pathinfo($file, PATHINFO_FILENAME );//拡張子除去in_array($post_is_done)
 			$lapse = time() - filemtime(TEMP_DIR.$file);
-			if(strpos($file,'pchup-')===0) {
-				if($lapse > (300)){//5分
+			if((strpos($file,'pchup-')===0)||((in_array($file_name,$post_is_dones)))) {
+				if($lapse > (600)){//10分
 					safe_unlink(TEMP_DIR.$file);
 				}
 			}else{
