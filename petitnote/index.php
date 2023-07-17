@@ -74,6 +74,7 @@ $display_search_nav = isset($display_search_nav) ? $display_search_nav : false;
 $switch_sns = isset($switch_sns) ? $switch_sns : true;
 $sns_window_width = isset($sns_window_width) ? (int)$sns_window_width : 350;
 $sns_window_height = isset($sns_window_height) ? (int)$sns_window_height : 490;
+$post2misskey = isset($post2misskey) ? $post2misskey : false;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -909,7 +910,7 @@ function paint(){
 // お絵かきコメント 
 function paintcom(){
 	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
-	global $usercode,$petit_lot; 
+	global $usercode,$petit_lot,$post2misskey; 
 
 	aikotoba_required_to_view();
 	$token=get_csrf_token();

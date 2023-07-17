@@ -455,8 +455,8 @@ $sns_window_height = 490;
 //Misskeyへの同時投稿機能を有効にする
 // する: true しない: false
 
-// $postToMisskey = true;
-$postToMisskey = false;
+$post2misskey = true;
+// $post2misskey = false;
 
 //Misskeyへの同時投稿の時に選択するMisskeyサーバ一覧
 $misskey_servers =
