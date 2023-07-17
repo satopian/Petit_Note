@@ -696,8 +696,8 @@ function deltemp(){
 	session_sta();
 	//掲示板本体への投稿が完了ずみのワークファイルのタイムスタンプ
 	//Misskeyへの投稿を途中でやめた時にワークファイルが残るためファイル名を特定して10分で除去
-	$post_is_dones = isset($_SESSION['post_is_done']) ? 
-	$_SESSION['post_is_done'] : [];
+	$post_is_dones = isset($_SESSION['post_is_dones']) ? 
+	$_SESSION['post_is_dones'] : [];
 	$post_is_dones = is_array($post_is_dones) ? $post_is_dones : [];
 
 	rsort($post_is_dones);
@@ -706,7 +706,7 @@ function deltemp(){
 			unset($post_is_dones[$i]);//古いタイムスタンプから順に消える。
 		}
 	}
-	$_SESSION['post_is_done'] = $post_is_dones;
+	$_SESSION['post_is_dones'] = $post_is_dones;
 
 	while ($file = readdir($handle)) {
 		if(!is_dir($file)) {

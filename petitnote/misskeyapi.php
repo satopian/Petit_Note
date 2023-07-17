@@ -138,8 +138,8 @@ if ($fileId) {
 		$postResult = json_decode($postResponse, true);
 		if (!empty($postResult['createdNote']["fileIds"])) {
 
-			$post_is_dones = isset($_SESSION['post_is_done']) ? 
-			$_SESSION['post_is_done'] : [];
+			$post_is_dones = isset($_SESSION['post_is_dones']) ? 
+			$_SESSION['post_is_dones'] : [];
 			$post_is_dones = is_array($post_is_dones) ? $post_is_dones : [];
 					
 			$picfile_name = pathinfo($picfile, PATHINFO_FILENAME );//拡張子除去

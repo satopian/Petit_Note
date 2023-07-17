@@ -655,7 +655,7 @@ function post(){
 	safe_unlink($up_tempfile);
 	safe_unlink($upfile);
 	delete_res_cache();
-	$_SESSION['post_is_done'][]=$picfile;
+	$_SESSION['post_is_dones'][]=$picfile;
 
 	global $send_email,$to_mail,$root_url,$boardname;
 
