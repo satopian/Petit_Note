@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?a4cn4');
-  src:  url('fonts/icomoon.eot?a4cn4#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?a4cn4') format('truetype'),
-    url('fonts/icomoon.woff?a4cn4') format('woff'),
-    url('fonts/icomoon.svg?a4cn4#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?wi1skq');
+  src:  url('fonts/icomoon.eot?wi1skq#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?wi1skq') format('truetype'),
+    url('fonts/icomoon.woff?wi1skq') format('woff'),
+    url('fonts/icomoon.svg?wi1skq#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,8 +25,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-Simpleicons-Team-Simple-Misskey:before {
+  content: "\e900";
+}
 .icon-share-from-square-solid:before {
   content: "\e908";
+}
+.icon-facebook2:before {
+  content: "\ea91";
 }
 .icon-angles-up-solid:before {
   content: "\e903";
