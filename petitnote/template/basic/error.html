@@ -17,7 +17,11 @@
 			<hr>
 <div class="error">
 <?=h($str)?><br>
+<?php if($historyback):?>
 <a href="#" onClick="javascript:window.history.back(-1);return false;"><?php if($en):?>Back<?php else:?>もどる<?php endif;?></a>
+<?php endif;?>
+</div>
+</div>
+</body>
+</html>
 <?php exit;?>
-</div>
-</div>

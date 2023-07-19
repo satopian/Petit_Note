@@ -160,8 +160,6 @@ switch($mode){
 		return misskey_note::create_misskey_post_sessiondata();
 	case 'create_misskey_authrequesturl':
 		return misskey_note::create_misskey_authrequesturl();
-	case 'connect_misskey_api':
-		return misskey_note::connect_misskey_api();
 	case 'search':
 		return search();
 	case 'catalog':
@@ -657,18 +655,13 @@ function post(){
 
 	chmod(LOG_DIR.'alllog.log',0600);
 
-	$to_misskey = filter_input(INPUT_POST, 'to_misskey');//Misskey同時投稿
-
 	//ワークファイル削除
 	safe_unlink($src);
-	if(!$to_misskey){
-		safe_unlink($tempfile);
-		safe_unlink(TEMP_DIR.$picfile.".dat");
-	}
+	safe_unlink($tempfile);
+	safe_unlink(TEMP_DIR.$picfile.".dat");
 	safe_unlink($up_tempfile);
 	safe_unlink($upfile);
 	delete_res_cache();
-	$_SESSION['post_is_dones'][]=$picfile;
 
 	global $send_email,$to_mail,$root_url,$boardname;
 
@@ -2306,7 +2299,7 @@ function catalog(){
 
 //通常表示
 function view(){
-	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url;
+	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height;
 
@@ -2407,7 +2400,7 @@ function view(){
 }
 //レス画面
 function res (){
-	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply;
+	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
 	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height;
 
@@ -2418,6 +2411,8 @@ function res (){
 	$denny_all_posts=$deny_all_posts;
 	$page='';
 	$resno=(string)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
+	$misskey_note=(bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
+
 	if(!is_file(LOG_DIR."{$resno}.log")){
 		return error($en?'Thread does not exist.':'スレッドがありません');	
 	}
@@ -2429,12 +2424,15 @@ function res (){
 	check_open_no($resno);
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 		$out[0]=[];
+		$findimage=false;
 		while ($line = fgets($rp)) {
 			if(!trim($line)){
 				continue;
 			}
 			$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
-
+			if($_res['img']){
+				$findimage = true;
+			}
 			if($_res['oya']==='oya'){
 
 				$_res['time_left_to_close_the_thread'] = time_left_to_close_the_thread($_res['time']);

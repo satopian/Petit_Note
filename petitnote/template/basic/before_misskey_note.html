@@ -31,24 +31,15 @@
 <?php endif;?>
 <a href="#bottom">▽</a>
 </nav>
-<h2 class="article_title"><?php if($en):?>Edit mode<?php else:?>編集モード<?php endif;?></h2>
+<h2 class="article_title"><?php if($en):?>Note to Misskey<?php else:?>Misskeyにノート<?php endif;?></h2>
 
 <div id="error_message_beforedelete"></div>
-<?php if($admindel):?>
-	<?php if($en):?>Edit this article. Press the edit button.<?php else:?>この記事を編集します。編集ボタンを押してください。<?php endif;?>: 
-<?php endif;?>
-<?php if($userdel&&!$admindel):?>
-	<?php if($en):?>Edit this article. Please enter password.<?php else:?>この記事を編集します。パスワードを入力してください。<?php endif;?>: 
-<?php endif;?>
-<?php if( $admindel || $aikotoba && $userdel):?>
+<?php if($aikotoba && !$deny_all_posts || $adminpost ):?>
+	<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note to Misskey. Please enter password.<?php else:?>この記事をMisskeyにノートします。パスワードを入力してください。<?php endif;?>: 
 <form action="./" method="POST" id="before_delete" class="aikotoba" onsubmit="return res_form_submit(event,'before_delete')">
-
-<?php if(!$admindel):?>
-
 <span class="non"><input type="text" value="" autocomplete="username"></span>
 <input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
-<?php endif;?>
-<input type="hidden" name="mode" value="edit_form">
+<input type="hidden" name="mode" value="misskey_note_edit_form">
 <input type="hidden" name="resmode" value="<?=h($resmode)?>">
 <input type="hidden" name="postresno" value="<?=h($postresno)?>">
 <input type="hidden" name="postpage" value="<?=h($postpage)?>">

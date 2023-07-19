@@ -197,8 +197,13 @@ Size:
 		$skipres=0;	//削除モードの時はレスを省略しない
 	}
 	?>
+	<?php $findimage=false;?>
 	<!-- 個別スレッドのループ -->
 	<?php foreach($ress as $i => $res) : ?>
+		<?php if($res['img']){
+			$findimage=true;
+		}?>
+
 		<!-- 縮小のかかったNSFW画像を元のサイズへ -->
 		<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
 		<?php if($skipres && $i===$skipres):?>
@@ -316,6 +321,12 @@ Size:
 	<div class="clear"></div>
 
 	<div class="res_button_wrap">
+	<?php if($use_misskey_note && $findimage):?>
+		<span class="share_button">
+			<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="nofollow noopener">
+			<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
+		</span>
+	<?php endif;?>
 	<?php if($aikotoba && (!$userdel && !$admindel)):?>
 	<?php if($use_sns_button):?>
 	<span class="share_button">

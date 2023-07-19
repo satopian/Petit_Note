@@ -49,20 +49,30 @@
 	<?php endif;?>
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<nav class="menu_wrap">
-	<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
-	<?php if($display_search_nav):?>
-		<span> [<a href="./?mode=search&radio=3"><?php if($en):?>Search<?php else:?>検索<?php endif;?></a>]</span>
-	<?php endif;?>
-<?php if($aikotoba):?>
-	<?php if($use_paint):?>
-		<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
-	<?php endif;?>
-	<?php if($userdel || $admindel):?>
-		<span>[<a href="./?mode=logout&resno=<?=h($resno)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
+
+	<?php if($misskey_note):?>
+		
+		<span>[<a href="./?resno=<?=h($out[0][0]['no'])?>"><?php if($en):?>Return<?php else:?>スレッドにもどる<?php endif;?></a>]</span>
+	
 	<?php else:?>
-		<span>[<a href="./?mode=userdel&resno=<?=h($resno)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
+
+		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
+		<?php if($display_search_nav):?>
+			<span> [<a href="./?mode=search&radio=3"><?php if($en):?>Search<?php else:?>検索<?php endif;?></a>]</span>
+		<?php endif;?>
+	<?php if($aikotoba):?>
+		<?php if($use_paint):?>
+			<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
+		<?php endif;?>
+		<?php if($userdel || $admindel):?>
+			<span>[<a href="./?mode=logout&resno=<?=h($resno)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
+		<?php else:?>
+			<span>[<a href="./?mode=userdel&resno=<?=h($resno)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
+		<?php endif;?>
 	<?php endif;?>
+
 <?php endif;?>
+
 <a href="#bottom">▽</a>
 </nav>
 <?php if(!$aikotoba):?>
@@ -189,19 +199,26 @@
 
 					<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
 					</form>
-					<form action="./" method="POST" class="aikotoba">
+				</div>
+				<?php endif;?>
+				
+				<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $misskey_note && $res['img'] ) || $adminpost)):?>
+				<div>
+				
+				<form action="./" method="POST" class="aikotoba">
 					<input type="hidden" name="mode" value="before_misskey_note">
-					<input type="hidden" name="edit_mode" value="delmode">
+					<input type="hidden" name="edit_mode" value="editmode">
 					<input type="hidden" name="resmode" value="true">
 					<input type="hidden" name="id" value="<?=h($res['time'])?>">
 					<input type="hidden" name="no" value="<?=h($res['no'])?>">
 					<input type="hidden" name="postpage" value="<?=h($page)?>">
 					<input type="hidden" name="postresno" value="<?=h($resno)?>">
 
-					<input type="submit" value="<?php if($en):?>Delete<?php else:?>misskey<?php endif;?>">
+					<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <input type="submit" value="<?php if($en):?>Note to Misskey<?php else:?>Misskeyにノート<?php endif;?>">
 					</form>
 				</div>
-				<?php endif;?>	
+				<?php endif;?>
+
 			</div>
 		<?php if($i!==0):?>
 		</div><!-- 子レスのwrap	 -->
@@ -209,7 +226,7 @@
 	<?php endforeach;?>
 <!-- 返信フォーム -->
 <div class="clear"></div>
-<?php if($aikotoba && (!$userdel && !$admindel)):?>
+<?php if($aikotoba && (!$userdel && !$admindel && !$misskey_note)):?>
 <!-- 返信可能な数の表示 -->
 <div class="res_notice_wrap">
 <?php $maxres_current=(int)$max_res-(int)$i;?>
@@ -250,6 +267,14 @@
 		</script>
 		<button class="copy_button" onclick="add_to_com()"><?php if($en):?>Copy the poster name<?php else:?>投稿者名をコピー<?php endif;?></button>
 		<?php endif; ?>
+			
+			
+			<?php if($use_misskey_note && $findimage):?>
+				<span class="share_button">
+					<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="nofollow noopener">
+					<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
+				</span>
+			<?php endif;?>
 			<?php if($use_sns_button):?>
 				<span class="share_button">
 				<?php if($switch_sns):?>

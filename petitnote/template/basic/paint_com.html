@@ -122,49 +122,7 @@
 	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
 	</span>
 	<?php endif;?>
-	<?php if($post2misskey):?>
-	<span>
-		<input type="checkbox" name="to_misskey" id="to_misskey" value="on"><label for="to_misskey"><span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Misskey Dual Posting<?php else:?>Misskeyにも投稿する<?php endif;?></label>	
-		</span>
-	<?php endif;?>
 </form>
-<?php if($post2misskey):?>
-<script>
-	function to_sns_submitform() {
-		// フォームの内容を取得
-		const form = document.getElementById("res_form");
-		const formData = new FormData(form);
-
-		const to_misskey = formData.get("to_misskey") || ''; 
-		if (!to_misskey) {
-		// Misskeyへの投稿オプションが存在しない場合は処理を中止
-			return;
-		}
-		
-		formData.append('mode', 'post2sns');//SNS投稿モード
-
-		// Misskeyへの投稿フォームを動的に生成
-		const sns_form = document.createElement('form');
-		sns_form.method = 'post';
-		sns_form.action = './';
-		sns_form.target = '_blank'; // フォームを新しいタブで開く
-
-		// formDataの内容をフォームに追加
-		for (const pair of formData.entries()) {
-			const input = document.createElement('input');
-			input.type = 'hidden';
-			input.name = pair[0];
-			input.value = pair[1];
-			sns_form.appendChild(input);
-	}
-
-    // フォームを送信
-    document.body.appendChild(sns_form);
-    sns_form.submit();
-}
-</script>
-<?php endif;?>
-
 <?php else:?>
 <?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
 <form action="./" method="post" class="aikotoba">

@@ -22,7 +22,7 @@
 <span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
  <a href="#bottom">▽</a>
 	</nav>
-	<h2 class="article_title"><?php if($en):?>Editing an article<?php else:?>記事編集中<?php endif;?></h2>
+	<h2 class="article_title"><?php if($en):?>Note to Misskey<?php else:?>Misskeyにノート<?php endif;?></h2>
 
 
 <hr>
@@ -77,7 +77,7 @@
 
 			<div class="clear"></div>
 
-	<form action="./" method="POST" enctype="multipart/form-data" class="resform" id="res_form"">
+	<form action="./" method="POST" enctype="multipart/form-data" class="resform" id="res_form">
 	<div id="error_message"></div>
 <textarea name="com" class="post_com"><?=h($com)?></textarea><br>
 <input type="hidden" name="no" value="<?= h($ress[0]['no'])?>">
@@ -86,7 +86,7 @@
 <input type="hidden" name="src_image" value="<?=h($res['img'])?>">
 <input type="hidden" name="mode" value="create_misskey_post_sessiondata">
 <input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on" checked="checked"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
-<input type="checkbox" name="article_url_link" id="article_url_link" value="on" checked="checked"><label for="article_url_link"><?php if($en):?>Link the article URL<?php else:?>記事のURLをリンクする<?php endif;?></label>
+<input type="checkbox" name="article_url_link" id="article_url_link" value=""><label for="article_url_link"><?php if($en):?>Link the article URL<?php else:?>記事のURLをリンクする<?php endif;?></label>
 <input type="submit" value="<?php if($en):?>Note<?php else:?>ノート<?php endif;?>" class="form_button">
 </form>
 
