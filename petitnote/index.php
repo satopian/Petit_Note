@@ -16,9 +16,15 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230710){
+if(!isset($functions_ver)||$functions_ver<20230718){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
+check_file(__DIR__.'/misskey_note.inc.php');
+require_once(__DIR__.'/misskey_note.inc.php');
+if(!isset($misskey_note_ver)||$misskey_note_ver<20230718){
+	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
+}
+
 // jQueryバージョン
 const JQUERY='jquery-3.7.0.min.js';
 check_file(__DIR__.'/lib/'.JQUERY);
@@ -144,12 +150,16 @@ switch($mode){
 		return logout();
 	case 'set_share_server':
 		return set_share_server();
-	case 'post2sns':
-		return post2sns();
-	case 'post2misskey':
-		return post2misskey();
 	case 'post_share_server':
 		return post_share_server();
+	case 'post2sns':
+		return misskey_note::post2sns();
+	case 'post2misskey':
+		return misskey_note::post2misskey();
+	case 'before_misskey_note':
+		return misskey_note::before_misskey_note();
+	case 'post2misskey_edit_form':
+		return misskey_note::post2misskey_edit_form();
 	case 'search':
 		return search();
 	case 'catalog':
@@ -704,7 +714,7 @@ return header('Location: ./');
 function paint(){
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$en;
-	global $usercode,$password_require_to_continue,$petit_lot;
+	global $usercode,$petit_lot;
 
 	check_same_origin();
 
@@ -969,100 +979,6 @@ function paintcom(){
 	// HTML出力
 	$templete='paint_com.html';
 	return include __DIR__.'/'.$skindir.$templete;
-}
-function post2sns(){
-	global $en,$usercode,$root_url,$mark_sensitive_image,$skindir,$petit_lot,$misskey_servers,$boardname;
-	
-	$userip =t(get_uip());
-
-	$pictmp = (int)filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
-	$com = t((string)filter_input(INPUT_POST,'com'));
-	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
-
-	$pictmp2=false;
-	if($pictmp===2){//ユーザーデータを調べる
-		list($picfile,) = explode(",",(string)filter_input(INPUT_POST, 'picfile'));
-		$picfile_name=basename($picfile);
-		$tempfile = TEMP_DIR.$picfile;
-		$picfile=basename($picfile);
-		$picfile=pathinfo($picfile, PATHINFO_FILENAME );//拡張子除去
-		//選択された絵が投稿者の絵か再チェック
-		if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat") || !is_file($tempfile)) {
-			return error($en? 'Posting failed.':'投稿に失敗しました。');
-		}
-		//ユーザーデータから情報を取り出す
-		$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
-		$userdata = fread($fp, 1024);
-		fclose($fp);
-		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
-		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
-		$tool= in_array($tool,['neo','chi','klecks','tegaki']) ? $tool : '???';
-		//描画時間を$userdataをもとに計算
-		if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
-			$painttime=(int)$postedtime-(int)$starttime;
-		}
-		$pictmp2=true;//お絵かきでエラーがなかった時にtrue;
-		
-	}
-	if(!$pictmp2){
-		error($en ? 'This operation has failed.':'失敗しました。');
-	}
-
-	$tool=switch_tool($tool);
-	
-	$painttime=calcPtime($painttime);
-	$painttime = $en ? $painttime['en'] : $painttime['ja'];
-	session_sta();
-	
-	//SESSIONに投稿内容を格納
-	$_SESSION['sns_api_val']=[$com,$picfile_name,$tool,$painttime,$hide_thumbnail];
-
-	$misskey_servers=isset($misskey_servers)?$misskey_servers:
-	[
-	
-		["misskey.io","https://misskey.io"],
-		["misskey.design","https://misskey.design"],
-		["nijimiss.moe","https://nijimiss.moe"],
-		["sushi.ski","https://sushi.ski"],
-	
-	];
-	$servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
-
-	$misskey_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_radio_cookie");
-	$misskey_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_direct_input_cookie");
-
-	// HTML出力
-	$templete='post2misskey.html';
-	return include __DIR__.'/'.$skindir.$templete;
-}
-
-function post2misskey(){
-	global $root_url;
-	global $en;
-
-	$misskey_server_radio=(string)filter_input(INPUT_POST,"misskey_server_radio",FILTER_VALIDATE_URL);
-	$misskey_server_radio_for_cookie=(string)filter_input(INPUT_POST,"misskey_server_radio");//directを判定するためurlでバリデーションしていない
-	$misskey_server_radio_for_cookie=($misskey_server_radio_for_cookie === 'direct') ? 'direct' : $misskey_server_radio;
-	$misskey_server_direct_input=(string)filter_input(INPUT_POST,"misskey_server_direct_input",FILTER_VALIDATE_URL);
-	setcookie("misskey_server_radio_cookie",$misskey_server_radio_for_cookie, time()+(86400*30),"","",false,true);
-	setcookie("misskey_server_direct_input_cookie",$misskey_server_direct_input, time()+(86400*30),"","",false,true);
-	$share_url='';
-
-	if(!$misskey_server_radio){
-		error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");
-	}
-
-	session_sta();
-	// セッションIDとユニークIDを結合
-	$sns_api_session_id = session_id() . uniqid();
-	// SHA256ハッシュ化
-	$sns_api_session_id=hash('sha256', $sns_api_session_id);
-
-	$_SESSION['sns_api_session_id']=$sns_api_session_id;
-
-	$root_url = urlencode($root_url);
-
-	return header("Location: {$misskey_server_radio}/miauth/{$sns_api_session_id}?name=MyApp&callback={$root_url}misskeyapi.php&permission=write:notes,write:following,read:drive,write:drive");
 }
 
 //コンティニュー前画面
@@ -1677,6 +1593,8 @@ function confirmation_before_deletion ($edit_mode=''){
 	}
 	return error($en?'This operation has failed.':'失敗しました。');
 }
+
+
 //編集画面
 function edit_form($id='',$no=''){
 

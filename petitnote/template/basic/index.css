@@ -88,11 +88,18 @@ form.postform span {
     margin: 0 0 0 10px;
 }
 
+form.postform span span {
+    margin: 0;
+}
+
 form.resform {
 	text-align: right;
 }
 form.resform span {
     margin: 0 10px 0 0;
+}
+form.resform span span {
+    margin: 0;
 }
 
 input.form_button {

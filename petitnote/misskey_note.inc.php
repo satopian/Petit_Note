@@ -1,0 +1,241 @@
+<?php
+//Petit Note 2021-2023 (c)satopian MIT LICENCE
+//https://paintbbs.sakura.ne.jp/
+//APIを使ってお絵かき掲示板からMisskeyにノート
+$misskey_note_ver=20230718;
+class misskey_note{
+
+	//Misskey同時投稿
+	public static function post2sns(){
+		global $en,$usercode,$root_url,$mark_sensitive_image,$skindir,$petit_lot,$misskey_servers,$boardname;
+		
+		$userip =t(get_uip());
+
+		$pictmp = (int)filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
+		$com = t((string)filter_input(INPUT_POST,'com'));
+		$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
+
+		$pictmp2=false;
+		if($pictmp===2){//ユーザーデータを調べる
+			list($picfile,) = explode(",",(string)filter_input(INPUT_POST, 'picfile'));
+			$picfile_name=basename($picfile);
+			$tempfile = TEMP_DIR.$picfile;
+			$picfile=basename($picfile);
+			$picfile=pathinfo($picfile, PATHINFO_FILENAME );//拡張子除去
+			//選択された絵が投稿者の絵か再チェック
+			if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat") || !is_file($tempfile)) {
+				return error($en? 'Posting failed.':'投稿に失敗しました。');
+			}
+			//ユーザーデータから情報を取り出す
+			$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
+			$userdata = fread($fp, 1024);
+			fclose($fp);
+			list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
+			if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
+			$tool= in_array($tool,['neo','chi','klecks','tegaki']) ? $tool : '???';
+			//描画時間を$userdataをもとに計算
+			if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
+				$painttime=(int)$postedtime-(int)$starttime;
+			}
+			$pictmp2=true;//お絵かきでエラーがなかった時にtrue;
+			
+		}
+		if(!$pictmp2){
+			error($en ? 'This operation has failed.':'失敗しました。');
+		}
+
+		$tool=switch_tool($tool);
+		
+		$painttime=calcPtime($painttime);
+		$painttime = $en ? $painttime['en'] : $painttime['ja'];
+		session_sta();
+		
+		//SESSIONに投稿内容を格納
+		$_SESSION['sns_api_val']=[$com,$picfile_name,$tool,$painttime,$hide_thumbnail];
+
+		$misskey_servers=isset($misskey_servers)?$misskey_servers:
+		[
+		
+			["misskey.io","https://misskey.io"],
+			["misskey.design","https://misskey.design"],
+			["nijimiss.moe","https://nijimiss.moe"],
+			["sushi.ski","https://sushi.ski"],
+		
+		];
+		$servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
+
+		$misskey_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_radio_cookie");
+		$misskey_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_direct_input_cookie");
+
+		// HTML出力
+		$templete='post2misskey.html';
+		return include __DIR__.'/'.$skindir.$templete;
+	}
+
+	public static function post2misskey(){
+		global $root_url;
+		global $en;
+
+		$misskey_server_radio=(string)filter_input(INPUT_POST,"misskey_server_radio",FILTER_VALIDATE_URL);
+		$misskey_server_radio_for_cookie=(string)filter_input(INPUT_POST,"misskey_server_radio");//directを判定するためurlでバリデーションしていない
+		$misskey_server_radio_for_cookie=($misskey_server_radio_for_cookie === 'direct') ? 'direct' : $misskey_server_radio;
+		$misskey_server_direct_input=(string)filter_input(INPUT_POST,"misskey_server_direct_input",FILTER_VALIDATE_URL);
+		setcookie("misskey_server_radio_cookie",$misskey_server_radio_for_cookie, time()+(86400*30),"","",false,true);
+		setcookie("misskey_server_direct_input_cookie",$misskey_server_direct_input, time()+(86400*30),"","",false,true);
+		$share_url='';
+
+		if(!$misskey_server_radio){
+			error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");
+		}
+
+		session_sta();
+		// セッションIDとユニークIDを結合
+		$sns_api_session_id = session_id() . uniqid();
+		// SHA256ハッシュ化
+		$sns_api_session_id=hash('sha256', $sns_api_session_id);
+
+		$_SESSION['sns_api_session_id']=$sns_api_session_id;
+
+		$root_url = urlencode($root_url);
+
+		return header("Location: {$misskey_server_radio}/miauth/{$sns_api_session_id}?name=MyApp&callback={$root_url}misskeyapi.php&permission=write:notes,write:following,read:drive,write:drive");
+	}
+
+	//投稿済みの記事をMisskeyにノートするための前処理
+		public static function before_misskey_note (){
+
+		global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en;
+		//管理者判定処理
+		check_same_origin();
+		session_sta();
+		$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+		aikotoba_required_to_view();
+
+		$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
+		$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
+		$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
+
+		if(!is_file(LOG_DIR."{$no}.log")){
+			return error($en? 'The article does not exist.':'記事がありません。');
+		}
+		check_open_no($no);
+		$rp=fopen(LOG_DIR."{$no}.log","r");
+		flock($rp, LOCK_EX);
+
+		$r_arr = create_array_from_fp($rp);
+
+		if(empty($r_arr)){
+			closeFile($rp);
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
+		$find=false;
+		foreach($r_arr as $i =>$val){
+			$_line=explode("\t",trim($val));
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
+			if($id===$time && $no===$_no){
+
+				$out[0][]=create_res($_line);
+				$find=true;
+				break;
+				
+			}
+
+		}
+		if(!$find){
+			closeFile ($rp);
+			return error($en?'The article was not found.':'記事が見つかりません。');
+		}
+
+		closeFile ($rp);
+
+		$token=get_csrf_token();
+
+		// nsfw
+		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+		$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+
+		$count_r_arr=count($r_arr);
+		$edit_mode=false;
+		$admindel=false; 
+		$templete='before_misskey_note.html';
+		return include __DIR__.'/'.$skindir.$templete;
+	}
+	//投稿済みの画像をMisskeyにNote
+	public static function post2misskey_edit_form(){
+
+		global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image;
+
+		check_same_origin();
+
+		$token=get_csrf_token();
+
+		$admindel=admindel_valid();
+		$adminpost=adminpost_valid();
+		$admin = ($admindel||$adminpost);
+
+		$pwd=(string)filter_input(INPUT_POST,'pwd');
+		$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
+		$pwd = $pwd ? $pwd : $pwdc;
+		
+		$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
+
+		list($id,$no)=explode(",",trim($id_and_no));
+
+		check_open_no($no);
+		if(!is_file(LOG_DIR."{$no}.log")){
+			return error($en? 'The article does not exist.':'記事がありません。');
+		}
+		$rp=fopen(LOG_DIR."{$no}.log","r");
+		flock($rp, LOCK_EX);
+
+		$r_arr = create_array_from_fp($rp);
+
+		if(empty($r_arr)){
+			closeFile($rp);
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
+
+		$flag=false;
+		foreach($r_arr as $val){
+
+			$line=explode("\t",trim($val));
+
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+			if($id===$time && $no===$_no){
+			
+				if(!$pwd||!password_verify($pwd,$hash)){
+					return error($en?'Password is incorrect.':'パスワードが違います。');
+				}
+				if($admin||check_elapsed_days($time)){
+					$flag=true;
+					break;
+				}
+			}
+		}
+
+		if(!$flag){
+			closeFile($rp);
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
+		closeFile($rp);
+
+		check_AsyncRequest();//Asyncリクエストの時は処理を中断
+
+		$out[0][]=create_res($line);//$lineから、情報を取り出す;
+
+		$resno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
+		$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+
+		foreach($line as $i => $val){
+			$line[$i]=h($val);
+		}
+		list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+
+		$com=h(str_replace('"\n"',"\n",$com));
+
+		$hide_thumb_checkd = true;
+		// HTML出力
+		$templete='misskey_note_form.html';
+		return include __DIR__.'/'.$skindir.$templete;
+	}
+}

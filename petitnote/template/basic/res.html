@@ -189,6 +189,17 @@
 
 					<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
 					</form>
+					<form action="./" method="POST" class="aikotoba">
+					<input type="hidden" name="mode" value="before_misskey_note">
+					<input type="hidden" name="edit_mode" value="delmode">
+					<input type="hidden" name="resmode" value="true">
+					<input type="hidden" name="id" value="<?=h($res['time'])?>">
+					<input type="hidden" name="no" value="<?=h($res['no'])?>">
+					<input type="hidden" name="postpage" value="<?=h($page)?>">
+					<input type="hidden" name="postresno" value="<?=h($resno)?>">
+
+					<input type="submit" value="<?php if($en):?>Delete<?php else:?>misskey<?php endif;?>">
+					</form>
 				</div>
 				<?php endif;?>	
 			</div>
