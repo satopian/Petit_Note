@@ -152,14 +152,16 @@ switch($mode){
 		return set_share_server();
 	case 'post_share_server':
 		return post_share_server();
-	case 'post2sns':
-		return misskey_note::post2sns();
-	case 'post2misskey':
-		return misskey_note::post2misskey();
 	case 'before_misskey_note':
 		return misskey_note::before_misskey_note();
-	case 'post2misskey_edit_form':
-		return misskey_note::post2misskey_edit_form();
+	case 'misskey_note_edit_form':
+		return misskey_note::misskey_note_edit_form();
+	case 'create_misskey_post_sessiondata':
+		return misskey_note::create_misskey_post_sessiondata();
+	case 'create_misskey_authrequesturl':
+		return misskey_note::create_misskey_authrequesturl();
+	case 'connect_misskey_api':
+		return misskey_note::connect_misskey_api();
 	case 'search':
 		return search();
 	case 'catalog':

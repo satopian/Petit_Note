@@ -5,109 +5,8 @@
 $misskey_note_ver=20230718;
 class misskey_note{
 
-	//Misskey同時投稿
-	public static function post2sns(){
-		global $en,$usercode,$root_url,$mark_sensitive_image,$skindir,$petit_lot,$misskey_servers,$boardname;
-		
-		$userip =t(get_uip());
-
-		$pictmp = (int)filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
-		$com = t((string)filter_input(INPUT_POST,'com'));
-		$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
-
-		$pictmp2=false;
-		if($pictmp===2){//ユーザーデータを調べる
-			list($picfile,) = explode(",",(string)filter_input(INPUT_POST, 'picfile'));
-			$picfile_name=basename($picfile);
-			$tempfile = TEMP_DIR.$picfile;
-			$picfile=basename($picfile);
-			$picfile=pathinfo($picfile, PATHINFO_FILENAME );//拡張子除去
-			//選択された絵が投稿者の絵か再チェック
-			if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat") || !is_file($tempfile)) {
-				return error($en? 'Posting failed.':'投稿に失敗しました。');
-			}
-			//ユーザーデータから情報を取り出す
-			$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
-			$userdata = fread($fp, 1024);
-			fclose($fp);
-			list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
-			if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
-			$tool= in_array($tool,['neo','chi','klecks','tegaki']) ? $tool : '???';
-			//描画時間を$userdataをもとに計算
-			if($starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
-				$painttime=(int)$postedtime-(int)$starttime;
-			}
-			$pictmp2=true;//お絵かきでエラーがなかった時にtrue;
-			
-		}
-		if(!$pictmp2){
-			error($en ? 'This operation has failed.':'失敗しました。');
-		}
-
-		$tool=switch_tool($tool);
-		
-		$painttime=calcPtime($painttime);
-		$painttime = $en ? $painttime['en'] : $painttime['ja'];
-		session_sta();
-		
-		//SESSIONに投稿内容を格納
-		$_SESSION['sns_api_val']=[$com,$picfile_name,$tool,$painttime,$hide_thumbnail];
-
-		$misskey_servers=isset($misskey_servers)?$misskey_servers:
-		[
-		
-			["misskey.io","https://misskey.io"],
-			["misskey.design","https://misskey.design"],
-			["nijimiss.moe","https://nijimiss.moe"],
-			["sushi.ski","https://sushi.ski"],
-			["misskey.art","https://misskey.art"],
-			["misskey.gamelore.fun","https://misskey.gamelore.fun"],
-			["novelskey.tarbin.net","https://novelskey.tarbin.net"],
-			["tyazzkey.work","https://tyazzkey.work"],
-			["misskey.delmulin.com","https://misskey.delmulin.com"],
-		
-		];
-			$servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
-
-		$misskey_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_radio_cookie");
-		$misskey_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_direct_input_cookie");
-
-		// HTML出力
-		$templete='post2misskey.html';
-		return include __DIR__.'/'.$skindir.$templete;
-	}
-
-	public static function post2misskey(){
-		global $root_url;
-		global $en;
-
-		$misskey_server_radio=(string)filter_input(INPUT_POST,"misskey_server_radio",FILTER_VALIDATE_URL);
-		$misskey_server_radio_for_cookie=(string)filter_input(INPUT_POST,"misskey_server_radio");//directを判定するためurlでバリデーションしていない
-		$misskey_server_radio_for_cookie=($misskey_server_radio_for_cookie === 'direct') ? 'direct' : $misskey_server_radio;
-		$misskey_server_direct_input=(string)filter_input(INPUT_POST,"misskey_server_direct_input",FILTER_VALIDATE_URL);
-		setcookie("misskey_server_radio_cookie",$misskey_server_radio_for_cookie, time()+(86400*30),"","",false,true);
-		setcookie("misskey_server_direct_input_cookie",$misskey_server_direct_input, time()+(86400*30),"","",false,true);
-		$share_url='';
-
-		if(!$misskey_server_radio){
-			error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");
-		}
-
-		session_sta();
-		// セッションIDとユニークIDを結合
-		$sns_api_session_id = session_id() . uniqid();
-		// SHA256ハッシュ化
-		$sns_api_session_id=hash('sha256', $sns_api_session_id);
-
-		$_SESSION['sns_api_session_id']=$sns_api_session_id;
-
-		$root_url = urlencode($root_url);
-
-		return header("Location: {$misskey_server_radio}/miauth/{$sns_api_session_id}?name=MyApp&callback={$root_url}misskeyapi.php&permission=write:notes,write:following,read:drive,write:drive");
-	}
-
 	//投稿済みの記事をMisskeyにノートするための前処理
-		public static function before_misskey_note (){
+	public static function before_misskey_note (){
 
 		global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en;
 		//管理者判定処理
@@ -165,8 +64,8 @@ class misskey_note{
 		$templete='before_misskey_note.html';
 		return include __DIR__.'/'.$skindir.$templete;
 	}
-	//投稿済みの画像をMisskeyにNote
-	public static function post2misskey_edit_form(){
+	//投稿済みの画像をMisskeyにNoteするための投稿フォーム
+	public static function misskey_note_edit_form(){
 
 		global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image;
 
@@ -240,7 +139,244 @@ class misskey_note{
 
 		$hide_thumb_checkd = true;
 		// HTML出力
-		$templete='misskey_note_form.html';
+		$templete='misskey_note_edit_form.html';
 		return include __DIR__.'/'.$skindir.$templete;
 	}
+
+	//Misskeyに投稿するSESSIONデータを作成
+	public static function create_misskey_post_sessiondata(){
+		global $en,$usercode,$root_url,$mark_sensitive_image,$skindir,$petit_lot,$misskey_servers,$boardname;
+		
+		$userip =t(get_uip());
+
+		$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
+		$src_image = t((string)filter_input(INPUT_POST,'src_image'));
+		$com = t((string)filter_input(INPUT_POST,'com'));
+		$abbr_toolname = t((string)filter_input(INPUT_POST,'abbr_toolname'));
+		$paintsec = filter_input(INPUT_POST,'paintsec',FILTER_VALIDATE_INT);
+		$hide_thumbnail = (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
+		$article_url_link = (bool)filter_input(INPUT_POST,'article_url_link',FILTER_VALIDATE_BOOLEAN);
+		
+		$tool=switch_tool($abbr_toolname);
+		
+		$painttime=calcPtime($paintsec);
+		$painttime = $en ? $painttime['en'] : $painttime['ja'];
+		session_sta();
+		
+		//SESSIONに投稿内容を格納
+		$_SESSION['sns_api_val']=[$com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link];
+
+		$misskey_servers=isset($misskey_servers)?$misskey_servers:
+		[
+		
+			["misskey.io","https://misskey.io"],
+			["misskey.design","https://misskey.design"],
+			["nijimiss.moe","https://nijimiss.moe"],
+			["sushi.ski","https://sushi.ski"],
+			["misskey.art","https://misskey.art"],
+			["misskey.gamelore.fun","https://misskey.gamelore.fun"],
+			["novelskey.tarbin.net","https://novelskey.tarbin.net"],
+			["tyazzkey.work","https://tyazzkey.work"],
+			["misskey.delmulin.com","https://misskey.delmulin.com"],
+		
+		];
+			$servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
+
+		$misskey_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_radio_cookie");
+		$misskey_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_direct_input_cookie");
+
+		// HTML出力
+		$templete='misskey_server_selection.html';
+		return include __DIR__.'/'.$skindir.$templete;
+	}
+
+	public static function create_misskey_authrequesturl(){
+		global $root_url;
+		global $en;
+
+		$misskey_server_radio=(string)filter_input(INPUT_POST,"misskey_server_radio",FILTER_VALIDATE_URL);
+		$misskey_server_radio_for_cookie=(string)filter_input(INPUT_POST,"misskey_server_radio");//directを判定するためurlでバリデーションしていない
+		$misskey_server_radio_for_cookie=($misskey_server_radio_for_cookie === 'direct') ? 'direct' : $misskey_server_radio;
+		$misskey_server_direct_input=(string)filter_input(INPUT_POST,"misskey_server_direct_input",FILTER_VALIDATE_URL);
+		setcookie("misskey_server_radio_cookie",$misskey_server_radio_for_cookie, time()+(86400*30),"","",false,true);
+		setcookie("misskey_server_direct_input_cookie",$misskey_server_direct_input, time()+(86400*30),"","",false,true);
+		$share_url='';
+
+		if(!$misskey_server_radio){
+			error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");
+		}
+
+		session_sta();
+		// セッションIDとユニークIDを結合
+		$sns_api_session_id = session_id() . uniqid();
+		// SHA256ハッシュ化
+		$sns_api_session_id=hash('sha256', $sns_api_session_id);
+
+		$_SESSION['sns_api_session_id']=$sns_api_session_id;
+
+		$root_url = urlencode($root_url);
+
+		return header("Location: {$misskey_server_radio}/miauth/{$sns_api_session_id}?name=MyApp&callback={$root_url}&mode=connect_misskey_api&permission=write:notes,write:following,read:drive,write:drive");
+	}
+
+	//Misskey APIに送信
+	public static function connect_misskey_api(){
+		
+		global $en,$root_url;
+
+		session_sta();
+		
+		if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))){
+			return header( "Location: ./ ") ;
+		};
+
+		$baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "https://misskey.io";
+		// 認証チェック
+		$sns_api_session_id = $_SESSION['sns_api_session_id'];
+		list($com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link) = $_SESSION['sns_api_val'];
+		$src_image=basename($src_image);
+
+		if((!$src_image)||!is_file(__DIR__.'/src/'.$src_image)){
+			 error($en ? "Image does not exist." : "画像がありません。");
+		};
+
+		$checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
+		
+		$checkCurl = curl_init();
+		curl_setopt($checkCurl, CURLOPT_URL, $checkUrl);
+		curl_setopt($checkCurl, CURLOPT_POST, true);
+		curl_setopt($checkCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+		curl_setopt($checkCurl, CURLOPT_POSTFIELDS, json_encode([]));//空のData
+		curl_setopt($checkCurl, CURLOPT_RETURNTRANSFER, true);
+		
+		$checkResponse = curl_exec($checkCurl);
+		curl_close($checkCurl);
+		
+		if (!$checkResponse) {
+			error($en ? "Authentication failed." :"認証に失敗しました。");	
+		}
+		
+		$responseData = json_decode($checkResponse, true);
+		$accessToken = $responseData['token'];
+		$user = $responseData['user'];
+		
+		// 画像のアップロード
+		$imagePath = __DIR__.'/src/'.$src_image;
+		$uploadUrl = $baseUrl . "/api/drive/files/create";
+		$uploadHeaders = array(
+			'Authorization: Bearer ' . $accessToken,
+			'Content-Type: multipart/form-data'
+		);
+		$uploadFields = array(
+			'i' => $accessToken,
+			'file' => new CURLFile($imagePath),
+		);
+		// var_dump($uploadFields);
+		$uploadCurl = curl_init();
+		curl_setopt($uploadCurl, CURLOPT_URL, $uploadUrl);
+		curl_setopt($uploadCurl, CURLOPT_POST, true);
+		curl_setopt($uploadCurl, CURLOPT_HTTPHEADER, $uploadHeaders);
+		curl_setopt($uploadCurl, CURLOPT_POSTFIELDS, $uploadFields);
+		curl_setopt($uploadCurl, CURLOPT_RETURNTRANSFER, true);
+		$uploadResponse = curl_exec($uploadCurl);
+		$uploadStatusCode = curl_getinfo($uploadCurl, CURLINFO_HTTP_CODE);
+		curl_close($uploadCurl);
+		// var_dump($uploadResponse);
+		if (!$uploadResponse) {
+			// var_dump($uploadResponse);
+			error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" );
+		}
+		
+		// アップロードしたファイルのIDを取得
+		
+		$responseData = json_decode($uploadResponse, true);
+		$fileId = isset($responseData['id']) ? $responseData['id']:'';
+		
+		if(!$fileId){
+			// var_dump($responseData);
+			error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" );
+		}
+		
+		// ファイルの更新
+		$updateUrl = $baseUrl . "/api/drive/files/update";
+		$updateHeaders = array(
+			'Authorization: Bearer ' . $accessToken,
+			'Content-Type: application/json'
+		);
+		$updateData = array(
+			'i' => $accessToken,
+			'fileId' => $fileId,
+			'isSensitive' => (bool)($hide_thumbnail), // isSensitiveフィールドを更新する場合はここで指定
+			// 他に更新したいパラメータがあればここに追加
+		);
+		
+		$updateCurl = curl_init();
+		curl_setopt($updateCurl, CURLOPT_URL, $updateUrl);
+		curl_setopt($updateCurl, CURLOPT_POST, true);
+		curl_setopt($updateCurl, CURLOPT_HTTPHEADER, $updateHeaders);
+		curl_setopt($updateCurl, CURLOPT_POSTFIELDS, json_encode($updateData));
+		curl_setopt($updateCurl, CURLOPT_RETURNTRANSFER, true);
+		$updateResponse = curl_exec($updateCurl);
+		$updateStatusCode = curl_getinfo($updateCurl, CURLINFO_HTTP_CODE);
+		curl_close($updateCurl);
+		
+		if (!$updateResponse) {
+			error($en ? "Failed to update the file." : "ファイルの更新に失敗しました。");
+		}
+		// var_dump($updateResponse);
+		
+		$uploadResult = json_decode($uploadResponse, true);
+		
+		if ($fileId) {
+			
+			sleep(10);
+			// 投稿
+			$tool= $tool ? 'Tool:'.$tool.' ' :'';
+			$painttime= $painttime ? 'Paint time:'.$painttime.' ' :'';
+			$url=$root_url.'?resno='.$no;
+			$status = $tool.$painttime.$com;
+			
+			$postUrl = $baseUrl . "/api/notes/create";
+			$postHeaders = array(
+				'Authorization: Bearer ' . $accessToken,
+				'Content-Type: application/json'
+			);
+			$postData = array(
+				'i' => $accessToken,
+				'text' => $status,
+				'fileIds' => array($fileId),
+			);
+		
+			$postCurl = curl_init();
+			curl_setopt($postCurl, CURLOPT_URL, $postUrl);
+			curl_setopt($postCurl, CURLOPT_POST, true);
+			curl_setopt($postCurl, CURLOPT_HTTPHEADER, $postHeaders);
+			curl_setopt($postCurl, CURLOPT_POSTFIELDS, json_encode($postData));
+			curl_setopt($postCurl, CURLOPT_RETURNTRANSFER, true);
+			$postResponse = curl_exec($postCurl);
+			$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE);
+			curl_close($postCurl);
+		// var_dump($postResponse);
+			if ($postResponse) {
+				$postResult = json_decode($postResponse, true);
+				if (!empty($postResult['createdNote']["fileIds"])) {
+		
+					unset($_SESSION['sns_api_session_id']);
+					unset($_SESSION['sns_api_val']);
+										
+					// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult);
+					return header('Location: '.$baseUrl);
+				} 
+				else {
+		error($en ? "Failed to post the content." : "投稿に失敗しました。");
+					}
+			} else {
+				error($en ? "Failed to post the content." : "投稿に失敗しました。");
+			}
+		} 
+				// var_dump($uploadResponse);
+						// unset($_SESSION['sns_api_val']);
+		// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult, $accessToken );
+		// var_dump($postResult['createdNote']["fileIds"],array($mediaId),$uploadStatusCode,$postStatusCode,$postResult,$uploadResponse, $accessToken );
+		}
 }

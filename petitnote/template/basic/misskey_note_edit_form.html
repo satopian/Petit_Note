@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
+<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css?<?=h($petit_lot)?>" onload="this.rel='stylesheet'">
+<link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
+<link rel="preload" as="script" href="lib/luminous/luminous.min.js">
+<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
+<link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
+<?php include __DIR__.'/parts/nsfw_css_control.html';?>
+<title><?=h($boardname)?></title> 
+</head>
+<body>
+
+<div class="container" id="top">
+
+<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+<nav class="menu_wrap">
+<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
+ <a href="#bottom">▽</a>
+	</nav>
+	<h2 class="article_title"><?php if($en):?>Editing an article<?php else:?>記事編集中<?php endif;?></h2>
+
+
+<hr>
+<?php if(isset($out)):?>
+<?php foreach($out as $ress) : ?>
+
+<h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
+	<!-- スレッドのループ -->
+<?php foreach($ress as $res) : ?>
+	<hr>
+	<div class="imginfo_wrap">
+	<span><?= h($res['name'])?></span>
+	<?php if($res['verified']):?>
+	<span class="icon-checkmark2"></span>
+	<?php endif?>
+	<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
+	<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
+	<span><?=h($res['date'])?></span>		
+<?php if($res['img']):?>
+	<?php if($res['tool']):?><span>Tool:<?=h($res['tool'])?></span><?php endif;?>
+	<?php if($res['painttime']):?>
+		<span><?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?></span>
+	<?php endif;?>
+
+<?php endif;?>
+	<?php if($admindel):?>
+		<br>
+		HOST:<?=h($res['host'])?>
+		<?php endif;?> 
+	</div>
+		<?php if($res['img']):?>
+			<?php if($res['anime']):?>
+				<div class="imginfo_wrap">
+				<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>&no=<?=h($res['no'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
+				</div>
+			<?php endif;?>
+
+			<div class="posted_image" <?php if($res['_w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
+				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
+				<?php if($res['thumbnail']):?>
+					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>">
+					<?php else:?>
+					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>">
+				<?php endif;?>
+				</a>
+			</div>
+			<?php endif;?>
+			<div class="comment"><?= com(h($res['com']))?></div>
+			<?php endforeach;?>
+			<?php endforeach;?>
+			<?php endif;?>
+
+			<div class="clear"></div>
+
+	<form action="./" method="POST" enctype="multipart/form-data" class="resform" id="res_form"">
+	<div id="error_message"></div>
+<textarea name="com" class="post_com"><?=h($com)?></textarea><br>
+<input type="hidden" name="no" value="<?= h($ress[0]['no'])?>">
+<input type="hidden" name="paintsec" value="<?=h($res['paintsec'])?>">
+<input type="hidden" name="abbr_toolname" value="<?=h($res['abbr_toolname'])?>">
+<input type="hidden" name="src_image" value="<?=h($res['img'])?>">
+<input type="hidden" name="mode" value="create_misskey_post_sessiondata">
+<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on" checked="checked"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
+<input type="checkbox" name="article_url_link" id="article_url_link" value="on" checked="checked"><label for="article_url_link"><?php if($en):?>Link the article URL<?php else:?>記事のURLをリンクする<?php endif;?></label>
+<input type="submit" value="<?php if($en):?>Note<?php else:?>ノート<?php endif;?>" class="form_button">
+</form>
+
+
+<hr>
+	<div class="copy">
+		<div class="left_wrap">
+		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+	</div>
+<div class="righit_wrap">
+<?php include __DIR__.'/parts/copyright.html';?>
+</div>
+</div>
+</div>
+<div id="bottom"></div>
+<div id="page_top"><a class="icon-angles-up-solid"></a></div>
+<script src="lib/<?=h(JQUERY)?>"></script>
+<script src="lib/luminous/luminous.min.js"></script>
+<script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
+</body>
+</html>
