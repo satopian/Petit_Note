@@ -414,13 +414,6 @@ date_default_timezone_set("asia/tokyo");
 $x_frame_options_deny=true;
 // $x_frame_options_deny=false;
 
-//通常は変更しません
-//ペイント画面の$pwdの暗号化
-
-define("CRYPT_PASS","v25Xc9nZ82a5JPT");//暗号鍵初期値
-define("CRYPT_METHOD","aes-128-cbc");
-define("CRYPT_IV","T3pkYxNyjN7Wz3pu");//半角英数16文字
-
 // SNSシェア機能詳細設定
 
 //シェア機能に、Mastodon、Misskeyの各サーバを含める 
@@ -452,22 +445,34 @@ $sns_window_width = 350;
 //windowの高さ 初期値 490
 $sns_window_height = 490;
 
-//Misskeyへの同時投稿機能を有効にする
+//Misskeyへの投稿機能を有効にする
 // する: true しない: false
 
 $post2misskey = true;
 // $post2misskey = false;
 
-//Misskeyへの同時投稿の時に選択するMisskeyサーバ一覧
-$misskey_servers =
+//Misskey投稿時に一覧で表示するMisskeyサーバ
+$misskey_servers=isset($misskey_servers)?$misskey_servers:
 [
-		
+
 	["misskey.io","https://misskey.io"],
 	["misskey.design","https://misskey.design"],
 	["nijimiss.moe","https://nijimiss.moe"],
 	["sushi.ski","https://sushi.ski"],
+	["misskey.art","https://misskey.art"],
+	["misskey.gamelore.fun","https://misskey.gamelore.fun"],
+	["novelskey.tarbin.net","https://novelskey.tarbin.net"],
+	["tyazzkey.work","https://tyazzkey.work"],
+	["misskey.delmulin.com","https://misskey.delmulin.com"],
 
 ];
+
+//通常は変更しません
+//ペイント画面の$pwdの暗号化
+
+define("CRYPT_PASS","v25Xc9nZ82a5JPT");//暗号鍵初期値
+define("CRYPT_METHOD","aes-128-cbc");
+define("CRYPT_IV","T3pkYxNyjN7Wz3pu");//半角英数16文字
 
 /*変更不可*/
 

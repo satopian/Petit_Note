@@ -60,9 +60,14 @@ class misskey_note{
 			["misskey.design","https://misskey.design"],
 			["nijimiss.moe","https://nijimiss.moe"],
 			["sushi.ski","https://sushi.ski"],
+			["misskey.art","https://misskey.art"],
+			["misskey.gamelore.fun","https://misskey.gamelore.fun"],
+			["novelskey.tarbin.net","https://novelskey.tarbin.net"],
+			["tyazzkey.work","https://tyazzkey.work"],
+			["misskey.delmulin.com","https://misskey.delmulin.com"],
 		
 		];
-		$servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
+			$servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
 
 		$misskey_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_radio_cookie");
 		$misskey_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_direct_input_cookie");
