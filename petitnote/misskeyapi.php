@@ -4,13 +4,13 @@
 
 require_once(__DIR__.'/functions.php');
 
-$baseUrl = "https://misskey.io";
-
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
 
 session_sta();
+
+$baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "https://misskey.io";
 
 
 // var_dump($com,$picfile,$tool,$painttime);
@@ -18,8 +18,10 @@ session_sta();
 
 // 認証チェック
 $sns_api_session_id = $_SESSION['sns_api_session_id'];
-list($com,$picfile,$tool,$painttime,$hide_thumbnail) = $_SESSION['sns_api_val'];
+list($com,$picfile,$tool,$painttime,$hide_thumbnail,$src_image) = $_SESSION['sns_api_val'];
 $picfile=basename($picfile);
+$src_image=basename($src_image);
+
 $checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
 
 $checkCurl = curl_init();
@@ -41,7 +43,7 @@ $accessToken = $responseData['token'];
 $user = $responseData['user'];
 
 // 画像のアップロード
-$imagePath = __DIR__.'/temp/'.$picfile;
+$imagePath = $src_image ? __DIR__.'/src/'.$src_image : __DIR__.'/temp/'.$picfile;
 $uploadUrl = $baseUrl . "/api/drive/files/create";
 $uploadHeaders = array(
 	'Authorization: Bearer ' . $accessToken,
@@ -112,7 +114,10 @@ if ($fileId) {
 	
 	sleep(10);
 	// 投稿
-	$status = 'Tool:'.$tool.' Paint time:'.$painttime.' '.$com;
+	$tool= $tool ? 'Tool:'.$tool.' ' :'';
+	$painttime= $painttime ? 'Paint time:'.$painttime.' ' :'';
+	$status = $tool.$painttime.$com;
+	
 	$postUrl = $baseUrl . "/api/notes/create";
 	$postHeaders = array(
 		'Authorization: Bearer ' . $accessToken,
@@ -133,7 +138,7 @@ if ($fileId) {
 	$postResponse = curl_exec($postCurl);
 	$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE);
 	curl_close($postCurl);
-
+// var_dump($postResponse);
 	if ($postResponse) {
 		$postResult = json_decode($postResponse, true);
 		if (!empty($postResult['createdNote']["fileIds"])) {
@@ -154,7 +159,7 @@ if ($fileId) {
 			return header('Location: '.$baseUrl);
 		} 
 		else {
-			die($en ? "Failed to post the content." : "投稿に失敗しました。");
+die($en ? "Failed to post the content." : "投稿に失敗しました。");
 			}
 	} else {
 		die($en ? "Failed to post the content." : "投稿に失敗しました。");

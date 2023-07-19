@@ -264,15 +264,14 @@ function check_cont_pass(){
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line,$options=[]){
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
-	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_md5,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 	$isset_catalog = isset($options['catalog']);
 	$isset_search = isset($options['search']);
 	$res=[];
 
 	$continue = true;
 	$upload_image = false;
-
-	$tool=switch_tool($tool);
+	$tool=switch_tool($abbr_toolname);
 
 	$anime = ($pchext==='.pch'||$pchext==='.tgkr'); 
 	$hide_thumbnail = $mark_sensitive_image ? ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_') :'';
@@ -284,8 +283,8 @@ function create_res($line,$options=[]){
 	}
 
 	$thumbnail = ($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail') ? $time.'s.jpg' : false; 
-	$link_thumbnail= ($thumbnail || $hide_thumbnail);  
-	$painttime = (!$isset_catalog && is_numeric($painttime)) ? calcPtime($painttime) : [];  
+	$link_thumbnail= ($thumbnail || $hide_thumbnail); 
+	$painttime = (!$isset_catalog && is_numeric($paintsec)) ? calcPtime($paintsec) : [];  
 	$_time=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 	$first_posted_time=(strlen($first_posted_time)>15) ? substr($first_posted_time,0,-6) : substr($first_posted_time,0,-3);
 	$datetime = $do_not_change_posts_time ? $first_posted_time : $_time;
@@ -309,11 +308,13 @@ function create_res($line,$options=[]){
 		'thumbnail' => $thumbnail,
 		'painttime' => $painttime ? $painttime['ja'] : '',
 		'painttime_en' => $painttime ? $painttime['en'] : '',
+		'paintsec' => $paintsec,
 		'w' => ($w && is_numeric($w)) ? $w :'',
 		'h' => ($h && is_numeric($h)) ? $h :'',
 		'_w' => ($w && is_numeric($w)) ? $_w :'',
 		'_h' => ($h && is_numeric($h)) ? $_h :'',
 		'tool' => $tool,
+		'abbr_toolname' => $abbr_toolname,
 		'upload_image' => $upload_image,
 		'pchext' => $pchext,
 		'anime' => $anime,
