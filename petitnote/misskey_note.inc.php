@@ -15,6 +15,13 @@ class misskey_note{
 		$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 		aikotoba_required_to_view();
 
+		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+		$resmode = ((string)filter_input(INPUT_POST,'resmode')==='true');
+		$resmode = $resmode ? 'true' : 'false';
+		$postpage = (int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+		$postresno = (int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
+		$postresno = $postresno ? $postresno : false; 
+
 		$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 		$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 		$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
