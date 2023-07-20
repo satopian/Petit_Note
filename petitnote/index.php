@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.82.0';
-$petit_lot='lot.20230717';
+$petit_ver='v0.82.1';
+$petit_lot='lot.20230720';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,13 +16,13 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230718){
+if(!isset($functions_ver)||$functions_ver<20230720){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
 if(!isset($misskey_note_ver)||$misskey_note_ver<20230718){
-	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
+	return die($en?'Please update misskey_note.inc.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
 // jQueryバージョン
@@ -80,7 +80,7 @@ $display_search_nav = isset($display_search_nav) ? $display_search_nav : false;
 $switch_sns = isset($switch_sns) ? $switch_sns : true;
 $sns_window_width = isset($sns_window_width) ? (int)$sns_window_width : 350;
 $sns_window_height = isset($sns_window_height) ? (int)$sns_window_height : 490;
-$post2misskey = isset($post2misskey) ? $post2misskey : true;
+$use_misskey_note = isset($use_misskey_note) ? $use_misskey_note : true;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -156,8 +156,8 @@ switch($mode){
 		return misskey_note::before_misskey_note();
 	case 'misskey_note_edit_form':
 		return misskey_note::misskey_note_edit_form();
-	case 'create_misskey_post_sessiondata':
-		return misskey_note::create_misskey_post_sessiondata();
+	case 'create_misskey_note_sessiondata':
+		return misskey_note::create_misskey_note_sessiondata();
 	case 'create_misskey_authrequesturl':
 		return misskey_note::create_misskey_authrequesturl();
 	case 'search':
@@ -658,9 +658,9 @@ function post(){
 	//ワークファイル削除
 	safe_unlink($src);
 	safe_unlink($tempfile);
-	safe_unlink(TEMP_DIR.$picfile.".dat");
 	safe_unlink($up_tempfile);
 	safe_unlink($upfile);
+	safe_unlink(TEMP_DIR.$picfile.".dat");
 	delete_res_cache();
 
 	global $send_email,$to_mail,$root_url,$boardname;
@@ -915,7 +915,7 @@ function paint(){
 // お絵かきコメント 
 function paintcom(){
 	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
-	global $usercode,$petit_lot,$post2misskey; 
+	global $usercode,$petit_lot; 
 
 	aikotoba_required_to_view();
 	$token=get_csrf_token();
@@ -1710,7 +1710,7 @@ function edit(){
 	$pwd = $pwd ? $pwd : $pwdc;
 	session_sta();
 	$admindel=(admindel_valid()||($pwd && $pwd === $admin_pass));
-	
+
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	if(!($admindel||($userdel&&$pwd))){
 		return error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
@@ -2390,10 +2390,10 @@ function view(){
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 	if($page===0 && !$admindel){
 		if(!is_file(__DIR__.'/template/cache/index_cache.json')){
-		file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
-		chmod(__DIR__.'/template/cache/index_cache.json',0600);
+			file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
+			chmod(__DIR__.'/template/cache/index_cache.json',0600);
 		}
-	} 
+	}
 	// HTML出力
 	$templete='main.html';
 	return include __DIR__.'/'.$skindir.$templete;

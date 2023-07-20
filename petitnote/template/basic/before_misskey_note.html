@@ -35,15 +35,21 @@
 
 <div id="error_message_beforedelete"></div>
 <?php if($aikotoba && !$deny_all_posts || $adminpost ):?>
-	<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note to Misskey. Please enter password.<?php else:?>この記事をMisskeyにノートします。パスワードを入力してください。<?php endif;?>: 
+<?php if(!$adminpost || $verified!=='adminpost'):?>
+	<?php if($en):?>Note to Misskey. Please enter password.<?php else:?>この記事をMisskeyにノートします。パスワードを入力してください。<?php endif;?>: 
+<?php else:?>
+<?php if($en):?>Note to Misskey.<?php else:?>この記事をMisskeyにノートします。<?php endif;?>: 
+<?php endif;?>
 <form action="./" method="POST" id="before_delete" class="aikotoba" onsubmit="return res_form_submit(event,'before_delete')">
+<?php if(!$adminpost || $verified!=='adminpost'):?>
 <span class="non"><input type="text" value="" autocomplete="username"></span>
 <input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
+<?php endif;?>
 <input type="hidden" name="mode" value="misskey_note_edit_form">
 <input type="hidden" name="resmode" value="<?=h($resmode)?>">
 <input type="hidden" name="postresno" value="<?=h($postresno)?>">
 <input type="hidden" name="postpage" value="<?=h($postpage)?>">
-<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
+<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <input type="submit" value="<?php if($en):?>Note<?php else:?>ノート<?php endif;?>">
 </form>
 <?php endif;?>
 <hr>

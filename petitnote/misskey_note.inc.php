@@ -15,6 +15,7 @@ class misskey_note{
 		session_sta();
 		$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 		aikotoba_required_to_view();
+		$adminpost=adminpost_valid();
 
 		$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 		$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
@@ -115,7 +116,7 @@ class misskey_note{
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 			if($id===$time && $no===$_no){
 			
-				if(!$pwd||!password_verify($pwd,$hash)){
+				if((!$admin || $verified!=='adminpost')&&(!$pwd||!password_verify($pwd,$hash))){
 					return error($en?'Password is incorrect.':'パスワードが違います。');
 				}
 				if($admin||check_elapsed_days($time)){
@@ -152,9 +153,11 @@ class misskey_note{
 	}
 
 	//Misskeyに投稿するSESSIONデータを作成
-	public static function create_misskey_post_sessiondata(){
+	public static function create_misskey_note_sessiondata(){
 		global $en,$usercode,$root_url,$mark_sensitive_image,$skindir,$petit_lot,$misskey_servers,$boardname;
 		
+		check_csrf_token();
+
 		$userip =t(get_uip());
 
 		$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));

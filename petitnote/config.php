@@ -448,8 +448,8 @@ $sns_window_height = 490;
 //Misskeyへの投稿機能を有効にする
 // する: true しない: false
 
-$post2misskey = true;
-// $post2misskey = false;
+$use_misskey_note = true;
+// $use_misskey_note = false;
 
 //Misskey投稿時に一覧で表示するMisskeyサーバ
 $misskey_servers=isset($misskey_servers)?$misskey_servers:
