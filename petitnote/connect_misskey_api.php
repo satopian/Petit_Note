@@ -19,16 +19,13 @@ if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))
 };
 
 $baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "https://misskey.io";
+if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
+	return error($en ? "This is not a valid server URL.":"サーバのURLが無効です。");
+}
 // 認証チェック
 $sns_api_session_id = $_SESSION['sns_api_session_id'];
 list($com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link) = $_SESSION['sns_api_val'];
 $src_image=basename($src_image);
-
-if((!$src_image)||!is_file(__DIR__.'/src/'.$src_image)){
-
-	error($en ? "Image does not exist." : "画像がありません。" ,false);
-};
-
 $checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
 
 $checkCurl = curl_init();
@@ -42,7 +39,7 @@ $checkResponse = curl_exec($checkCurl);
 curl_close($checkCurl);
 
 if (!$checkResponse) {
-	error($en ? "Authentication failed." :"認証に失敗しました。" ,false);	
+	return error($en ? "Authentication failed." :"認証に失敗しました。" ,false);	
 }
 
 $responseData = json_decode($checkResponse, true);
@@ -51,6 +48,15 @@ $user = $responseData['user'];
 
 // 画像のアップロード
 $imagePath = __DIR__.'/src/'.$src_image;
+
+if(!is_file($imagePath)){
+	return error($en ? "Image does not exist." : "画像がありません。" ,false);
+};
+$img_type = mime_content_type($imagePath);
+if (!in_array($img_type, ["image/gif", "image/jpeg", "image/png","image/webp"])) {
+	return error($en? "This file is an unsupported format.":"対応していないファイル形式です。" ,false);
+}
+
 $uploadUrl = $baseUrl . "/api/drive/files/create";
 $uploadHeaders = array(
 	'Authorization: Bearer ' . $accessToken,
@@ -73,7 +79,7 @@ curl_close($uploadCurl);
 // var_dump($uploadResponse);
 if (!$uploadResponse) {
 	// var_dump($uploadResponse);
-	error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" ,false);
+	return error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" ,false);
 }
 
 // アップロードしたファイルのIDを取得
@@ -83,7 +89,7 @@ $fileId = isset($responseData['id']) ? $responseData['id']:'';
 
 if(!$fileId){
 	// var_dump($responseData);
-	error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" ,false);
+	return error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" ,false);
 }
 
 // ファイルの更新
@@ -110,60 +116,62 @@ $updateStatusCode = curl_getinfo($updateCurl, CURLINFO_HTTP_CODE);
 curl_close($updateCurl);
 
 if (!$updateResponse) {
-	error($en ? "Failed to update the file." : "ファイルの更新に失敗しました。" ,false);
+	return error($en ? "Failed to update the file." : "ファイルの更新に失敗しました。" ,false);
 }
 // var_dump($updateResponse);
 
 $uploadResult = json_decode($uploadResponse, true);
 
-if ($fileId) {
+if (!$fileId) {
+	return error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
+}
 	
-	sleep(10);
-	// 投稿
-	$tool= $tool ? 'Tool:'.$tool.' ' :'';
-	$painttime= $painttime ? 'Paint time:'.$painttime.' ' :'';
-	$fixed_link = ' '.$root_url.'?resno='.$no;
-	$fixed_link = $article_url_link ? $fixed_link :'';
-	$status = $tool.$painttime.$com.$fixed_link;
-	
-	$postUrl = $baseUrl . "/api/notes/create";
-	$postHeaders = array(
-		'Authorization: Bearer ' . $accessToken,
-		'Content-Type: application/json'
-	);
-	$postData = array(
-		'i' => $accessToken,
-		'text' => $status,
-		'fileIds' => array($fileId),
-	);
+sleep(10);
 
-	$postCurl = curl_init();
-	curl_setopt($postCurl, CURLOPT_URL, $postUrl);
-	curl_setopt($postCurl, CURLOPT_POST, true);
-	curl_setopt($postCurl, CURLOPT_HTTPHEADER, $postHeaders);
-	curl_setopt($postCurl, CURLOPT_POSTFIELDS, json_encode($postData));
-	curl_setopt($postCurl, CURLOPT_RETURNTRANSFER, true);
-	$postResponse = curl_exec($postCurl);
-	$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE);
-	curl_close($postCurl);
+// 投稿
+$tool= $tool ? 'Tool:'.$tool.' ' :'';
+$painttime= $painttime ? 'Paint time:'.$painttime.' ' :'';
+$fixed_link = ' '.$root_url.'?resno='.$no;
+$fixed_link = $article_url_link ? $fixed_link :'';
+$status = $tool.$painttime.$com.$fixed_link;
+
+$postUrl = $baseUrl . "/api/notes/create";
+$postHeaders = array(
+	'Authorization: Bearer ' . $accessToken,
+	'Content-Type: application/json'
+);
+$postData = array(
+	'i' => $accessToken,
+	'text' => $status,
+	'fileIds' => array($fileId),
+);
+
+$postCurl = curl_init();
+curl_setopt($postCurl, CURLOPT_URL, $postUrl);
+curl_setopt($postCurl, CURLOPT_POST, true);
+curl_setopt($postCurl, CURLOPT_HTTPHEADER, $postHeaders);
+curl_setopt($postCurl, CURLOPT_POSTFIELDS, json_encode($postData));
+curl_setopt($postCurl, CURLOPT_RETURNTRANSFER, true);
+$postResponse = curl_exec($postCurl);
+$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE);
+curl_close($postCurl);
 // var_dump($postResponse);
-	if ($postResponse) {
-		$postResult = json_decode($postResponse, true);
-		if (!empty($postResult['createdNote']["fileIds"])) {
+if ($postResponse) {
+	$postResult = json_decode($postResponse, true);
+	if (!empty($postResult['createdNote']["fileIds"])) {
 
-			unset($_SESSION['sns_api_session_id']);
-			unset($_SESSION['sns_api_val']);
-								
-			// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult);
-			return header('Location: '.$baseUrl);
-		} 
-		else {
-error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
-			}
-	} else {
-		error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
-	}
-} 
+		unset($_SESSION['sns_api_session_id']);
+		unset($_SESSION['sns_api_val']);
+							
+		// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult);
+		return header('Location: '.$baseUrl);
+	} 
+	else {
+		return error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
+		}
+} else {
+	return error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
+}
 		// var_dump($uploadResponse);
 				// unset($_SESSION['sns_api_val']);
 // var_dump($uploadResponse,$postResponse,$uploadResult,$postResult, $accessToken );

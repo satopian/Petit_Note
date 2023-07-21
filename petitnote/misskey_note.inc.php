@@ -174,7 +174,8 @@ class misskey_note{
 		$painttime=calcPtime($paintsec);
 		$painttime = $en ? $painttime['en'] : $painttime['ja'];
 		session_sta();
-		
+
+		$src_image=basename($src_image);
 		//SESSIONに投稿内容を格納
 		$_SESSION['sns_api_val']=[$com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link];
 
@@ -205,6 +206,8 @@ class misskey_note{
 	public static function create_misskey_authrequesturl(){
 		global $root_url;
 		global $en;
+
+		check_same_origin();
 
 		$misskey_server_radio=(string)filter_input(INPUT_POST,"misskey_server_radio",FILTER_VALIDATE_URL);
 		$misskey_server_radio_for_cookie=(string)filter_input(INPUT_POST,"misskey_server_radio");//directを判定するためurlでバリデーションしていない

@@ -1589,7 +1589,6 @@ function confirmation_before_deletion ($edit_mode=''){
 	return error($en?'This operation has failed.':'失敗しました。');
 }
 
-
 //編集画面
 function edit_form($id='',$no=''){
 
