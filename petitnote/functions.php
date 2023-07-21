@@ -80,6 +80,7 @@ function admin_in(){
 	$search=(bool)filter_input(INPUT_GET,'search',FILTER_VALIDATE_BOOLEAN);
 	$radio=(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
+	$misskey_note=(bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 	$q=(string)filter_input(INPUT_GET,'q');
 
 	session_sta();
@@ -207,14 +208,19 @@ function set_nsfw_show_hide(){
 function branch_destination_of_location(){
 	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$resno=(int)filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	$misskey_note=(bool)filter_input(INPUT_POST,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 	$catalog=(bool)filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 	$search=(bool)filter_input(INPUT_POST,'search',FILTER_VALIDATE_BOOLEAN);
 	$paintcom=(bool)filter_input(INPUT_POST,'paintcom',FILTER_VALIDATE_BOOLEAN);
+
+	$misskey_note = admindel_valid() ? false : $misskey_note;
+
 	if($paintcom){
 		return header('Location: ./?mode=paintcom');
 	}
 	if($resno){
-		return header('Location: ./?resno='.h($resno));
+		$misskey_note = $misskey_note ? '&misskey_note=on' : '';
+		return header('Location: ./?resno='.h($resno).$misskey_note);
 	}
 	if($catalog){
 		return header('Location: ./?mode=catalog&page='.h($page));
@@ -272,6 +278,14 @@ function create_res($line,$options=[]){
 	$continue = true;
 	$upload_image = false;
 	$tool=switch_tool($abbr_toolname);
+
+	if($abbr_toolname==='upload'){
+		$continue = false;
+		$upload_image = true;
+	}
+	if(!$tool){
+		$continue = false;
+	}
 
 	$anime = ($pchext==='.pch'||$pchext==='.tgkr'); 
 	$hide_thumbnail = $mark_sensitive_image ? ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_') :'';
@@ -370,12 +384,9 @@ function switch_tool($tool){
 			break;
 		case 'upload':
 			$tool=$en?'Upload':'アップロード';
-			$continue = false;
-			$upload_image = true;
 			break;
 		default:
 			$tool='';
-			$continue = false;
 			break;
 	}
 	return $tool;
@@ -694,14 +705,11 @@ function check_AsyncRequest($upfile='') {
 // テンポラリ内のゴミ除去 
 function deltemp(){
 	$handle = opendir(TEMP_DIR);
-	session_sta();
-
 	while ($file = readdir($handle)) {
 		if(!is_dir($file)) {
 			$file=basename($file);
 			//pchアップロードペイントファイル削除
 			//仮差し換えアップロードファイル削除
-			$file_name=pathinfo($file, PATHINFO_FILENAME );//拡張子除去in_array($post_is_done)
 			$lapse = time() - filemtime(TEMP_DIR.$file);
 			if(strpos($file,'pchup-')===0){
 				if($lapse > (300)){//5分

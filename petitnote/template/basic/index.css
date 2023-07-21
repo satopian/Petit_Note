@@ -88,18 +88,11 @@ form.postform span {
     margin: 0 0 0 10px;
 }
 
-form.postform span span {
-    margin: 0;
-}
-
 form.resform {
 	text-align: right;
 }
 form.resform span {
     margin: 0 10px 0 0;
-}
-form.resform span span {
-    margin: 0;
 }
 
 input.form_button {
@@ -253,7 +246,6 @@ label {
 	padding: 2px;
 	border-radius: 5px;
 }
-
 .form_radio_sns_server label:hover{
 	background-color: #ffe6e6;
 }
@@ -287,7 +279,7 @@ form.res_button {
 }
 form.res_button input {
     padding: 1px 12px;
-    margin: 0 0 0 8px;
+    margin: 16px 0 0 8px;
 }
 /* 返信フォーム */
 form.res_form {
@@ -363,6 +355,9 @@ form.aikotoba {
 	text-align: right;
 	margin: 0;
 	display: inline-block;
+}
+form#set_nsfw_show_hide {
+    display: inline-block;
 }
 select {
     font-size: inherit;

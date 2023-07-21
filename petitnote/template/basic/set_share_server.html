@@ -52,8 +52,9 @@
 <input type="hidden" name="encoded_u" value="<?=h($encoded_u)?>">
 <input type="hidden" name="mode" value="post_share_server">
 <input type="submit" value="<?php if($en):?>Share<?php else:?>シェア<?php endif;?>" class="post_share_button">
-<script src="lib/<?=h(JQUERY)?>"></script>
-<script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
 </form>
+<script src="lib/<?=h(JQUERY)?>"></script>
+<script src="lib/luminous/luminous.min.js"></script>
+<script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
 </body>
 </html>

@@ -27,6 +27,7 @@ class misskey_note{
 		$postpage = (int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 		$postresno = (int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 		$postresno = $postresno ? $postresno : false; 
+		$misskey_note=(bool)filter_input(INPUT_POST,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 	
 		if(!is_file(LOG_DIR."{$no}.log")){
 			return error($en? 'The article does not exist.':'記事がありません。');
@@ -146,7 +147,7 @@ class misskey_note{
 
 		$com=h(str_replace('"\n"',"\n",$com));
 
-		$hide_thumb_checkd = true;
+		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 		// HTML出力
 		$templete='misskey_note_edit_form.html';
 		return include __DIR__.'/'.$skindir.$templete;
@@ -213,8 +214,12 @@ class misskey_note{
 		setcookie("misskey_server_direct_input_cookie",$misskey_server_direct_input, time()+(86400*30),"","",false,true);
 		$share_url='';
 
-		if(!$misskey_server_radio){
+		if(!$misskey_server_radio && !$misskey_server_direct_input){
 			error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");
+		}
+
+		if(!$misskey_server_radio && $misskey_server_direct_input){
+			$misskey_server_radio = $misskey_server_direct_input;
 		}
 
 		session_sta();
@@ -227,7 +232,8 @@ class misskey_note{
 
 		$root_url = urlencode($root_url);
 
-		return header("Location: {$misskey_server_radio}/miauth/{$sns_api_session_id}?name=MyApp&callback={$root_url}connect_misskey_api.php&permission=write:notes,write:drive");
+		return header("Location: {$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$root_url}connect_misskey_api.php&permission=write:notes,write:drive");
+	
 	}
 
 }

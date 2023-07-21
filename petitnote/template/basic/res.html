@@ -50,11 +50,11 @@
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<nav class="menu_wrap">
 
-	<?php if($misskey_note):?>
+<?php if($misskey_note):?>
 		
 		<span>[<a href="./?resno=<?=h($out[0][0]['no'])?>"><?php if($en):?>Return<?php else:?>スレッドにもどる<?php endif;?></a>]</span>
 	
-	<?php else:?>
+<?php else:?>
 
 		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 		<?php if($display_search_nav):?>
@@ -175,7 +175,7 @@
 				<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
 					$resform=false;//最大レス数を超えている時と指定した日数を超えた古いスレッドはレスフォームを閉じる
 				}?>
-			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
+			<?php if($aikotoba && !$deny_all_posts && !$misskey_note && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
 				<div>
 					<form action="./" method="POST" class="aikotoba">
 					<input type="hidden" name="mode" value="before_del">
@@ -202,7 +202,7 @@
 				</div>
 				<?php endif;?>
 				
-				<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $misskey_note && $res['img'] ) || $adminpost && $misskey_note)):?>
+				<?php if($use_misskey_note && $aikotoba && !$deny_all_posts && ((!isset($res['not_deleted'])||$res['not_deleted']) && $misskey_note && $res['img'] ) && ($res['check_elapsed_days']||$adminpost)):?>
 				<div>
 				
 				<form action="./" method="POST" class="aikotoba">
@@ -213,6 +213,7 @@
 					<input type="hidden" name="no" value="<?=h($res['no'])?>">
 					<input type="hidden" name="postpage" value="<?=h($page)?>">
 					<input type="hidden" name="postresno" value="<?=h($resno)?>">
+					<input type="hidden" name="misskey_note" value="<?=h($misskey_note)?>">
 
 					<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <input type="submit" value="<?php if($en):?>Note to Misskey<?php else:?>Misskeyにノート<?php endif;?>">
 					</form>
@@ -226,7 +227,7 @@
 	<?php endforeach;?>
 <!-- 返信フォーム -->
 <div class="clear"></div>
-<?php if($aikotoba && ((!$userdel && !$admindel) || !$misskey_note)):?>
+<?php if($aikotoba && (!$userdel && !$admindel && !$misskey_note)):?>
 <!-- 返信可能な数の表示 -->
 <div class="res_notice_wrap">
 <?php $maxres_current=(int)$max_res-(int)$i;?>
@@ -267,8 +268,7 @@
 		</script>
 		<button class="copy_button" onclick="add_to_com()"><?php if($en):?>Copy the poster name<?php else:?>投稿者名をコピー<?php endif;?></button>
 		<?php endif; ?>
-			
-			<?php if($use_misskey_note && $findimage):?>
+		<?php if($use_misskey_note && $findimage && ($ress[0]['check_elapsed_days']||$adminpost)):?>
 				<span class="share_button">
 					<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="nofollow noopener">
 					<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
@@ -398,24 +398,24 @@
 <div class="pagelink pcdisp">
 	<span class="res_prev">
 	<?php if(!empty($prev)):?>
-		<a href="./?resno=<?=h($prev['no'])?>">≪<?=h($prev['substr_sub'])?></a>
+		<a href="./?resno=<?=h($prev['no'])?><?php if($misskey_note):?>&misskey_note=on<?php endif;?>">≪<?=h($prev['substr_sub'])?></a>
 	<?php endif;?>
 	</span>
 	| <a href="./">top</a> |
 	<span class="res_next">
 	<?php if(!empty($next)):?>
-		<a href="./?resno=<?=h($next['no'])?>"><?=h($next['substr_sub'])?>≫</a>
+		<a href="./?resno=<?=h($next['no'])?><?php if($misskey_note):?>&misskey_note=on<?php endif;?>"><?=h($next['substr_sub'])?>≫</a>
 	<?php endif;?>
 	</span>
 </div>
 <!-- モバイル用 -->
 <div class="mobiledisp">
 	<?php if(!empty($prev)):?>
-	prev: <a href="./?resno=<?=h($prev['no'])?>"><?=h($prev['sub'])?></a>
+	prev: <a href="./?resno=<?=h($prev['no'])?><?php if($misskey_note):?>&misskey_note=on<?php endif;?>"><?=h($prev['sub'])?></a>
 	<br>
 	<?php endif;?>
 	<?php if(!empty($next)):?>
-	next: <a href="./?resno=<?=h($next['no'])?>"><?=h($next['sub'])?></a>
+	next: <a href="./?resno=<?=h($next['no'])?><?php if($misskey_note):?>&misskey_note=on<?php endif;?>"><?=h($next['sub'])?></a>
 	<br>
 	<?php endif;?>
 	<a href="./">top</a>
@@ -423,7 +423,7 @@
 <?php if($view_other_works):?>
 <div class="view_other_works">
 <?php foreach($view_other_works as $view_other_work):?><div <?php if($view_other_work['hide_thumbnail'] && !$admindel):?>class="hide_thumbnail"<?php endif;?>>
-	<a href="?resno=<?=h($view_other_work['no'])?>">
+	<a href="?resno=<?=h($view_other_work['no'])?><?php if($misskey_note):?>&misskey_note=on<?php endif;?>">
 	<?php if($view_other_work['webpimg']):?>
 	<picture><source srcset="<?=h($view_other_work['webpimg'])?>" type="image/webp">
 	<?php endif;?>
@@ -439,7 +439,7 @@
 </nav>
 <div class="copy">
 <div class="left_wrap">
-	[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+	[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?><?php if($misskey_note):?>&misskey_note=on<?php endif;?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 </div>
 <div class="righit_wrap">
 <?php include __DIR__.'/parts/copyright.html';?>
