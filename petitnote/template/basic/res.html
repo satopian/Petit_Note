@@ -202,7 +202,7 @@
 				</div>
 				<?php endif;?>
 				
-				<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $misskey_note && $res['img'] ) || $adminpost)):?>
+				<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $misskey_note && $res['img'] ) || $adminpost && $misskey_note)):?>
 				<div>
 				
 				<form action="./" method="POST" class="aikotoba">
@@ -226,7 +226,7 @@
 	<?php endforeach;?>
 <!-- 返信フォーム -->
 <div class="clear"></div>
-<?php if($aikotoba && (!$userdel && !$admindel && !$misskey_note)):?>
+<?php if($aikotoba && ((!$userdel && !$admindel) || !$misskey_note)):?>
 <!-- 返信可能な数の表示 -->
 <div class="res_notice_wrap">
 <?php $maxres_current=(int)$max_res-(int)$i;?>
@@ -267,7 +267,6 @@
 		</script>
 		<button class="copy_button" onclick="add_to_com()"><?php if($en):?>Copy the poster name<?php else:?>投稿者名をコピー<?php endif;?></button>
 		<?php endif; ?>
-			
 			
 			<?php if($use_misskey_note && $findimage):?>
 				<span class="share_button">
