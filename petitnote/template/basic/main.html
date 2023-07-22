@@ -286,31 +286,44 @@ Size:
 				$res_max_over=true;//最大レス数を超えている時はレスフォームを閉じる
 			}?>
 			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
-					<div>
-						<!-- 編集削除のためのボタン -->
-						<form action="./" method="POST" class="aikotoba">
-							<input type="hidden" name="mode" value="before_del">
-							<input type="hidden" name="edit_mode" value="editmode">
-							<input type="hidden" name="resmode" value="false">
-							<input type="hidden" name="id" value="<?=h($res['time'])?>">
-							<input type="hidden" name="no" value="<?=h($res['no'])?>">
-							<input type="hidden" name="postpage" value="<?=h($page)?>">
-							<?php if(($res['check_elapsed_days']&&!$is_badhost||$admindel)&&(!isset($res['not_deleted'])||$res['not_deleted'])):?>
-							<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
-							<?php endif;?>
+				<div>
+					<!-- 編集削除のためのボタン -->
+					<form action="./" method="POST" class="aikotoba">
+						<input type="hidden" name="mode" value="before_del">
+						<input type="hidden" name="edit_mode" value="editmode">
+						<input type="hidden" name="resmode" value="false">
+						<input type="hidden" name="id" value="<?=h($res['time'])?>">
+						<input type="hidden" name="no" value="<?=h($res['no'])?>">
+						<input type="hidden" name="postpage" value="<?=h($page)?>">
+						<?php if(($res['check_elapsed_days']&&!$is_badhost||$admindel)&&(!isset($res['not_deleted'])||$res['not_deleted'])):?>
+						<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
+						<?php endif;?>
+					</form>
+					<form action="./" method="POST" class="aikotoba">
+						<input type="hidden" name="mode" value="before_del">
+						<input type="hidden" name="edit_mode" value="delmode">
+						<input type="hidden" name="resmode" value="false">
+						<input type="hidden" name="id" value="<?=h($res['time'])?>">
+						<input type="hidden" name="no" value="<?=h($res['no'])?>">
+						<input type="hidden" name="postpage" value="<?=h($page)?>">
+						<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
+					</form>
+				
+					<?php if($use_misskey_note && $res['img'] && ($res['check_elapsed_days'] && !$is_badhost||$admindel)):?>
+					
+					<form action="./" method="POST" class="aikotoba" target="_blank">
+						<input type="hidden" name="mode" value="before_misskey_note">
+						<input type="hidden" name="edit_mode" value="editmode">
+						<input type="hidden" name="resmode" value="true">
+						<input type="hidden" name="id" value="<?=h($res['time'])?>">
+						<input type="hidden" name="no" value="<?=h($res['no'])?>">
+						<input type="hidden" name="postpage" value="<?=h($page)?>">
+
+						<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <input type="submit" value="<?php if($en):?>Note to Misskey<?php else:?>Misskeyにノート<?php endif;?>">
 						</form>
-						<form action="./" method="POST" class="aikotoba">
-							<input type="hidden" name="mode" value="before_del">
-							<input type="hidden" name="edit_mode" value="delmode">
-							<input type="hidden" name="resmode" value="false">
-							<input type="hidden" name="id" value="<?=h($res['time'])?>">
-							<input type="hidden" name="no" value="<?=h($res['no'])?>">
-							<input type="hidden" name="postpage" value="<?=h($page)?>">
-							<!-- <input type="hidden" name="resno" value="<?=h($page)?>"> -->
-							<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
-						</form>
-					</div>
-				<?php endif;?>
+					<?php endif;?>
+				</div>
+			<?php endif;?>
 			</div>
 		<?php if($i!==0):?>
 		</div><!-- 子レスのwrap	 -->
@@ -322,12 +335,6 @@ Size:
 
 	<div class="res_button_wrap">
 	<?php if($aikotoba && (!$userdel && !$admindel)):?>
-	<?php if($use_misskey_note && $findimage && ($ress[0]['check_elapsed_days']||$adminpost)):?>
-		<span class="share_button">
-			<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="nofollow noopener">
-			<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
-		</span>
-	<?php endif;?>
 	<?php if($use_sns_button):?>
 	<span class="share_button">
 	<?php if($switch_sns):?>
