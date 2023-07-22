@@ -213,6 +213,10 @@ button.copy_button {
 button.copy_button:hover {
     background-color: #fff7f7;
 }
+/* 編集･削除ボタン */
+div.edit_button {
+    margin: 8px 0 0;
+}
 
 /* メニューのラップ */
 .menu_pr {
@@ -353,7 +357,7 @@ form.paint_form {
 }
 form.aikotoba {
 	text-align: right;
-	margin: 0;
+	margin: 0px;
 	display: inline-block;
 }
 form#set_nsfw_show_hide {

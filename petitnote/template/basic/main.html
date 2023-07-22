@@ -286,7 +286,7 @@ Size:
 				$res_max_over=true;//最大レス数を超えている時はレスフォームを閉じる
 			}?>
 			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
-				<div>
+				<div class="edit_button">
 					<!-- 編集削除のためのボタン -->
 					<form action="./" method="POST" class="aikotoba">
 						<input type="hidden" name="mode" value="before_del">

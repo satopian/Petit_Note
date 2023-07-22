@@ -171,7 +171,7 @@
 					$resform=false;//最大レス数を超えている時と指定した日数を超えた古いスレッドはレスフォームを閉じる
 				}?>
 			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
-				<div>
+				<div class="edit_button">
 					<?php if($res['check_elapsed_days']&&!$is_badhost||$admindel):?>
 						<form action="./" method="POST" class="aikotoba">
 					<input type="hidden" name="mode" value="before_del">
