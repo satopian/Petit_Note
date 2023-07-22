@@ -451,8 +451,8 @@ $sns_window_height = 490;
 $use_misskey_note = true;
 // $use_misskey_note = false;
 
-//Misskey投稿時に一覧で表示するMisskeyサーバ
-$misskey_servers=isset($misskey_servers)?$misskey_servers:
+//Misskeyへの投稿時に一覧で表示するMisskeyサーバ
+$misskey_servers=
 [
 
 	["misskey.io","https://misskey.io"],

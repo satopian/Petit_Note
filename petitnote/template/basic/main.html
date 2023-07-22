@@ -321,13 +321,13 @@ Size:
 	<div class="clear"></div>
 
 	<div class="res_button_wrap">
+	<?php if($aikotoba && (!$userdel && !$admindel)):?>
 	<?php if($use_misskey_note && $findimage && ($ress[0]['check_elapsed_days']||$adminpost)):?>
 		<span class="share_button">
 			<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="nofollow noopener">
 			<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
 		</span>
 	<?php endif;?>
-	<?php if($aikotoba && (!$userdel && !$admindel)):?>
 	<?php if($use_sns_button):?>
 	<span class="share_button">
 	<?php if($switch_sns):?>
