@@ -20,7 +20,7 @@ if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))
 
 $baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "https://misskey.io";
 if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
-	return error($en ? "This is not a valid server URL.":"サーバのURLが無効です。");
+	return error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 }
 // 認証チェック
 $sns_api_session_id = $_SESSION['sns_api_session_id'];
@@ -160,6 +160,7 @@ if ($postResponse) {
 	$postResult = json_decode($postResponse, true);
 	if (!empty($postResult['createdNote']["fileIds"])) {
 
+		unset($_SESSION['misskey_server_radio']);
 		unset($_SESSION['sns_api_session_id']);
 		unset($_SESSION['sns_api_val']);
 							
