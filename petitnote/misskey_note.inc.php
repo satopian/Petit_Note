@@ -2,7 +2,7 @@
 //Petit Note 2021-2023 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20230722;
+$misskey_note_ver=20230723;
 
 class misskey_note{
 
@@ -232,11 +232,26 @@ class misskey_note{
 		$sns_api_session_id=hash('sha256', $sns_api_session_id);
 
 		$_SESSION['sns_api_session_id']=$sns_api_session_id;
+		$_SESSION['misskey_server_radio']=$misskey_server_radio;
 
 		$root_url = urlencode($root_url);
 
 		return header("Location: {$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$root_url}connect_misskey_api.php&permission=write:notes,write:drive");
 	
 	}
-
+	// Misskeyねの投稿が成功した事を知らせる画面
+	public static function misskey_success(){
+		global $en,$skindir,$boardname,$petit_lot;
+		$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
+		
+		session_sta();
+		
+		$misskey_server_url = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "";
+		if(!$misskey_server_url || !filter_var($misskey_server_url,FILTER_VALIDATE_URL) || !$no){
+			return header('Location: ./');
+		}
+		$templete='misskey_success.html';
+		return include __DIR__.'/'.$skindir.$templete;
+	}
 }
+

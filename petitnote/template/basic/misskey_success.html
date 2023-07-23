@@ -7,36 +7,27 @@
 	<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
 
 	<title><?=h($boardname)?></title> 
-<style>
-.Misskey_description{
-	line-height: 2;
-}
+	<style>
 .success {
-    font-size: 26px;
-    font-weight: 600;
+    font-size: 24px;
+    margin: 16px 0 0 0;
 }
-.success a {
-    font-weight: normal;
-}
-.hotaru img {
-	max-width: 50%;
-	height: auto;
-}
-
 </style>
 </head>
 <body>
 	<div class="container">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<nav class="menu_wrap" >
-		<span>[<a href="<?=h($fixed_link)?>"><?php if($en):?>Return to thread<?php else:?>スレッドに戻る<?php endif;?></a>]</span>
+	<span>[<a href="./?resno=<?=h($no)?>"><?php if($en):?>Return to thread<?php else:?>スレッドに戻る<?php endif;?></a>]</span>
 		<a href="#bottom">▽</a>
 	</nav>
 <hr>
+<h2>
+<?php if($en):?>Your post was successful.<?php else:?>投稿に成功しました。<?php endif;?>
+</h2>
 <div class="success">
-<?php if($en):?>Posted on Misskey.<?php else:?>Misskeyに投稿しました。<?php endif;?><br>
 <?php
-$baseUrl = isset($baseUrl) ? $baseUrl : "";
+$baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "";
 $baseUrl = filter_var($baseUrl,FILTER_VALIDATE_URL) ? $baseUrl:'';
 ?>
 <?php if($baseUrl):?>
