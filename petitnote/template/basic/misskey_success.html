@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
+
+	<title><?=h($boardname)?></title> 
+<style>
+.Misskey_description{
+	line-height: 2;
+}
+.success {
+    font-size: 26px;
+    font-weight: 600;
+}
+.success a {
+    font-weight: normal;
+}
+.hotaru img {
+	max-width: 50%;
+	height: auto;
+}
+
+</style>
+</head>
+<body>
+	<div class="container">
+	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+	<nav class="menu_wrap" >
+		<span>[<a href="<?=h($fixed_link)?>"><?php if($en):?>Return to thread<?php else:?>スレッドに戻る<?php endif;?></a>]</span>
+		<a href="#bottom">▽</a>
+	</nav>
+<hr>
+<div class="success">
+<?php if($en):?>Posted on Misskey.<?php else:?>Misskeyに投稿しました。<?php endif;?><br>
+<?php
+$baseUrl = isset($baseUrl) ? $baseUrl : "";
+$baseUrl = filter_var($baseUrl,FILTER_VALIDATE_URL) ? $baseUrl:'';
+?>
+<?php if($baseUrl):?>
+<a href="<?=h($baseUrl)?>" target="_blank" rel="noopener"><?=h($baseUrl)?></a>
+<?php endif;?>
+</div>
+</div>
+</body>
+</html>

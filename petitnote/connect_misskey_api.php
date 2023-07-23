@@ -10,7 +10,7 @@ require_once(__DIR__.'/functions.php');
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
 ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
-$skindir='template/'.$skindir;
+$skindir=__DIR__.'/template/'.$skindir;
 
 session_sta();
 
@@ -43,8 +43,8 @@ if (!$checkResponse) {
 }
 
 $responseData = json_decode($checkResponse, true);
-$accessToken = $responseData['token'];
-$user = $responseData['user'];
+$accessToken = isset($responseData['token'])? $responseData['token'] :'';
+$user = isset($responseData['user']) ? $responseData['user'] :'';
 
 // 画像のアップロード
 $imagePath = __DIR__.'/src/'.$src_image;
@@ -131,9 +131,12 @@ sleep(10);
 // 投稿
 $tool= $tool ? 'Tool:'.$tool.' ' :'';
 $painttime= $painttime ? 'Paint time:'.$painttime.' ' :'';
-$fixed_link = ' '.$root_url.'?resno='.$no;
-$fixed_link = $article_url_link ? $fixed_link :'';
-$status = $tool.$painttime.$com.$fixed_link;
+
+$fixed_link = $root_url.'?resno='.$no;
+$fixed_link = filter_var($fixed_link,FILTER_VALIDATE_URL) ? $fixed_link : '';
+$article_url_link = $article_url_link ? ' '.$fixed_link : '';
+
+$status = $tool.$painttime.$com.$article_url_link;
 
 $postUrl = $baseUrl . "/api/notes/create";
 $postHeaders = array(
@@ -163,9 +166,13 @@ if ($postResponse) {
 		unset($_SESSION['misskey_server_radio']);
 		unset($_SESSION['sns_api_session_id']);
 		unset($_SESSION['sns_api_val']);
+		unset($_SESSION['userdel']);
+
+		$templete='misskey_success.html';
+		return include $skindir.$templete;
 							
 		// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult);
-		return header('Location: '.$baseUrl);
+		// return header('Location: '.$baseUrl);
 	} 
 	else {
 		return error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);

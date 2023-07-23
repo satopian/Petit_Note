@@ -2410,7 +2410,6 @@ function res (){
 	$denny_all_posts=$deny_all_posts;
 	$page='';
 	$resno=(string)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
-	$misskey_note=(bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 
 	if(!is_file(LOG_DIR."{$resno}.log")){
 		return error($en?'Thread does not exist.':'スレッドがありません');	

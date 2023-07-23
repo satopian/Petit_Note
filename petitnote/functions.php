@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230720;
+$functions_ver=20230722;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -80,7 +80,6 @@ function admin_in(){
 	$search=(bool)filter_input(INPUT_GET,'search',FILTER_VALIDATE_BOOLEAN);
 	$radio=(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
-	$misskey_note=(bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 	$q=(string)filter_input(INPUT_GET,'q');
 
 	session_sta();
@@ -208,19 +207,16 @@ function set_nsfw_show_hide(){
 function branch_destination_of_location(){
 	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$resno=(int)filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
-	$misskey_note=(bool)filter_input(INPUT_POST,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 	$catalog=(bool)filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 	$search=(bool)filter_input(INPUT_POST,'search',FILTER_VALIDATE_BOOLEAN);
 	$paintcom=(bool)filter_input(INPUT_POST,'paintcom',FILTER_VALIDATE_BOOLEAN);
 
-	$misskey_note = admindel_valid() ? false : $misskey_note;
 
 	if($paintcom){
 		return header('Location: ./?mode=paintcom');
 	}
 	if($resno){
-		$misskey_note = $misskey_note ? '&misskey_note=on' : '';
-		return header('Location: ./?resno='.h($resno).$misskey_note);
+		return header('Location: ./?resno='.h($resno));
 	}
 	if($catalog){
 		return header('Location: ./?mode=catalog&page='.h($page));

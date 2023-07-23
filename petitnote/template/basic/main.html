@@ -191,7 +191,6 @@ Size:
 	<!-- タイトル -->
 	<h2 class="article_title"><a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a></h2>
 	<?php
-	$findimage=false;
 	$countres=count($ress);
 	$skipres=$countres-($dispres+1);
 	if($userdel || $admindel){
@@ -200,10 +199,6 @@ Size:
 	?>
 	<!-- 個別スレッドのループ -->
 	<?php foreach($ress as $i => $res) : ?>
-		<?php if($res['img']){
-			$findimage=true;
-		}?>
-
 		<!-- 縮小のかかったNSFW画像を元のサイズへ -->
 		<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
 		<?php if($skipres && $i===$skipres):?>
@@ -288,17 +283,17 @@ Size:
 			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
 				<div class="edit_button">
 					<!-- 編集削除のためのボタン -->
-					<form action="./" method="POST" class="aikotoba">
+					<?php if($res['check_elapsed_days']&&!$is_badhost||$admindel):?>
+						<form action="./" method="POST" class="aikotoba">
 						<input type="hidden" name="mode" value="before_del">
 						<input type="hidden" name="edit_mode" value="editmode">
 						<input type="hidden" name="resmode" value="false">
 						<input type="hidden" name="id" value="<?=h($res['time'])?>">
 						<input type="hidden" name="no" value="<?=h($res['no'])?>">
 						<input type="hidden" name="postpage" value="<?=h($page)?>">
-						<?php if(($res['check_elapsed_days']&&!$is_badhost||$admindel)&&(!isset($res['not_deleted'])||$res['not_deleted'])):?>
 						<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
-						<?php endif;?>
-					</form>
+						</form>
+					<?php endif;?>
 					<form action="./" method="POST" class="aikotoba">
 						<input type="hidden" name="mode" value="before_del">
 						<input type="hidden" name="edit_mode" value="delmode">
@@ -309,9 +304,9 @@ Size:
 						<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
 					</form>
 				
-					<?php if($use_misskey_note && $res['img'] && ($res['check_elapsed_days'] && !$is_badhost||$admindel)):?>
+					<?php if($use_misskey_note && $res['img'] && ($res['check_elapsed_days'] && !$is_badhost||($admindel||$adminpost))):?>
 					
-					<form action="./" method="POST" class="aikotoba" target="_blank">
+						<form action="./" method="POST" class="aikotoba">
 						<input type="hidden" name="mode" value="before_misskey_note">
 						<input type="hidden" name="edit_mode" value="editmode">
 						<input type="hidden" name="resmode" value="true">
