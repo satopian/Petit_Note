@@ -16,6 +16,7 @@ class misskey_note{
 		$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 		aikotoba_required_to_view();
 		$adminpost=adminpost_valid();
+		$admindel=admindel_valid();
 
 		$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 		$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
@@ -69,7 +70,7 @@ class misskey_note{
 
 		$count_r_arr=count($r_arr);
 		$edit_mode = 'editmode';
-		$admindel=false; 
+
 		$templete='before_misskey_note.html';
 		return include __DIR__.'/'.$skindir.$templete;
 	}
