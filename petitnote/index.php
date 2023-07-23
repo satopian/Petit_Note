@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.82.2';
-$petit_lot='lot.20230721';
+$petit_ver='v0.82.5';
+$petit_lot='lot.20230723';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,13 +16,13 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230720){
+if(!isset($functions_ver)||$functions_ver<20230723){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20230718){
-	return die($en?'Please update misskey_note.inc.php to the latest version.':'functions.phpを最新版に更新してください。');
+if(!isset($misskey_note_ver)||$misskey_note_ver<20230723){
+	return die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
 // jQueryバージョン
@@ -160,6 +160,8 @@ switch($mode){
 		return misskey_note::create_misskey_note_sessiondata();
 	case 'create_misskey_authrequesturl':
 		return misskey_note::create_misskey_authrequesturl();
+	case 'misskey_success':
+		return misskey_note::misskey_success();
 	case 'search':
 		return search();
 	case 'catalog':
