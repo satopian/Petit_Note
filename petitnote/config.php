@@ -445,6 +445,8 @@ $sns_window_width = 350;
 //windowの高さ 初期値 490
 $sns_window_height = 490;
 
+//Misskey投稿機能設定
+
 //Misskeyへの投稿機能を有効にする
 // する: true しない: false
 
