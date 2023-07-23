@@ -18,7 +18,7 @@ if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))
 	return header( "Location: ./ ") ;
 };
 
-$baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "https://misskey.io";
+$baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "";
 if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
 	return error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 }
@@ -163,16 +163,15 @@ if ($postResponse) {
 	$postResult = json_decode($postResponse, true);
 	if (!empty($postResult['createdNote']["fileIds"])) {
 
-		unset($_SESSION['misskey_server_radio']);
 		unset($_SESSION['sns_api_session_id']);
 		unset($_SESSION['sns_api_val']);
 		unset($_SESSION['userdel']);
 
-		$templete='misskey_success.html';
-		return include $skindir.$templete;
+		// $templete='misskey_success.html';
+		// return include $skindir.$templete;
 							
 		// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult);
-		// return header('Location: '.$baseUrl);
+		return header('Location: '.$root_url.'?mode=misskey_success&no='.$no);
 	} 
 	else {
 		return error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
