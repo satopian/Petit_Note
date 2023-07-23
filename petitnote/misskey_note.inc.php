@@ -11,7 +11,6 @@ class misskey_note{
 
 		global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en,$deny_all_posts;
 		//管理者判定処理
-		check_same_origin();
 		session_sta();
 		$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 		aikotoba_required_to_view();
@@ -20,19 +19,17 @@ class misskey_note{
 
 		$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 		$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
+		$id = $id ? $id : t((string)filter_input(INPUT_GET,'id'));//intの範囲外
 		$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
-
+		$no = $no ? $no : t((string)filter_input(INPUT_GET,'no',FILTER_VALIDATE_INT));
+		$misskey_note = (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-		$resmode = ((string)filter_input(INPUT_POST,'resmode')==='true');
-		$resmode = $resmode ? 'true' : 'false';
-		$postpage = (int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-		$postresno = (int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
-		$postresno = $postresno ? $postresno : false; 
+		$postresno = (int)$no;
 	
+		check_open_no($no);
 		if(!is_file(LOG_DIR."{$no}.log")){
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
-		check_open_no($no);
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
 

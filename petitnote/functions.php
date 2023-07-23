@@ -81,6 +81,7 @@ function admin_in(){
 	$radio=(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
 	$q=(string)filter_input(INPUT_GET,'q');
+	$misskey_note=(bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 
 	session_sta();
 	$admindel=admindel_valid();
@@ -210,13 +211,14 @@ function branch_destination_of_location(){
 	$catalog=(bool)filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 	$search=(bool)filter_input(INPUT_POST,'search',FILTER_VALIDATE_BOOLEAN);
 	$paintcom=(bool)filter_input(INPUT_POST,'paintcom',FILTER_VALIDATE_BOOLEAN);
-
+	$misskey_note=(bool)filter_input(INPUT_POST,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 
 	if($paintcom){
 		return header('Location: ./?mode=paintcom');
 	}
 	if($resno){
-		return header('Location: ./?resno='.h($resno));
+		$misskey_note = $misskey_note ? '&misskey_note=on':'';
+		return header('Location: ./?resno='.h($resno).$misskey_note);
 	}
 	if($catalog){
 		return header('Location: ./?mode=catalog&page='.h($page));

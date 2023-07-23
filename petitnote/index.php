@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.82.5';
-$petit_lot='lot.20230723';
+$petit_ver='v0.83.0';
+$petit_lot='lot.20230724';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1539,10 +1539,10 @@ function confirmation_before_deletion ($edit_mode=''){
 	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 
+	check_open_no($no);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
-	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	flock($rp, LOCK_EX);
 
@@ -1884,10 +1884,10 @@ function del(){
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
+	check_open_no($no);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
-	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 
@@ -2535,7 +2535,9 @@ function res (){
 
 	//token
 	$token=get_csrf_token();
-	$templete='res.html';
+	
+	$misskey_note = (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
+	$templete= $misskey_note ? 'misskey_note_catalog.html' : 'res.html';
 	return include __DIR__.'/'.$skindir.$templete;
 
 }
