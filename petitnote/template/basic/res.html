@@ -169,7 +169,7 @@
 			<?php endif;?>
 
 				<?php if(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])){
-					$resform=false;//最大レス数を超えている時と指定した日数を超えた古いスレッドはレスフォームを閉じる
+					$res_max_over=true;//最大レス数を超えている時と指定した日数を超えた古いスレッドはレスフォームを閉じる
 				}?>
 		<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
 			<div class="edit_button">
@@ -222,7 +222,7 @@
 <!-- 返信可能な数の表示 -->
 <div class="res_notice_wrap">
 <?php $maxres_current=(int)$max_res-(int)$i;?>
-<?php if(($maxres_current<=20) && !$adminpost && $resform):?>
+<?php if(($maxres_current<=20) && !$adminpost && $resform && !$res_max_over):?>
 	<hr>
 		<?php if($en):?>
 			This thread will be closed with <?=h($maxres_current)?> more posts.
@@ -230,7 +230,7 @@
 			あと<?=h($maxres_current)?>件投稿できます。
 		<?php endif;?>
 <?php endif;?>
-<?php if($ress[0]['time_left_to_close_the_thread']&& !$adminpost && $resform):?>
+<?php if($ress[0]['time_left_to_close_the_thread']&& !$adminpost && $resform && !$res_max_over):?>
 	<hr>
 		<?php if($en):?>
 			This thread will be closed after <?=h($ress[0]['time_left_to_close_the_thread'])?>.
@@ -239,7 +239,7 @@
 	<?php endif;?>
 <?php endif;?>
 </div>
-<?php if($use_sns_button||($resform && $resname)):?>
+<?php if($use_sns_button||($resform && !$res_max_over && $resname)):?>
 	<div class="res_button_wrap">
 		<?php if($resform && $resname):?>
 		<script>
@@ -259,7 +259,7 @@
 		</script>
 		<button class="copy_button" onclick="add_to_com()"><?php if($en):?>Copy the poster name<?php else:?>投稿者名をコピー<?php endif;?></button>
 		<?php endif; ?>
-		<?php if($use_misskey_note && $findimage && ($ress[0]['check_elapsed_days']||$adminpost)):?>
+		<?php if($use_misskey_note && $findimage && ($resform && $ress[0]['check_elapsed_days']||$adminpost)):?>
 				<span class="share_button">
 					<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="nofollow noopener">
 					<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
@@ -278,7 +278,7 @@
 	</div>
 <?php endif;?>
 
-<?php if($resform):?>
+<?php if($resform && !$res_max_over):?>
 
 <?php if($use_res_upload || $adminpost):?>
 <?php if($use_paint):?>

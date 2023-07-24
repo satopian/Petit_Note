@@ -237,7 +237,7 @@ nav.menu_wrap_catalog {
 	display: block;
     line-height: 1.8;
 }
-.menu_wrap span {
+.menu_wrap > span {
     display: inline-block;
     margin: 2px 0;
 }

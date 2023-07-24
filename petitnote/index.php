@@ -2538,7 +2538,7 @@ function res (){
 	//token
 	$token=get_csrf_token();
 	
-	$misskey_note = (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
+	$misskey_note = $use_misskey_note ? (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN) : false;
 	$res_catalog = $misskey_note ? true : (bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
 
 	$templete= $res_catalog ? 'res_catalog.html' : 'res.html';

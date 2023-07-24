@@ -671,8 +671,7 @@ function check_same_origin(){
 	if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
 		return error($en?'Your browser is not supported. ':'お使いのブラウザはサポートされていません。');
 	}
-	$url_scheme=parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_SCHEME).'://';
-	if(str_replace($url_scheme,'',$_SERVER['HTTP_ORIGIN']) !== $_SERVER['HTTP_HOST']){
+	if(parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_HOST) !== $_SERVER['HTTP_HOST']){
 		return error($en?"The post has been rejected.":'拒絶されました。');
 	}
 }
