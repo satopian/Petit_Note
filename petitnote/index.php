@@ -2539,7 +2539,9 @@ function res (){
 	$token=get_csrf_token();
 	
 	$misskey_note = (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
-	$templete= $misskey_note ? 'misskey_note_catalog.html' : 'res.html';
+	$res_catalog = $misskey_note ? true : (bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
+
+	$templete= $res_catalog ? 'res_catalog.html' : 'res.html';
 	return include __DIR__.'/'.$skindir.$templete;
 
 }

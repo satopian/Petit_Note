@@ -40,7 +40,9 @@
 	<!-- 閲覧注意画像を隠す/隠さない -->
 	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
 <?php endif;?>
+<?php if($misskey_note):?>
 <h2 class="article_title"><?php if($en):?>Which image would you like to note on Misskey?<?php else:?>どの画像をMisskeyにノートしますか?<?php endif;?></h2>
+<?php endif;?>
 <hr>
 <h2 class="article_title"><a href="./?resno=<?= h($out[0][0]['no'])?>">[<?= h($out[0][0]['no'])?>] <?= h($out[0][0]['sub'])?></a></h2>
 <hr>

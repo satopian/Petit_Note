@@ -52,6 +52,7 @@
 
 
 		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
+		<span> [<a href="./?resno=<?=h($resno)?>&res_catalog=on"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
 		<?php if($display_search_nav):?>
 			<span> [<a href="./?mode=search&radio=3"><?php if($en):?>Search<?php else:?>検索<?php endif;?></a>]</span>
 		<?php endif;?>
