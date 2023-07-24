@@ -33,10 +33,11 @@
 
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <nav class="menu_wrap" >
-
-<?php if(!($adminpost||$admindel) && !$out[0][0]['check_elapsed_days']){
+	
+<?php if(!($adminpost||$admindel) && !$out[0][0]['check_elapsed_days']||!$use_misskey_note){
 	$resform=false;//指定した日数を超えた古いスレッドはレスフォームを閉じる
 	$misskey_note=false;
+
 }?>
 
 <span>[<a href="./?resno=<?= h($out[0][0]['no'])?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]</span>
