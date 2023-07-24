@@ -36,9 +36,9 @@
 <div id="error_message_beforedelete"></div>
 <?php if($aikotoba && !$deny_all_posts || $adminpost ):?>
 	<?php if(!($adminpost || $admindel) || $verified!=='adminpost'):?>
-	<?php if($en):?>Note to Misskey. Please enter password.<?php else:?>この記事をMisskeyにノートします。パスワードを入力してください。<?php endif;?>: 
+	<?php if($en):?>Note to Misskey. Please enter password.<?php else:?>この画像をMisskeyにノートします。パスワードを入力してください。<?php endif;?>: 
 <?php else:?>
-<?php if($en):?>Note to Misskey.<?php else:?>この記事をMisskeyにノートします。<?php endif;?>: 
+<?php if($en):?>Note to Misskey.<?php else:?>この画像をMisskeyにノートします。<?php endif;?>: 
 <?php endif;?>
 <form action="./" method="POST" id="before_delete" class="aikotoba" onsubmit="return res_form_submit(event,'before_delete')">
 <?php if(!($adminpost || $admindel) || $verified!=='adminpost'):?>
@@ -59,7 +59,7 @@
 <div class="copy">
 <div class="left_wrap">[<a href="<?=h($home)?>">HOME</a> /
 <?php if($postresno):?>
-<a href="./?mode=adminin&resno=<?=h($postresno)?><?php if($misskey_note):?>&misskey_note=on<?php endif;?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+<a href="./?mode=adminin&resno=<?=h($postresno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 <?php endif;?>
 <?php if(!$postresno && ($postpage||$postpage===0)):?>
 <a href="./?mode=adminin&page=<?=h($postpage)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]

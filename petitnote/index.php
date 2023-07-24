@@ -2285,6 +2285,8 @@ function catalog(){
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 	//token
 	$token=get_csrf_token();
+	//misskey投稿用では無い
+	$misskey_note=false;
 
 	//ページング
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);

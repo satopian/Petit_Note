@@ -24,8 +24,8 @@
 	<form action="./" method="post">
 	<input type="hidden" name="mode" value="view_nsfw">
 	<input type="hidden" name="view_nsfw" value="on">
-	<input type="hidden" name="postpage" value="<?=h($page)?>">
-	<input type="hidden" name="catalog" value="on">
+	<input type="hidden" name="resno" value="<?=h($out[0][0]['no'])?>">
+	<input type="hidden" name="misskey_note" value="on">
 	<input type="submit" value="<?php if($en):?>Yes<?php else:?>はい表示します。<?php endif;?>">
 	</form>
 	</div>
@@ -33,48 +33,27 @@
 
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <nav class="menu_wrap" >
-<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
+<span>[<a href="./?resno=<?= h($out[0][0]['no'])?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]</span>
 <a href="#bottom">▽</a>
 </nav>
 <?php if($mark_sensitive_image):?>
 	<!-- 閲覧注意画像を隠す/隠さない -->
 	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
 <?php endif;?>
+<h2 class="article_title"><?php if($en):?>Which image would you like to note on Misskey?<?php else:?>どの画像をMisskeyにノートしますか?<?php endif;?></h2>
+<hr>
+<h2 class="article_title"><a href="./?resno=<?= h($out[0][0]['no'])?>">[<?= h($out[0][0]['no'])?>] <?= h($out[0][0]['sub'])?></a></h2>
 <hr>
 <div class="catalog_wrap">
-	<!-- 親のループ -->
-<?php if(isset($out)):?>
-<?php foreach($out as $t => $ress):?>
-	<?php foreach($ress as  $res):?><?php if(!$res['img']){
-			continue;
-		}?><span class="catalog_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>">	
-		<?php if($res['img']):?>
-			<a href="./?mode=before_misskey_note&no=<?= h($res['no'])?>&id=<?=h($res['time'])?>" target="_blank" rel="nofollow noopener">
-			<?php if($res['webpimg']):?>
-			<picture><source srcset="<?=h($res['webpimg'])?>" type="image/webp">
-			<?php endif;?>
-			<?php if($res['thumbnail']):?>
-				<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
-			<?php else:?>
-				<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
-			<?php endif;?>
-			<?php if($res['webpimg']):?>
-			</picture>
-			<?php endif;?>
-			<?php if($res['hide_thumbnail']):?>
-					<p>NSFW</p>
-			<?php endif;?>
-			</a>
-		<?php endif;?>
-				</span><?php endforeach; ?><?php endforeach; ?>
+<!-- 画像一覧 -->
+<?php include 'parts/catalog_images_loop.html';?>
 </div>
 
 <hr>
 
-<?php endif;?>
 	<div class="copy">
 		<div class="left_wrap">
-		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&catalog=on&page=<?=h($page)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
 	</div>
 <div class="righit_wrap">
 <?php include __DIR__.'/parts/copyright.html';?>

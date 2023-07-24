@@ -81,7 +81,6 @@ function admin_in(){
 	$radio=(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
 	$q=(string)filter_input(INPUT_GET,'q');
-	$misskey_note=(bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 
 	session_sta();
 	$admindel=admindel_valid();
