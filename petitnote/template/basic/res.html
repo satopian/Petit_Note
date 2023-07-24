@@ -50,7 +50,6 @@
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<nav class="menu_wrap">
 
-
 		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
 		<span> [<a href="./?resno=<?=h($resno)?>&res_catalog=on"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
 		<?php if($display_search_nav):?>
@@ -66,7 +65,6 @@
 			<span>[<a href="./?mode=userdel&resno=<?=h($resno)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]</span>
 		<?php endif;?>
 	<?php endif;?>
-
 
 <a href="#bottom">▽</a>
 </nav>
@@ -237,9 +235,8 @@
 	<?php endif;?>
 <?php endif;?>
 </div>
-<?php if($use_sns_button||($resform && !$res_max_over && $resname)):?>
 	<div class="res_button_wrap">
-		<?php if($resform && $resname):?>
+		<?php if($resform && $resname && !$res_max_over):?>
 		<script>
 		function add_to_com() {
 			var textField = document.getElementById("res_com");
@@ -259,7 +256,7 @@
 		<?php endif; ?>
 		<?php if($use_misskey_note && $findimage && ($resform && $ress[0]['check_elapsed_days']||$adminpost)):?>
 				<span class="share_button">
-					<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="nofollow noopener">
+					<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="noopener">
 					<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
 				</span>
 			<?php endif;?>
@@ -366,7 +363,6 @@
 	<?php endif;?>
 </label>
 </span>
-<?php endif;?>
 <?php endif;?>
 <?php if(!$sage_all):?>
 	<span>
