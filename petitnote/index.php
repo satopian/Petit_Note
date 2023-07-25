@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.83.2';
+$petit_ver='v0.83.3';
 $petit_lot='lot.20230725';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2397,6 +2397,7 @@ function view(){
 			chmod(__DIR__.'/template/cache/index_cache.json',0600);
 		}
 	}
+	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
 	// HTML出力
 	$templete='main.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -2404,7 +2405,7 @@ function view(){
 //レス画面
 function res (){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en;
+	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height;
 
 	aikotoba_required_to_view();
@@ -2540,6 +2541,7 @@ function res (){
 	
 	$misskey_note = $use_misskey_note ? (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN) : false;
 	$res_catalog = $misskey_note ? true : (bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
+	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
 
 	$templete= $res_catalog ? 'res_catalog.html' : 'res.html';
 	return include __DIR__.'/'.$skindir.$templete;
