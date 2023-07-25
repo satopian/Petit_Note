@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.83.3';
+$petit_ver='v0.83.5';
 $petit_lot='lot.20230725';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1663,8 +1663,8 @@ function edit_form($id='',$no=''){
 
 	$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
-	$resno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
-	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$postresno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
+	$postpage=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
 	foreach($line as $i => $val){
 		$line[$i]=h($val);
