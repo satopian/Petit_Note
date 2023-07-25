@@ -1663,8 +1663,8 @@ function edit_form($id='',$no=''){
 
 	$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
-	$postresno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
-	$postpage=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	$resno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
+	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
 	foreach($line as $i => $val){
 		$line[$i]=h($val);

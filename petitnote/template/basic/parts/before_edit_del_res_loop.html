@@ -28,7 +28,7 @@
 <?php if($res['img']):?>
 	<?php if($res['tool']):?><span>Tool:<?=h($res['tool'])?></span><?php endif;?>
 	<?php if($res['painttime']):?>
-		<span><?php if($en):?>Paint time:<?php else:?>描画時間:<?php endif;?><?=h($res['painttime'])?></span>
+		<span><?php if($en):?>Paint time:<?=h($res['painttime_en'])?><?php else:?>描画時間:<?=h($res['painttime'])?><?php endif;?></span>
 		
 		<?php endif;?>
 		<span>
