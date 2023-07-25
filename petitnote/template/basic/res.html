@@ -165,7 +165,7 @@
 			<?php if(isset($res['not_deleted']) && !$res['not_deleted']):?>
 			<?php if($en):?>This post does not exist.<?php else:?>この記事はありません。<?php endif;?>
 			<?php endif;?>
-			<?php $res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])) ? true : false;?>
+			<?php $res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));?>
 
 		<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
 			<div class="edit_button">

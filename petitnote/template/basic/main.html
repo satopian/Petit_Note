@@ -280,7 +280,7 @@ Size:
 			<?php if(isset($res['not_deleted'])&&!$res['not_deleted']):?>
 			<?php if($en):?>This post does not exist.<?php else:?>この記事はありません。<?php endif;?>
 			<?php endif;?>
-			<?php $res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days'])) ? true : false;?>
+			<?php $res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));?>
 			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
 				<div class="edit_button">
 					<!-- 編集削除のためのボタン -->
@@ -328,7 +328,6 @@ Size:
 	<?php endforeach;?>
 	<!-- 返信ボタン -->
 	<div class="clear"></div>
-
 	<div class="res_button_wrap">
 	<?php if($use_misskey_note && $findimage && ($resform && $ress[0]['check_elapsed_days'] || $adminpost || $admindel)):?>
 		<span class="share_button">
