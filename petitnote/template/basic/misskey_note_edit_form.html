@@ -77,20 +77,45 @@
 
 			<div class="clear"></div>
 
-	<form action="./" method="POST" enctype="multipart/form-data" class="resform" id="res_form">
+	<form action="./" method="POST" enctype="multipart/form-data" class="misskey_form" id="res_form">
 	<div id="error_message"></div>
-<textarea name="com" class="post_com"></textarea><br>
+<textarea name="cw" class="post_cw" id="cw" placeholder="<?php if($en):?>CW<?php else:?>CW 注釈<?php endif;?>"></textarea><br>
+<textarea name="com" class="post_com" placeholder="<?php if($en):?>Comment<?php else:?>コメント<?php endif;?>"></textarea><br>
 <input type="hidden" name="token" value="<?=h($token)?>">
 <input type="hidden" name="no" value="<?= h($ress[0]['no'])?>">
 <input type="hidden" name="paintsec" value="<?=h($res['paintsec'])?>">
 <input type="hidden" name="abbr_toolname" value="<?=h($res['abbr_toolname'])?>">
 <input type="hidden" name="src_image" value="<?=h($res['img'])?>">
 <input type="hidden" name="mode" value="create_misskey_note_sessiondata">
+<span>
 <input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on" checked="checked"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
+</span>
+<span>
 <input type="checkbox" name="article_url_link" id="article_url_link" value="on" checked="checked"><label for="article_url_link"><?php if($en):?>Link the article URL<?php else:?>記事のURLをリンクする<?php endif;?></label>
-<span class="icon-Simpleicons-Team-Simple-Misskey"></span><input type="submit" value="<?php if($en):?>Note<?php else:?>ノート<?php endif;?>" class="form_button">
+</span>
+<span>
+<input type="checkbox" name="hide_content" id="hide_content" value="on" ><label for="hide_content"><?php if($en):?>Hide content<?php else:?>内容を隠す<?php endif;?></label>
+</span>
+<div>
+	<span class="icon-Simpleicons-Team-Simple-Misskey misskey_form_misskey_icon"></span><input type="submit" value="<?php if($en):?>Note<?php else:?>ノート<?php endif;?>" class="form_button">
+<div>		
 </form>
+<!-- 内容を隠すをチェックした時に注釈のテキストエリアを表示 -->
+<script>
+document.addEventListener("DOMContentLoaded", function() {
 
+document.getElementById('cw').style.display = "none";
+document.getElementById('hide_content').addEventListener('change', function() {
+	
+	if(document.getElementById('hide_content').checked){
+		document.getElementById('cw').style.display = "inline-block";
+	}else{
+		document.getElementById('cw').style.display = "none";
+
+	}
+});
+});
+</script>
 
 <hr>
 	<div class="copy">

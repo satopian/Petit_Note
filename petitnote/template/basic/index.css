@@ -69,6 +69,13 @@ textarea.post_com {
 	margin: 8px 0 5px 0;
 	font-family: inherit;
 }
+textarea.post_cw {
+	width: 300px;
+	height: 60px;
+	margin: 8px 0 5px 0;
+	font-family: inherit;
+	display: inline-block;
+}
 
 input.input_txt,textarea {
 	font-size: inherit;
@@ -84,17 +91,24 @@ textarea.rescom {
 	height: 60px;
 	margin: 10px 0;
 }
-form.postform span {
+form.postform > span {
     margin: 0 0 0 10px;
 }
 
-form.resform {
+form.resform ,form.misskey_form {
 	text-align: right;
 }
-form.resform span {
+form.resform >span {
     margin: 0 10px 0 0;
 }
-
+form.misskey_form > span {
+    display: inline-block;
+    margin: 10px 0px 0;
+}
+/* Misskeyノートフォームのアイコン位置 */
+span.misskey_form_misskey_icon {
+    margin: 0 5px 0 0;
+}
 input.form_button {
     margin: 10px 0 0 2px;
     padding: 1px 12px;
@@ -283,7 +297,7 @@ form.res_button {
 }
 form.res_button input {
     padding: 1px 12px;
-    margin: 8px 0 0 8px;
+    margin: 12px 0 0 8px;
 }
 /* 返信フォーム */
 form.res_form {
@@ -456,7 +470,7 @@ span.continue_menu {
 }
 
 @media screen and (max-width:767px){
-	textarea.post_com {
+	textarea.post_com,textarea.post_cw {
 		max-width: 276px;
 	}
 	.posted_image{

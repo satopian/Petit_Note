@@ -165,7 +165,11 @@ class misskey_note{
 		$paintsec = filter_input(INPUT_POST,'paintsec',FILTER_VALIDATE_INT);
 		$hide_thumbnail = (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
 		$article_url_link = (bool)filter_input(INPUT_POST,'article_url_link',FILTER_VALIDATE_BOOLEAN);
-		
+		$hide_content = (bool)filter_input(INPUT_POST,'hide_content',FILTER_VALIDATE_BOOLEAN);
+		$cw = t((string)filter_input(INPUT_POST,'cw'));
+			
+		$cw = $hide_content ? $cw : null;
+
 		$tool=switch_tool($abbr_toolname);
 		
 		$painttime=calcPtime($paintsec);
@@ -174,7 +178,7 @@ class misskey_note{
 
 		$src_image=basename($src_image);
 		//SESSIONに投稿内容を格納
-		$_SESSION['sns_api_val']=[$com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link];
+		$_SESSION['sns_api_val']=[$com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw];
 
 		$misskey_servers=isset($misskey_servers)?$misskey_servers:
 		[

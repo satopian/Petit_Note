@@ -24,7 +24,7 @@ if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
 }
 // 認証チェック
 $sns_api_session_id = $_SESSION['sns_api_session_id'];
-list($com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link) = $_SESSION['sns_api_val'];
+list($com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw) = $_SESSION['sns_api_val'];
 $src_image=basename($src_image);
 $checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
 
@@ -145,6 +145,7 @@ $postHeaders = array(
 );
 $postData = array(
 	'i' => $accessToken,
+	'cw' => $cw,
 	'text' => $status,
 	'fileIds' => array($fileId),
 );
