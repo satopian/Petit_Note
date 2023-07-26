@@ -2,7 +2,7 @@
 //Petit Note 2021-2023 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20230726;
+$misskey_note_ver=20230727;
 
 class misskey_note{
 
@@ -175,6 +175,8 @@ class misskey_note{
 		$painttime=calcPtime($paintsec);
 		$painttime = $en ? $painttime['en'] : $painttime['ja'];
 		session_sta();
+		// セッションIDの再生成
+		session_regenerate_id(true);
 
 		$src_image=basename($src_image);
 		//SESSIONに投稿内容を格納
@@ -285,3 +287,4 @@ class misskey_note{
 		return include __DIR__.'/'.$skindir.$templete;
 	}
 }
+
