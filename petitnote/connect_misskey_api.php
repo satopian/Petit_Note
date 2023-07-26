@@ -22,29 +22,38 @@ $baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_
 if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
 	return error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 }
-// 認証チェック
-$sns_api_session_id = $_SESSION['sns_api_session_id'];
 list($com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw) = $_SESSION['sns_api_val'];
 $src_image=basename($src_image);
-$checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
+$noauth = (bool)filter_input(INPUT_GET, 'noauth',FILTER_VALIDATE_BOOLEAN);
+$accessToken = (isset($_SESSION['accessToken']) && $noauth) ? $_SESSION['accessToken'] : miauth_check();
 
-$checkCurl = curl_init();
-curl_setopt($checkCurl, CURLOPT_URL, $checkUrl);
-curl_setopt($checkCurl, CURLOPT_POST, true);
-curl_setopt($checkCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-curl_setopt($checkCurl, CURLOPT_POSTFIELDS, json_encode([]));//空のData
-curl_setopt($checkCurl, CURLOPT_RETURNTRANSFER, true);
+// 認証チェック
 
-$checkResponse = curl_exec($checkCurl);
-curl_close($checkCurl);
+function miauth_check(){
+	global $en,$baseUrl;
+	$sns_api_session_id = $_SESSION['sns_api_session_id'];
+	$checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
 
-if (!$checkResponse) {
-	return error($en ? "Authentication failed." :"認証に失敗しました。" ,false);	
+	$checkCurl = curl_init();
+	curl_setopt($checkCurl, CURLOPT_URL, $checkUrl);
+	curl_setopt($checkCurl, CURLOPT_POST, true);
+	curl_setopt($checkCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+	curl_setopt($checkCurl, CURLOPT_POSTFIELDS, json_encode([]));//空のData
+	curl_setopt($checkCurl, CURLOPT_RETURNTRANSFER, true);
+
+	$checkResponse = curl_exec($checkCurl);
+	curl_close($checkCurl);
+
+	if (!$checkResponse) {
+		return error($en ? "Authentication failed." :"認証に失敗しました。" ,false);	
+	}
+
+	$responseData = json_decode($checkResponse, true);
+	$accessToken = $responseData['token'];
+	$_SESSION['accessToken']=$accessToken;
+	$user = $responseData['user'];
+	return	$accessToken;
 }
-
-$responseData = json_decode($checkResponse, true);
-$accessToken = isset($responseData['token'])? $responseData['token'] :'';
-$user = isset($responseData['user']) ? $responseData['user'] :'';
 
 // 画像のアップロード
 $imagePath = __DIR__.'/src/'.$src_image;

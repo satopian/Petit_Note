@@ -235,10 +235,40 @@ class misskey_note{
 		$_SESSION['sns_api_session_id']=$sns_api_session_id;
 		$_SESSION['misskey_server_radio']=$misskey_server_radio;
 
-		$root_url = urlencode($root_url);
+		$encoded_root_url = urlencode($root_url);
 
-		return header("Location: {$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$root_url}connect_misskey_api.php&permission=write:notes,write:drive");
+		if(isset($_SESSION['accessToken'])){
+
+			// ダミーの投稿を試みる（textフィールドを空にする）
+			$postUrl = "{$misskey_server_radio}/api/notes/create";
+			$postData = array(
+				'i' => $_SESSION['accessToken'],
+				'text' => '', // textフィールドを空にする
+			);
 	
+			$postCurl = curl_init();
+			curl_setopt($postCurl, CURLOPT_URL, $postUrl);
+			curl_setopt($postCurl, CURLOPT_POST, true);
+			curl_setopt($postCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+			curl_setopt($postCurl, CURLOPT_POSTFIELDS, json_encode($postData));
+			curl_setopt($postCurl, CURLOPT_RETURNTRANSFER, true);
+			$postResponse = curl_exec($postCurl);
+			$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE); // HTTPステータスコードを取得
+			curl_close($postCurl);
+	
+			// HTTPステータスコードが403番台でない場合は、ダミーの投稿が失敗したと判断
+			if ($postStatusCode === 403) {
+				$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
+			} else {
+				$Location = "{$root_url}connect_misskey_api.php?noauth=on";
+			}
+	
+		}else{
+			$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
+	
+		}
+		return header('Location:'.$Location);
+		
 	}
 	// Misskeyねの投稿が成功した事を知らせる画面
 	public static function misskey_success(){
