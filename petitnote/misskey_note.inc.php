@@ -243,7 +243,7 @@ class misskey_note{
 			$postUrl = "{$misskey_server_radio}/api/notes/create";
 			$postData = array(
 				'i' => $_SESSION['accessToken'],
-				'text' => '', // textフィールドを空にする
+				'text' => '', // 投稿を成功させないようにするためtextフィールドを空にする
 			);
 	
 			$postCurl = curl_init();
@@ -256,21 +256,21 @@ class misskey_note{
 			$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE); // HTTPステータスコードを取得
 			curl_close($postCurl);
 	
-			// HTTPステータスコードが403番台でない場合は、ダミーの投稿が失敗したと判断
+			// HTTPステータスコードが403の時は、トークン不一致と判断しアプリを認証
 			if ($postStatusCode === 403) {
 				$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
 			} else {
 				$Location = "{$root_url}connect_misskey_api.php?noauth=on";
 			}
 	
-		}else{
+		}else{//SESSIONにトークンがセットされていない時はアプリを認証
 			$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
 	
 		}
 		return header('Location:'.$Location);
 		
 	}
-	// Misskeyねの投稿が成功した事を知らせる画面
+	// Misskeyへの投稿が成功した事を知らせる画面
 	public static function misskey_success(){
 		global $en,$skindir,$boardname,$petit_lot;
 		$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
@@ -285,4 +285,3 @@ class misskey_note{
 		return include __DIR__.'/'.$skindir.$templete;
 	}
 }
-
