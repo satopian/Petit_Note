@@ -175,8 +175,6 @@ class misskey_note{
 		$painttime=calcPtime($paintsec);
 		$painttime = $en ? $painttime['en'] : $painttime['ja'];
 		session_sta();
-		// セッションIDの再生成
-		session_regenerate_id(true);
 
 		$src_image=basename($src_image);
 		//SESSIONに投稿内容を格納
@@ -230,7 +228,7 @@ class misskey_note{
 
 		session_sta();
 		// セッションIDとユニークIDを結合
-		$sns_api_session_id = session_id() . uniqid();
+		$sns_api_session_id = session_id() . uniqid() . mt_rand();
 		// SHA256ハッシュ化
 		$sns_api_session_id=hash('sha256', $sns_api_session_id);
 
@@ -262,7 +260,7 @@ class misskey_note{
 			if ($postStatusCode === 403) {
 				$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
 			} else {
-				$Location = "{$root_url}connect_misskey_api.php?noauth=on";
+				$Location = "{$root_url}connect_misskey_api.php?noauth=on&s_id={$sns_api_session_id}";
 			}
 	
 		}else{//SESSIONにトークンがセットされていない時はアプリを認証

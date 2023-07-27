@@ -11,7 +11,7 @@ require_once(__DIR__.'/functions.php');
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
 ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
-$skindir=__DIR__.'/template/'.$skindir;
+$skindir='template/'.$skindir;
 
 session_sta();
 
@@ -26,6 +26,10 @@ if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
 
 $noauth = (bool)filter_input(INPUT_GET,'noauth',FILTER_VALIDATE_BOOLEAN);
 if($noauth){
+	if((string)filter_input(INPUT_GET,'s_id') !== $_SESSION['sns_api_session_id']){
+
+		return error($en ? "Operation failed." :"失敗しました。" ,false);	
+	}
 	return connect_misskey_api::create_misskey_note();
 }
 
@@ -35,7 +39,7 @@ connect_misskey_api::miauth_check();
 class connect_misskey_api{
 
 	public static function miauth_check(){
-		global $en,$baseUrl;
+		global $en,$baseUrl,$skindir;
 		$sns_api_session_id = $_SESSION['sns_api_session_id'];
 		$checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
 
@@ -62,7 +66,7 @@ class connect_misskey_api{
 
 	public static function create_misskey_note(){
 		
-		global $en,$baseUrl,$root_url;
+		global $en,$baseUrl,$root_url,$skindir;
 		
 		$accessToken = isset($_SESSION['accessToken']) ? $_SESSION['accessToken'] : "";
 
