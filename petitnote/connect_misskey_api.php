@@ -7,6 +7,7 @@
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/functions.php');
 
+$petit_lot='20230728';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
 ? explode( ',', $http_langs )[0] : '';
@@ -39,7 +40,7 @@ connect_misskey_api::miauth_check();
 class connect_misskey_api{
 
 	public static function miauth_check(){
-		global $en,$baseUrl,$skindir;
+		global $en,$baseUrl,$skindir,$petit_lot;
 		$sns_api_session_id = $_SESSION['sns_api_session_id'];
 		$checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
 
@@ -66,7 +67,7 @@ class connect_misskey_api{
 
 	public static function create_misskey_note(){
 		
-		global $en,$baseUrl,$root_url,$skindir;
+		global $en,$baseUrl,$root_url,$skindir,$petit_lot;
 		
 		$accessToken = isset($_SESSION['accessToken']) ? $_SESSION['accessToken'] : "";
 
@@ -161,7 +162,9 @@ class connect_misskey_api{
 		$tool= $tool ? 'Tool:'.$tool.' ' :'';
 		$painttime= $painttime ? 'Paint time:'.$painttime.' ' :'';
 
-		$fixed_link = $root_url.'?resno='.$no;
+		$src_image_filename = pathinfo($src_image, PATHINFO_FILENAME );//拡張子除去
+
+		$fixed_link = $root_url.'?resno='.$no.'#'.$src_image_filename;
 		$fixed_link = filter_var($fixed_link,FILTER_VALIDATE_URL) ? $fixed_link : '';
 		$article_url_link = $article_url_link ? ' '.$fixed_link : '';
 
