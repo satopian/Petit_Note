@@ -304,7 +304,7 @@ Size:
 						<input type="hidden" name="postpage" value="<?=h($page)?>">
 						<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
 					</form>
-				
+
 					<?php if($use_misskey_note && $res['img'] && ($res['check_elapsed_days'] && !$is_badhost||($admindel||$adminpost))):?>
 					
 						<form action="./" method="POST" class="aikotoba">
@@ -329,13 +329,13 @@ Size:
 	<!-- 返信ボタン -->
 	<div class="clear"></div>
 	<div class="res_button_wrap">
-	<?php if($use_misskey_note && $findimage && ($resform && $ress[0]['check_elapsed_days'] || $adminpost || $admindel)):?>
+	<?php if($aikotoba && (!$userdel && !$admindel)):?>
+	<?php if($use_misskey_note && $findimage && ($resform && $ress[0]['check_elapsed_days'] || $adminpost)):?>
 		<span class="share_button">
 			<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="noopener">
 			<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
 		</span>
 	<?php endif;?>
-	<?php if($aikotoba && (!$userdel && !$admindel)):?>
 	<?php if($use_sns_button):?>
 	<span class="share_button">
 	<?php if($switch_sns):?>
