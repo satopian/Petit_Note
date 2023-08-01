@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.83.8';
-$petit_lot='lot.20230727';
+$petit_ver='v0.83.9';
+$petit_lot='lot.20230731';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -562,16 +562,14 @@ function post(){
 		$no_arr[]=$log_no;
 	}
 
-	$max_no=0;
-	if(!empty($no_arr)){
-		$max_no=max($no_arr);
-	}
+	$max_no = (!empty($no_arr)) ? max($no_arr) : 0; 
+
 	//書き込むログの書式
 	$line='';
 	$newline='';
 	$r_line='';
 	$new_r_line='';
-	if($resto){//レスの時はスレッド別ログに追記
+	if($resto){//レスの時はスレッド別ログに
 		$r_oya='';
 		$r_no='';
 		if(empty($r_arr)){
