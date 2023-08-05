@@ -103,7 +103,7 @@ form.resform >span {
 }
 form.misskey_form > span {
     display: inline-block;
-    margin: 10px 0px 0;
+    margin: 10px 0px 10px;
 }
 /* Misskeyノートフォームのアイコン位置 */
 span.misskey_form_misskey_icon {

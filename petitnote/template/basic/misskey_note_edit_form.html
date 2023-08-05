@@ -88,13 +88,16 @@
 <input type="hidden" name="src_image" value="<?=h($res['img'])?>">
 <input type="hidden" name="mode" value="create_misskey_note_sessiondata">
 <span>
-<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on" checked="checked"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
+	<input type="checkbox" name="article_url_link" id="article_url_link" value="on" checked="checked"><label for="article_url_link"><?php if($en):?>Link the article URL<?php else:?>記事のURLをリンク<?php endif;?></label>
 </span>
 <span>
-<input type="checkbox" name="article_url_link" id="article_url_link" value="on" checked="checked"><label for="article_url_link"><?php if($en):?>Link the article URL<?php else:?>記事のURLをリンクする<?php endif;?></label>
+	<input type="checkbox" name="show_painttime" id="show_painttime" value="on" checked="checked"><label for="show_painttime"><?php if($en):?>Show Paint time<?php else:?>描画時間を表示<?php endif;?></label>
 </span>
 <span>
-<input type="checkbox" name="hide_content" id="hide_content" value="on" ><label for="hide_content"><?php if($en):?>Hide content<?php else:?>内容を隠す<?php endif;?></label>
+	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on" checked="checked"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
+</span>
+<span>
+	<input type="checkbox" name="hide_content" id="hide_content" value="on" ><label for="hide_content"><?php if($en):?>Hide content<?php else:?>内容を隠す<?php endif;?></label>
 </span>
 <div>
 	<span class="icon-Simpleicons-Team-Simple-Misskey misskey_form_misskey_icon"></span><input type="submit" value="<?php if($en):?>Note<?php else:?>ノート<?php endif;?>" class="form_button">

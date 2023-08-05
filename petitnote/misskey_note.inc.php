@@ -164,6 +164,7 @@ class misskey_note{
 		$abbr_toolname = t((string)filter_input(INPUT_POST,'abbr_toolname'));
 		$paintsec = filter_input(INPUT_POST,'paintsec',FILTER_VALIDATE_INT);
 		$hide_thumbnail = (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
+		$show_painttime = (bool)filter_input(INPUT_POST,'show_painttime',FILTER_VALIDATE_BOOLEAN);
 		$article_url_link = (bool)filter_input(INPUT_POST,'article_url_link',FILTER_VALIDATE_BOOLEAN);
 		$hide_content = (bool)filter_input(INPUT_POST,'hide_content',FILTER_VALIDATE_BOOLEAN);
 		$cw = t((string)filter_input(INPUT_POST,'cw'));
@@ -172,8 +173,11 @@ class misskey_note{
 
 		$tool=switch_tool($abbr_toolname);
 		
-		$painttime=calcPtime($paintsec);
+
+		$painttime= calcPtime($paintsec);
 		$painttime = $en ? $painttime['en'] : $painttime['ja'];
+		$painttime = $show_painttime ? $painttime :'';
+
 		session_sta();
 
 		$src_image=basename($src_image);
