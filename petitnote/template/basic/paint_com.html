@@ -91,7 +91,6 @@
 <textarea name="com" class="post_com"></textarea><br>
 <?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
 <input type="hidden" name="mode" value="regist">
-<!-- <input type="hidden" name="mode" value="post2sns"> -->
 <input type="hidden" name="token" value="<?=h($token)?>">
 <input type="hidden" name="pictmp" value="<?=h($pictmp)?>">
 <div class="post_table_title"><?php if($en):?>Images<?php else:?>画像<?php endif;?>
@@ -110,7 +109,7 @@
 	</span>
 	<br>
 		</div>
-	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>" onclick="to_sns_submitform()">
+	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>">
 
 	<?php if(!$sage_all):?>
 	<span id="paintcom_sage">
