@@ -118,9 +118,14 @@
 	</span>
 	<?php endif;?>
 	<?php if($mark_sensitive_image):?>
-	<span>
-	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
-	</span>
+		<span>
+			<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
+		</span>
+	<?php endif;?>
+	<?php if($show_hide_painttime):?>
+		<span>
+			<input type="checkbox" name="show_painttime" id="show_painttime" value="on" checked="checked"><label for="show_painttime"><?php if($en):?>Show paint time<?php else:?>描画時間を表示<?php endif;?></label>
+		</span>
 	<?php endif;?>
 </form>
 <?php else:?>
