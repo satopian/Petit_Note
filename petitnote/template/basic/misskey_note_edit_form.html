@@ -90,9 +90,12 @@
 <span>
 	<input type="checkbox" name="article_url_link" id="article_url_link" value="on" checked="checked"><label for="article_url_link"><?php if($en):?>Link the article URL<?php else:?>記事のURLをリンク<?php endif;?></label>
 </span>
-<span>
+<?php if(is_numeric($res['paintsec'])):?>
+
+	<span>
 	<input type="checkbox" name="show_painttime" id="show_painttime" value="on" checked="checked"><label for="show_painttime"><?php if($en):?>Show Paint time<?php else:?>描画時間を表示<?php endif;?></label>
 </span>
+<?php endif;?>
 <span>
 	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on" checked="checked"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
 </span>

@@ -91,8 +91,9 @@ textarea.rescom {
 	height: 60px;
 	margin: 10px 0;
 }
-form.postform > span {
-    margin: 0 0 0 10px;
+form.postform  span {
+    margin: 10px 0 0px 10px;
+    display: inline-block;
 }
 
 form.resform ,form.misskey_form {
@@ -115,11 +116,6 @@ input.form_button {
 }
 input.pchup_button {
     margin: 0 0 10px;
-}
-/* お絵かきコメント */
-span#paintcom_hide_animation {
-    display: inline-block;
-    margin: 10px 0 0;
 }
 
 /* 投稿者名から検索文字列にリンク */

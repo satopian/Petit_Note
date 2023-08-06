@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.85.5';
+$petit_ver='v0.85.6';
 $petit_lot='lot.20230805';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -252,10 +252,8 @@ function post(){
 		check_open_no($resto);
 		$resto=(string)$resto;//(string)厳密な型
 		//描画時間を$userdataをもとに計算
-		$show_hide_painttime=(bool)filter_input(INPUT_POST,'show_hide_painttime',FILTER_VALIDATE_BOOLEAN);
-		$show_painttime=(bool)filter_input(INPUT_POST,'show_painttime',FILTER_VALIDATE_BOOLEAN);
-		$show_painttime= $show_hide_painttime ? $show_painttime : true;
-		if($show_painttime && $starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
+		$hide_painttime=(bool)filter_input(INPUT_POST,'hide_painttime',FILTER_VALIDATE_BOOLEAN);
+		if(!$hide_painttime && $starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
 			$painttime=(int)$postedtime-(int)$starttime;
 		}
 		if($resto && !$use_res_upload && !$adminpost){
@@ -975,8 +973,7 @@ function paintcom(){
 	$urlc = (string)filter_input(INPUT_COOKIE,'urlc');
 
 	$adminpost = adminpost_valid();
-	$use_painttime_show_hide = isset($use_painttime_show_hide) ? $use_painttime_show_hide : false;
-	$show_hide_painttime = $use_painttime_show_hide ? true : $adminpost;
+	$use_hide_painttime = isset($use_hide_painttime) ? $use_hide_painttime : $adminpost;
 
 	// HTML出力
 

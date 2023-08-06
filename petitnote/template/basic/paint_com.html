@@ -107,6 +107,12 @@
 	<span id="paintcom_hide_animation">
 		<input type="checkbox" name="hide_animation" id="hide_animation" value="on"><label for="hide_animation"><?php if($en):?>Hide Animation<?php else:?>動画を表示しない<?php endif;?></label>	
 	</span>
+	<?php if($use_hide_painttime):?>
+		<span>
+			<input type="checkbox" name="hide_painttime" id="hide_painttime" value="on"><label for="hide_painttime"><?php if($en):?>Hide paint time<?php else:?>描画時間を表示しない<?php endif;?></label>
+		</span>
+	<?php endif;?>
+
 	<br>
 		</div>
 	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>">
@@ -120,12 +126,6 @@
 		<span>
 			<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
 		</span>
-	<?php endif;?>
-	<?php if($show_hide_painttime):?>
-		<span>
-			<input type="checkbox" name="show_painttime" id="show_painttime" value="on" checked="checked"><label for="show_painttime"><?php if($en):?>Show paint time<?php else:?>描画時間を表示<?php endif;?></label>
-		</span>
-		<input type="hidden" name="show_hide_painttime" value="on">
 	<?php endif;?>
 </form>
 <?php else:?>

@@ -175,7 +175,7 @@ class misskey_note{
 		
 		$painttime = calcPtime($paintsec);
 		$painttime = $en ? $painttime['en'] : $painttime['ja'];
-		$painttime = $show_painttime ? $painttime :'';
+		$painttime = $show_painttime ? $painttime : '';
 
 		session_sta();
 
