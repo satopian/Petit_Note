@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.85.6';
+$petit_ver='v0.85.7';
 $petit_lot='lot.20230806';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -916,7 +916,7 @@ function paint(){
 // お絵かきコメント 
 function paintcom(){
 	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
-	global $usercode,$petit_lot,$use_painttime_show_hide; 
+	global $usercode,$petit_lot,$use_hide_painttime; 
 
 	aikotoba_required_to_view();
 	$token=get_csrf_token();
