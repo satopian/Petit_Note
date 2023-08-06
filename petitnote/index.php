@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.85.7';
+$petit_ver='v0.85.8';
 $petit_lot='lot.20230806';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -973,7 +973,8 @@ function paintcom(){
 	$urlc = (string)filter_input(INPUT_COOKIE,'urlc');
 
 	$adminpost = adminpost_valid();
-	$use_hide_painttime = isset($use_hide_painttime) ? $use_hide_painttime : $adminpost;
+	$use_hide_painttime = isset($use_hide_painttime) ? $use_hide_painttime : false;
+	$use_hide_painttime = ($adminpost || $use_hide_painttime);
 
 	// HTML出力
 
