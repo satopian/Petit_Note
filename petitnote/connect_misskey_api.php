@@ -7,7 +7,7 @@
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/functions.php');
 
-$petit_lot='20230728';
+$petit_lot='20230807';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
 ? explode( ',', $http_langs )[0] : '';
@@ -59,6 +59,9 @@ class connect_misskey_api{
 		}
 
 		$responseData = json_decode($checkResponse, true);
+		if(!isset($responseData['token'])){
+			return error($en ? "Authentication failed." :"認証に失敗しました。");
+		}
 		$accessToken = $responseData['token'];
 		$_SESSION['accessToken']=$accessToken;
 		$user = $responseData['user'];
