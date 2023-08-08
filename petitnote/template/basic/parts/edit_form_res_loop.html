@@ -1,0 +1,61 @@
+<?php if(isset($out)):?>
+<?php foreach($out as $ress) : ?>
+
+<h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
+	<!-- スレッドのループ -->
+<?php foreach($ress as $res) : ?>
+	<hr>
+	<div class="imginfo_wrap">
+	<span class="info_name"><span><?= h($res['name'])?></span></span>
+	<?php if($res['verified']):?>
+	<span class="icon-checkmark2"></span>
+	<?php endif?>
+	<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
+	<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
+	<span><?=h($res['date'])?></span>
+<?php if($res['img']):?>
+	<?php if($res['tool']):?><span>Tool:<?=h($res['tool'])?></span><?php endif;?>
+	<?php if($res['painttime']):?>
+		<span><?php if($en):?>Paint time:<?=h($res['painttime_en'])?><?php else:?>描画時間:<?=h($res['painttime'])?><?php endif;?></span>
+	<?php endif;?>
+
+	<?php if($image_rep && ($use_upload || $admin) && $res['upload_image']):?>
+		<form action="./" method="POST" enctype="multipart/form-data" class="postform" id="image_rep" onsubmit="return res_form_submit(event,'image_rep')">
+		<div id="error_message_imgrep"></div>
+		<input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
+		<input type="hidden" name="pwd" value="<?=h($pwd)?>">
+		<input type="hidden" name="id" value="<?=h($time)?>">
+		<input type="hidden" name="no" value="<?=h($no)?>">
+		<input type="hidden" name="mode" value="picrep">
+		<input type="hidden" name="token" value="<?=h($token)?>">
+		<input type="file" name="imgfile" size="35" accept="image/*" class="form_button">
+		<input type="submit" Value="<?php if($en):?>Replace<?php else:?>差し換え<?php endif;?>" class="form_button">
+		</form>
+	<?php endif;?>
+<?php endif;?>
+	<?php if($admindel):?>
+		<br>
+		HOST:<?=h($res['host'])?>
+		<?php endif;?> 
+	</div>
+		<?php if($res['img']):?>
+			<?php if($res['anime']):?>
+				<div class="imginfo_wrap">
+				<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>&no=<?=h($res['no'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
+				</div>
+			<?php endif;?>
+
+			<div class="posted_image" <?php if($res['_w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
+				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
+				<?php if($res['thumbnail']):?>
+					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>">
+					<?php else:?>
+					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>">
+				<?php endif;?>
+				</a>
+			</div>
+			<?php endif;?>
+			<div class="comment"><?= com(h($res['com']))?></div>
+	<?php endforeach;?>
+<?php endforeach;?>
+<?php endif;?>

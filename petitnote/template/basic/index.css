@@ -127,8 +127,8 @@ span.info_name {
     line-height: 1;
     margin: 0 2px 2px 0px;
 }
-span.info_name:hover {background-color: #fff7f7;}
-span.info_name a {
+span.info_name:hover a {background-color: #fff7f7;}
+span.info_name a ,span.info_name > span {
     display: block;
     padding: 5px;
     text-decoration: none;

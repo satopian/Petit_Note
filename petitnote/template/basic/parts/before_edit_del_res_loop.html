@@ -18,7 +18,7 @@
 	<?php if($edit_mode==='editmode'):?>
 		<input type="hidden" name="id_and_no" form="before_delete" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
 	<?php endif;?>
-	<span><?= h($res['name'])?></span>
+	<span class="info_name"><span><?= h($res['name'])?></span></span>
 	<?php if($res['verified']):?>
 	<span class="icon-checkmark2"></span>
 	<?php endif?>
@@ -64,6 +64,6 @@
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>
 
-			<?php endforeach;?>
-			<?php endforeach;?>
-			<?php endif;?>
+	<?php endforeach;?>
+<?php endforeach;?>
+<?php endif;?>

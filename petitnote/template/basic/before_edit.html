@@ -32,15 +32,14 @@
 <a href="#bottom">▽</a>
 </nav>
 <h2 class="article_title"><?php if($en):?>Edit mode<?php else:?>編集モード<?php endif;?></h2>
-
-<div id="error_message_beforedelete"></div>
+<?php if($userdel && $aikotoba && !$deny_all_posts && $out[0][0]['check_elapsed_days'] || $admindel):?>
+	<div id="error_message_beforedelete"></div>
 <?php if($admindel):?>
 	<?php if($en):?>Edit this article. Press the edit button.<?php else:?>この記事を編集します。編集ボタンを押してください。<?php endif;?>: 
 <?php endif;?>
 <?php if($userdel&&!$admindel):?>
 	<?php if($en):?>Edit this article. Please enter password.<?php else:?>この記事を編集します。パスワードを入力してください。<?php endif;?>: 
 <?php endif;?>
-<?php if( $admindel || $aikotoba && $userdel):?>
 <form action="./" method="POST" id="before_delete" class="aikotoba" onsubmit="return res_form_submit(event,'before_delete')">
 
 <?php if(!$admindel):?>
@@ -54,6 +53,8 @@
 <input type="hidden" name="postpage" value="<?=h($postpage)?>">
 <input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
 </form>
+<?php else:?>
+	<div id="error_message_beforedelete"><?php if($en):?>This thread is closed.<?php else:?>このスレッドは閉じられています。<?php endif;?></div>
 <?php endif;?>
 <hr>
 <?php include __DIR__.'/parts/before_edit_del_res_loop.html';?>

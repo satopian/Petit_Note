@@ -145,6 +145,9 @@ class misskey_note{
 		$com=h(str_replace('"\n"',"\n",$com));
 
 		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+
+		$image_rep=false;
+
 		// HTML出力
 		$templete='misskey_note_edit_form.html';
 		return include __DIR__.'/'.$skindir.$templete;

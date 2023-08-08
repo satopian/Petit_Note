@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.85.8';
-$petit_lot='lot.20230806';
+$petit_ver='v0.86.0';
+$petit_lot='lot.20230808';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230806){
+if(!isset($functions_ver)||$functions_ver<20230808){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -1516,6 +1516,7 @@ function pchview(){
 function confirmation_before_deletion ($edit_mode=''){
 
 	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en;
+	global $deny_all_posts;
 	//管理者判定処理
 	check_same_origin();
 	session_sta();
@@ -1523,7 +1524,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	aikotoba_required_to_view();
 
-	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$userdel=userdel_valid();
 	$resmode = ((string)filter_input(INPUT_POST,'resmode')==='true');
 	$resmode = $resmode ? 'true' : 'false';
 	$postpage = (int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
@@ -1606,7 +1607,7 @@ function edit_form($id='',$no=''){
 	$token=get_csrf_token();
 	$admindel=admindel_valid();
 	$adminpost=adminpost_valid();
-	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$userdel=userdel_valid();
 
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
@@ -1684,6 +1685,8 @@ function edit_form($id='',$no=''){
 	$hide_thumb_checkd = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 
 	$admin = ($admindel||$adminpost);
+	
+	$image_rep=true;
 	// HTML出力
 	$templete='edit_form.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -1716,7 +1719,7 @@ function edit(){
 	session_sta();
 	$admindel=(admindel_valid()||($pwd && $pwd === $admin_pass));
 
-	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$userdel=userdel_valid();
 	if(!($admindel||($userdel&&$pwd))){
 		return error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
 	}
@@ -1864,7 +1867,7 @@ function del(){
 	check_csrf_token();
 
 	$admindel=admindel_valid();
-	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$userdel=userdel_valid();
 
 	$pwd=(string)filter_input(INPUT_POST,'pwd');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
@@ -2279,7 +2282,7 @@ function catalog(){
 	$admindel=admindel_valid();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 
-	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$userdel=userdel_valid();
 	$adminpost=adminpost_valid();
 
 	$encoded_q='';//旧バージョンのテンプレート用
@@ -2315,6 +2318,7 @@ function view(){
 
 	//管理者判定処理
 	$admindel=admindel_valid();
+	$userdel=userdel_valid();
 
 	$max_byte = $max_kb * 1024*2;
 	$denny_all_posts=$deny_all_posts;//互換性
@@ -2336,7 +2340,7 @@ function view(){
 	fclose($fp);
 
 	$out=[];
-	if($page===0 && !$admindel){
+	if($page===0 && !$admindel && !$userdel){
 		$out = is_file(__DIR__.'/template/cache/index_cache.json') ? json_decode(file_get_contents(__DIR__.'/template/cache/index_cache.json'),true) : [];
 	}
 	if(empty($out)){
@@ -2368,7 +2372,6 @@ function view(){
 	// 禁止ホスト
 	$is_badhost=is_badhost();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
-	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
 	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$use_diary && !$is_badhost && $aikotoba)||$adminpost);
 	//Cookie
@@ -2520,7 +2523,7 @@ function res (){
 	//管理者判定処理
 	$admindel=admindel_valid();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
-	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	$userdel=userdel_valid();
 	$adminpost=adminpost_valid();
 	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$is_badhost)||$adminpost);
 
