@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230808;
+$functions_ver=20230809;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -56,7 +56,7 @@ function aikotoba_required_to_view(){
 	$mode = (string)filter_input(INPUT_POST,'mode');
 	$mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 
-	$required_flag=($use_aikotoba && in_array($mode,['paintcom','before_del','to_continue']));
+	$required_flag=($use_aikotoba && in_array($mode,['paintcom','before_del','before_misskey_note','to_continue']));
 
 	if(!$aikotoba_required_to_view && !$required_flag){
 	return;

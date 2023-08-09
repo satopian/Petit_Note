@@ -266,6 +266,10 @@ label {
 
 input[type="checkbox"]:checked + label{background-color: #ffe6e6;font-weight: 600;}
 input[type="radio"]:checked + label{background-color: #ffe6e6;font-weight: 600;}
+/* チェックボックスが選択された場合のスタイル */
+input[type="checkbox"]:checked + label .info_name {
+	border: none;
+}
 
 select.post_select_image {
     margin: 10px 6px 0;

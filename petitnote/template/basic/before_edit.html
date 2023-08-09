@@ -32,7 +32,7 @@
 <a href="#bottom">▽</a>
 </nav>
 <h2 class="article_title"><?php if($en):?>Edit mode<?php else:?>編集モード<?php endif;?></h2>
-<?php if($userdel && $aikotoba && !$deny_all_posts && $out[0][0]['check_elapsed_days'] || $admindel):?>
+<?php if($userdel && !$deny_all_posts && $out[0][0]['check_elapsed_days'] || $admindel):?>
 	<div id="error_message_beforedelete"></div>
 <?php if($admindel):?>
 	<?php if($en):?>Edit this article. Press the edit button.<?php else:?>この記事を編集します。編集ボタンを押してください。<?php endif;?>: 
