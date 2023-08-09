@@ -2,7 +2,7 @@
 //Petit Note 2021-2023 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20230805;
+$misskey_note_ver=20230809;
 
 class misskey_note{
 
@@ -13,7 +13,7 @@ class misskey_note{
 		//管理者判定処理
 		session_sta();
 		$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
-		aikotoba_required_to_view();
+		aikotoba_required_to_view(true);
 		$adminpost=adminpost_valid();
 		$admindel=admindel_valid();
 

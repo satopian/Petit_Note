@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.86.1';
+$petit_ver='v0.86.2';
 $petit_lot='lot.20230809';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -21,7 +21,7 @@ if(!isset($functions_ver)||$functions_ver<20230809){
 }
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20230805){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20230809){
 	return die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
@@ -918,7 +918,7 @@ function paintcom(){
 	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
 	global $usercode,$petit_lot,$use_hide_painttime; 
 
-	aikotoba_required_to_view();
+	aikotoba_required_to_view(true);
 	$token=get_csrf_token();
 	$userip = get_uip();
 	//テンポラリ画像リスト作成
@@ -988,7 +988,7 @@ function to_continue(){
 	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en,$password_require_to_continue;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$petit_lot;
 
-	aikotoba_required_to_view();
+	aikotoba_required_to_view(true);
 
 	$appc=(string)filter_input(INPUT_COOKIE,'appc');
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
@@ -1522,7 +1522,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	session_sta();
 	$admindel=admindel_valid();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
-	aikotoba_required_to_view();
+	aikotoba_required_to_view(true);
 
 	$userdel=userdel_valid();
 	$resmode = ((string)filter_input(INPUT_POST,'resmode')==='true');

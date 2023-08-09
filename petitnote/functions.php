@@ -49,14 +49,14 @@ function aikotoba(){
 
 }
 //記事の表示に合言葉を必須にする
-function aikotoba_required_to_view(){
+function aikotoba_required_to_view($required_flag=false){
 
 	global $use_aikotoba,$aikotoba_required_to_view,$skindir,$en,$petit_lot;
 
 	$mode = (string)filter_input(INPUT_POST,'mode');
 	$mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 
-	$required_flag=($use_aikotoba && in_array($mode,['paintcom','before_del','before_misskey_note','to_continue']));
+	$required_flag=($use_aikotoba && $required_flag);
 
 	if(!$aikotoba_required_to_view && !$required_flag){
 	return;
