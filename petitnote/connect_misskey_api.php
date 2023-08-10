@@ -172,6 +172,8 @@ class connect_misskey_api{
 		$article_url_link = $article_url_link ? $fixed_link : '';
 		$com=str_replace(["\r\n","\r"],"\n",$com);
 		$com=$com ? $com."\n" :'';
+		$com = preg_replace("/(\s*\n){2,}/u","\n",$com); //不要改行カット
+
 		$status = $tool.$painttime.$com.$article_url_link;
 
 		$postUrl = $baseUrl . "/api/notes/create";
