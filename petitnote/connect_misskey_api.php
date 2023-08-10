@@ -169,8 +169,9 @@ class connect_misskey_api{
 
 		$fixed_link = $root_url.'?resno='.$no.'#'.$src_image_filename;
 		$fixed_link = filter_var($fixed_link,FILTER_VALIDATE_URL) ? $fixed_link : '';
-		$article_url_link = $article_url_link ? "\n".$fixed_link : '';
+		$article_url_link = $article_url_link ? $fixed_link : '';
 		$com=str_replace(["\r\n","\r"],"\n",$com);
+		$com=$com ? $com."\n" :'';
 		$status = $tool.$painttime.$com.$article_url_link;
 
 		$postUrl = $baseUrl . "/api/notes/create";
