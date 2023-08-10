@@ -117,6 +117,9 @@ input.form_button {
 input.pchup_button {
     margin: 0 0 10px;
 }
+input.paint_button {
+    padding: 1px 10px;
+}
 
 /* 投稿者名から検索文字列にリンク */
 
