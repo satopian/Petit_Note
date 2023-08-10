@@ -162,15 +162,15 @@ class connect_misskey_api{
 		sleep(10);
 
 		// 投稿
-		$tool= $tool ? 'Tool:'.$tool.' ' :'';
-		$painttime= $painttime ? 'Paint time:'.$painttime.' ' :'';
+		$tool= $tool ? 'Tool:'.$tool."\n" :'';
+		$painttime= $painttime ? 'Paint time:'.$painttime."\n" :'';
 
 		$src_image_filename = pathinfo($src_image, PATHINFO_FILENAME );//拡張子除去
 
 		$fixed_link = $root_url.'?resno='.$no.'#'.$src_image_filename;
 		$fixed_link = filter_var($fixed_link,FILTER_VALIDATE_URL) ? $fixed_link : '';
-		$article_url_link = $article_url_link ? ' '.$fixed_link : '';
-
+		$article_url_link = $article_url_link ? "\n".$fixed_link : '';
+		$com=str_replace(["\r\n","\r"],"\n",$com);
 		$status = $tool.$painttime.$com.$article_url_link;
 
 		$postUrl = $baseUrl . "/api/notes/create";
