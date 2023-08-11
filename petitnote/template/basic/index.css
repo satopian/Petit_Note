@@ -374,7 +374,7 @@ form.paint_form {
 }
 form.aikotoba {
 	text-align: right;
-	margin: 0px;
+	margin: 2px 0;
 	display: inline-block;
 }
 form#set_nsfw_show_hide {
