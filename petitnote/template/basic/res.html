@@ -87,6 +87,9 @@
 	<!-- 親のループ -->
 <?php if(isset($out)):?>
 <?php foreach($out as $ress) : ?>
+	<?php if($sort_comments_by_newest){
+		krsort($ress);
+	}?>
 
 <h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
 	<!-- スレッドのループ -->

@@ -263,6 +263,12 @@ $latest_var = true;
 // $password_require_to_continue = true;
 $password_require_to_continue = false;
 
+// スレッド内のコメントを新着順に並び替える 
+// 初期値 false
+
+// $sort_comments_by_newest = true;
+$sort_comments_by_newest = false;
+
 /*表示件数*/
 
 //1ページに表示するスレッド数

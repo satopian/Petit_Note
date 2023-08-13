@@ -188,6 +188,10 @@ Size:
 	<!-- 親のループ -->
 <?php if(isset($out)):?>
 <?php foreach($out as $t => $ress) : ?>
+
+	<?php if($sort_comments_by_newest){
+		krsort($ress);
+	}?>
 	<!-- タイトル -->
 	<h2 class="article_title"><a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a></h2>
 	<?php
