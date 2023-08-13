@@ -1,7 +1,9 @@
 <?php $misskey_note = isset($misskey_note) ? $misskey_note : false;?>
 <?php $res_catalog = isset($res_catalog) ? $res_catalog : false;?>
 <?php if(isset($out)):?>
-<?php foreach($out as $t => $ress):?><?php foreach($ress as  $res):?><?php if(($misskey_note||$res_catalog) && !$res['img']){
+<?php foreach($out as $t => $ress):?><?php if(($misskey_note||$res_catalog)&&$sort_comments_by_newest){
+			krsort($ress);
+	}?><?php foreach($ress as  $res):?><?php if(($misskey_note||$res_catalog) && !$res['img']){
 			continue;
 		}?><span class="catalog_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>">	
 		<?php if($res['img']):?>

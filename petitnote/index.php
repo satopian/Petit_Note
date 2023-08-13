@@ -2251,7 +2251,7 @@ function search(){
 //カタログ表示
 function catalog(){
 	global $use_aikotoba,$home,$catalog_pagedef,$skindir,$display_link_back_to_home;
-	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en,$mark_sensitive_image; 
+	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en,$mark_sensitive_image,$sort_comments_by_newest; 
 
 	aikotoba_required_to_view();
 
