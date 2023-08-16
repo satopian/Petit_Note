@@ -8,6 +8,8 @@ if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
 
 //設定
 include(__DIR__.'/config.php');
+include(__DIR__.'/functions.php');
+
 $security_timer = isset($security_timer) ? $security_timer : 0;
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -88,9 +90,9 @@ if((!adminpost_valid() && !$repcode && $timer) && (int)$timer<(int)$security_tim
 	$psec=(int)$security_timer-(int)$timer;
 	$waiting_time=calcPtime ($psec);
 	if($en){
-		die("error\nPlease draw for another {$waiting_time}.");
+		die("error\nPlease draw for another {$waiting_time['en']}.");
 	}else{
-		die("error\n描画時間が短すぎます。あと{$waiting_time}。");
+		die("error\n描画時間が短すぎます。あと{$waiting_time['ja']}。");
 	}
 }
 if(!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK){
@@ -129,64 +131,3 @@ if(!is_file(TEMP_DIR.$imgfile.'.dat')){
 chmod(TEMP_DIR.$imgfile.'.dat',PERMISSION_FOR_LOG);
 
 die("ok");
-/**
- * 描画時間を計算
- * @param $starttime
- * @return string
- */
-function calcPtime ($psec) {
-	global $en;
-
-	$D = floor($psec / 86400);
-	$H = floor($psec % 86400 / 3600);
-	$M = floor($psec % 3600 / 60);
-	$S = $psec % 60;
-
-	if($en){
-		return
-			($D ? $D.'day '  : '')
-			. ($H ? $H.'hr ' : '')
-			. ($M ? $M.'min ' : '')
-			. ($S ? $S.'sec' : '')
-			. ((!$D&&!$H&&!$M&&!$S) ? '0sec':'');
-
-	}
-		return
-			($D ? $D.'日'  : '')
-			. ($H ? $H.'時間' : '')
-			. ($M ? $M.'分' : '')
-			. ($S ? $S.'秒' : '')
-			. ((!$D&&!$H&&!$M&&!$S) ? '0秒':'');
-
-}
-//ユーザーip
-function get_uip(){
-	$ip = isset($_SERVER["HTTP_CLIENT_IP"]) ? $_SERVER["HTTP_CLIENT_IP"] :'';
-	$ip = $ip ? $ip : (isset($_SERVER["HTTP_INCAP_CLIENT_IP"]) ? $_SERVER["HTTP_INCAP_CLIENT_IP"] : '');
-	$ip = $ip ? $ip : (isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : '');
-	$ip = $ip ? $ip : (isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '');
-	if(strstr($ip, ', ')) {
-		$ips = explode(', ', $ip);
-		$ip = $ips[0];
-	}
-	return $ip;
-}
-//sessionの確認
-function adminpost_valid(){
-	global $second_pass;
-	session_sta();
-	return isset($_SESSION['adminpost'])&&($second_pass && $_SESSION['adminpost']===$second_pass);
-}
-//session開始
-function session_sta(){
-	if(!isset($_SESSION)){
-		ini_set('session.use_strict_mode', 1);
-		session_set_cookie_params(
-			0,"","",false,true
-		);
-		session_start();
-		header('Expires:');
-		header('Cache-Control:');
-		header('Pragma:');
-	}
-}
