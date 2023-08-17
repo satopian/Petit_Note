@@ -50,7 +50,7 @@
 	const klecks = new Klecks({
 
 		disableAutoFit: true,
-		
+
 		onSubmit: (onSuccess, onError) => {
 			// download png
 			// saveData(klecks.getPNG(), 'drawing.png');
@@ -64,7 +64,7 @@
 			onSuccess();
 			//Petit Note 2021-2023 (c)satopian MIT Licence
 			//この箇所はさとぴあが作成したMIT Licenceのコードです。
-				const postData = (path, data) => {
+			const postData = (path, data) => {
 					fetch(path, {
 						method: 'post',
 						mode: 'same-origin',
@@ -79,7 +79,7 @@
 							response.text().then((text) => {
 							console.log(text)
 								if(text==='ok'){
-									return window.location.href="index.php?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>";
+									return window.location.href="./?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>";
 								}
 								return alert(text);
 							})
@@ -90,7 +90,7 @@
 								return alert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
 							}
 							if(response_status===404){
-								return alert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
+								return alert(<?php if($en):?>'404 not found\nThe PHP file to save the image does not exist.'<?php else:?>'エラー404\n画像を保存するPHPファイルがありません。'<?php endif;?>);	
 							}
 							return alert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗\n時間をおいて再度投稿してみてください。'<?php endif;?>);
 						}

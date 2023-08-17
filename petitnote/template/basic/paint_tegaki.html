@@ -58,7 +58,7 @@ Tegaki.open({
 				console.log(text)
 					if(text==='ok'){
 						Tegaki.hide();//｢このサイトを離れますか?｣を解除
-						return window.location.href="index.php?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>";
+						return window.location.href="./?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>";
 					}
 					return showAlert(text);
 				})
@@ -69,7 +69,7 @@ Tegaki.open({
 					return showAlert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
 				}
 				if(response_status===404){
-					return showAlert(<?php if($en):?>'404 not found\nsaveklecks.php'<?php else:?>'エラー404\nsaveklecks.phpがありません。'<?php endif;?>);	
+					return showAlert(<?php if($en):?>'404 not found\nThe PHP file to save the image does not exist.'<?php else:?>'エラー404\n画像を保存するPHPファイルがありません。'<?php endif;?>);	
 				}
 				return showAlert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗\n時間をおいて再度投稿してみてください。'<?php endif;?>);
 			}
@@ -93,7 +93,7 @@ Tegaki.open({
 		formData.append("tool", "tegaki");
 		formData.append("stime", <?=time();?>);
 		formData.append("resto", "<?=h($resto)?>");
-		postData("./?mode=saveimage&tool=klecks", formData);
+		postData("./?mode=saveimage&tool=tegaki", formData);
       },
       'image/png'
     );
