@@ -12,7 +12,8 @@ class image_save{
 
 		global $security_timer,$pmax_w,$pmax_h;
 
-	// $this->security_timer = isset($this->security_timer) ? $this->security_timer : 0;
+	// $security_timer=60;	
+	$this->security_timer = isset($security_timer) ? $security_timer : 0;
 	//容量違反チェックをする する:1 しない:0
 	defined('SIZE_CHECK') or define('SIZE_CHECK', '1');
 	//PNG画像データ投稿容量制限KB(chiは含まない)
@@ -26,8 +27,6 @@ class image_save{
 		return header( "Location: ./ ") ;
 	}
 
-
-	$this->security_timer = isset($security_timer) ? $security_timer : 0;
 	$lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
 	? explode( ',', $http_langs )[0] : '';
 	$this->en= (stripos($lang,'ja')!==0);
@@ -54,7 +53,7 @@ class image_save{
 		$this->resto = (string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT);
 		$this->stime = (string)filter_input(INPUT_POST, 'stime',FILTER_VALIDATE_INT);
 		$this->timer=time()-(int)$this->stime;
-		$this->hide_animation = (bool)filter_input(INPUT_POST, 'hide_animation',FILTER_VALIDATE_BOOLEAN);
+		$this->hide_animation = (string)filter_input(INPUT_POST, 'hide_animation');
 
 		$this->check_security();
 		$this->move_uploaded_image();
@@ -146,12 +145,12 @@ class image_save{
 		$u_agent = trim($_SERVER["HTTP_USER_AGENT"]);
 		$u_agent = str_replace("\t", "", $u_agent);
 		$imgext='.png';
-
 		$this->usercode = trim($this->usercode);
 		$this->repcode = trim($this->repcode);
 		$this->stime = trim($this->stime);
 		$this->resto = trim($this->resto);
 		$this->tool = trim($this->tool);
+		$this->hide_animation = isset($this->hide_animation) ? $this->hide_animation : ''; 
 		$this->hide_animation = trim($this->hide_animation);
 		/* ---------- 投稿者情報記録 ---------- */
 		$userdata = "$u_ip\t$u_host\t$u_agent\t$imgext";
@@ -183,12 +182,12 @@ class image_save{
 			$this->error_msg($this->en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
 		}
 
-		list($w,$h)=getimagesize($_FILES['picture']['tmp_name']);
+		// list($w,$h)=getimagesize($_FILES['picture']['tmp_name']);
 
-		if($w > $this->pmax_w || $h > $this->pmax_h){//幅と高さ
-			//規定サイズ違反を検出しました。画像は保存されません。
-			$this->error_msg($this->en ? "The image dimensions are too large." : "画像のサイズが大きすぎます。");
-		}
+		// if($w > $this->pmax_w || $h > $this->pmax_h){//幅と高さ
+		// 	//規定サイズ違反を検出しました。画像は保存されません。
+		// 	$this->error_msg($this->en ? "The image dimensions are too large." : "画像のサイズが大きすぎます。");
+		// }
 
 		$success = move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$this->imgfile.'.png');
 		
