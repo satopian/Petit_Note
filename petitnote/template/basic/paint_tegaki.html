@@ -93,7 +93,7 @@ Tegaki.open({
 		formData.append("tool", "tegaki");
 		formData.append("stime", <?=time();?>);
 		formData.append("resto", "<?=h($resto)?>");
-		postData("saveklecks.php", formData);
+		postData("./?mode=saveimage&tool=klecks", formData);
       },
       'image/png'
     );

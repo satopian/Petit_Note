@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.86.7';
-$petit_lot='lot.20230816';
+$petit_ver='v0.87.0';
+$petit_lot='lot.20230817';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -23,6 +23,11 @@ check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
 if(!isset($misskey_note_ver)||$misskey_note_ver<20230809){
 	return die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
+}
+check_file(__DIR__.'/save.inc.php');
+require_once(__DIR__.'/save.inc.php');
+if(!isset($save_inc_ver)||$save_inc_ver<20230817){
+	return die($en?'Please update save.inc.php to the latest version.':'save.inc.phpを最新版に更新してください。');
 }
 
 // jQueryバージョン
@@ -163,6 +168,8 @@ switch($mode){
 		return misskey_note::create_misskey_authrequesturl();
 	case 'misskey_success':
 		return misskey_note::misskey_success();
+	case 'saveimage':
+		return saveimage();
 	case 'search':
 		return search();
 	case 'catalog':
@@ -2039,6 +2046,28 @@ function set_share_server(){
 	//HTML出力
 	$templete='set_share_server.html';
 	return include __DIR__.'/'.$skindir.$templete;
+
+}
+function saveimage(){
+	
+	$tool=filter_input(INPUT_GET,"tool");
+
+	$image_save = new image_save;
+
+	switch($tool){
+		case "neo":
+			$image_save->save_neo();
+		break;
+		case "chi":
+			$image_save->save_chickenpaint();
+		break;
+		case "klecks":
+			$image_save->save_klecks();
+			break;
+		case "tegaki":
+			$image_save->save_klecks();
+			break;
+	}
 
 }
 //検索画面
