@@ -37,7 +37,6 @@ class image_save{
 	$this->pmax_w=isset($pmax_w) ? $pmax_w :'';
 	$this->pmax_h=isset($pmax_h) ? $pmax_h :'';
 	
-	header('Content-type: text/plain');
 	}
 
 	public function save_klecks(){
