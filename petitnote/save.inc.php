@@ -162,7 +162,7 @@ class image_save{
 		file_put_contents(TEMP_DIR.$this->imgfile.".dat",$userdata,LOCK_EX);
 			
 		if(!is_file(TEMP_DIR.$this->imgfile.'.dat')){
-			$this->error_msg($this->en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
+			$this->error_msg($this->en ? "Your picture upload failed!\nPlease try again!" : "投稿に失敗。\n時間を置いて再度投稿してみてください。");
 		}
 		chmod(TEMP_DIR.$this->imgfile.'.dat',PERMISSION_FOR_LOG);
 			
@@ -171,7 +171,7 @@ class image_save{
 	private function move_uploaded_image(){
 
 		if(!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK) {
-			$this->error_msg($this->en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
+			$this->error_msg($this->en ? "Your picture upload failed!\nPlease try again!" : "投稿に失敗。\n時間を置いて再度投稿してみてください。");
 		}
 		
 		if(SIZE_CHECK && ($_FILES['picture']['size'] > (PICTURE_MAX_KB * 1024))){
@@ -179,7 +179,7 @@ class image_save{
 		}
 
 		if(mime_content_type($_FILES['picture']['tmp_name'])!=='image/png'){
-			$this->error_msg($this->en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
+			$this->error_msg($this->en ? "Your picture upload failed!\nPlease try again!" : "投稿に失敗。\n時間を置いて再度投稿してみてください。");
 		}
 
 		// list($w,$h)=getimagesize($_FILES['picture']['tmp_name']);
@@ -192,7 +192,7 @@ class image_save{
 		$success = move_uploaded_file($_FILES['picture']['tmp_name'], TEMP_DIR.$this->imgfile.'.png');
 		
 		if(!$success||!is_file(TEMP_DIR.$this->imgfile.'.png')) {
-			$this->error_msg($this->en ? "Your picture upload failed! Please try again!" : "投稿に失敗。時間をおいて再度投稿してみてください。");
+			$this->error_msg($this->en ? "Your picture upload failed!\nPlease try again!" : "投稿に失敗。\n時間を置いて再度投稿してみてください。");
 		}
 		chmod(TEMP_DIR.$this->imgfile.'.png',PERMISSION_FOR_DEST);
 	}
