@@ -18,7 +18,7 @@ class image_save{
 	defined('SIZE_CHECK') or define('SIZE_CHECK', '1');
 	//PNG画像データ投稿容量制限KB(chiは含まない)
 	defined('PICTURE_MAX_KB') or define('PICTURE_MAX_KB', '10485760');//10MBまで
-	define('PSD_MAX_KB', '40960');//40MBまで。ただしサーバのPHPの設定によって2MB以下に制限される可能性があります。
+	defined('PSD_MAX_KB') or define('PSD_MAX_KB', '40960');//40MBまで。ただしサーバのPHPの設定によって2MB以下に制限される可能性があります。
 	defined('PERMISSION_FOR_LOG') or define('PERMISSION_FOR_LOG', 0600); //config.phpで未定義なら0600
 	defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 
