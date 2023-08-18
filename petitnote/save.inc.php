@@ -2,7 +2,7 @@
 //Petit Note 2021-2023 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20230817;
+$save_inc_ver=20230818;
 class image_save{
 
 	private $security_timer,$imgfile,$usercode,$en,$count,$errtext; // プロパティとして宣言
@@ -260,6 +260,8 @@ class image_save{
 			default:
 			$errtext="";
 		}
-		die($errtext.$message);
+
+		header('Content-type: text/plain');
+		die(h($errtext.$message));
 	}
 }
