@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230818;
+$functions_ver=20230825;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -61,6 +61,10 @@ function aikotoba_required_to_view($required_flag=false){
 	if(!$aikotoba_required_to_view && !$required_flag){
 	return;
 	}
+
+	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
+
 	if(!aikotoba_valid()){
 		$templete='aikotoba.html';
 		include __DIR__.'/'.$skindir.$templete;

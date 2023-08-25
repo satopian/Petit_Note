@@ -2,7 +2,7 @@
 //Petit Note 2021-2023 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20230818;
+$save_inc_ver=20230826;
 class image_save{
 
 	private $security_timer,$imgfile,$usercode,$en,$count,$errtext; // プロパティとして宣言
@@ -41,10 +41,6 @@ class image_save{
 
 	public function save_klecks(){
 
-		if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-			$this->error_msg($this->en ? "The post has been rejected." : "拒絶されました。");
-		}
-
 		$this->error_type="klecks";
 
 		$this->tool = (string)filter_input(INPUT_POST, 'tool');
@@ -55,6 +51,7 @@ class image_save{
 		$this->timer=time()-(int)$this->stime;
 		$this->hide_animation = (string)filter_input(INPUT_POST, 'hide_animation');
 
+		$this->check_async_request();
 		$this->check_security();
 		$this->move_uploaded_image();
 		$this->move_uploaded_psd();
@@ -64,10 +61,6 @@ class image_save{
 
 	}
 	public function save_neo(){
-
-		if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
-			$this->error_msg($this->en ? "The post has been rejected." : "拒絶されました。");
-		}
 
 		$this->error_type="neo";
 
@@ -85,6 +78,7 @@ class image_save{
 		$this->timer = isset($u['timer']) ? ($u['timer']/1000) : 0;
 		$this->hide_animation = isset($u['hide_animation']) ? $u['hide_animation'] : '';
 
+		$this->check_async_request();
 		$this->check_security();
 		$this->move_uploaded_image();
 		$this->move_uploaded_pch();
@@ -109,6 +103,12 @@ class image_save{
 		$this->put_user_dat();
 
 		die("CHIBIOK\n");
+	}
+
+	private function check_async_request(){
+		if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+			$this->error_msg($this->en ? "The post has been rejected." : "拒絶されました。");
+		}
 	}
 
 	private function check_security(){

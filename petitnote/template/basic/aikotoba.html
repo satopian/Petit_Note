@@ -16,6 +16,8 @@
 <form action="./" method="post" class="aikotoba">
 	<input type="text" name="aikotoba" class="input_txt">
 	<input type="hidden" name="mode" value="aikotoba">
+	<input type="hidden" name="postpage" value="<?=h($page)?>">
+	<input type="hidden" name="resno" value="<?=h($resno)?>">
 	<input type="submit" value="<?php if($en):?>Answer<?php else:?>秘密の答え<?php endif;?>">
 </form><br>
 </div>
