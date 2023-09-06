@@ -2406,7 +2406,9 @@ function view(){
 	$is_badhost=is_badhost();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	$adminpost=adminpost_valid();
-	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$use_diary && !$is_badhost && $aikotoba)||$adminpost);
+	$resform = ((!$only_admin_can_reply && !$use_diary && !$is_badhost && $aikotoba)||$adminpost);
+	$resform = $deny_all_posts ? false :$resform;
+
 	//Cookie
 	$namec=h((string)filter_input(INPUT_COOKIE,'namec'));
 	$pwdc=h((string)filter_input(INPUT_COOKIE,'pwdc'));
@@ -2558,7 +2560,8 @@ function res (){
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	$userdel=userdel_valid();
 	$adminpost=adminpost_valid();
-	$resform = ((!$deny_all_posts && !$only_admin_can_reply && !$is_badhost)||$adminpost);
+	$resform = ((!$only_admin_can_reply && !$is_badhost && $aikotoba)||$adminpost);
+	$resform = $deny_all_posts ? false :$resform;
 
 	//Cookie
 	$namec=h((string)filter_input(INPUT_COOKIE,'namec'));
