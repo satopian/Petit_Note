@@ -985,7 +985,6 @@ function paintcom(){
 	$use_hide_painttime = ($adminpost || $use_hide_painttime);
 
 	// HTML出力
-
 	$templete='paint_com.html';
 	return include __DIR__.'/'.$skindir.$templete;
 }

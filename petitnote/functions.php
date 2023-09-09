@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230825;
+$functions_ver=20230907;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -287,9 +287,6 @@ function create_res($line,$options=[]){
 	if($abbr_toolname==='upload'){
 		$continue = false;
 		$upload_image = true;
-	}
-	if(!$tool){
-		$continue = true;
 	}
 
 	$anime = ($pchext==='.pch'||$pchext==='.tgkr'); 
