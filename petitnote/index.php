@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.87.8';
-$petit_lot='lot.20230906';
+$petit_ver='v0.88.0';
+$petit_lot='lot.20230912';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2249,13 +2249,14 @@ function search(){
 	}
 
 
-	$countarr=count($arr);//配列の数
+	$count_alllog=count($arr);//配列の数
+	$countarr=$count_alllog;//古いテンプレート互換
 
 	//ページング
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
 
 	//prev next 
-	$next=(($page+$pagedef)<$countarr) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
+	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page<=0) ? false : ($page-$pagedef) ;//ページ番号が0の時はprevのリンクを出さない
 
 	//最終更新日時を取得
