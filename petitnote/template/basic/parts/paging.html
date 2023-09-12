@@ -1,6 +1,7 @@
 <?php
 	$mode=(string)filter_input(INPUT_GET,'mode');
-	$mode=in_array($mode["catalog"],["search"]) ? $mode : ""; 
+	$mode=in_array($mode,["catalog","search"]) ? $mode : "";
+	$search=($mode==="search");
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
 	$radio =(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 	$en_q=isset($en_q) ? $en_q :"";
@@ -8,50 +9,50 @@
 <nav>
 
 <div class="pagelink">
-	<span class="prev">
+	<span class="Prev">
 			<?php if($prev!==false):?>
-			<a href="?page=<?=h($prev)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($imgsearch):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
-">≪prev</a>
+			<a href="?page=<?=h($prev)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
+">≪Prev</a>
 	<?php endif;?>
 	</span>
-	| <a href="./">top</a> |
+	| <a href="./">Top</a> |
 	<span class="next">
 	<?php if($next):?>
-	<a href="?page=<?=h($next)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($imgsearch):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
-">next≫</a>
+	<a href="?page=<?=h($next)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
+">Next≫</a>
 	<?php endif;?>
 	</span>
 </div>
 <div class="pagination">
-<?php if($page >= 170):?>
-<a href="?page=0">start</a> |
+<?php if($page >= ($pagedef*17)):?>
+<a href="?page=0">First</a> |
 <?php endif;?>
 <?php for($i = $start_page; ($i < $count_alllog && $i <= $end_page) ; $i+=$pagedef) :?>
 	<?php if($page==$i):?>
 			[<strong><?=h($i/$pagedef)?></strong>]
 		<?php else: ?>
 			<?php if($i===0):?>
-				[<a href="?page=0<?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($imgsearch):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
+				[<a href="?page=0<?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
 ">0</a>]
 			<?php else:?>	
 			<?php if($i === $end_page):?>
 			<!-- 特定のページに代入される記号 エンド -->
-				[<a href="?page=<?=h($i)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($imgsearch):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
+				[<a href="?page=<?=h($i)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
 ">≫</a>]
 				<?php elseif($i === $start_page):?>
-				[<a href="?page=<?=h($i)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($imgsearch):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
+				[<a href="?page=<?=h($i)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
 ">≪</a>]
 					<?php else:?>
-			[<a href="?page=<?=h($i)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($imgsearch):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
+			[<a href="?page=<?=h($i)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
 "><?=h($i/$pagedef)?></a>]
 			<?php endif;?>
 			<?php endif;?>
 		<?php endif;?>
 		<?php endfor ;?>
 
-		<?php if($next):?>
-		| <a href="?page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?><?php if($imgsearch):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
-">end</a>
+		<?php if($end_page < $count_alllog):?>
+		| <a href="?page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
+">Last</a>
 		<?php endif;?>
 	</div>
 </nav>
