@@ -156,56 +156,7 @@
 		<p>last modified: <?=h($lastmodified)?></p>
 		<?php endif;?>
 
-
-<nav>
-
-<!-- ページング -->
-	<div class="pagelink">
-		
-	<span class="prev">
-			<?php if($prev!==false):?>
-			<a href="?mode=search&page=<?=h($prev)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>
-			">≪prev</a>
-	<?php endif;?>
-	</span>
-	| <a href="./">top</a> |
-	<span class="next">
-	<?php if($next):?>
-	<a href="?mode=search&page=<?=h($next)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>
-	">next≫</a>
-	<?php endif;?>
-	</span>
-</div>
-
-<div class="pagination">
-<?php if($prev):?>
-<a href="?mode=search&page=0&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">start</a> |
-<?php endif;?>
-
-	<?php for($i = $start_page; ($i < $countarr && $i <= $end_page) ; $i+=$pagedef) :?>
-	<?php if($page==($i)):?>
-			[<strong><?=h($i/$pagedef)?></strong>]
-		<?php else: ?>
-			<?php if($i===0):?>
-				[<a href="?mode=search&page=0&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">0</a>]
-			<?php else:?>	
-			<?php if($i === $end_page):?>
-			<!-- 特定のページに代入される記号 エンド -->
-				[<a href="?mode=search&page=<?=h($i)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">≫</a>]
-				<?php elseif($i === $start_page):?>
-				[<a href="?mode=search&page=<?=h($i)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">≪</a>]
-					<?php else:?>
-			[<a href="?mode=search&page=<?=h($i)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>"><?=h($i/$pagedef)?></a>]
-			<?php endif;?>
-			<?php endif;?>
-		<?php endif;?>
-		<?php endfor ;?>
-		<?php if($next):?>
-		| <a href="?mode=search&page=<?=h(ceil(($countarr/$pagedef)-1)*$pagedef)?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?>">end</a>
-		<?php endif;?>
-
-</div>
-</nav>
+<?php include __DIR__.'/parts/paging.html';?>
 
 <div class="copy">
 <div class="left_wrap">
