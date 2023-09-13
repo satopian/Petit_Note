@@ -362,7 +362,10 @@ Size:
 	<hr>
 <?php endforeach;?>
 <?php endif;?>
-<?php include __DIR__.'/parts/paging.html';?>
+<nav>
+	<?php include __DIR__.'/parts/prev_next.html';?>
+	<?php include __DIR__.'/parts/paging.html';?>
+</nav>
 	<div class="copy">
 		<div class="left_wrap">
 		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]

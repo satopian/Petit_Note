@@ -6,23 +6,6 @@
 	$radio =(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 	$en_q=isset($en_q) ? $en_q :"";
 ?>
-<nav>
-
-<div class="pagelink">
-	<span class="Prev">
-			<?php if($prev!==false):?>
-			<a href="?page=<?=h($prev)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
-">≪Prev</a>
-	<?php endif;?>
-	</span>
-	| <a href="./">Top</a> |
-	<span class="next">
-	<?php if($next):?>
-	<a href="?page=<?=h($next)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
-">Next≫</a>
-	<?php endif;?>
-	</span>
-</div>
 <div class="pagination">
 <?php if($page >= ($pagedef*17)):?>
 <a href="?page=0">First</a> |
@@ -54,5 +37,4 @@
 		| <a href="?page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
 ">Last</a>
 		<?php endif;?>
-	</div>
-</nav>
+</div>

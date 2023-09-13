@@ -1,0 +1,23 @@
+<?php
+	$mode=(string)filter_input(INPUT_GET,'mode');
+	$mode=in_array($mode,["catalog","search"]) ? $mode : "";
+	$search=($mode==="search");
+	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
+	$radio =(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
+	$en_q=isset($en_q) ? $en_q :"";
+?>
+<div class="pagelink">
+	<span class="Prev">
+			<?php if($prev!==false):?>
+			<a href="?page=<?=h($prev)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
+">≪Prev</a>
+	<?php endif;?>
+	</span>
+	| <a href="./">Top</a> |
+	<span class="next">
+	<?php if($next):?>
+	<a href="?page=<?=h($next)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>
+">Next≫</a>
+	<?php endif;?>
+	</span>
+</div>
