@@ -19817,34 +19817,30 @@ function CPResourceSaver(options) {
   }
 
   function postDrawing(formData) {
-    var xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener("progress", function (evt) {
-      var progress;
+    // リクエストのオプションを設定
+    var requestOptions = {
+      method: 'POST',
+      body: formData,
+      signal: new AbortController().signal // キャンセル用のAbortSignalを生成
 
-      if (evt.lengthComputable) {
-        progress = evt.loaded / evt.total;
-      } else {
-        progress = null;
+    }; // リクエストを送信
+
+    fetch(options.url, requestOptions).then(function (response) {
+      if (!response.ok) {
+        throw new Error("Network response was not ok (".concat(response.status, ")"));
       }
 
-      reportProgress(progress);
-    }, false);
-    xhr.addEventListener("load", function (evt) {
-      reportProgress(1.0);
-
-      if (this.status == 200 && /^CHIBIOK/.test(this.response)) {
+      return response.text();
+    }).then(function (responseText) {
+      if (/^CHIBIOK/.test(responseText)) {
+        reportProgress(1.0);
         that.emitEvent("savingComplete");
       } else {
-        reportFatal(this.response);
+        reportFatal(responseText);
       }
-    }, false);
-    xhr.addEventListener("error", function () {
-      reportFatal(this.response);
-    }, false);
-    reportProgress(0);
-    xhr.open("POST", options.url, true);
-    xhr.responseType = "text";
-    xhr.send(formData);
+    }).catch(function (error) {
+      reportFatal(error.message);
+    });
   }
   /**
    * Begin saving the data provided in the constructor. Returns immediately, and fires these events to report the
