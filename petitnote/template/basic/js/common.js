@@ -104,13 +104,13 @@ function form_submit_set_nsfw_show_hide(event) {
 			mode: 'same-origin',
 			body: formData
 			})
-			.then(function(response) {
+			.then(response => {
 			// レスポンスの処理
 			console.log("Data sent successfully");
 			submitBtn.disabled = false;
 			location.reload();
 			})
-			.catch(function(error) {
+			.catch(error => {
 			// エラーハンドリング
 			console.error("Error:", error);
 			submitBtn.disabled = false;
