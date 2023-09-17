@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.88.0';
-$petit_lot='lot.20230912';
+$petit_ver='v0.89.0';
+$petit_lot='lot.20230917';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -707,11 +707,8 @@ function post(){
 	}
 
 	//多重送信防止
-	if($resto){
-		return header("Location: ./?resno={$resto}&resid={$time}#{$time}");
-	}
-	
-return header('Location: ./');
+	$resno = $resto ? $resto : $no;	
+	return header("Location: ./?resno={$resno}&resid={$time}#{$time}");
 
 }
 //お絵かき画面
