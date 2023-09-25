@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.89.0';
+$petit_ver='v0.90.2';
 $petit_lot='lot.20230917';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -365,7 +365,12 @@ function post(){
 			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 		}
 		$upfile=TEMP_DIR.$time.'.tmp';
-		move_uploaded_file($up_tempfile,$upfile);
+		$move_uploaded = move_uploaded_file($up_tempfile,$upfile);
+		if(!$move_uploaded){//アップロード成功なら続行
+			safe_unlink($up_tempfile);
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
+
 		$tool = 'upload'; 
 		$is_upload=true;	
 	}
@@ -714,7 +719,7 @@ function post(){
 //お絵かき画面
 function paint(){
 
-	global $boardname,$skindir,$pmax_w,$pmax_h,$en;
+	global $boardname,$skindir,$pmax_w,$pmax_h,$max_px,$en;
 	global $usercode,$petit_lot;
 
 	check_same_origin();
@@ -769,35 +774,44 @@ function paint(){
 			$pchext=pathinfo($pchfilename, PATHINFO_EXTENSION);
 			$pchext=strtolower($pchext);//すべて小文字に
 			//拡張子チェック
-			if (!in_array($pchext, ['pch','chi','psd'])) {
-				return error($en?'This file does not supported by the ability to load uploaded files onto the canvas.Supported formats are pch and chi.':'アップロードペイントで使用できるファイルはpch、chi、psdです。');
+			if (!in_array($pchext, ['pch','chi','psd','gif','jpg','jpeg','png','webp'])) {
+				safe_unlink($pchtmp);
+				return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 			}
 			$pchup = TEMP_DIR.'pchup-'.$time.'-tmp.'.$pchext;//アップロードされるファイル名
 
-			if(move_uploaded_file($pchtmp, $pchup)){//アップロード成功なら続行
-
+			$move_uploaded = move_uploaded_file($pchtmp, $pchup);
+			if(!$move_uploaded){//アップロード成功なら続行
+				safe_unlink($pchtmp);
+				return error($en?'This operation has failed.':'失敗しました。');
+			
+			}
 				$pchup=TEMP_DIR.basename($pchup);//ファイルを開くディレクトリを固定
-				if(!in_array(mime_content_type($pchup),["application/octet-stream","image/vnd.adobe.photoshop"])){
-					safe_unlink($pchup);
-					return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
-				}
-				if(($pchext==="pch")&&is_neo($pchup)){
+				$mime_type = mime_content_type($pchup);
+				if(($pchext==="pch") && ($mime_type === "application/octet-stream") && is_neo($pchup)){
 					$app='neo';
-						if($get_pch_size=get_pch_size($pchup)){
+						if($get_pch_size = get_pch_size($pchup)){
 							list($picw,$pich)=$get_pch_size;//pchの幅と高さを取得
 						}
 					$pchfile = $pchup;
-				} elseif($pchext==="chi"){
-					$app='chi';
+				} elseif(($pchext==="chi") && ($mime_type === "application/octet-stream")){
+						$app='chi';
 					$img_chi = $pchup;
-				} elseif($pchext==="psd"){
-					$app='klecks';
+				} elseif(($pchext==="psd") && ($mime_type === "image/vnd.adobe.photoshop")){
+						$app='klecks';
 					$img_klecks = $pchup;
+				} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
+					$file_name=pathinfo($pchup,PATHINFO_FILENAME);
+					$pchext=pathinfo($pchup,PATHINFO_EXTENSION);
+					$max_px=isset($max_px) ? $max_px : 1024;
+					thumb(TEMP_DIR,$file_name.'.'.$pchext,$time,$max_px,$max_px,['toolarge'=>1]);
+					list($picw,$pich) = getimagesize($pchup);
+					$imgfile = $pchup;
+					$anime = false;
 				}else{
 					safe_unlink($pchup);
 					return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 				}
-			}
 		}
 	}
 	$repcode='';
@@ -1291,7 +1305,12 @@ function img_replace(){
 	$upfile=TEMP_DIR.$time.'.tmp';
 
 	if($is_upload && ($_tool==='upload') && ( $use_upload || $adminpost || $admindel) && is_file($up_tempfile)){
-		move_uploaded_file($up_tempfile,$upfile);
+		$move_uploaded = move_uploaded_file($up_tempfile,$upfile);
+		if(!$move_uploaded){//アップロード成功なら続行
+			safe_unlink($up_tempfile);
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
+
 	}
 	if(!$is_upload && $repfind && is_file($tempfile) && ($_tool !== 'upload')){
 		copy($tempfile, $upfile);
