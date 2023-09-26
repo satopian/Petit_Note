@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.90.2';
-$petit_lot='lot.20230917';
+$petit_ver='v0.90.8';
+$petit_lot='lot.20230926';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -366,7 +366,7 @@ function post(){
 		}
 		$upfile=TEMP_DIR.$time.'.tmp';
 		$move_uploaded = move_uploaded_file($up_tempfile,$upfile);
-		if(!$move_uploaded){//アップロード成功なら続行
+		if(!$move_uploaded){//アップロードは成功した?
 			safe_unlink($up_tempfile);
 			return error($en?'This operation has failed.':'失敗しました。');
 		}
@@ -466,7 +466,7 @@ function post(){
 		// 画像アップロードと画像なしそれぞれの待機時間
 		$_chk_time_=(strlen($_time_)>15) ? substr($_time_,0,-6) : substr($_time_,0,-3);
 		$interval=(int)time()-(int)$_chk_time_;
-		if($interval>=0 && (($upfile && $interval<30)||(!$upfile && $interval<15))){//待機時間がマイナスの時は通す
+		if($interval>=0 && (($upfile && $interval<30)||(!$upfile && $interval<20))){//待機時間がマイナスの時は通す
 			closeFile($fp);
 			closeFile($rp);
 			safe_unlink($upfile);
@@ -781,37 +781,37 @@ function paint(){
 			$pchup = TEMP_DIR.'pchup-'.$time.'-tmp.'.$pchext;//アップロードされるファイル名
 
 			$move_uploaded = move_uploaded_file($pchtmp, $pchup);
-			if(!$move_uploaded){//アップロード成功なら続行
+			if(!$move_uploaded){//アップロードは成功した?
 				safe_unlink($pchtmp);
 				return error($en?'This operation has failed.':'失敗しました。');
 			
 			}
-				$pchup=TEMP_DIR.basename($pchup);//ファイルを開くディレクトリを固定
-				$mime_type = mime_content_type($pchup);
-				if(($pchext==="pch") && ($mime_type === "application/octet-stream") && is_neo($pchup)){
-					$app='neo';
-						if($get_pch_size = get_pch_size($pchup)){
-							list($picw,$pich)=$get_pch_size;//pchの幅と高さを取得
-						}
-					$pchfile = $pchup;
-				} elseif(($pchext==="chi") && ($mime_type === "application/octet-stream")){
-						$app='chi';
-					$img_chi = $pchup;
-				} elseif(($pchext==="psd") && ($mime_type === "image/vnd.adobe.photoshop")){
-						$app='klecks';
-					$img_klecks = $pchup;
-				} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
-					$file_name=pathinfo($pchup,PATHINFO_FILENAME);
-					$pchext=pathinfo($pchup,PATHINFO_EXTENSION);
-					$max_px=isset($max_px) ? $max_px : 1024;
-					thumb(TEMP_DIR,$file_name.'.'.$pchext,$time,$max_px,$max_px,['toolarge'=>1]);
-					list($picw,$pich) = getimagesize($pchup);
-					$imgfile = $pchup;
-					$anime = false;
-				}else{
-					safe_unlink($pchup);
-					return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
+			$basename_pchup=basename($pchup);
+			$pchup=TEMP_DIR.$basename_pchup;//ファイルを開くディレクトリを固定
+			$mime_type = mime_content_type($pchup);
+			if(($pchext==="pch") && ($mime_type === "application/octet-stream") && is_neo($pchup)){
+			$app='neo';
+				if($get_pch_size = get_pch_size($pchup)){
+					list($picw,$pich)=$get_pch_size;//pchの幅と高さを取得
 				}
+			$pchfile = $pchup;
+			} elseif(($pchext==="chi") && ($mime_type === "application/octet-stream")){
+					$app='chi';
+				$img_chi = $pchup;
+			} elseif(($pchext==="psd") && ($mime_type === "image/vnd.adobe.photoshop")){
+					$app='klecks';
+				$img_klecks = $pchup;
+			} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
+				$file_name=pathinfo($pchup,PATHINFO_FILENAME);
+				$max_px=isset($max_px) ? $max_px : 1024;
+				thumb(TEMP_DIR,$basename_pchup,$time,$max_px,$max_px,['toolarge'=>1]);
+				list($picw,$pich) = getimagesize($pchup);
+				$imgfile = $pchup;
+				$anime = false;
+			}else{
+				safe_unlink($pchup);
+				return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
+			}
 		}
 	}
 	$repcode='';
