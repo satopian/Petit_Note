@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.91.8';
-$petit_lot='lot.20230929';
+$petit_ver='v0.92.5';
+$petit_lot='lot.20230930';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2526,52 +2526,80 @@ function res (){
 	$articles=[];
 	$count_alllog=0;
 	$i=0;
+	$j=0;
+	$find=false;
+	$articles1=[];
+	$articles2=[];
+
 	while ($line = fgets($fp)) {
 		if(!trim($line)){
 			continue;
 		}
 		if (strpos(trim($line), $resno . "\t") === 0) {//現在のスレッド
+			$find=true;
+			$i=$j;
+		}
+		if($find && ($i<$j)){
+			$articles2[$j]=$line;//現在のスレッドより20件後ろの行を取得
+		}
+		if($find && ($i+20)<=$j){
 			break;
 		}
-		++$i;
+		++$j;
 	}
-
 	rewind($fp);
 	$j=0;
 	while ($line = fgets($fp)) {//メモリ消費量を削減するため二度ループ
 		if(!trim($line)){
 			continue;
 		}
-		if(($i-15) < $j){//現在のスレッドの20スレッド手前から
-			$articles[$j]=$line;
+		if(($i!==$j) && ($i-20) <= $j){//現在のスレッドより20件手前の行を取得
+			$articles1[$j]=$line;
 		}
-		if(($i+15) < $j){//現在のスレッド以後の20スレッド分のログを取得
+		if($i===$j){
 			break;
 		}
 		++$j;
 	}
 	fclose($fp);
 
-	$next=isset($articles[$i+1])? rtrim($articles[$i+1]) :'';
-	$prev=isset($articles[$i-1])? rtrim($articles[$i-1]) :'';
+	$next=isset($articles2[$i+1])? rtrim($articles2[$i+1]) :'';
+	$prev=isset($articles1[$i-1])? rtrim($articles1[$i-1]) :'';
 	$next=$next ? (create_res(explode("\t",trim($next)),['catalog'=>true])):[];
 	$prev=$prev ? (create_res(explode("\t",trim($prev)),['catalog'=>true])):[];
 	$next=(!empty($next) && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
 	$prev=(!empty($prev) && is_file(LOG_DIR."{$prev['no']}.log"))?$prev:[];
 
+	$rr1=[];
+	$rr2=[];
 	if($view_other_works){
 		$view_other_works=[];
 		$a=[];
-		foreach($articles as $val){
-			$b=create_res(explode("\t",trim($val)),['catalog'=>true]);
-			if(!empty($b)&&$b['img']&&$b['no']!==$resno){
-				$a[]=$b;
+		foreach($articles1 as $val){
+
+			$r1=create_res(explode("\t",trim($val)),['catalog'=>true]);
+			if(!empty($r1)&&$r1['img']&&$r1['no']!==$resno){
+				$rr1[]=$r1;
 			}
 		}
-		$count_a = count($a);
-		$c = 0<($count_a-6) ? $count_a-6 : 0;//負の値なら0に
-		$start_view = ($i<6) ? 0 : ($count_a>=19 ? $count_a-19 : $c);
-		$view_other_works=array_slice($a,$start_view,6,false);
+		foreach($articles2 as $val){
+
+			$r2=create_res(explode("\t",trim($val)),['catalog'=>true]);
+			if(!empty($r2)&&$r2['img']&&$r2['no']!==$resno){
+				$rr2[]=$r2;
+			}
+		}
+		if(($i>3) && (3<count($rr1)) && (2<count($rr2))  ){
+			$rr1 = array_slice($rr1,-3);
+			$rr2 = array_slice($rr2,0,3);
+			$view_other_works= array_merge($rr1,$rr2);
+		
+		}elseif((6>count($rr2))){
+			$view_other_works= array_slice($rr1,-6);
+		}else{
+			$view_other_works= array_slice($rr2,0,6);
+
+		}
 	}
 	//禁止ホスト
 	$is_badhost=is_badhost();
