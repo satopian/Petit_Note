@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.90.8';
-$petit_lot='lot.20230926';
+$petit_ver='v0.91.8';
+$petit_lot='lot.20230929';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1004,7 +1004,7 @@ function paintcom(){
 function to_continue(){
 
 	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en,$password_require_to_continue;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$petit_lot;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$petit_lot,$elapsed_days;
 
 	aikotoba_required_to_view(true);
 
@@ -1035,7 +1035,7 @@ function to_continue(){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
 	if(!check_elapsed_days($time)&&!adminpost_valid()){
-		return error($en? 'The article does not exist.':'記事がありません。');
+		return error($en? "Article older than {$elapsed_days} days cannot be edited.":"{$elapsed_days}日以上前の記事は編集できません。");
 	}
 
 	$hidethumbnail = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
@@ -2525,25 +2525,30 @@ function res (){
 	$fp=fopen(LOG_DIR."alllog.log","r");
 	$articles=[];
 	$count_alllog=0;
-	$i=0;$j=0;
-	$flag=false;
+	$i=0;
 	while ($line = fgets($fp)) {
 		if(!trim($line)){
 			continue;
 		}
-		if (strpos(trim($line), $resno . "\t") === 0) {
-			$flag=true;//現在のスレッドが見つかったら
-			$i=$count_alllog;//$iに配列のキーをセット
-		}
-		if (!$flag) {//見つからなければカウントを続ける
-			$j = $count_alllog;
-			//見つからなかった時の$iは初期値の0。
-		} 
-		$articles[$count_alllog]=$line;
-		if($j+20<$count_alllog){//+20件でbreak
+		if (strpos(trim($line), $resno . "\t") === 0) {//現在のスレッド
 			break;
 		}
-		++$count_alllog;
+		++$i;
+	}
+
+	rewind($fp);
+	$j=0;
+	while ($line = fgets($fp)) {//メモリ消費量を削減するため二度ループ
+		if(!trim($line)){
+			continue;
+		}
+		if(($i-15) < $j){//現在のスレッドの20スレッド手前から
+			$articles[$j]=$line;
+		}
+		if(($i+15) < $j){//現在のスレッド以後の20スレッド分のログを取得
+			break;
+		}
+		++$j;
 	}
 	fclose($fp);
 
@@ -2557,18 +2562,17 @@ function res (){
 	if($view_other_works){
 		$view_other_works=[];
 		$a=[];
-		$start_view=(($i-7)>=0) ? ($i-7) : 0;
-		$other_articles=array_slice($articles,$start_view,17,false);
-		foreach($other_articles as $val){
+		foreach($articles as $val){
 			$b=create_res(explode("\t",trim($val)),['catalog'=>true]);
 			if(!empty($b)&&$b['img']&&$b['no']!==$resno){
 				$a[]=$b;
 			}
 		}
-		$c=($i<5) ? 0 : (count($a)>9 ? 4 :0);
-		$view_other_works=array_slice($a,$c,6,false);
+		$count_a = count($a);
+		$c = 0<($count_a-6) ? $count_a-6 : 0;//負の値なら0に
+		$start_view = ($i<6) ? 0 : ($count_a>=19 ? $count_a-19 : $c);
+		$view_other_works=array_slice($a,$start_view,6,false);
 	}
-
 	//禁止ホスト
 	$is_badhost=is_badhost();
 	//管理者判定処理
