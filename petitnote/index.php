@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.92.5';
+$petit_ver='v0.92.6';
 $petit_lot='lot.20230930';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2589,15 +2589,18 @@ function res (){
 				$rr2[]=$r2;
 			}
 		}
-		if(($i>3) && (3<count($rr1)) && (2<count($rr2))  ){
+		if(($i>=3) && (3<=count($rr1)) && (3<=count($rr2))  ){
 			$rr1 = array_slice($rr1,-3);
 			$rr2 = array_slice($rr2,0,3);
 			$view_other_works= array_merge($rr1,$rr2);
 		
-		}elseif((6>count($rr2))){
+		}elseif((6>count($rr2))&&(6<=count($rr1))){
 			$view_other_works= array_slice($rr1,-6);
-		}else{
+		}elseif((6>count($rr1))&&(6<=count($rr2))){
 			$view_other_works= array_slice($rr2,0,6);
+		}else{
+			$view_other_works= array_merge($rr1,$rr2);
+			$view_other_works= array_slice($view_other_works,0,6);
 
 		}
 	}
