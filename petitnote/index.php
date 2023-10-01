@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.92.7';
-$petit_lot='lot.20230930';
+$petit_ver='v0.92.8';
+$petit_lot='lot.20231001';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2384,7 +2384,7 @@ function view(){
 			list($_no)=explode("\t",trim($_line));
 			$article_nos[]=$_no;	
 		}
-		++$count_alllog;
+		++$count_alllog;//処理の後半で記事数のカウントとして使用
 	}
 	fclose($fp);
 
@@ -2589,7 +2589,7 @@ function res (){
 				$rr2[]=$r2;
 			}
 		}
-		if(($i>=3) && (3<=count($rr1)) && (3<=count($rr2))  ){
+		if((3<=count($rr1)) && (3<=count($rr2))  ){
 			$rr1 = array_slice($rr1,-3);
 			$rr2 = array_slice($rr2,0,3);
 			$view_other_works= array_merge($rr1,$rr2);
@@ -2601,7 +2601,6 @@ function res (){
 		}else{
 			$view_other_works= array_merge($rr1,$rr2);
 			$view_other_works= array_slice($view_other_works,0,6);
-
 		}
 	}
 	//禁止ホスト
