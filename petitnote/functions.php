@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20230907;
+$functions_ver=20231005;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -759,11 +759,11 @@ function Reject_if_NGword_exists_in_the_post(){
 	$url_len=strlen((string)$url);
 	$pwd_len=strlen((string)$pwd);
 
-	if($name_len && ($name_len > 30)) return error($en?'Name is too long':'名前が長すぎます。');
-	if($sub_len && ($sub_len > 80)) return error($en? 'Subject is too long.':'題名が長すぎます。');
-	if($url_len && ($url_len > 100)) return error($en? 'URL is too long.':'URLが長すぎます。');
-	if($com_len && ($com_len > $max_com)) return error($en? 'Comment is too long.':'本文が長すぎます。');
-	if($pwd_len && ($pwd_len > 100)) return error($en? 'Password is too long.':'パスワードが長すぎます。');
+	if($name_len > 30) return error($en?'Name is too long':'名前が長すぎます。');
+	if($sub_len > 80) return error($en? 'Subject is too long.':'題名が長すぎます。');
+	if($url_len > 100) return error($en? 'URL is too long.':'URLが長すぎます。');
+	if($com_len > $max_com) return error($en? 'Comment is too long.':'本文が長すぎます。');
+	if($pwd_len > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
 	//チェックする項目から改行・スペース・タブを消す
 	$chk_name = $name_len ? preg_replace("/\s/u", "", $name ) : '';
@@ -802,7 +802,6 @@ function Reject_if_NGword_exists_in_the_post(){
 	if($bstr_A_find && $bstr_B_find){
 		return error($en?'There is an inappropriate string.':'不適切な表現があります。');
 	}
-
 }
 /**
  * NGワードチェック

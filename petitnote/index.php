@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.92.9';
-$petit_lot='lot.20231003';
+$petit_ver='v0.93.0';
+$petit_lot='lot.20231005';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2107,6 +2107,8 @@ function search(){
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$q=(string)filter_input(INPUT_GET,'q');
 	$q=urldecode($q);
+	$q_len=strlen((string)$q);
+	$q=1000<$q_len ? "" :$q; 
 	$check_q=mb_convert_kana($q, 'rn', 'UTF-8');
 	$check_q=str_replace(array(" ", "　"), "", $check_q);
 	$check_q=str_replace("〜","～",$check_q);//波ダッシュを全角チルダに

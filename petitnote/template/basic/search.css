@@ -61,8 +61,8 @@ form.searchform {
 	text-decoration: none;
 }
 
-.searchform input[type=text] {
-	height: 1.6em;
+.searchform input[type="search"] {
+	height: 1.9em;
 	width: 180px;
 	border: 1px solid #888;
 	vertical-align: middle;

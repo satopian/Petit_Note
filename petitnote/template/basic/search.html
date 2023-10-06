@@ -11,14 +11,13 @@
 <link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
 <link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
 <?php include __DIR__.'/parts/nsfw_css_control.html';?>
-
 <title>
 	<?php if($en):?>	
-			Displaying <?=h($pageno)?> <?=h($result_subject)?> 
-			<?php else:?>
-			<?=h($result_subject)?><?=h($img_or_com)?><?=h($pageno)?>
-			<?php endif;?>
-		</title>
+		Displaying <?=h($pageno)?> <?=h($result_subject)?> 
+		<?php else:?>
+		<?=h($result_subject)?><?=h($img_or_com)?><?=h($pageno)?>
+	<?php endif;?>
+</title>
 </head>
 <body>
 <div class="container" id="top">
@@ -85,7 +84,7 @@
 			<input type="hidden" name="imgsearch" value="off">
 			<?php endif;?>
 
-			<input type="text" name="q" placeholder="<?php if($en):?>Search<?php else:?>検索<?php endif;?>" value="<?=h($q)?>">
+			<input type="search" name="q" maxlength="100" placeholder="<?php if($en):?>Search<?php else:?>検索<?php endif;?>" value="<?=h($q)?>">
 			<input type="submit" value="<?php if($en):?>Search<?php else:?>検索<?php endif;?>">
 		</form>
 		<p></p>
@@ -178,4 +177,3 @@
 <script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
 </body>
 </html>
-	

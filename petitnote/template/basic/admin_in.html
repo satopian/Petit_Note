@@ -90,10 +90,13 @@
 	<?php endif;?>
 
 <hr>
-<?php if(isset($latest_var)&&$latest_var):?>
-<div class="left_wrap"><a href="https://github.com/satopian/Petit_Note/releases/latest" target="_blank" rel="noopener"><img src="https://img.shields.io/github/v/release/satopian/Petit_Note?label=Latest" alt="Latest release"></a></div>
-<?php endif;?>
 <div class="copy">
+<?php if(isset($latest_var)&&$latest_var):?>
+	<div class="left_wrap">
+	<a href="https://github.com/satopian/Petit_Note/releases/latest" target="_blank" rel="noopener"><img src="https://img.shields.io/github/v/release/satopian/Petit_Note?label=Latest" alt="Latest release"></a>
+	</div>
+<?php endif;?>
+<div class="righit_wrap">
 <?php include __DIR__.'/parts/copyright.html';?>
 </div>
 </div>
