@@ -98,33 +98,7 @@
 
 <span class="canvas_size_wrap"> 
 Size:
-<select name="picw" title="幅" class="canvas_select">
-	<?php
-	//幅 300から、$pmax_w で設定した最大値まで。
-		for($i = 300; $i <=$pmax_w ; $i+=50){//50ずつ増える
-		if($picwc==$i){//デフォルトサイズ
-		echo'<option value="'.h($i).'" selected>'.h($i).'</option>';
-		}
-		else{
-		echo'<option value="'.h($i).'">'.h($i).'</option>';
-		}
-		}
-	?>
-	</select>
-	x
-	<select name="pich" title="高さ" class="canvas_select">
-	<?php
-	//高さ 300から、PMAX_H で設定した最大値まで。
-		for($i = 300; $i <=$pmax_h ; $i+=50){//50ずつ増える
-		if($pichc==$i){//デフォルトサイズ
-		echo'<option value="'.h($i).'" selected>'.h($i).'</option>';
-		}
-		else{
-		echo'<option value="'.h($i).'">'.h($i).'</option>';
-		}
-		}
-	?>
-	</select>
+<?php include __DIR__."/parts/select_canvas_size.html"?>
 </span>
 </form>
 <?php endif;?>

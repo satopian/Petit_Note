@@ -302,34 +302,8 @@
 <input type="hidden" name="app" value="<?=h($app_to_use)?>">
 <?php endif;?>
 <span class="canvas_size_wrap"> 
-<span class="canvas_size">Size</span>:
-<select name="picw" title="<?php if($en):?>Width<?php else:?>幅<?php endif;?>" class="canvas_select">
-	<?php
-	//幅 300から、$pmax_w で設定した最大値まで。
-		for($i = 300; $i <=$pmax_w ; $i+=50){//50ずつ増える
-		if($picwc==$i){//デフォルトサイズ
-		echo'<option value="'.h($i).'" selected>'.h($i).'</option>';
-		}
-		else{
-		echo'<option value="'.h($i).'">'.h($i).'</option>';
-		}
-		}
-	?>
-	</select>
-	x
-	<select name="pich" title="<?php if($en):?>Height<?php else:?>高さ<?php endif;?>" class="canvas_select">
-	<?php
-	//高さ 300から、PMAX_H で設定した最大値まで。
-		for($i = 300; $i <=$pmax_h ; $i+=50){//50ずつ増える
-		if($pichc==$i){//デフォルトサイズ
-		echo'<option value="'.h($i).'" selected>'.h($i).'</option>';
-		}
-		else{
-		echo'<option value="'.h($i).'">'.h($i).'</option>';
-		}
-		}
-	?>
-	</select>
+Size:
+<?php include __DIR__."/parts/select_canvas_size.html"?>
 </span>
 </form>
 <?php endif;?>
