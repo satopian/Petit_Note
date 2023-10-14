@@ -15,9 +15,12 @@
 	?>
 	<!-- 個別threadのループ -->
 	<?php foreach($ress as $i => $res) : ?>
-	<?php if($res['img']){
+	<?php
+	 if($res['img']){
 		$findimage=true;
-	}?>
+	}
+	$res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));
+	?>
 	<!-- 縮小のかかったNSFW画像を元のサイズへ -->
 	<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
 	<?php if($skipres && $i===$skipres):?>
@@ -94,7 +97,6 @@
 			<?php if(isset($res['not_deleted']) && !$res['not_deleted']):?>
 			<?php if($en):?>This post does not exist.<?php else:?>この記事はありません。<?php endif;?>
 			<?php endif;?>
-			<?php $res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));?>
 			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
 			<div class="edit_button">
 					<!-- 編集削除のためのボタン -->
@@ -144,9 +146,8 @@
 	<?php endforeach;?>
 	<!-- 返信ボタン -->
 	<div class="clear"></div>
-	<?php if($aikotoba && (!$userdel && !$admindel)):?>
+	<?php if($resmode && $aikotoba && (!$userdel && !$admindel)):?>
 	<!-- 返信可能な数の表示 -->
-		<?php if($resmode):?>
 			<div class="res_notice_wrap">
 			<?php $maxres_current=(int)$max_res-(int)$i;?>
 			<?php if(($maxres_current<=20) && !$adminpost && $resform && !$res_max_over):?>
@@ -166,7 +167,6 @@
 				<?php endif;?>
 			<?php endif;?>
 			</div>
-		<?php endif;?>
 		<?php endif;?>
 
 			<div class="res_button_wrap">
