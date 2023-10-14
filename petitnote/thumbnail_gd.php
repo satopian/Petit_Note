@@ -59,7 +59,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 				if(!$im_in)return;
 			break;
 		case "image/webp";
-			if(!function_exists("ImageCreateFromWEBP")){//webp
+			if(!function_exists("ImageCreateFromWEBP")||version_compare(PHP_VERSION, '7.0.0', '<')){//webp
 				return;
 			}
 			$im_in = @ImageCreateFromWEBP($fname);

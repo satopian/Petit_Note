@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.93.2';
-$petit_lot='lot.20231011';
+$petit_ver='v0.95.2';
+$petit_lot='lot.20231015';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1548,8 +1548,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	aikotoba_required_to_view(true);
 
 	$userdel=userdel_valid();
-	$resmode = ((string)filter_input(INPUT_POST,'resmode')==='true');
-	$resmode = $resmode ? 'true' : 'false';
+	$resmode = (bool)filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
 	$postpage = (int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$postresno = (int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 	$postresno = $postresno ? $postresno : false; 
@@ -1904,7 +1903,7 @@ function del(){
 	}
 	$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
 	if(!$id_and_no){
-		return error($en?'Please select an article.':'記事が選択されていません。');
+		return error($en?'The post deletion checkbox is unchecked.':'記事が選択されていません。');
 	}
 	$id=$no='';
 	if($id_and_no){
@@ -2021,7 +2020,7 @@ function del(){
 	unset($_SESSION['userdel']);
 	$resno=(string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 	//多重送信防止
-	if((string)filter_input(INPUT_POST,'resmode')==='true'){
+	if((bool)filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN)){
 		if(!is_file(LOG_DIR.$resno.'.log')){
 			return header('Location: ./');
 		}
@@ -2300,7 +2299,7 @@ function search(){
 //カタログ表示
 function catalog(){
 	global $use_aikotoba,$home,$catalog_pagedef,$skindir,$display_link_back_to_home;
-	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en,$mark_sensitive_image,$sort_comments_by_newest; 
+	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en,$mark_sensitive_image; 
 
 	aikotoba_required_to_view();
 
@@ -2458,7 +2457,9 @@ function view(){
 		}
 	}
 	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
-	// HTML出力
+	$resmode=false;
+	$resno=0;
+		// HTML出力
 	$templete='main.html';
 	return include __DIR__.'/'.$skindir.$templete;
 }
@@ -2525,7 +2526,6 @@ function res (){
 	$resname = !empty($rresname) ? implode(($en?'-san':'さん').' ',$rresname) : false; // レス投稿者一覧
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
-	$articles=[];
 	$count_alllog=0;
 	$i=0;
 	$j=0;
@@ -2637,6 +2637,8 @@ function res (){
 	$misskey_note = $use_misskey_note ? (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN) : false;
 	$res_catalog = $misskey_note ? true : (bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
 	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
+	$resmode=true;
+	$page=0;
 
 	$templete= $res_catalog ? 'res_catalog.html' : 'res.html';
 	return include __DIR__.'/'.$skindir.$templete;
