@@ -43,7 +43,7 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 				response.text().then((text) => {
 					if (text.startsWith("error\n")) {
 							console.log(text);
-							const error_message = text.split("\n").slice(1).join("\n");
+							const error_message = text.split("\n").slice(1).join("\n");//"error\n"を除去
 							return document.getElementById(error_message_Id).innerText = error_message;
 					}
 					if (formId !== "res_form") {
@@ -97,79 +97,73 @@ function form_submit_set_nsfw_show_hide(event) {
 	const form = document.getElementById("set_nsfw_show_hide");	
 	const submitBtn = form.querySelector('input[type="submit"]');	
 	if (form) {
-			event.preventDefault(); // 通常フォームの送信を中断
-			const formData = new FormData(form);
-			fetch("./", {
-			method: "post",
-			mode: 'same-origin',
-			body: formData
-			})
-			.then(response => {
-			// レスポンスの処理
-			console.log("Data sent successfully");
-			submitBtn.disabled = false;
-			location.reload();
-			})
-			.catch(error => {
-			// エラーハンドリング
-			console.error("Error:", error);
-			submitBtn.disabled = false;
-			});
-			
-			return false;
+		event.preventDefault(); // 通常フォームの送信を中断
+		const formData = new FormData(form);
+		fetch("./", {
+		method: "post",
+		mode: 'same-origin',
+		body: formData
+		})
+		.then(response => {
+		// レスポンスの処理
+		console.log("Data sent successfully");
+		submitBtn.disabled = false;
+		location.reload();
+		})
+		.catch(error => {
+		// エラーハンドリング
+		console.error("Error:", error);
+		submitBtn.disabled = false;
+		});
+		
+		return false;
+	}
+}
+
+//shareするSNSのserver一覧を開く
+var snsWindow = null; // グローバル変数としてウィンドウオブジェクトを保存する
+
+function open_sns_server_window(event,width=350,height=490) {
+	event.preventDefault(); // デフォルトのリンクの挙動を中断
+
+	if (isNaN(parseInt(width)) || width <= 0 || isNaN(parseInt(height)) || height <= 0) {
+		width = 350; // デフォルト値
+		height = 490; // デフォルト値
+	}		
+	var url = event.currentTarget.href;
+	var windowFeatures = "width="+width+",height="+height; // ウィンドウのサイズを指定
+	
+	if (snsWindow && !snsWindow.closed) {
+		snsWindow.focus(); // 既に開かれているウィンドウがあればフォーカスする
+		} else {
+		snsWindow = window.open(url, "_blank", windowFeatures); // 新しいウィンドウを開く
 		}
-	}
-
-	//shareするSNSのserver一覧を開く
-	var snsWindow = null; // グローバル変数としてウィンドウオブジェクトを保存する
-
-	function open_sns_server_window(event,width=350,height=490) {
-		event.preventDefault(); // デフォルトのリンクの挙動を中断
-
-			// 幅と高さが数値であることを確認
-			if (typeof width !== 'number' || typeof height !== 'number') {
-				width=350;//デフォルト値
-				height=490;//デフォルト値
-			}
-		
-			// 幅と高さが正の値であることを確認
-			if (width <= 0 || height <= 0) {
-				width=350;//デフォルト値
-				height=490;//デフォルト値
-			}
-		
-		var url = event.currentTarget.href;
-		var windowFeatures = "width="+width+",height="+height; // ウィンドウのサイズを指定
-		
-		if (snsWindow && !snsWindow.closed) {
-			snsWindow.focus(); // 既に開かれているウィンドウがあればフォーカスする
-			} else {
-			snsWindow = window.open(url, "_blank", windowFeatures); // 新しいウィンドウを開く
-			}
-	}
+}
 // (c)satopian MIT Licence ここまで
 
 jQuery(function() {
+
+	//URLクエリからresidを取得して指定idへページ内を移動
+	const urlParams = new URLSearchParams(window.location.search);
+	const resid = urlParams.get('resid');
+	const document_resid = document.getElementById(resid);
+	if(document_resid){
+		document_resid.scrollIntoView();
+	}
+
 	window.onpageshow = function(){
-		//URLクエリからresidを取得して指定idへページ内を移動
-		const urlParams = new URLSearchParams(window.location.search);
-		const resid = urlParams.get('resid');
-		const document_res_id = document.getElementById(resid);
-		if(document_res_id){
-			document_res_id.scrollIntoView();
-		}
 
 		$('[type="submit"]').each(function() {
 			const $btn = $(this);
 			const $form = $btn.closest('form');
 			const isTargetBlank = $form.prop('target') === '_blank';
 		
+			$btn.prop('disabled', false);
 			// ボタンが target="_blank" の場合は無効化しない
 			if (!isTargetBlank) {
-				$btn.prop('disabled', false);
-				$btn.on('click', function() {
-				$btn.prop('disabled', true);
-				$form.trigger('submit');
+				$btn.on('click', function() {//ボタンをクリックすると
+				$btn.prop('disabled', true);//ボタンを無効化して
+				$form.trigger('submit');//送信する
 				});
 			}
 		});
