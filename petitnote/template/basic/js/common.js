@@ -126,7 +126,9 @@ var snsWindow = null; // グローバル変数としてウィンドウオブジ�
 function open_sns_server_window(event,width=350,height=490) {
 	event.preventDefault(); // デフォルトのリンクの挙動を中断
 
-	if (isNaN(parseInt(width)) || width <= 0 || isNaN(parseInt(height)) || height <= 0) {
+	// 幅と高さが数値であることを確認
+	// 幅と高さが正の値であることを確認
+	if (isNaN(width) || width <= 0 || isNaN(height) || height <= 0) {
 		width = 350; // デフォルト値
 		height = 490; // デフォルト値
 	}		
