@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.95.2';
+$petit_ver='v0.95.3';
 $petit_lot='lot.20231015';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2135,8 +2135,8 @@ function search(){
 		if(!is_file(LOG_DIR."{$resno}.log")){
 			continue;	
 		}
-		$cp=fopen("log/{$resno}.log","r");
-		while($line=fgets($cp)){
+		$rp=fopen("log/{$resno}.log","r");
+		while($line=fgets($rp)){
 
 			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
 
@@ -2184,7 +2184,7 @@ function search(){
 				
 			}
 		}
-		fclose($cp);
+		fclose($rp);
 		if($j>=5000){break;}//1掲示板あたりの最大行数
 		++$j;
 	}
