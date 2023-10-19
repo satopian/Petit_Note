@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.95.3';
-$petit_lot='lot.20231015';
+$petit_ver='v0.95.5';
+$petit_lot='lot.20231019';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -677,6 +677,8 @@ function post(){
 	safe_unlink(TEMP_DIR.$picfile.".dat");
 	delete_res_cache();
 
+	$resno = $resto ? $resto : $no;	
+
 	global $send_email,$to_mail,$root_url,$boardname;
 
 	if($send_email){
@@ -700,19 +702,17 @@ function post(){
 		} 
 		if($resto){
 			$data['subject'] = '['.$boardname.'] No.'.$resto.NOTICE_MAIL_REPLY;
-			$data['option'][] = NOTICE_MAIL_URL.','.$root_url.'?res='.$resto;
 		}else{
 			$data['subject'] = '['.$boardname.'] '.NOTICE_MAIL_NEWPOST;
-			$data['option'][] = NOTICE_MAIL_URL.','.$root_url.'?res='.$no;
 		}
 
+		$data['option'][] = NOTICE_MAIL_URL.','.$root_url.'?resno='.$resno;
 		$data['comment'] = str_replace('"\n"',"\n",$com);
 
 		noticemail::send($data);
 	}
 
 	//多重送信防止
-	$resno = $resto ? $resto : $no;	
 	return header("Location: ./?resno={$resno}&resid={$time}#{$time}");
 
 }
