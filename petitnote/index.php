@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.95.7';
-$petit_lot='lot.20231019';
+$petit_ver='v0.96.1';
+$petit_lot='lot.20231020';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -87,6 +87,8 @@ $sns_window_width = isset($sns_window_width) ? (int)$sns_window_width : 350;
 $sns_window_height = isset($sns_window_height) ? (int)$sns_window_height : 490;
 $use_misskey_note = isset($use_misskey_note) ? $use_misskey_note : true;
 $sort_comments_by_newest = isset($sort_comments_by_newest) ? $sort_comments_by_newest : false;
+$pmin_w = isset($pmin_w) ? $pmin_w : 300;//幅
+$pmin_h = isset($pmin_h) ? $pmin_h : 300;//高さ
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -719,7 +721,7 @@ function post(){
 //お絵かき画面
 function paint(){
 
-	global $boardname,$skindir,$pmax_w,$pmax_h,$max_px,$en;
+	global $boardname,$skindir,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$max_px,$en;
 	global $usercode,$petit_lot;
 
 	check_same_origin();
@@ -734,10 +736,11 @@ function paint(){
 	if(!$usercode){
 		error($en? 'User code does not exist.' :'ユーザーコードがありません。');
 	}
-	if($picw < 300) $picw = 300;
-	if($pich < 300) $pich = 300;
-	if($picw > $pmax_w) $picw = $pmax_w;
-	if($pich > $pmax_h) $pich = $pmax_h;
+
+	$picw = ($picw < $pmin_w) ? $pmin_w : $picw;//最低の幅チェック
+	$pich = ($pich < $pmin_h) ? $pmin_h : $pich;//最低の高さチェック
+	$picw = ($picw > $pmax_w) ? $pmax_w : $picw;//最大の幅チェック
+	$pich = ($pich > $pmax_h) ? $pmax_h : $pich;//最大の高さチェック
 
 	setcookie("appc", $app , time()+(60*60*24*30),"","",false,true);//アプレット選択
 	setcookie("picwc", $picw , time()+(60*60*24*30),"","",false,true);//幅
@@ -902,7 +905,8 @@ function paint(){
 			$tool='neo';
 			$appw = $picw + 150;//NEOの幅
 			$apph = $pich + 172;//NEOの高さ
-			if($apph < 560){$apph = 560;}//最低高
+			$appw = ($appw < 450) ? 450 : $appw;//最低幅
+			$apph = ($apph < 560) ? 560 : $apph;//最低高
 			//動的パレット
 			$palettetxt = $en? 'palette_en.txt' : 'palette.txt';
 			check_file(__DIR__.'/'.$palettetxt);  
@@ -2359,7 +2363,7 @@ function catalog(){
 //通常表示
 function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
+	global $boardname,$max_res,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest;
 
 
@@ -2466,7 +2470,7 @@ function view(){
 //レス画面
 function res (){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
-	global $boardname,$max_res,$pmax_w,$pmax_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary;
+	global $boardname,$max_res,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest;
 
 	aikotoba_required_to_view();

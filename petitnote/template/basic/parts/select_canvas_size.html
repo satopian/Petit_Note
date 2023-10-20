@@ -1,7 +1,7 @@
 <select name="picw" title="<?php if($en):?>Width<?php else:?>幅<?php endif;?>" class="canvas_select">
 	<?php
 	//幅 300から、$pmax_w で設定した最大値まで。
-		for($i = 300; $i <=$pmax_w ; $i+=50){//50ずつ増える
+		for($i = $pmin_w; $i <=$pmax_w ; $i+=50){//50ずつ増える
 		if($picwc==$i){//デフォルトサイズ
 		echo'<option value="'.h($i).'" selected>'.h($i).'</option>';
 		}
@@ -15,7 +15,7 @@
 <select name="pich" title="<?php if($en):?>Height<?php else:?>高さ<?php endif;?>" class="canvas_select">
 	<?php
 	//高さ 300から、PMAX_H で設定した最大値まで。
-		for($i = 300; $i <=$pmax_h ; $i+=50){//50ずつ増える
+		for($i = $pmin_h; $i <=$pmax_h ; $i+=50){//50ずつ増える
 		if($pichc==$i){//デフォルトサイズ
 		echo'<option value="'.h($i).'" selected>'.h($i).'</option>';
 		}
