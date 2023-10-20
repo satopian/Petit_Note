@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.95.5';
+$petit_ver='v0.95.7';
 $petit_lot='lot.20231019';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -706,7 +706,7 @@ function post(){
 			$data['subject'] = '['.$boardname.'] '.NOTICE_MAIL_NEWPOST;
 		}
 
-		$data['option'][] = NOTICE_MAIL_URL.','.$root_url.'?resno='.$resno;
+		$data['option'][] = NOTICE_MAIL_URL.",{$root_url}?resno={$resno}#{$time}";
 		$data['comment'] = str_replace('"\n"',"\n",$com);
 
 		noticemail::send($data);
