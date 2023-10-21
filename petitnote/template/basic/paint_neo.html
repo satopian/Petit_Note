@@ -228,7 +228,7 @@ if(DynamicColor) PaletteListSetColor();
 <INPUT SIZE="20" NAME="count">
 </FORM>
 <Script>
-timerID=10;stime=new Date;function SetTimeCount(){now=new Date;s=Math.floor((now.getTime()-stime.getTime())/1E3);disp="";86400<=s&&(d=Math.floor(s/86400),disp+=d+"<?php if($en):?>day <?php else:?>\u65e5<?php endif;?>",s-=86400*d);3600<=s&&(h=Math.floor(s/3600),disp+=h+"<?php if($en):?>hr <?php else:?>\u6642\u9593<?php endif;?>",s-=3600*h);60<=s&&(m=Math.floor(s/60),disp+=m+"<?php if($en):?>min <?php else:?>\u5206<?php endif;?>",s-=60*m);document.watch.count.value=disp+s+"<?php if($en):?>sec<?php else:?>\u79d2<?php endif;?>";clearTimeout(timerID);timerID = setTimeout(function() { SetTimeCount(); }, 250);};
+timerID=10;stime=new Date;function SetTimeCount(){now=new Date;s=Math.floor((now.getTime()-stime.getTime())/1E3);disp="";86400<=s&&(d=Math.floor(s/86400),disp+=d+"<?php if($en):?>day <?php else:?>\u65e5<?php endif;?>",s-=86400*d);3600<=s&&(h=Math.floor(s/3600),disp+=h+"<?php if($en):?>hr <?php else:?>\u6642\u9593<?php endif;?>",s-=3600*h);60<=s&&(m=Math.floor(s/60),disp+=m+"<?php if($en):?>min <?php else:?>\u5206<?php endif;?>",s-=60*m);document.watch.count.value=disp+s+"<?php if($en):?>sec<?php else:?>\u79d2<?php endif;?>";clearTimeout(timerID);timerID = setTimeout(()=>{ SetTimeCount(); }, 250);};
 document.addEventListener('DOMContentLoaded',SetTimeCount,false);
 </Script>
 </div>
