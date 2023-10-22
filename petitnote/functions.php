@@ -300,7 +300,7 @@ function create_res($line,$options=[]){
 
 	$thumbnail = ($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail') ? $time.'s.jpg' : false; 
 	$link_thumbnail= ($thumbnail || $hide_thumbnail); 
-	$painttime = !$isset_catalog ? calcPtime($paintsec) : [];  
+	$painttime = !$isset_catalog ? calcPtime($paintsec) : false;  
 	$_time=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
 	$first_posted_time=(strlen($first_posted_time)>15) ? substr($first_posted_time,0,-6) : substr($first_posted_time,0,-3);
 	$datetime = $do_not_change_posts_time ? $first_posted_time : $_time;
@@ -938,11 +938,7 @@ function image_reduction_display($w,$h,$max_w,$max_h){
 function calcPtime ($psec) {
 
 	if(!is_numeric($psec)){
-		$result=[
-			'ja'=> '',
-			'en'=> '',
-			];
-		return $result;
+		return false;
 	}
 
 	$D = floor($psec / 86400);
@@ -1133,6 +1129,7 @@ function get_pch_size($src) {
 	}
 	return[(int)$width,(int)$height];
 }
+
 //アップロード画像のファイルサイズが大きすぎる時は削除
 function delete_file_if_sizeexceeds($upfile,$fp,$rp){
 global $max_kb,$en;
