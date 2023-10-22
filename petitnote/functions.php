@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231022;
+$functions_ver=20231023;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -612,7 +612,32 @@ function png2jpg ($src) {
 	}
 	return false;
 }
+//pngをjpegに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
+function convert_andsave_if_smaller_png2jpg($upfile){
+	if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
+		clearstatcache();
+		$filesize=filesize($upfile);
+		if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
+			rename($im_jpg,$upfile);//JPEGで保存
+			chmod($upfile,0606);
+		} else{//PNGよりファイルサイズが大きくなる時は
+			unlink($im_jpg);//作成したJPEG画像を削除
+		}
+	}
+}
 
+//アップロード画像のファイルサイズが大きすぎる時は削除
+function delete_file_if_sizeexceeds($upfile,$fp,$rp){
+	global $max_kb,$en;
+	clearstatcache();
+	if(filesize($upfile) > $max_kb*1024){
+		closeFile($fp);
+		closeFile($rp);
+		safe_unlink($upfile);
+	return error($en? "Upload failed.\nFile size exceeds {$max_kb}kb.":"アップロードに失敗しました。\nファイル容量が{$max_kb}kbを超えています。");
+	}
+}
+	
 function error($str,$historyback=true){
 
 	global $boardname,$skindir,$en,$aikotoba_required_to_view,$petit_lot;
@@ -1128,17 +1153,6 @@ function get_pch_size($src) {
 		return;
 	}
 	return[(int)$width,(int)$height];
-}
-
-//アップロード画像のファイルサイズが大きすぎる時は削除
-function delete_file_if_sizeexceeds($upfile,$fp,$rp){
-global $max_kb,$en;
-	if(filesize($upfile) > $max_kb*1024){
-		closeFile($fp);
-		closeFile($rp);
-		safe_unlink($upfile);
-	return error($en? "Upload failed.\nFile size exceeds {$max_kb}kb.":"アップロードに失敗しました。\nファイル容量が{$max_kb}kbを超えています。");
-	}
 }
 
 //使用するペイントアプリの配列化

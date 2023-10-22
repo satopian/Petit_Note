@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.96.5';
+$petit_ver='v0.96.6';
 $petit_lot='lot.20231022';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20231022){
+if(!isset($functions_ver)||$functions_ver<20231023){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -485,17 +485,10 @@ function post(){
 		}	
 		clearstatcache();
 		$filesize=filesize($upfile);
-		if(($filesize > $max_file_size_in_png_format_paint * 1024) || ($is_upload && $filesize > $max_file_size_in_png_format_upload * 1024)){//指定サイズを超えていたら
-			if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
-				clearstatcache();
-				if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
-					rename($im_jpg,$upfile);//JPEGで保存
-					chmod($upfile,0606);
-				} else{//PNGよりファイルサイズが大きくなる時は
-					unlink($im_jpg);//作成したJPEG画像を削除
-				}
-			}
-		}
+		if(($pictmp2 && ($filesize > ($max_file_size_in_png_format_paint * 1024))) || ($is_upload && ($filesize > ($max_file_size_in_png_format_upload * 1024)))){//指定サイズを超えていたら
+			//pngをjpegに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
+			convert_andsave_if_smaller_png2jpg($upfile);
+	}
 		if(!$pictmp2){//アップロード画像のファイルサイズが大きすぎる時は削除
 			delete_file_if_sizeexceeds($upfile,$fp,$rp);
 		}
@@ -1326,16 +1319,9 @@ function img_replace(){
 	}	
 	clearstatcache();
 	$filesize=filesize($upfile);
-	if(($filesize > $max_file_size_in_png_format_paint * 1024) || ($is_upload && $filesize > $max_file_size_in_png_format_upload * 1024)){//指定サイズを超えていたら
-		if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
-			clearstatcache();
-			if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
-				rename($im_jpg,$upfile);//JPEGで保存
-				chmod($upfile,0606);
-			} else{//PNGよりファイルサイズが大きくなる時は
-				unlink($im_jpg);//作成したJPEG画像を削除
-			}
-		}
+	if((!$is_upload && ($filesize > ($max_file_size_in_png_format_paint * 1024))) || ($is_upload && ($filesize > ($max_file_size_in_png_format_upload * 1024)))){//指定サイズを超えていたら
+		//pngをjpegに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
+		convert_andsave_if_smaller_png2jpg($upfile);
 	}
 	if($is_upload){//アップロード画像のファイルサイズが大きすぎる時は削除
 		delete_file_if_sizeexceeds($upfile,$fp,$rp);
