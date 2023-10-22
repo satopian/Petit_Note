@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231005;
+$functions_ver=20231022;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1132,6 +1132,16 @@ function get_pch_size($src) {
 		return;
 	}
 	return[(int)$width,(int)$height];
+}
+//アップロード画像のファイルサイズが大きすぎる時は削除
+function delete_file_if_sizeexceeds($upfile,$fp,$rp){
+global $max_kb,$en;
+	if(filesize($upfile) > $max_kb*1024){
+		closeFile($fp);
+		closeFile($rp);
+		safe_unlink($upfile);
+	return error($en? "Upload failed.\nFile size exceeds {$max_kb}kb.":"アップロードに失敗しました。\nファイル容量が{$max_kb}kbを超えています。");
+	}
 }
 
 //使用するペイントアプリの配列化

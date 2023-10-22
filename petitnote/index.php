@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.96.1';
-$petit_lot='lot.20231020';
+$petit_ver='v0.96.5';
+$petit_lot='lot.20231022';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20230825){
+if(!isset($functions_ver)||$functions_ver<20231022){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -496,14 +496,8 @@ function post(){
 				}
 			}
 		}
-		if(!$pictmp2){
-			clearstatcache();
-			if(filesize($upfile) > $max_kb*1024){
-				closeFile($fp);
-				closeFile($rp);
-				safe_unlink($upfile);
-			return error($en? "Upload failed.\nFile size exceeds {$max_kb}kb.":"アップロードに失敗しました。\nファイル容量が{$max_kb}kbを超えています。");
-			}
+		if(!$pictmp2){//アップロード画像のファイルサイズが大きすぎる時は削除
+			delete_file_if_sizeexceeds($upfile,$fp,$rp);
 		}
 
 		list($w,$h)=getimagesize($upfile);
@@ -1148,7 +1142,7 @@ function download_app_dat(){
 function img_replace(){
 
 	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image;
-	global $admin_pass,$max_file_size_in_png_format_upload,$max_file_size_in_png_format_paint;
+	global $admin_pass,$max_file_size_in_png_format_upload,$max_file_size_in_png_format_paint,$max_kb;
 
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
@@ -1326,7 +1320,7 @@ function img_replace(){
 		return error($en?'This operation has failed.':'失敗しました。');
 	} 
 	chmod($upfile,0606);
-	if($is_upload&&($_tool==='upload')){//実体データの縮小
+	if($is_upload){//実体データの縮小
 		$max_px=isset($max_px) ? $max_px : 1024;
 		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
 	}	
@@ -1343,7 +1337,10 @@ function img_replace(){
 			}
 		}
 	}
-		
+	if($is_upload){//アップロード画像のファイルサイズが大きすぎる時は削除
+		delete_file_if_sizeexceeds($upfile,$fp,$rp);
+	}
+
 	$img_type=mime_content_type($upfile);
 
 	$imgext = getImgType($img_type);
