@@ -2,7 +2,7 @@
 //Petit Note 2021-2023 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20230809;
+$misskey_note_ver=20231024;
 
 class misskey_note{
 
@@ -74,7 +74,7 @@ class misskey_note{
 	//投稿済みの画像をMisskeyにNoteするための投稿フォーム
 	public static function misskey_note_edit_form(){
 
-		global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image;
+		global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload;
 
 		check_same_origin();
 
@@ -137,13 +137,6 @@ class misskey_note{
 		$resno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
 		$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
-		foreach($line as $i => $val){
-			$line[$i]=h($val);
-		}
-		list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
-
-		$com=h(str_replace('"\n"',"\n",$com));
-
 		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 		$image_rep=false;
@@ -155,7 +148,7 @@ class misskey_note{
 
 	//Misskeyに投稿するSESSIONデータを作成
 	public static function create_misskey_note_sessiondata(){
-		global $en,$usercode,$root_url,$mark_sensitive_image,$skindir,$petit_lot,$misskey_servers,$boardname;
+		global $en,$usercode,$root_url,$skindir,$petit_lot,$misskey_servers,$boardname;
 		
 		check_csrf_token();
 

@@ -1681,7 +1681,7 @@ function edit_form($id='',$no=''){
 	$resno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 
-	foreach($line as $i => $val){
+	foreach($line as $i => $val){//エスケープ処理
 		$line[$i]=h($val);
 	}
 	list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
