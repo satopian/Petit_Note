@@ -2,7 +2,7 @@
 //Petit Note 2021-2023 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20231024;
+$misskey_note_ver=20231025;
 
 class misskey_note{
 
@@ -67,6 +67,8 @@ class misskey_note{
 
 		$count_r_arr=count($r_arr);
 		$edit_mode = 'editmode';
+
+		$admin_pass= null;
 
 		$templete='before_misskey_note.html';
 		return include __DIR__.'/'.$skindir.$templete;
@@ -140,6 +142,7 @@ class misskey_note{
 		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 		$image_rep=false;
+		$admin_pass= null;
 
 		// HTML出力
 		$templete='misskey_note_edit_form.html';
@@ -198,6 +201,7 @@ class misskey_note{
 		$misskey_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_radio_cookie");
 		$misskey_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_direct_input_cookie");
 
+		$admin_pass= null;
 		// HTML出力
 		$templete='misskey_server_selection.html';
 		return include __DIR__.'/'.$skindir.$templete;
@@ -280,6 +284,7 @@ class misskey_note{
 		if(!$misskey_server_url || !filter_var($misskey_server_url,FILTER_VALIDATE_URL) || !$no){
 			return header('Location: ./');
 		}
+		$admin_pass= null;
 		$templete='misskey_success.html';
 		return include __DIR__.'/'.$skindir.$templete;
 	}

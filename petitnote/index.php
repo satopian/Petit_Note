@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.96.8';
-$petit_lot='lot.20231024';
+$petit_ver='v0.97.1';
+$petit_lot='lot.20231025';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,12 +16,12 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20231023){
+if(!isset($functions_ver)||$functions_ver<20231025){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20230809){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20231025){
 	return die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/save.inc.php');
@@ -90,6 +90,7 @@ $sort_comments_by_newest = isset($sort_comments_by_newest) ? $sort_comments_by_n
 $pmin_w = isset($pmin_w) ? $pmin_w : 300;//幅
 $pmin_h = isset($pmin_h) ? $pmin_h : 300;//高さ
 $pdef_w = isset($pdef_w) ? $pdef_w : 300;//幅
+$step_of_canvas_size = isset($step_of_canvas_size) ? $step_of_canvas_size : 50;
 $pdef_h = isset($pdef_h) ? $pdef_h : 300;//高さ
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
@@ -869,6 +870,8 @@ function paint(){
 
 	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
 
+	$admin_pass= null;
+
 	switch($app){
 		case 'chi'://ChickenPaint
 		
@@ -916,6 +919,7 @@ function paint(){
 			$palettes=$initial_palette.implode('',$arr_pal);
 			$palsize = count($arr_dynp) + 1;
 
+			$admin_pass= null;
 			// HTML出力
 			$templete='paint_neo.html';
 			return include __DIR__.'/'.$skindir.$templete;
@@ -987,7 +991,7 @@ function paintcom(){
 	$adminpost = adminpost_valid();
 	$use_hide_painttime = isset($use_hide_painttime) ? $use_hide_painttime : false;
 	$use_hide_painttime = ($adminpost || $use_hide_painttime);
-
+	$admin_pass= null;
 	// HTML出力
 	$templete='paint_com.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -1075,6 +1079,8 @@ function to_continue(){
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
 	$is_badhost=is_badhost();
+	$admin_pass= null;
+
 	// HTML出力
 	$templete='continue.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -1520,6 +1526,8 @@ function pchview(){
 	}elseif($pchext==='.tgkr'){
 		$templete='tgkr_view.html';
 	}
+	$admin_pass= null;
+
 	return include __DIR__.'/'.$skindir.$templete;
 
 }
@@ -1595,6 +1603,7 @@ function confirmation_before_deletion ($edit_mode=''){
 
 	$count_r_arr=count($r_arr);
 
+	$admin_pass= null;
 	if($edit_mode==='delmode'){
 		$templete='before_del.html';
 		return include __DIR__.'/'.$skindir.$templete;
@@ -1697,6 +1706,7 @@ function edit_form($id='',$no=''){
 	$admin = ($admindel||$adminpost);
 	
 	$image_rep=true;
+	$admin_pass= null;
 	// HTML出力
 	$templete='edit_form.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -2045,6 +2055,7 @@ function set_share_server(){
 	$sns_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"sns_server_radio_cookie");
 	$sns_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"sns_server_direct_input_cookie");
 	
+	$admin_pass= null;
 	//HTML出力
 	$templete='set_share_server.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -2280,6 +2291,7 @@ function search(){
 	$admindel=admindel_valid();
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+	$admin_pass= null;
 	//HTML出力
 	$templete='search.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -2338,6 +2350,7 @@ function catalog(){
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
 
+	$admin_pass= null;
 	// HTML出力
 	$templete='catalog.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -2347,7 +2360,7 @@ function catalog(){
 //通常表示
 function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
-	global $boardname,$max_res,$pdef_w,$pdef_h,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
+	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest;
 
 
@@ -2418,14 +2431,8 @@ function view(){
 	$namec=h((string)filter_input(INPUT_COOKIE,'namec'));
 	$pwdc=h((string)filter_input(INPUT_COOKIE,'pwdc'));
 	$urlc=h((string)filter_input(INPUT_COOKIE,'urlc'));
-	$appc=h((string)filter_input(INPUT_COOKIE,'appc'));
-	$picwc=h((string)filter_input(INPUT_COOKIE,'picwc'));
-	$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
-	//Cookieが存在しない時はデフォルトのキャンバスサイズ
-	$picwc= $picwc ? $picwc : $pdef_w;
-	$pichc= $pichc ? $pichc : $pdef_h;
 
 	//token
 	$token=get_csrf_token();
@@ -2450,14 +2457,15 @@ function view(){
 	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
 	$resmode=false;
 	$resno=0;
-		// HTML出力
+	$admin_pass= null;
+	// HTML出力
 	$templete='main.html';
 	return include __DIR__.'/'.$skindir.$templete;
 }
 //レス画面
 function res (){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
-	global $boardname,$max_res,$pdef_w,$pdef_h,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary;
+	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest;
 
 	aikotoba_required_to_view();
@@ -2610,15 +2618,8 @@ function res (){
 	$namec=h((string)filter_input(INPUT_COOKIE,'namec'));
 	$pwdc=h((string)filter_input(INPUT_COOKIE,'pwdc'));
 	$urlc=h((string)filter_input(INPUT_COOKIE,'urlc'));
-	$appc=h((string)filter_input(INPUT_COOKIE,'appc'));
-	$picwc=h((string)filter_input(INPUT_COOKIE,'picwc'));
-	$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
-
-	//Cookieが存在しない時はデフォルトのキャンバスサイズ
-	$picwc= $picwc ? $picwc : $pdef_w;
-	$pichc= $pichc ? $pichc : $pdef_h;
 
 	$arr_apps=app_to_use();
 	$count_arr_apps=count($arr_apps);
@@ -2635,6 +2636,7 @@ function res (){
 	$resmode=true;
 	$page=0;
 
+	$admin_pass= null;
 	$templete= $res_catalog ? 'res_catalog.html' : 'res.html';
 	return include __DIR__.'/'.$skindir.$templete;
 

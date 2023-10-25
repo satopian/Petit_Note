@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231023;
+$functions_ver=20231025;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -65,6 +65,8 @@ function aikotoba_required_to_view($required_flag=false){
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
+	$admin_pass= null;
+
 	if(!aikotoba_valid()){
 		$templete='aikotoba.html';
 		include __DIR__.'/'.$skindir.$templete;
@@ -94,6 +96,7 @@ function admin_in(){
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
+	$admin_pass= null;
 	// HTML出力
 	$templete='admin_in.html';
 	return include __DIR__.'/'.$skindir.$templete;
@@ -649,6 +652,9 @@ function error($str,$historyback=true){
 		return die(h("error\n{$str}"));
 	}
 	$boardname = ($aikotoba_required_to_view && !aikotoba_valid()) ? '' : $boardname; 
+
+	$admin_pass= null;
+
 	$templete='error.html';
 	include __DIR__.'/'.$skindir.$templete;
 	exit;
