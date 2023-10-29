@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231025;
+$functions_ver=20231028;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -626,6 +626,41 @@ function convert_andsave_if_smaller_png2jpg($upfile){
 		} else{//PNGよりファイルサイズが大きくなる時は
 			unlink($im_jpg);//作成したJPEG画像を削除
 		}
+	}
+}
+
+//Exifをチェックして画像が回転している時と位置情報付いている時は上書き保存
+function check_jpeg_exif($upfile){
+
+	if((exif_imagetype($upfile) !== IMAGETYPE_JPEG ) || !function_exists("imagecreatefromjpeg")){
+		return;
+	}
+	//画像回転の検出
+	$exif = exif_read_data($upfile);
+	$orientation = isset($exif["Orientation"]) ? $exif["Orientation"] : 1;
+	//位置情報はあるか?
+	$gpsdata_exists =(isset($exif['GPSLatitude']) && isset($exif['GPSLongitude'])); 
+
+	if ($orientation !== 1||$gpsdata_exists) {//画像が回転あるいは位置情報が存在する時は
+		$image = imagecreatefromjpeg($upfile);
+
+		switch ($orientation) {
+			case 3:
+				$image = imagerotate($image, 180, 0);
+				break;
+			case 6:
+				$image = imagerotate($image, -90, 0);
+				break;
+			case 8:
+				$image = imagerotate($image, 90, 0);
+				break;
+			default:
+				break;
+		}
+	// 画像を保存
+	imagejpeg($image, $upfile,98);
+	// 画像のメモリを解放
+	imagedestroy($image);
 	}
 }
 

@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.97.2';
-$petit_lot='lot.20231026';
+$petit_ver='v0.98.5';
+$petit_lot='lot.20231028';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20231025){
+if(!isset($functions_ver)||$functions_ver<20231028){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -373,6 +373,11 @@ function post(){
 		$move_uploaded = move_uploaded_file($up_tempfile,$upfile);
 		if(!$move_uploaded){//アップロードは成功した?
 			safe_unlink($up_tempfile);
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
+		//Exifをチェックして画像が回転している時と位置情報付いている時は上書き保存
+		check_jpeg_exif($upfile);
+		if(!is_file($upfile)){
 			return error($en?'This operation has failed.':'失敗しました。');
 		}
 
@@ -1309,6 +1314,11 @@ function img_replace(){
 			safe_unlink($up_tempfile);
 			return error($en?'This operation has failed.':'失敗しました。');
 		}
+		//Exifをチェックして画像が回転している時と位置情報付いている時は上書き保存
+		check_jpeg_exif($upfile);
+		if(!is_file($upfile)){
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
 	}
 	if(!$is_upload && $repfind && is_file($tempfile) && ($_tool !== 'upload')){
 		copy($tempfile, $upfile);
@@ -1510,7 +1520,7 @@ function pchview(){
 
 	$pchext=basename($pchext);
 
-	$view_replay = ($pchext==='.pch'||$pchext==='.tgkr') && check_pch_ext(IMG_DIR . $time);
+	$view_replay = in_array($pchext,['.pch','.tgkr']) && check_pch_ext(IMG_DIR . $time);
 	if(!$view_replay||!is_file(IMG_DIR.$imagefile)){
 		return error('ファイルがありません。');
 	}
