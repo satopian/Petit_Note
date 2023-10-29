@@ -375,7 +375,7 @@ function post(){
 			safe_unlink($up_tempfile);
 			return error($en?'This operation has failed.':'失敗しました。');
 		}
-		//Exifをチェックして画像が回転している時と位置情報付いている時は上書き保存
+		//Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
 		check_jpeg_exif($upfile);
 		if(!is_file($upfile)){
 			return error($en?'This operation has failed.':'失敗しました。');
@@ -1314,7 +1314,7 @@ function img_replace(){
 			safe_unlink($up_tempfile);
 			return error($en?'This operation has failed.':'失敗しました。');
 		}
-		//Exifをチェックして画像が回転している時と位置情報付いている時は上書き保存
+		//Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
 		check_jpeg_exif($upfile);
 		if(!is_file($upfile)){
 			return error($en?'This operation has failed.':'失敗しました。');

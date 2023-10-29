@@ -629,7 +629,7 @@ function convert_andsave_if_smaller_png2jpg($upfile){
 	}
 }
 
-//Exifをチェックして画像が回転している時と位置情報付いている時は上書き保存
+//Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
 function check_jpeg_exif($upfile){
 
 	if((exif_imagetype($upfile) !== IMAGETYPE_JPEG ) || !function_exists("imagecreatefromjpeg")){
