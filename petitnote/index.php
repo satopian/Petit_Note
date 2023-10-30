@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.98.6';
+$petit_ver='v0.98.7';
 $petit_lot='lot.20231030';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -362,8 +362,8 @@ function post(){
 			safe_unlink($up_tempfile);
 			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
 		}
+		$img_type=mime_content_type($up_tempfile);
 
-		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
 		if (!getImgType($img_type)) {//対応フォーマットではなかった時
 			safe_unlink($up_tempfile);
 			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
@@ -1183,7 +1183,8 @@ function img_replace(){
 	$tool = '';
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 
-		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
+		$img_type=mime_content_type($up_tempfile);
+
 		if (!getImgType($img_type)) {//対応フォーマットではなかった時
 			safe_unlink($up_tempfile);
 			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
