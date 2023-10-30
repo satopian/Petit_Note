@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.98.5';
-$petit_lot='lot.20231028';
+$petit_ver='v0.98.6';
+$petit_lot='lot.20231030';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -364,8 +364,7 @@ function post(){
 		}
 
 		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
-
-		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+		if (!getImgType($img_type)) {//対応フォーマットではなかった時
 			safe_unlink($up_tempfile);
 			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 		}
@@ -1185,8 +1184,7 @@ function img_replace(){
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 
 		$img_type = isset($_FILES['imgfile']['type']) ? $_FILES['imgfile']['type'] : '';
-
-		if (!in_array($img_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])) {
+		if (!getImgType($img_type)) {//対応フォーマットではなかった時
 			safe_unlink($up_tempfile);
 			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 		}
