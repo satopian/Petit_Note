@@ -7,7 +7,7 @@
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/functions.php');
 
-$petit_lot='20230807';
+$petit_lot='20231031';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
 ? explode( ',', $http_langs )[0] : '';
@@ -85,8 +85,7 @@ class connect_misskey_api{
 		if(!is_file($imagePath)){
 			return error($en ? "Image does not exist." : "画像がありません。" ,false);
 		};
-		$img_type = mime_content_type($imagePath);
-		if (!in_array($img_type, ["image/gif", "image/jpeg", "image/png","image/webp"])) {
+		if (!get_image_type($imagePath)) {
 			return error($en? "This file is an unsupported format.":"対応していないファイル形式です。" ,false);
 		}
 
