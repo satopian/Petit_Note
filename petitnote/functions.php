@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231028;
+$functions_ver=20231031;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -541,8 +541,10 @@ function auto_link($str){
 	return $str;
 }
 
-//mimeから拡張子
-function getImgType ($img_type) {
+//mime typeを取得して拡張子を返す
+function get_image_type ($img_file) {
+
+	$img_type = mime_content_type($img_file);
 
 	switch ($img_type) {
 		case "image/gif" : return ".gif";
@@ -551,7 +553,6 @@ function getImgType ($img_type) {
 		case "image/webp" : return ".webp";
 		default : return '';
 	}
-	
 }
 //ファイルがあれば削除
 function safe_unlink ($path) {

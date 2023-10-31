@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.98.7';
-$petit_lot='lot.20231030';
+$petit_ver='v0.98.8';
+$petit_lot='lot.20231031';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20231028){
+if(!isset($functions_ver)||$functions_ver<20231031){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -362,9 +362,7 @@ function post(){
 			safe_unlink($up_tempfile);
 			return error($en? 'You are not logged in in diary mode.':'日記にログインしていません。');
 		}
-		$img_type=mime_content_type($up_tempfile);
-
-		if (!getImgType($img_type)) {//対応フォーマットではなかった時
+		if (!get_image_type($up_tempfile)) {//対応フォーマットではなかった時
 			safe_unlink($up_tempfile);
 			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 		}
@@ -492,17 +490,16 @@ function post(){
 		}	
 		clearstatcache();
 		$filesize=filesize($upfile);
-		if(($pictmp2 && ($filesize > ($max_file_size_in_png_format_paint * 1024))) || ($is_upload && ($filesize > ($max_file_size_in_png_format_upload * 1024)))){//指定サイズを超えていたら
+		if(($pictmp2 && ($filesize > ($max_file_size_in_png_format_paint * 1024))) ||
+		 ($is_upload && ($filesize > ($max_file_size_in_png_format_upload * 1024)))){//指定サイズを超えていたら
 			//pngをjpegに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
 			convert_andsave_if_smaller_png2jpg($upfile);
-	}
+		}
 		if(!$pictmp2){//アップロード画像のファイルサイズが大きすぎる時は削除
 			delete_file_if_sizeexceeds($upfile,$fp,$rp);
 		}
 
-		list($w,$h)=getimagesize($upfile);
-		$_img_type=mime_content_type($upfile);
-		$ext=getImgType ($_img_type);
+		$ext=get_image_type($upfile);
 		if (!$ext) {
 			closeFile($fp);
 			closeFile($rp);
@@ -546,6 +543,8 @@ function post(){
 	}
 	$pchext= ($pchext==='.pch' && $hide_animation) ? 'hide_animation' : $pchext; 
 	$pchext= ($pchext==='.tgkr' && $hide_animation) ? 'hide_tgkr' : $pchext; 
+
+	list($w,$h)=getimagesize(IMG_DIR.$imgfile);
 
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
@@ -1183,9 +1182,7 @@ function img_replace(){
 	$tool = '';
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 
-		$img_type=mime_content_type($up_tempfile);
-
-		if (!getImgType($img_type)) {//対応フォーマットではなかった時
+		if (!get_image_type($up_tempfile)) {//対応フォーマットではなかった時
 			safe_unlink($up_tempfile);
 			return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 		}
@@ -1343,9 +1340,7 @@ function img_replace(){
 		delete_file_if_sizeexceeds($upfile,$fp,$rp);
 	}
 
-	$img_type=mime_content_type($upfile);
-
-	$imgext = getImgType($img_type);
+	$imgext = get_image_type($upfile);
 
 	if (!$imgext) {
 		closeFile($fp);
