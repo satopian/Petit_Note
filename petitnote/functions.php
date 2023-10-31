@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231031;
+$functions_ver=20231101;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -632,10 +632,14 @@ function convert_andsave_if_smaller_png2jpg($upfile){
 
 //Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
 function check_jpeg_exif($upfile){
+global $max_px;
 
 	if((exif_imagetype($upfile) !== IMAGETYPE_JPEG ) || !function_exists("imagecreatefromjpeg")){
 		return;
 	}
+
+	list($w,$h) = getimagesize($upfile);
+
 	//画像回転の検出
 	$exif = exif_read_data($upfile);
 	$orientation = isset($exif["Orientation"]) ? $exif["Orientation"] : 1;
@@ -658,10 +662,27 @@ function check_jpeg_exif($upfile){
 			default:
 				break;
 		}
-	// 画像を保存
-	imagejpeg($image, $upfile,98);
-	// 画像のメモリを解放
-	imagedestroy($image);
+		if ($orientation === 6 || $orientation === 8) {
+			// 90度または270度回転の場合、幅と高さを入れ替える
+			list($w, $h) = [$h, $w];
+		}
+		$w_ratio = $max_px / $w;
+		$h_ratio = $max_px / $h;
+		$ratio = min($w_ratio, $h_ratio);
+		$out_w = ceil($w * $ratio);//端数の切り上げ
+		$out_h = ceil($h * $ratio);
+		$im_out = $image;//縮小しない時
+		//JPEG形式で何度も保存しなおすのを回避するため、
+		//指定範囲内にリサイズしておく。
+		if(function_exists("ImageCreateTrueColor") && function_exists("ImageCopyResampled")){
+			$im_out = ImageCreateTrueColor($out_w, $out_h);
+			ImageCopyResampled($im_out, $image, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
+		}
+		// 画像を保存
+		imagejpeg($im_out, $upfile,98);
+		// 画像のメモリを解放
+		imagedestroy($image);
+		imagedestroy($im_out);
 	}
 }
 
