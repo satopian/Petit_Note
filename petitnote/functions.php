@@ -638,52 +638,55 @@ global $max_px;
 		return;
 	}
 
-	list($w,$h) = getimagesize($upfile);
-
 	//画像回転の検出
 	$exif = exif_read_data($upfile);
 	$orientation = isset($exif["Orientation"]) ? $exif["Orientation"] : 1;
 	//位置情報はあるか?
 	$gpsdata_exists =(isset($exif['GPSLatitude']) && isset($exif['GPSLongitude'])); 
 
-	if ($orientation !== 1||$gpsdata_exists) {//画像が回転あるいは位置情報が存在する時は
-		$im_in = imagecreatefromjpeg($upfile);
-
-		switch ($orientation) {
-			case 3:
-				$im_in = imagerotate($im_in, 180, 0);
-				break;
-			case 6:
-				$im_in = imagerotate($im_in, -90, 0);
-				break;
-			case 8:
-				$im_in = imagerotate($im_in, 90, 0);
-				break;
-			default:
-				break;
-		}
-		if ($orientation === 6 || $orientation === 8) {
-			// 90度または270度回転の場合、幅と高さを入れ替える
-			list($w, $h) = [$h, $w];
-		}
-		$w_ratio = $max_px / $w;
-		$h_ratio = $max_px / $h;
-		$ratio = min($w_ratio, $h_ratio);
-		$out_w = ceil($w * $ratio);//端数の切り上げ
-		$out_h = ceil($h * $ratio);
-		$im_out = $im_in;//縮小しない時
-		//JPEG形式で何度も保存しなおすのを回避するため、
-		//指定範囲内にリサイズしておく。
-		if(function_exists("ImageCreateTrueColor") && function_exists("ImageCopyResampled")){
-			$im_out = ImageCreateTrueColor($out_w, $out_h);
-			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
-		}
-		// 画像を保存
-		imagejpeg($im_out, $upfile,98);
-		// 画像のメモリを解放
-		imagedestroy($im_in);
-		imagedestroy($im_out);
+	if ($orientation === 1 && !$gpsdata_exists) {
+		//画像が回転していない、位置情報も存在しない
+		return;
 	}
+
+	list($w,$h) = getimagesize($upfile);
+
+	$im_in = imagecreatefromjpeg($upfile);
+
+	switch ($orientation) {
+		case 3:
+			$im_in = imagerotate($im_in, 180, 0);
+			break;
+		case 6:
+			$im_in = imagerotate($im_in, -90, 0);
+			break;
+		case 8:
+			$im_in = imagerotate($im_in, 90, 0);
+			break;
+		default:
+			break;
+	}
+	if ($orientation === 6 || $orientation === 8) {
+		// 90度または270度回転の場合、幅と高さを入れ替える
+		list($w, $h) = [$h, $w];
+	}
+	$w_ratio = $max_px / $w;
+	$h_ratio = $max_px / $h;
+	$ratio = min($w_ratio, $h_ratio);
+	$out_w = ceil($w * $ratio);//端数の切り上げ
+	$out_h = ceil($h * $ratio);
+	$im_out = $im_in;//縮小しない時
+	//JPEG形式で何度も保存しなおすのを回避するため、
+	//指定範囲内にリサイズしておく。
+	if(function_exists("ImageCreateTrueColor") && function_exists("ImageCopyResampled")){
+		$im_out = ImageCreateTrueColor($out_w, $out_h);
+		ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
+	}
+	// 画像を保存
+	imagejpeg($im_out, $upfile,98);
+	// 画像のメモリを解放
+	imagedestroy($im_in);
+	imagedestroy($im_out);
 }
 
 //アップロード画像のファイルサイズが大きすぎる時は削除
