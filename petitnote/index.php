@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.98.8';
-$petit_lot='lot.20231031';
+$petit_ver='v0.98.10';
+$petit_lot='lot.20231101';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20231031){
+if(!isset($functions_ver)||$functions_ver<20231101){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -92,6 +92,7 @@ $pmin_h = isset($pmin_h) ? $pmin_h : 300;//高さ
 $pdef_w = isset($pdef_w) ? $pdef_w : 300;//幅
 $pdef_h = isset($pdef_h) ? $pdef_h : 300;//高さ
 $step_of_canvas_size = isset($step_of_canvas_size) ? $step_of_canvas_size : 50;
+$max_px=isset($max_px) ? $max_px : 1024;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -485,7 +486,6 @@ function post(){
 	if($is_file_upfile){
 
 		if(!$pictmp2){//実体データの縮小
-			$max_px=isset($max_px) ? $max_px : 1024;
 			thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
 		}	
 		clearstatcache();
@@ -543,12 +543,12 @@ function post(){
 	}
 	$pchext= ($pchext==='.pch' && $hide_animation) ? 'hide_animation' : $pchext; 
 	$pchext= ($pchext==='.tgkr' && $hide_animation) ? 'hide_tgkr' : $pchext; 
-
-	list($w,$h)=getimagesize(IMG_DIR.$imgfile);
-
+	
 	$thumbnail='';
 	if($imgfile && is_file(IMG_DIR.$imgfile)){
 		
+		list($w,$h)=getimagesize(IMG_DIR.$imgfile);
+
 		$max_w = $resto ? $res_max_w : $max_w; 
 		$max_h = $resto ? $res_max_h : $max_h; 
 		//縮小表示
@@ -799,7 +799,6 @@ function paint(){
 				$img_klecks = $pchup;
 			} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
 				$file_name=pathinfo($pchup,PATHINFO_FILENAME);
-				$max_px=isset($max_px) ? $max_px : 1024;
 				thumb(TEMP_DIR,$basename_pchup,$time,$max_px,$max_px,['toolarge'=>1]);
 				list($picw,$pich) = getimagesize($pchup);
 				$imgfile = $pchup;
@@ -1327,7 +1326,6 @@ function img_replace(){
 	} 
 	chmod($upfile,0606);
 	if($is_upload){//実体データの縮小
-		$max_px=isset($max_px) ? $max_px : 1024;
 		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
 	}	
 	clearstatcache();

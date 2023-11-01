@@ -647,17 +647,17 @@ global $max_px;
 	$gpsdata_exists =(isset($exif['GPSLatitude']) && isset($exif['GPSLongitude'])); 
 
 	if ($orientation !== 1||$gpsdata_exists) {//画像が回転あるいは位置情報が存在する時は
-		$image = imagecreatefromjpeg($upfile);
+		$im_in = imagecreatefromjpeg($upfile);
 
 		switch ($orientation) {
 			case 3:
-				$image = imagerotate($image, 180, 0);
+				$im_in = imagerotate($im_in, 180, 0);
 				break;
 			case 6:
-				$image = imagerotate($image, -90, 0);
+				$im_in = imagerotate($im_in, -90, 0);
 				break;
 			case 8:
-				$image = imagerotate($image, 90, 0);
+				$im_in = imagerotate($im_in, 90, 0);
 				break;
 			default:
 				break;
@@ -671,17 +671,17 @@ global $max_px;
 		$ratio = min($w_ratio, $h_ratio);
 		$out_w = ceil($w * $ratio);//端数の切り上げ
 		$out_h = ceil($h * $ratio);
-		$im_out = $image;//縮小しない時
+		$im_out = $im_in;//縮小しない時
 		//JPEG形式で何度も保存しなおすのを回避するため、
 		//指定範囲内にリサイズしておく。
 		if(function_exists("ImageCreateTrueColor") && function_exists("ImageCopyResampled")){
 			$im_out = ImageCreateTrueColor($out_w, $out_h);
-			ImageCopyResampled($im_out, $image, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
+			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
 		}
 		// 画像を保存
 		imagejpeg($im_out, $upfile,98);
 		// 画像のメモリを解放
-		imagedestroy($image);
+		imagedestroy($im_in);
 		imagedestroy($im_out);
 	}
 }
