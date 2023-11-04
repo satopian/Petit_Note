@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.98.12';
-$petit_lot='lot.20231103';
+$petit_ver='v0.99.0';
+$petit_lot='lot.20231104';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2361,7 +2361,7 @@ function catalog(){
 
 //通常表示
 function view(){
-	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$use_top_form,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
+	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest;
 
@@ -2445,6 +2445,7 @@ function view(){
 	$select_app=($count_arr_apps>1);
 	$app_to_use=($count_arr_apps===1) ? $arr_apps[0] : ''; 
 
+	$use_top_form = true;//互換性のために常にtrue;
 	//ページング
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
 	//prev next 
