@@ -149,6 +149,12 @@ $use_klecs= true;
 // $allow_comments_url = true; 
 $allow_comments_url = false; 
 
+//URL入力欄を使用する
+// する: true しない: false
+
+$use_url_input_field = true;
+// $use_url_input_field = false;
+
 // URLを自動リンクする
 // マークダウン記法も使えます。[リンクの文字](https://example.com/)
 // する: true しない: false

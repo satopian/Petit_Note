@@ -46,12 +46,14 @@
 			<td><input type="text" name="sub" value="<?=h($sub)?>" class="input_txt"></td>
 		</tr>
 	<?php endif;?>
-	<tr>
-		<td>URL</td>
-		<td>:</td>
-		<td><input type="text" name="url" value="<?=h($url)?>" autocomplete="off" class="input_txt"></td>
-	</tr>
-	</table>
+	<?php if($admin||$use_url_input_field):?>
+		<tr>
+			<td>URL</td>
+			<td>:</td>
+			<td><input type="text" name="url" value="<?=h($url)?>" autocomplete="off" class="input_txt"></td>
+		</tr>
+	<?php endif;?>
+</table>
 <textarea name="com" class="post_com"><?=h($com)?></textarea><br>
 <input type="hidden" name="pwd" value="<?=h($pwd)?>">
 <input type="hidden" name="id" value="<?=h($time)?>">
