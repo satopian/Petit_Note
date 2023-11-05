@@ -103,7 +103,7 @@ Size:
 </form>
 <?php endif;?>
 <!-- フォーム入力欄 -->
-	<?php if(($use_top_form && ($use_upload||$allow_comments_only))||$adminpost):?>
+	<?php if(($use_upload||$allow_comments_only)||$adminpost):?>
 	<form action="./" method="POST" enctype="multipart/form-data" class="postform" id="res_form" onsubmit="return res_form_submit(event)">
 	<div id="error_message"></div>
 	<table>
