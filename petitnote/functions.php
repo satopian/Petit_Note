@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231102;
+$functions_ver=20231105;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -74,6 +74,13 @@ function aikotoba_required_to_view($required_flag=false){
 	}
 }
 
+//管理者パスワードを確認
+function is_adminpass($pwd){
+	global $admin_pass,$second_pass;
+	$pwd=(string)$pwd;
+	return ($admin_pass && $pwd && $second_pass !== $admin_pass && $pwd === $admin_pass);
+}
+
 function admin_in(){
 
 	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
@@ -112,12 +119,12 @@ function check_aikotoba(){
 }
 //管理者投稿モード
 function adminpost(){
-	global $admin_pass,$second_pass,$en;
+	global $second_pass,$en;
 
 	check_same_origin();
 	check_password_input_error_count();
 	session_sta();
-	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==(string)filter_input(INPUT_POST,'adminpass')){
+	if(!is_adminpass(filter_input(INPUT_POST,'adminpass'))){
 		if(isset($_SESSION['adminpost'])){
 			unset($_SESSION['adminpost']);
 		} 
@@ -133,13 +140,13 @@ function adminpost(){
 
 //管理者削除モード
 function admin_del(){
-	global $admin_pass,$second_pass,$en;
+	global $second_pass,$en;
 
 	check_same_origin();
 	check_password_input_error_count();
 
 	session_sta();
-	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==(string)filter_input(INPUT_POST,'adminpass')){
+	if(!is_adminpass(filter_input(INPUT_POST,'adminpass'))){
 		if(isset($_SESSION['admindel'])){
 			unset($_SESSION['admindel']);
 		} 
@@ -781,7 +788,13 @@ function check_open_no($no){
 }
 
 function getId ($userip) {
-	return substr(hash('sha256', $userip, false),-8);
+
+	session_sta();
+	return 
+	(isset($_SESSION['userid'])&&$_SESSION['userid']) ?
+	$_SESSION['userid'] :
+	substr(hash('sha256', $userip, false),-8);
+
 }
 
 //Asyncリクエストの時は処理を中断
@@ -827,7 +840,7 @@ function deltemp(){
 
 // NGワードがあれば拒絶
 function Reject_if_NGword_exists_in_the_post(){
-	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$admin_pass,$max_com,$en;
+	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$max_com,$en;
 
 	$admin =(adminpost_valid()||admindel_valid());
 
@@ -837,7 +850,7 @@ function Reject_if_NGword_exists_in_the_post(){
 	$com = t((string)filter_input(INPUT_POST,'com'));
 	$pwd = t((string)filter_input(INPUT_POST,'pwd'));
 
-	if($admin || ($admin_pass && $pwd === $admin_pass)){
+	if($admin || is_adminpass($pwd)){
 		return;
 	}
 	if(is_badhost()){
@@ -1242,7 +1255,7 @@ function app_to_use(){
 
 //パスワードを5回連続して間違えた時は拒絶
 function check_password_input_error_count(){
-	global $admin_pass,$second_pass,$en,$check_password_input_error_count;
+	global $second_pass,$en,$check_password_input_error_count;
 	if(!$check_password_input_error_count){
 		return;
 	}
@@ -1252,7 +1265,8 @@ function check_password_input_error_count(){
 	if(count($arr_err)>=5){
 		error($en?'Rejected.':'拒絶されました。');
 	}
-	if(!$admin_pass || !$second_pass || $admin_pass === $second_pass || $admin_pass!==(string)filter_input(INPUT_POST,'adminpass')){
+	if(!is_adminpass(filter_input(INPUT_POST,'adminpass'))){
+
 		$errlog=$userip."\n";
 		file_put_contents(__DIR__.'/template/errorlog/error.log',$errlog,FILE_APPEND);
 		chmod(__DIR__.'/template/errorlog/error.log',0600);

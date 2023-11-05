@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.99.1';
+$petit_ver='v0.99.3';
 $petit_lot='lot.20231105';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20231102){
+if(!isset($functions_ver)||$functions_ver<20231105){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -195,7 +195,7 @@ switch($mode){
 //投稿処理
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$use_thumb,$mark_sensitive_image;
-	global $allow_comments_only,$res_max_w,$res_max_h,$admin_pass,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
+	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 	global $usercode,$max_file_size_in_png_format_upload,$max_file_size_in_png_format_paint,$use_url_input_field;
 
 	if($use_aikotoba){
@@ -239,7 +239,7 @@ function post(){
 	$tool='';
 
 	$time=create_post_time();//ファイル名が重複しない投稿時刻を作成
-	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
+	$adminpost=(adminpost_valid()|| is_adminpass($pwd));
 
 	//お絵かきアップロード
 	$pictmp = (int)filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
@@ -416,8 +416,7 @@ function post(){
 
 
 	//ユーザーid
-	$userid=(isset($_SESSION['userid'])&&$_SESSION['userid'])
-	? $_SESSION['userid'] : getId($userip);
+	$userid=getId($userip);//sessionも確認
 	$userid=t($userid);//タブ除去
 	$_SESSION['userid'] = $userid;
 
@@ -1145,7 +1144,7 @@ function download_app_dat(){
 function img_replace(){
 
 	global $use_thumb,$max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image;
-	global $admin_pass,$max_file_size_in_png_format_upload,$max_file_size_in_png_format_paint,$max_kb;
+	global $max_file_size_in_png_format_upload,$max_file_size_in_png_format_paint,$max_kb;
 
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
@@ -1166,7 +1165,7 @@ function img_replace(){
 
 	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
-	$adminpost=(adminpost_valid()||($pwd && $pwd === $admin_pass));
+	$adminpost=(adminpost_valid()|| is_adminpass($pwd));
 	$admindel=admindel_valid();
 
 	//アップロード画像の差し換え
@@ -1704,7 +1703,7 @@ function edit_form($id='',$no=''){
 
 	$hide_thumb_checkd = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 
-	$admin = ($admindel||$adminpost);
+	$admin = ($admindel||$adminpost||is_adminpass($pwd));
 	
 	$image_rep=true;
 	$admin_pass= null;
@@ -1716,7 +1715,7 @@ function edit_form($id='',$no=''){
 
 //編集
 function edit(){
-	global $name_input_required,$max_com,$en,$mark_sensitive_image,$admin_pass,$use_url_input_field;
+	global $name_input_required,$max_com,$en,$mark_sensitive_image,$use_url_input_field;
 
 	check_csrf_token();
 
@@ -1737,9 +1736,10 @@ function edit(){
 	$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
 	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
-	$url= (adminpost_valid() || $use_url_input_field) ? $url : '';
 
-	$admindel=(admindel_valid()||($pwd && $pwd === $admin_pass));
+	$admindel=(admindel_valid() || is_adminpass($pwd));
+
+	$url= (adminpost_valid()|| $admindel || $use_url_input_field) ? $url : '';
 
 	$userdel=userdel_valid();
 	if(!($admindel||($userdel&&$pwd))){
