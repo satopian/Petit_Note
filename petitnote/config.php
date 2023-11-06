@@ -150,6 +150,7 @@ $use_klecs= true;
 $allow_comments_url = false; 
 
 //URL入力欄を使用する
+//管理者は設定に関わらずURL入力欄を使用できます
 // する: true しない: false
 
 $use_url_input_field = true;
