@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231105;
+$functions_ver=20231106;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -659,7 +659,9 @@ global $max_px;
 	list($w,$h) = getimagesize($upfile);
 
 	$im_in = imagecreatefromjpeg($upfile);
-
+	if(!$im_in){
+		return;
+	}
 	switch ($orientation) {
 		case 3:
 			$im_in = imagerotate($im_in, 180, 0);
@@ -672,6 +674,9 @@ global $max_px;
 			break;
 		default:
 			break;
+	}
+	if(!$im_in){
+		return;
 	}
 	if ($orientation === 6 || $orientation === 8) {
 		// 90度または270度回転の場合、幅と高さを入れ替える
