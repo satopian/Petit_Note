@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.99.7';
+$petit_ver='v0.99.8';
 $petit_lot='lot.20231111';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -442,10 +442,11 @@ function post(){
 
 	$chk_com=[];
 	$chk_images=[];
+	$m2time=microtime2time($time);
 	foreach($chk_lines as $chk_line){
 		$chk_ex_line=explode("\t",trim($chk_line));
 		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
-		if(microtime2time($time)===microtime2time($time_)){//投稿時刻の重複回避
+		if($m2time===microtime2time($time_)){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
@@ -1352,17 +1353,18 @@ function img_replace(){
 	//$n行分の全体ログをもとにスレッドのログファイルを開いて配列を作成
 	$chk_lines = create_chk_lins($chk_log_arr,$no);//取得済みの$noの配列を除外
 	$chk_images=array_merge($chk_lines,$r_arr);
+	$m2time=microtime2time($time);
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
 		
-		if($is_upload && (microtime2time($time) === microtime2time($chk_time))){//投稿時刻の重複回避
+		if($is_upload && ($m2time === microtime2time($chk_time))){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
 		if(!$is_upload && ((string)$time === (string)$chk_time)){
-			$time=(string)(microtime2time($time)+1).(string)substr($time,-6);
+			$time=(string)($m2time+1).(string)substr($time,-6);
 		}
 		if(!$admindel && $is_upload && ($chk_log_md5 && ($chk_log_md5 === $img_md5))){
 			safe_unlink($upfile);
