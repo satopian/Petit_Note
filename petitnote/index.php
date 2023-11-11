@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.99.8';
-$petit_lot='lot.20231111';
+$petit_ver='v1.00.0';
+$petit_lot='lot.20231112';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -452,7 +452,7 @@ function post(){
 			closeFile($rp);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
-		if($host === $host_){
+		if($userid === $userid_){
 			$chk_com[$time_]=$chk_ex_line;//コメント
 		}
 		if($is_file_upfile && $imgfile_){
@@ -1815,7 +1815,7 @@ function edit(){
 	foreach($chk_lines as $line){
 		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",trim($line));
 
-		if(!$admindel && ($host===$_host_) && ($id!==$_time_) && ($com && ($com!==$_com) && ($com === $_com_))){
+		if(!$admindel && ($userid===$_userid_) && ($id!==$_time_) && ($com && ($com!==$_com) && ($com === $_com_))){
 			closeFile($fp);
 			closeFile($rp);
 			return error($en?'Post once by this comment.':'同じコメントがありました。');
@@ -1832,8 +1832,9 @@ function edit(){
 	if(in_array($pchext,['.tgkr','hide_tgkr'])){
 		$pchext= $hide_animation ? 'hide_tgkr' : '.tgkr'; 
 	}
-
-	$host=($admindel && ($sub === $_sub) && ($url === $_url) && ($com === $_com)) ? $_host : $host;//管理者による閲覧注意への変更時は投稿者のホスト名を変更しない
+	$is_admindel = ($admindel && ($sub === $_sub) && ($url === $_url) && ($com === $_com));
+	$host = $is_admindel ? $_host : $host;//管理者による閲覧注意への変更時は投稿者のホスト名を変更しない
+	$userid = $is_admindel ? $_userid : $userid;//管理者による閲覧注意への変更時は投稿者のidを変更しない
 
 	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 	
