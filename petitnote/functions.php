@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231107;
+$functions_ver=20231111;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -311,9 +311,8 @@ function create_res($line,$options=[]){
 	$thumbnail = ($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail') ? $time.'s.jpg' : false; 
 	$link_thumbnail= ($thumbnail || $hide_thumbnail); 
 	$painttime = !$isset_catalog ? calcPtime($paintsec) : false;  
-	$_time=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
-	$first_posted_time=(strlen($first_posted_time)>15) ? substr($first_posted_time,0,-6) : substr($first_posted_time,0,-3);
-	$datetime = $do_not_change_posts_time ? $first_posted_time : $_time;
+	
+	$datetime = $do_not_change_posts_time ? microtime2time($first_posted_time) : microtime2time($time);
 	$date=$datetime ? date('y/m/d',(int)$datetime):'';
 
 	$check_elapsed_days = !$isset_catalog ? check_elapsed_days($time) : true;//念のためtrueに
@@ -1149,7 +1148,7 @@ function get_gd_ver(){
 // 古いスレッドへの投稿を許可するかどうか
 function check_elapsed_days ($postedtime) {
 	global $elapsed_days;
-	$postedtime=(strlen($postedtime)>15) ? substr($postedtime,0,-6) : substr($postedtime,0,-3);
+	$postedtime=microtime2time($postedtime);//マイクロ秒を秒に戻す
 	return $elapsed_days //古いスレッドのフォームを閉じる日数が設定されていたら
 		? ((time() - (int)$postedtime) <= ((int)$elapsed_days * 86400)) // 指定日数以内なら許可
 		: true; // フォームを閉じる日数が未設定なら許可
@@ -1160,12 +1159,19 @@ function time_left_to_close_the_thread ($postedtime) {
 	if(!$elapsed_days){
 		return false;
 	}
-	$postedtime=(strlen($postedtime)>15) ? substr($postedtime,0,-6) : substr($postedtime,0,-3);
+	$postedtime=microtime2time($postedtime);//マイクロ秒を秒に戻す
 	$timeleft=((int)$elapsed_days * 86400)-(time() - (int)$postedtime);
 	//残り時間が60日を切ったら表示
 	return ($timeleft<(60 * 86400)) ? 
 	calc_remaining_time_to_close_thread($timeleft) : false;
 }	
+// マイクロ秒を秒に戻す
+function microtime2time($microtime){
+	$microtime=(string)$microtime;
+	$time=(strlen($microtime)>15) ? substr($microtime,0,-6) : substr($microtime,0,-3);
+	return $time;
+}
+
 //POSTされた値をログファイルに格納する書式にフォーマット
 function create_formatted_text_from_post($name,$sub,$url,$com){
 	global $en,$name_input_required,$subject_input_required;

@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v0.99.6';
-$petit_lot='lot.20231107';
+$petit_ver='v0.99.7';
+$petit_lot='lot.20231111';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20231107){
+if(!isset($functions_ver)||$functions_ver<20231111){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -445,8 +445,7 @@ function post(){
 	foreach($chk_lines as $chk_line){
 		$chk_ex_line=explode("\t",trim($chk_line));
 		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
-		$chk_time=(strlen($time_)>15) ? substr($time_,0,-6) : substr($time_,0,-3);
-		if((string)substr($time,0,-6)===(string)$chk_time){//投稿時刻の重複回避
+		if(microtime2time($time)===microtime2time($time_)){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
@@ -474,8 +473,7 @@ function post(){
 		}
 
 		// 画像アップロードと画像なしそれぞれの待機時間
-		$_chk_time_=(strlen($_time_)>15) ? substr($_time_,0,-6) : substr($_time_,0,-3);
-		$interval=(int)time()-(int)$_chk_time_;
+		$interval=(int)time()-(int)microtime2time($_time_);
 		if($interval>=0 && (($upfile && $interval<30)||(!$upfile && $interval<20))){//待機時間がマイナスの時は通す
 			closeFile($fp);
 			closeFile($rp);
@@ -1356,15 +1354,15 @@ function img_replace(){
 	$chk_images=array_merge($chk_lines,$r_arr);
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
-		$_chk_time=(strlen($chk_time)>15) ? substr($chk_time,0,-6) : substr($chk_time,0,-3);//秒単位に戻す
-		if($is_upload && ((string)substr($time,0,-6) === (string)$_chk_time)){//投稿時刻の重複回避
+		
+		if($is_upload && (microtime2time($time) === microtime2time($chk_time))){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
 		if(!$is_upload && ((string)$time === (string)$chk_time)){
-			$time=(string)(substr($time,0,-6)+1).(string)substr($time,-6);
+			$time=(string)(microtime2time($time)+1).(string)substr($time,-6);
 		}
 		if(!$admindel && $is_upload && ($chk_log_md5 && ($chk_log_md5 === $img_md5))){
 			safe_unlink($upfile);
@@ -2283,7 +2281,7 @@ function search(){
 	if(!empty($arr)){
 
 		$time= key($arr);
-		$postedtime=(strlen($time)>15) ? substr($time,0,-6) : substr($time,0,-3);
+		$postedtime=microtime2time($time);
 		$lastmodified=date("Y/m/d G:i", (int)$postedtime);
 	}
 
