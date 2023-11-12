@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.00.1';
+$petit_ver='v1.00.2';
 $petit_lot='lot.20231112';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1309,9 +1309,6 @@ function img_replace(){
 		}
 		//Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
 		check_jpeg_exif($upfile);
-		if(!is_file($upfile)){
-			return error($en?'This operation has failed.':'失敗しました。');
-		}
 	}
 	if(!$is_upload && $repfind && is_file($tempfile) && ($_tool !== 'upload')){
 		copy($tempfile, $upfile);
