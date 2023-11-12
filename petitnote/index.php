@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.00.0';
+$petit_ver='v1.00.1';
 $petit_lot='lot.20231112';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1832,9 +1832,9 @@ function edit(){
 	if(in_array($pchext,['.tgkr','hide_tgkr'])){
 		$pchext= $hide_animation ? 'hide_tgkr' : '.tgkr'; 
 	}
-	$is_admindel = ($admindel && ($sub === $_sub) && ($url === $_url) && ($com === $_com));
-	$host = $is_admindel ? $_host : $host;//管理者による閲覧注意への変更時は投稿者のホスト名を変更しない
-	$userid = $is_admindel ? $_userid : $userid;//管理者による閲覧注意への変更時は投稿者のidを変更しない
+	$is_admin_set_nsfw = ($admindel && ($sub === $_sub) && ($url === $_url) && ($com === $_com));
+	$host = $is_admin_set_nsfw ? $_host : $host;//管理者による閲覧注意への変更時は投稿者のホスト名を変更しない
+	$userid = $is_admin_set_nsfw ? $_userid : $userid;//管理者による閲覧注意への変更時は投稿者のidを変更しない
 
 	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 	
