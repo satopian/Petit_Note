@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.00.2';
+$petit_ver='v1.00.5';
 $petit_lot='lot.20231112';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1353,7 +1353,7 @@ function img_replace(){
 	$m2time=microtime2time($time);
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
-		
+
 		if($is_upload && ($m2time === microtime2time($chk_time))){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
@@ -2363,7 +2363,6 @@ function view(){
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
 
-
 	aikotoba_required_to_view();
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 
@@ -2614,6 +2613,7 @@ function res (){
 	$adminpost=adminpost_valid();
 	$resform = ((!$only_admin_can_reply && !$is_badhost && $aikotoba)||$adminpost);
 	$resform = $deny_all_posts ? false :$resform;
+	$resform = ($userdel||$admindel) ? false :$resform;
 
 	//Cookie
 	$namec=h((string)filter_input(INPUT_COOKIE,'namec'));
