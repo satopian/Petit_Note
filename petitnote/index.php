@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.00.5';
-$petit_lot='lot.20231112';
+$petit_ver='v1.01.0';
+$petit_lot='lot.20231114';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -65,6 +65,7 @@ $view_other_works= isset($view_other_works) ? $view_other_works : true;
 $deny_all_posts= isset($deny_all_posts) ? $deny_all_posts : (isset($denny_all_posts) ? $denny_all_posts : false);
 $allow_comments_only = isset($allow_comments_only) ? $allow_comments_only : (isset($allow_coments_only) ? $allow_coments_only : false); 
 $dispres = isset($dispres) ? $dispres : (isset($display) ? $display : 5); 
+$disp_image_res = isset($disp_image_res) ? $disp_image_res : 0;//0ですべて表示
 $latest_var=isset($latest_var) ? $latest_var : true;
 $badhost=isset($badhost) ? $badhost :[]; 
 $mark_sensitive_image = isset($mark_sensitive_image) ? $mark_sensitive_image : false; 
@@ -2362,6 +2363,7 @@ function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
+	global $disp_image_res; 
 
 	aikotoba_required_to_view();
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);

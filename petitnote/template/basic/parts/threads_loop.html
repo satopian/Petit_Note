@@ -1,8 +1,35 @@
 <?php foreach($out as $t => $ress) : ?>
 	<?php if($sort_comments_by_newest){
-			krsort($ress);
-	}?>
-	<!-- タイトル -->
+		krsort($ress);
+	}
+	$findimage=false;
+
+	$revd_count_images=0;
+	$ress_revd = $ress;
+
+	if(!$resmode){
+		krsort($ress_revd);//キーを逆順でソート
+		foreach($ress_revd as $img_skipres =>$res){
+			if($res['img']){//配列の後ろからの画像の出現回数を数える
+				++$revd_count_images;
+			}
+			if($disp_image_res < $revd_count_images){
+				break;//breakしてのキーの値を取得する
+			}
+		}
+		$countres=count($ress);
+		// $dispresを設定しない場合の処理の振り分け
+		$com_skipres= $dispres ? ($countres-($dispres+1)) : 0;
+		// $disp_image_resを設定しない場合の処理の振り分け
+		$img_skipres = $disp_image_res ? $img_skipres : 0;
+		$skipres = max($com_skipres,$img_skipres);
+
+	}
+	if($userdel || $admindel || $resmode){
+		$skipres=0;	//削除モードの時はレスを省略しない
+	}
+?>
+		<!-- タイトル -->
 	<h2 class="article_title">
 		<?php if($resmode):?>
 			[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?>
@@ -10,15 +37,7 @@
 			<a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a>
 		<?php endif;?>
 	</h2>
-	<?php
-	$findimage=false;
-	$countres=count($ress);
-	$skipres=$resmode ? 0 : $countres-($dispres+1);
-	$dispres=$resmode ? 0 : $dispres;
-	if($userdel || $admindel || $resmode){
-		$skipres=0;	//削除モードの時はレスを省略しない
-	}
-	?>
+
 	<!-- 個別threadのループ -->
 	<?php foreach($ress as $i => $res) : ?>
 	<?php
