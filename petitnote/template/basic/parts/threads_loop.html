@@ -2,12 +2,12 @@
 	<?php if($sort_comments_by_newest){
 		krsort($ress);
 	}
+	$find_hide_thumbnail=false;
 	$findimage=false;
 
-	$revd_count_images=0;
-	$ress_revd = $ress;
-
-	if(!$resmode){
+	if(!$resmode){//レス画面では必要がない
+		$revd_count_images=0;
+		$ress_revd = $ress;
 		krsort($ress_revd);//キーを逆順でソート
 		foreach($ress_revd as $img_skipres =>$res){
 			if($res['img']){//配列の後ろからの画像の出現回数を数える
@@ -43,6 +43,9 @@
 	<?php
 	 if($res['img']){
 		$findimage=true;
+	}
+	if($res['hide_thumbnail']){
+		$find_hide_thumbnail=true;
 	}
 	$res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));
 	?>
@@ -247,3 +250,8 @@
 	<hr>
 	<?php endif;?>
 <?php endforeach;?>
+<!-- Luminousのギャラリーモードを使うかどうかを判定 -->
+<?php $luminous_gallery = ($resmode &&(!$find_hide_thumbnail||(isset($set_nsfw_show_hide) && $set_nsfw_show_hide)))
+ ? "true" :"false";?>
+<!-- common.jsで使用 -->
+<script>const luminous_gallery=<?=h($luminous_gallery);?></script>

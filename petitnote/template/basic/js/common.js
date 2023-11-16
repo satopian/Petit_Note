@@ -187,12 +187,16 @@ jQuery(function() {
 		}, 500); //0.5秒かけてトップへ移動
 		return false;
 	});
+	// threads_loop.html で設定された変数をチェック
+	let gallery = typeof luminous_gallery === 'undefined' ? false :luminous_gallery;
 	// https://www.webdesignleaves.com/pr/plugins/luminous-lightbox.html
 	const luminousElems = document.querySelectorAll('.luminous');
-	//取得した要素の数が 0 より大きければ
-	if( luminousElems.length > 0 ) {
+	
+	if(gallery && luminousElems.length > 1 ){//1枚しか無い場合はgalleryモードは必要ない
+		new LuminousGallery(luminousElems);
+	}else if( luminousElems.length > 0 ){//取得した要素の数が 0 より大きければ
 		for(const elem of luminousElems)  {
 			new Luminous(elem);
-		};
+		}
 	}
 });
