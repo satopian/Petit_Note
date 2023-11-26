@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.02.3';
-$petit_lot='lot.20231125';
+$petit_ver='v1.02.5';
+$petit_lot='lot.20231126';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2478,6 +2478,9 @@ function res (){
 	$page='';
 	$resno=(string)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
+	$misskey_note = $use_misskey_note ? (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN) : false;
+	$res_catalog = $misskey_note ? true : (bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
+
 	if(!is_file(LOG_DIR."{$resno}.log")){
 		return error($en?'Thread does not exist.':'スレッドがありません');	
 	}
@@ -2495,6 +2498,9 @@ function res (){
 				continue;
 			}
 			$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
+			if($res_catalog && !$_res['img']){
+				continue;
+			}
 			if($_res['img']){
 				$findimage = true;
 			}
@@ -2633,8 +2639,6 @@ function res (){
 	//token
 	$token=get_csrf_token();
 	
-	$misskey_note = $use_misskey_note ? (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN) : false;
-	$res_catalog = $misskey_note ? true : (bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
 	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
 	$resmode=true;
 	$page=0;
