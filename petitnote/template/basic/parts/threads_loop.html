@@ -31,11 +31,7 @@
 ?>
 		<!-- タイトル -->
 	<h2 class="article_title">
-		<?php if($resmode):?>
-			[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?>
-		<?php else:?>
 			<a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a>
-		<?php endif;?>
 	</h2>
 
 	<!-- 個別threadのループ -->
