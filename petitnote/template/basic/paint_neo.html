@@ -48,13 +48,21 @@ return;
 	function neo_add_disable_touch_move() {
 		document.getElementById('NEO').addEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
 	}
-	document.addEventListener('touchmove', function(e) {
+	document.addEventListener('touchmove', (e)=> {
 		neo_add_disable_touch_move();
 		if(isPinchZooming ()){//ピンチズーム使用時はNEOの網目でスワイプする
 			document.getElementById('NEO').removeEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
 		}
 	});
 	window.addEventListener('DOMContentLoaded',neo_add_disable_touch_move,false);
+	//Firefoxでメニューバーが開閉するのため、Altキーのデフォルトの処理をキャンセル
+	document.addEventListener('keyup', (e)=> {
+		// e.key を利用して特定のキーのアップイベントを検知する
+		if (e.key.toLowerCase() === 'alt') {
+			e.preventDefault(); // Alt キーのデフォルトの動作をキャンセル
+		}
+	});
+
 </script>
 </head>
 <body>
