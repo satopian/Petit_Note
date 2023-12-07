@@ -18,6 +18,7 @@
 	<?php if($res['painttime']):?>
 		<span><?php if($en):?>Paint time:<?=h($res['painttime_en'])?><?php else:?>描画時間:<?=h($res['painttime'])?><?php endif;?></span>
 	<?php endif;?>
+	</h3>
 
 	<?php if($image_rep && ($use_upload || $admin) && $res['upload_image']):?>
 		<form action="./" method="POST" enctype="multipart/form-data" class="postform" id="image_rep" onsubmit="return res_form_submit(event,'image_rep')">
@@ -37,7 +38,6 @@
 		<br>
 		HOST:<?=h($res['host'])?>
 		<?php endif;?> 
-	</h3>
 		<?php if($res['img']):?>
 			<?php if($res['anime']):?>
 				<div class="imginfo_wrap">

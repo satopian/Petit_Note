@@ -55,7 +55,7 @@
 	<?php if($i===0 || $i>$skipres):?>
 		<hr>
 		<?php if($i!==0):?>
-			<div class="res_wrap" id="<?=h($res['time'])?>">
+			<div class="res_wrap" <?php if($resmode):?>id="<?=h($res['time'])?>"<?php endif;?>>
 		<?php endif;?>
 			<h3 class="imginfo_wrap">
 			<?php if(!isset($res['not_deleted']) || $res['not_deleted']):?>
