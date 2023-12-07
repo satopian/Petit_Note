@@ -57,7 +57,7 @@
 		<?php if($i!==0):?>
 			<div class="res_wrap" id="<?=h($res['time'])?>">
 		<?php endif;?>
-			<div class="imginfo_wrap">
+			<h3 class="imginfo_wrap">
 			<?php if(!isset($res['not_deleted']) || $res['not_deleted']):?>
 				<span class="info_name"><a href="./?mode=search&radio=2&imgsearch=on&q=<?=h($res['encoded_name'])?>" target="_blank"><?= h($res['name'])?></a></span>
 				<?php if($res['verified']):?>
@@ -86,7 +86,7 @@
 				HOST:<?=h($res['host'])?>
 				<?php endif;?> 
 			<?php endif;?>
-			</div>
+			</h3>
 			<?php if($res['img']):?>
 				<?php if($res['continue']||$res['anime']):?>
 				<div class="imginfo_wrap">
