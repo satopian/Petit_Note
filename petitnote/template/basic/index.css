@@ -175,7 +175,7 @@ span.info_name a ,span.info_name > span {
 
 .posted_image span , .catalog_image span {
     position: absolute;
-    top: 0;
+	top: 13px;
     left: 13px;
     display: inline-block;
     background-color: #555;

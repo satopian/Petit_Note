@@ -18,7 +18,7 @@ form.searchform {
 
 .s_posted_image span  {
     position: absolute;
-    top: 0;
+	top: 13px;
     left: 13px;
     display: inline-block;
     background-color: #555;
@@ -103,7 +103,7 @@ form.searchform {
 
 @media screen and (max-width:610px) {
 
-	.s_posted_image p{
+	.s_posted_image span{
 		display: none;
 	}
 
