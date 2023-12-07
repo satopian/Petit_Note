@@ -142,6 +142,8 @@ span.info_name a ,span.info_name > span {
 
 .imginfo_wrap {
     margin: 3px 0 10px;
+	font-size: 1em;
+	font-weight: normal;
 }
 .imginfo_wrap span {
     display: inline-block;
@@ -171,7 +173,7 @@ span.info_name a ,span.info_name > span {
 	position: relative;
 }
 
-.posted_image p , .catalog_image p {
+.posted_image span , .catalog_image span {
     position: absolute;
     top: 0;
     left: 13px;

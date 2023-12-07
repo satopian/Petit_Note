@@ -108,16 +108,17 @@
 				<?php if($res['webpimg']):?>
 				</picture>
 				<?php endif;?>
-					<?php if($res['hide_thumbnail']):?><p>NSFW</p><?php endif;?></a></span><?php endforeach;?></div>
+					<?php if($res['hide_thumbnail']):?><span>NSFW</span><?php endif;?></a></span><?php endforeach;?></div>
 		<?php else:?>
 		<?php foreach($out as $i => $res):?>
 		<article>
 			<div class="s_article">
 				<div class="s_comments_title_wrap">
-				<a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><h3><?=h($res['sub'])?></h3>
-					<?=h($res['date'])?></a><br><span class="info_name"><a
+				<a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><h3><?=h($res['sub'])?><?=h($res['date'])?></a></h3>
+					<br>
+					<h3 class="info_name"><a
 							href="?mode=search&page=0&q=<?=h($res['encoded_name'])?>&radio=2"
-							target="_blank"><?=h($res['name'])?></a></span>
+							target="_blank"><?=h($res['name'])?></a></h3>
 				</div>
 				<?php if($res['img']):?>
 				<div class="s_posted_image<?php if($res['hide_thumbnail']):?> hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
@@ -132,9 +133,9 @@
 						<?php endif;?>
 					<?php if($res['webpimg']):?>
 					</picture>	
-					<?php endif;?><?php if($res['hide_thumbnail']):?><p>NSFW</p><?php endif;?></a></div>
+					<?php endif;?><?php if($res['hide_thumbnail']):?><span>NSFW</span><?php endif;?></a></div>
 				<?php endif;?>
-				<?=h($res['com'])?>
+				<p><?=h($res['com'])?></p>
 				<div class="res_button_wrap">
 					<form action="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" method="post" target="_blank"><input type="submit" value="<?php if($en):?>View thread<?php else:?>スレッドを表示<?php endif;?>"
 						class="form_button"></form>

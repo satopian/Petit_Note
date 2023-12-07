@@ -2,14 +2,14 @@
 <!-- 親のループ -->
 <?php if(isset($out)):?>
 <?php foreach($out as $ress) : ?>
-
+<article>
 <h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
 	<!-- スレッドのループ -->
 	<?php foreach($ress as $i => $res) : ?>
 	<!-- 縮小のかかったNSFW画像を元のサイズへ -->
 	<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
 	<hr>
-	<div class="imginfo_wrap">
+	<h3 class="imginfo_wrap">
 
 	<?php if($edit_mode==='delmode'):?>
 		<input type="checkbox" name="id_and_no" form="before_delete" id="id_and_no" value="<?=h($res['time'])?>,<?=h($res['no'])?>">
@@ -47,7 +47,7 @@
 		<br>
 		HOST:<?=h($res['host'])?>
 		<?php endif;?> 
-	</div>
+</h3>
 		<?php if($res['img']):?>
 			<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
 				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
@@ -57,7 +57,7 @@
 			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 				<?php endif;?>
 				<?php if($res['hide_thumbnail']):?>
-					<p>NSFW</p>
+					<span>NSFW</span>
 						<?php endif;?>
 					</a>
 			</div>
@@ -65,5 +65,6 @@
 			<div class="comment"><?= com(h($res['com']))?></div>
 
 	<?php endforeach;?>
+	</article>
 <?php endforeach;?>
 <?php endif;?>

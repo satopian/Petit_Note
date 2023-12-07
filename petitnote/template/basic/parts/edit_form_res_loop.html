@@ -1,11 +1,11 @@
 <?php if(isset($out)):?>
 <?php foreach($out as $ress) : ?>
-
+<article>
 <h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
 	<!-- スレッドのループ -->
 <?php foreach($ress as $res) : ?>
 	<hr>
-	<div class="imginfo_wrap">
+	<h3 class="imginfo_wrap">
 	<span class="info_name"><span><?= h($res['name'])?></span></span>
 	<?php if($res['verified']):?>
 	<span class="icon-checkmark2"></span>
@@ -37,7 +37,7 @@
 		<br>
 		HOST:<?=h($res['host'])?>
 		<?php endif;?> 
-	</div>
+	</h3>
 		<?php if($res['img']):?>
 			<?php if($res['anime']):?>
 				<div class="imginfo_wrap">
@@ -57,5 +57,6 @@
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>
 	<?php endforeach;?>
+</article>
 <?php endforeach;?>
 <?php endif;?>

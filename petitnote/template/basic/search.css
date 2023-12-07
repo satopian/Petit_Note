@@ -16,7 +16,7 @@ form.searchform {
 	margin: 12px 0 0;
 }
 
-.s_posted_image p  {
+.s_posted_image span  {
     position: absolute;
     top: 0;
     left: 13px;
@@ -46,7 +46,7 @@ form.searchform {
 }
 
 .s_article h3 {
-	font-size: 16px;
+	font-size: 1em;
 	font-weight: 400;
 	margin: 0 0 3px;
 	display: inline-block;
