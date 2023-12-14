@@ -23,7 +23,7 @@
 
 </head>
 <body>
-	<div class="container">
+<div class="container" <?php if($appw>928):?>style="max-width:<?=h($appw) ?>px"<?php endif;?>>
 <div class="appstage" style="width:<?=h($appw) ?>px; height:<?=h($apph) ?>px">
 <applet-dummy
 name="pch" code="pch.PCHViewer.class" archive="PCHViewer.jar,PaintBBS.jar" width="<?=h($appw)?>" height="<?=h($apph)?>" MAYSCRIPT>
