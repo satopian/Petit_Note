@@ -4,13 +4,8 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
-<link rel="preload" as="style" href="<?=h($skindir)?>icomoon/style.css?<?=h($petit_lot)?>" onload="this.rel='stylesheet'">
-<link rel="preload" as="style" href="lib/luminous/luminous-basic.min.css" onload="this.rel='stylesheet'">
-<link rel="preload" as="script" href="lib/luminous/luminous.min.js">
-<link rel="preload" as="script" href="lib/<?=h(JQUERY)?>">
-<link rel="preload" as="script" href="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>">
-<?php include __DIR__.'/parts/nsfw_css_control.html';?>
+	<?php include __DIR__.'/parts/head_css_js.html';?>
+	<?php include __DIR__.'/parts/nsfw_css_control.html';?>
 	<title><?=h($boardname)?></title> 
 </head>
 <body>
@@ -80,9 +75,7 @@
 </div>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
-<script src="lib/<?=h(JQUERY)?>"></script>
-<script src="lib/luminous/luminous.min.js"></script>
-<script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
+<?php include __DIR__.'/parts/footer_js.html';?>
 </body>
 </html>
 	
