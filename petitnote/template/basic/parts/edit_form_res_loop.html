@@ -21,7 +21,7 @@
 	</h3>
 
 	<?php if($image_rep && ($use_upload || $admin) && $res['upload_image']):?>
-		<form action="./" method="POST" enctype="multipart/form-data" class="postform" id="image_rep" onsubmit="return res_form_submit(event,'image_rep')">
+		<form action="./" method="POST" enctype="multipart/form-data" class="postform image_rep_form" id="image_rep" onsubmit="return res_form_submit(event,'image_rep')">
 		<div id="error_message_imgrep"></div>
 		<input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
 		<input type="hidden" name="pwd" value="<?=h($pwd)?>">
