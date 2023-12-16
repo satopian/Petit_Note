@@ -4,7 +4,8 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<?php include __DIR__.'/parts/head_css_js.html';?>
+	<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
+	<?php include __DIR__.'/parts/head_preload_css_js.html';?>
 	<?php include __DIR__.'/parts/nsfw_css_control.html';?>
 <title><?=h($boardname)?></title> 
 </head>
@@ -24,8 +25,8 @@
 <?php include __DIR__.'/parts/edit_form_res_loop.html'?>
 			<div class="clear"></div>
 
-	<form action="./" method="POST" enctype="multipart/form-data" class="misskey_form" id="res_form">
-	<div id="error_message"></div>
+		<form action="./" method="POST" enctype="multipart/form-data" class="misskey_form" id="image_rep" onsubmit="return res_form_submit(event,'image_rep')">
+	<div id="error_message_imgrep"></div>
 <textarea name="cw" class="post_cw" id="cw" placeholder="<?php if($en):?>CW<?php else:?>CW 注釈<?php endif;?>"></textarea><br>
 <textarea name="com" class="post_com" placeholder="<?php if($en):?>Comment<?php else:?>コメント<?php endif;?>"></textarea><br>
 <input type="hidden" name="token" value="<?=h($token)?>">
@@ -81,8 +82,6 @@ document.getElementById('hide_content').addEventListener('change', function() {
 </div>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
-<script src="lib/<?=h(JQUERY)?>"></script>
-<script src="lib/luminous/luminous.min.js"></script>
-<script src="<?=h($skindir)?>js/common.js?<?=h($petit_lot)?>"></script>
+<?php include __DIR__.'/parts/footer_js.html';?>
 </body>
 </html>
