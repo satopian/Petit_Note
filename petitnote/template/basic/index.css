@@ -96,10 +96,6 @@ form.postform  span {
     display: inline-block;
 }
 
-form.image_rep_form {
-margin: 0 0 1em 0;
-}
-
 form.resform ,form.misskey_form {
 	text-align: right;
 }
