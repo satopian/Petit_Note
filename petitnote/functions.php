@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231111;
+$functions_ver=20231219;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -768,14 +768,17 @@ function session_sta(){
 }
 
 function check_same_origin(){
-	global $en;
+	global $en,$usercode;
 
-	$usercode = (string)filter_input(INPUT_COOKIE, 'usercode');//user-codeを取得
-
-	if(!$usercode){
+	session_sta();
+	$c_usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
+	$session_usercode = isset($_SESSION['usercode']) ? t((string)$_SESSION['usercode']) : "";
+	if(!$c_usercode&&!$session_usercode){
 		return error($en?'Cookie check failed.':'Cookieが確認できません。');
-	} 
-
+	}
+	if(!$usercode || ($usercode!==$c_usercode)&&($usercode!==$session_usercode)){
+		return error($en?"User code mismatch.":"ユーザーコードが一致しません。");
+	}
 	if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
 		return error($en?'Your browser is not supported. ':'お使いのブラウザはサポートされていません。');
 	}

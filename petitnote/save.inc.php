@@ -2,7 +2,7 @@
 //Petit Note 2021-2023 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20231106;
+$save_inc_ver=20231219;
 class image_save{
 
 	private $security_timer,$imgfile,$usercode,$en,$count,$errtext; // プロパティとして宣言
@@ -112,9 +112,13 @@ class image_save{
 	}
 
 	private function check_security(){
-
 		//csrf
-		if(!$this->usercode || $this->usercode !== (string)filter_input(INPUT_COOKIE, 'usercode')){
+		session_sta();
+		$session_usercode = isset($_SESSION['usercode']) ? $_SESSION['usercode'] : "";
+		if(!$this->usercode
+		|| ($this->usercode !== t((string)filter_input(INPUT_COOKIE, 'usercode'))
+		&& ($this->usercode !== t((string)$session_usercode)
+		))){
 			$this->error_msg($this->en ? "User code mismatch." : "ユーザーコードが一致しません。");
 		}
 		if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
