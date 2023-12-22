@@ -5,14 +5,16 @@
 	<meta name="robots" content="noindex,nofollow">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<?php include __DIR__.'/parts/head_preload_css_js.html';?>
 <link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
 <title></title> 
 </head>
 <body>
 <div class="container" id="top">
-<div class="mainform">
+	<div class="mainform">
+	<div id="error_message"></div>
 <?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
-<form action="./" method="post" class="aikotoba">
+	<form action="./" method="POST" class="aikotoba" id="res_form" onsubmit="return res_form_submit(event)">
 	<input type="text" name="aikotoba" class="input_txt">
 	<input type="hidden" name="mode" value="aikotoba">
 	<input type="hidden" name="postpage" value="<?=h($page)?>">
@@ -21,5 +23,6 @@
 </form><br>
 </div>
 </div>
+<?php include __DIR__.'/parts/footer_js.html';?>
 </body>
 </html>
