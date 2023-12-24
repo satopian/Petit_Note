@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.07.3';
-$petit_lot='lot.20231224';
+$petit_ver='v1.08.0';
+$petit_lot='lot.20231225';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2184,9 +2184,8 @@ function search(){
 
 					$arr[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
 					++$i;
-					if($i>=$max_search){break 2;}//1掲示板あたりの最大検索数
+					if($i>=$max_search&&$j>10){break 2;}//1掲示板あたりの最大検索数 最低でも10スレッド分は取得
 				}
-				
 			}
 		}
 		fclose($rp);
@@ -2201,7 +2200,7 @@ function search(){
 	$j=0;
 	$out=[];
 	if(!empty($arr)){
-	//ページ番号から1ページ分のスレッド分とりだす
+	//ページ番号から1ページ分をとりだす
 	$articles=array_slice($arr,(int)$page,$pagedef,false);
 	$articles = array_values($articles);//php5.6 32bit 対応
 
