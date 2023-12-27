@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20231226;
+$functions_ver=20231227;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -773,7 +773,7 @@ function check_same_origin(){
 	session_sta();
 	$c_usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
 	$session_usercode = isset($_SESSION['usercode']) ? t((string)$_SESSION['usercode']) : "";
-	if(!$c_usercode&&!$session_usercode){
+	if(!$c_usercode){
 		return error($en?'Cookie check failed.':'Cookieが確認できません。');
 	}
 	if(!$usercode || ($usercode!==$c_usercode)&&($usercode!==$session_usercode)){
