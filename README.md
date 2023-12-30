@@ -93,6 +93,8 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 描画時の円カーソル表示を別の方法で再実装しました。  
 タッチデバイス以外のPC等で描画時にも円カーソルを表示します。  
 
+https://github.com/satopian/Petit_Note/assets/44894014/a79c6e5d-1a9d-4520-8a83-fe68ea8d3e6a
+
 ## 23/12/22 v1.07.2.1
 ### ペイントアプリを更新
 
