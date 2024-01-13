@@ -21945,28 +21945,29 @@ var _CPLayer = _interopRequireDefault(require("../engine/CPLayer.js"));
 var _CPImageLayer = _interopRequireDefault(require("../engine/CPImageLayer.js"));
 var _lang = require("../languages/lang.js");
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-/*
-    ChickenPaint
-    
-    ChickenPaint is a translation of ChibiPaint from Java to JavaScript
-    by Nicholas Sherlock / Chicken Smoothie.
-    
-    ChibiPaint is Copyright (c) 2006-2008 Marc Schefer
-
-    ChickenPaint is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    ChickenPaint is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with ChickenPaint. If not, see <http://www.gnu.org/licenses/>.
-*/
-
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; } /*
+                                                                                                                                                                                        ChickenPaint
+                                                                                                                                                                                        
+                                                                                                                                                                                        ChickenPaint is a translation of ChibiPaint from Java to JavaScript
+                                                                                                                                                                                        by Nicholas Sherlock / Chicken Smoothie.
+                                                                                                                                                                                        
+                                                                                                                                                                                        ChibiPaint is Copyright (c) 2006-2008 Marc Schefer
+                                                                                                                                                                                    
+                                                                                                                                                                                        ChickenPaint is free software: you can redistribute it and/or modify
+                                                                                                                                                                                        it under the terms of the GNU General Public License as published by
+                                                                                                                                                                                        the Free Software Foundation, either version 3 of the License, or
+                                                                                                                                                                                        (at your option) any later version.
+                                                                                                                                                                                    
+                                                                                                                                                                                        ChickenPaint is distributed in the hope that it will be useful,
+                                                                                                                                                                                        but WITHOUT ANY WARRANTY; without even the implied warranty of
+                                                                                                                                                                                        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+                                                                                                                                                                                        GNU General Public License for more details.
+                                                                                                                                                                                    
+                                                                                                                                                                                        You should have received a copy of the GNU General Public License
+                                                                                                                                                                                        along with ChickenPaint. If not, see <http://www.gnu.org/licenses/>.
+                                                                                                                                                                                    */
 function absorbTouch(e) {
   e.preventDefault();
   e.stopPropagation();
@@ -23013,11 +23014,24 @@ function CPLayersPalette(controller) {
       facts = computeLayerPredicates(activeLayer);
     for (var _i4 = 0, _arr2 = ["mask", "no-mask", "clipping-mask", "no-clipping-mask-or-is-group"]; _i4 < _arr2.length; _i4++) {
       var requirement = _arr2[_i4];
-      (0, _jquery.default)(".chickenpaint-action-require-" + requirement, layerActionButtons).css("display", facts[requirement] ? "inline-block" : "none");
+      var elements = layerActionButtons.getElementsByClassName("chickenpaint-action-require-" + requirement);
+      var _iterator = _createForOfIteratorHelper(elements),
+        _step;
+      try {
+        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+          var element = _step.value;
+          element.style.display = facts[requirement] ? "inline-block" : "none";
+        }
+      } catch (err) {
+        _iterator.e(err);
+      } finally {
+        _iterator.f();
+      }
     }
-    (0, _jquery.default)("[data-action]", layerActionButtons).each(function () {
-      var action = this.getAttribute("data-action");
-      (0, _jquery.default)(this).toggleClass("disabled", !controller.isActionAllowed(action));
+    var actions = layerActionButtons.querySelectorAll("[data-action]");
+    actions.forEach(function (element) {
+      var action = element.getAttribute("data-action");
+      element.classList.toggle("disabled", !controller.isActionAllowed(action));
     });
   }
   function updateActiveLayerControls() {
