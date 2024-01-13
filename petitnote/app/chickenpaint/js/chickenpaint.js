@@ -22965,7 +22965,13 @@ function CPLayersPalette(controller) {
       }, {
         title: "Add layer mask",
         icon: createChickenPaintIcon("mask"),
-        action: "CPAddLayerMask"
+        action: "CPAddLayerMask",
+        require: ["no-mask"]
+      }, {
+        title: "Apply mask",
+        icon: createChickenPaintIcon("mask"),
+        action: "CPApplyLayerMask",
+        require: ["mask"]
       }, {
         title: "Clip to the layer below",
         icon: createFontAwesomeIcon("fa-level-down-alt fa-flip-horizontal"),
@@ -23005,7 +23011,7 @@ function CPLayersPalette(controller) {
   function updateActiveLayerActionButtons() {
     var activeLayer = artwork.getActiveLayer(),
       facts = computeLayerPredicates(activeLayer);
-    for (var _i4 = 0, _arr2 = ["clipping-mask", "no-clipping-mask-or-is-group"]; _i4 < _arr2.length; _i4++) {
+    for (var _i4 = 0, _arr2 = ["mask", "no-mask", "clipping-mask", "no-clipping-mask-or-is-group"]; _i4 < _arr2.length; _i4++) {
       var requirement = _arr2[_i4];
       (0, _jquery.default)(".chickenpaint-action-require-" + requirement, layerActionButtons).css("display", facts[requirement] ? "inline-block" : "none");
     }
@@ -23530,7 +23536,8 @@ var MENU_ENTRIES = [{
   }, {
     hideIfNotAvailable: true,
     name: "Delete layer mask",
-    action: "CPRemoveLayerMask"
+    action: "CPRemoveLayerMask",
+    shortcut: "shift+m"
   }, {
     hideIfNotAvailable: true,
     name: "Apply layer mask",
@@ -26596,7 +26603,7 @@ module.exports={
 
   "Whoops! This layer is currently hidden": "非表示レイヤーです。",
   "Whoops! This layer's opacity is currently 0%": "レイヤーの不透明度が0%です",
-  "Whoops! You can't draw on a group": "レイヤーグループには描けません",
+  "Whoops! You can't draw on a group": "グループフォルダには描けません",
   "Whoops! All of the selected pixels are transparent!": "レイヤーが空です",
  
   "Sorry, you can't remove the last remaining layer in the drawing.": "レイヤーが1つしか残っていないため削除できません。",
