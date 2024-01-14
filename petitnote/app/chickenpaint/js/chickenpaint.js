@@ -22964,6 +22964,10 @@ function CPLayersPalette(controller) {
         icon: createFontAwesomeIcon("fa-folder"),
         action: "CPAddGroup"
       }, {
+        title: "Merge group",
+        icon: createFontAwesomeIcon("fa-compress-arrows-alt"),
+        action: "CPGroupMerge"
+      }, {
         title: "Add layer mask",
         icon: createChickenPaintIcon("mask"),
         action: "CPAddLayerMask",
