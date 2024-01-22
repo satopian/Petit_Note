@@ -110,7 +110,9 @@ if (window.PointerEvent) {
 }
 //ブラウザデフォルトのキー操作をキャンセル
 document.addEventListener("keydown", function (e) {
-  e.preventDefault();
+  if (e.key === "+" || e.key === ";" || e.key === "=" || e.key === "-" || e.key.toLocaleLowerCase === "s") {
+    e.preventDefault();
+  }
 });
 require("pepjs"); // Needs to use require() instead of import so we can run code before it
 function checkBrowserSupport() {
