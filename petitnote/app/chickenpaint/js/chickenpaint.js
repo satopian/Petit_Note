@@ -18400,14 +18400,14 @@ function CPBoxBlurDialog(parent, controller) {
   dialog[0].addEventListener('shown.bs.modal', function (e) {
     blurAmountElem.trigger('focus');
   });
-  parent.addEventListener("keydown", function keydown_EnterKey(e) {
-    if (e.key === "Enter") {
-      e.preventDefault(); // デフォルトのフォーム送信を阻止
-    }
-
+  document.addEventListener("keydown", function keydown_EnterKey(e) {
     if (e.key === "Enter" && dialog.hasClass('show')) {
       applyButton.trigger('click');
-      parent.removeEventListener("keydown", keydown_EnterKey);
+      e.preventDefault(); // デフォルトのフォーム送信を阻止
+      document.removeEventListener("keydown", keydown_EnterKey);
+    } else if (e.key === "Enter") {
+      e.preventDefault(); // デフォルトのフォーム送信を阻止
+      document.removeEventListener("keydown", keydown_EnterKey);
     }
   });
   parent.appendChild(dialog[0]);
