@@ -111,7 +111,7 @@ if (window.PointerEvent) {
 //ブラウザデフォルトのキー操作をキャンセル
 document.addEventListener("keydown", function (e) {
   var keys = ["+", ";", "=", "-", "s", "h", "r"];
-  if (keys.includes(e.key.toLowerCase())) {
+  if ((e.ctrlKey || e.metaKey) && keys.includes(e.key.toLowerCase())) {
     // console.log("e.key",e.key);
     e.preventDefault();
   }
@@ -18401,9 +18401,12 @@ function CPBoxBlurDialog(parent, controller) {
     blurAmountElem.trigger('focus');
   });
   parent.addEventListener("keydown", function keydown_EnterKey(e) {
+    if (e.key === "Enter") {
+      e.preventDefault(); // デフォルトのフォーム送信を阻止
+    }
+
     if (e.key === "Enter" && dialog.hasClass('show')) {
       applyButton.trigger('click');
-      e.preventDefault(); // デフォルトのフォーム送信を阻止
       parent.removeEventListener("keydown", keydown_EnterKey);
     }
   });
