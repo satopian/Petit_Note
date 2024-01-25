@@ -18400,13 +18400,13 @@ function CPBoxBlurDialog(parent, controller) {
   dialog[0].addEventListener('shown.bs.modal', function (e) {
     blurAmountElem.trigger('focus');
   });
-  document.addEventListener('keydown', function (e) {
+  parent.addEventListener("keydown", function keydown_EnterKey(e) {
     if (e.key === "Enter" && dialog.hasClass('show')) {
       applyButton.trigger('click');
       e.preventDefault(); // デフォルトのフォーム送信を阻止
+      parent.removeEventListener("keydown", keydown_EnterKey);
     }
   });
-
   parent.appendChild(dialog[0]);
 }
 module.exports = exports.default;
@@ -21812,6 +21812,9 @@ function CPConfirmTransformDialog(parent, controller) {
   this.show = function () {
     modal.show();
   };
+  dialog[0].addEventListener('hidden.bs.modal', function (e) {
+    dialog.remove();
+  });
   // Enterキーが押されたときの処理
   parent.addEventListener("keydown", function keydown_EnterKey(e) {
     if (e.key === "Enter") {
@@ -21961,10 +21964,11 @@ function CPGridDialog(parent, canvas) {
   });
 
   // Enter キーが押されたときの処理を追加
-  dialog[0].addEventListener('keydown', function (e) {
+  dialog[0].addEventListener('keydown', function keydown_EnterKey(e) {
     if (e.key === "Enter") {
       e.preventDefault(); // デフォルトのフォーム送信を阻止
       applyButton.trigger('click');
+      dialog[0].removeEventListener("keydown", keydown_EnterKey);
     }
   });
   parent.appendChild(dialog[0]);
