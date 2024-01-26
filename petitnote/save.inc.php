@@ -70,13 +70,14 @@ class image_save{
 		parse_str($sendheader, $u);
 		$this->tool = 'neo';
 		
-		$this->usercode = isset($u['usercode']) ? $u['usercode'] : '';
-		$this->repcode = isset($u['repcode']) ? $u['repcode'] : '';
-		$this->resto = isset($u['resto']) ? $u['resto'] : '';
-		$this->stime = isset($u['stime']) ? $u['stime'] : '';
+		$this->usercode = (string)filter_input(INPUT_GET, 'usercode');
+		$this->repcode = (string)filter_input(INPUT_GET, 'repcode');
+		$this->resto = (string)filter_input(INPUT_GET, 'resto',FILTER_VALIDATE_INT);
+		$this->stime = (string)filter_input(INPUT_GET, 'stime',FILTER_VALIDATE_INT);
+		$this->hide_animation = (string)filter_input(INPUT_GET, 'hide_animation');
+
 		$this->count = isset($u['count']) ? $u['count'] : 0;
 		$this->timer = isset($u['timer']) ? ($u['timer']/1000) : 0;
-		$this->hide_animation = isset($u['hide_animation']) ? $u['hide_animation'] : '';
 
 		$this->check_async_request();
 		$this->check_security();
