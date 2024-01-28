@@ -74,9 +74,11 @@
 <input type="checkbox" name="hide_animation" id="hide_animation" value="on" <?php if($hide_animation_checkd):?>checked="checked"<?php endif;?>><label for="hide_animation"><?php if($en):?>Hide Animation<?php else:?>動画を表示しない<?php endif;?></label>	
 <?php endif;?>
 </span>
+<?php if(!$res_max_over):?>
 <span class="continue_menu" id="span_cont_paint_same_thread">
 			<input type="checkbox" name="cont_paint_same_thread" id="cont_paint_same_thread" value="on" checked="checked"><label for="cont_paint_same_thread"><?php if($en):?>Post in the same thread<?php else:?>同じスレッドに投稿する<?php endif;?></label>
 </span>
+<?php endif;?>
  <br>
 
 <?php if($select_app):?>
