@@ -47,9 +47,8 @@ class image_save{
 		$this->repcode = t(filter_input(INPUT_POST, 'repcode'));
 		$this->resto = t(filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
 		$this->stime = t(filter_input(INPUT_POST, 'stime',FILTER_VALIDATE_INT));
-		$this->hide_animation = (string)filter_input(INPUT_POST, 'hide_animation');
+		$this->hide_animation = t(filter_input(INPUT_POST, 'hide_animation'));
 
-		$this->check_async_request();
 		$this->check_security();
 		$this->move_uploaded_image();
 		$this->move_uploaded_psd();
@@ -75,7 +74,6 @@ class image_save{
 
 		$this->count = isset($u['count']) ? $u['count'] : 0;
 
-		$this->check_async_request();
 		$this->check_security();
 		$this->move_uploaded_image();
 		$this->move_uploaded_pch();
@@ -92,7 +90,6 @@ class image_save{
 		$this->resto = t(filter_input(INPUT_GET, 'resto',FILTER_VALIDATE_INT));
 		$this->stime = t(filter_input(INPUT_GET, 'stime',FILTER_VALIDATE_INT));
 
-		$this->check_async_request();
 		$this->check_security();
 		$this->move_uploaded_image();
 		$this->move_uploaded_chi();
@@ -108,7 +105,9 @@ class image_save{
 	}
 
 	private function check_security(){
-		//csrf
+
+		$this->check_async_request();
+
 		session_sta();
 		$this->session_usercode = isset($_SESSION['usercode']) ? $_SESSION['usercode'] : "";
 		$cookie_usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
