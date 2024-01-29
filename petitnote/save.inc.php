@@ -1,8 +1,8 @@
 <?php
-//Petit Note 2021-2023 (c)satopian MIT Licence
+//Petit Note 2021-2024 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20240127;
+$save_inc_ver=20240129;
 class image_save{
 
 	private $security_timer,$imgfile,$en,$count,$errtext,$session_usercode; // プロパティとして宣言
@@ -70,9 +70,15 @@ class image_save{
 		$this->repcode = t(filter_input(INPUT_GET, 'repcode'));
 		$this->resto = t(filter_input(INPUT_GET, 'resto',FILTER_VALIDATE_INT));
 		$this->stime = t(filter_input(INPUT_GET, 'stime',FILTER_VALIDATE_INT));
-		$this->hide_animation = (string)filter_input(INPUT_GET, 'hide_animation');
+		$this->hide_animation = t(filter_input(INPUT_GET, 'hide_animation'));
 
-		$this->count = isset($u['count']) ? $u['count'] : 0;
+		//GETで取得できなかった時は、拡張ヘッダから取得		
+		$this->repcode = $this->repcode ? $this->repcode: (isset($u['repcode']) ? t($u['repcode']) : '');
+		$this->resto = $this->resto ? $this->resto : (isset($u['resto']) ? t($u['resto']) : '');
+		$this->stime = $this->stime ? $this->stime : (isset($u['stime']) ? t($u['stime']) : '');
+		$this->hide_animation = $this->hide_animation ? $this->hide_animation : (isset($u['hide_animation']) ? t($u['hide_animation']) : '');
+
+		$this->count = isset($u['count']) ? t($u['count']) : 0;
 
 		$this->check_security();
 		$this->move_uploaded_image();
