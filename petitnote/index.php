@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.15.5';
-$petit_lot='lot.20240128';
+$petit_ver='v1.15.6';
+$petit_lot='lot.20240129';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2385,6 +2385,7 @@ function view(){
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 
 	//管理者判定処理
+	$adminpost=adminpost_valid();
 	$admindel=admindel_valid();
 	$userdel=userdel_valid();
 
@@ -2408,7 +2409,7 @@ function view(){
 	fclose($fp);
 
 	$out=[];
-	if($page===0 && !$admindel && !$userdel){
+	if($page===0 && !$admindel && !$userdel && !$adminpost){
 		$out = is_file(__DIR__.'/template/cache/index_cache.json') ? json_decode(file_get_contents(__DIR__.'/template/cache/index_cache.json'),true) : [];
 	}
 	if(empty($out)){
@@ -2466,7 +2467,7 @@ function view(){
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
-	if($page===0 && !$admindel){
+	if($page===0 && !$admindel && !$adminpost){
 		if(!is_file(__DIR__.'/template/cache/index_cache.json')){
 			file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
 			chmod(__DIR__.'/template/cache/index_cache.json',0600);
