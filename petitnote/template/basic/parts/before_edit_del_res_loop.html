@@ -50,7 +50,7 @@
 </h3>
 		<?php if($res['img']):?>
 			<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
-				<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
+				<a href="src/<?=h($res['img'])?>" target="_blank" data-lightbox="<?=h($res['no'])?>_<?=h($res['time'])?>">
 				<?php if($res['thumbnail']):?>
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 			<?php else:?>

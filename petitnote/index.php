@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.15.6';
-$petit_lot='lot.20240129';
+$petit_ver='v1.16.1';
+$petit_lot='lot.20240202';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -34,8 +34,8 @@ if(!isset($save_inc_ver)||$save_inc_ver<20240127){
 const JQUERY='jquery-3.7.0.min.js';
 check_file(__DIR__.'/lib/'.JQUERY);
 // luminous
-check_file(__DIR__.'/lib/luminous/luminous.min.js');
-check_file(__DIR__.'/lib/luminous/luminous-basic.min.css');
+check_file(__DIR__.'/lib/lightbox/js/lightbox.min.js');
+check_file(__DIR__.'/lib/lightbox/css/lightbox.min.css');
 
 check_file(__DIR__.'/config.php');
 check_file(__DIR__.'/thumbnail_gd.php');
@@ -2474,6 +2474,7 @@ function view(){
 		}
 	}
 	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
+	$lightbox_gallery=false;
 	$resmode=false;
 	$resno=0;
 	$admin_pass= null;
@@ -2506,6 +2507,7 @@ function res (){
 	$oyaname='';
 	$_res['time_left_to_close_the_thread']=false;
 	$_res['descriptioncom']='';
+	$find_hide_thumbnail=false;	
 	check_open_no($resno);
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 		$out[0]=[];
@@ -2520,6 +2522,9 @@ function res (){
 			}
 			if($_res['img']){
 				$findimage = true;
+				if($_res['hide_thumbnail']){
+					$find_hide_thumbnail=true;	
+				}
 			}
 			if($_res['oya']==='oya'){
 
@@ -2657,7 +2662,10 @@ function res (){
 	$token=get_csrf_token();
 	
 	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
+
+	$lightbox_gallery = (!$find_hide_thumbnail||$set_nsfw_show_hide);
 	$resmode=true;
+
 	$page=0;
 
 	$admin_pass= null;

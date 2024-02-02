@@ -99,7 +99,7 @@
 				</div>
 				<?php endif;?>
 				<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
-					<a href="src/<?=h($res['img'])?>" target="_blank" class="luminous">
+					<a href="src/<?=h($res['img'])?>" target="_blank" data-lightbox="<?php if($lightbox_gallery):?><?=h($res['no'])?><?php else:?><?=h($res['no'])?>_<?=h($res['time'])?><?php endif;?>">
 					<?php if($res['thumbnail']):?>
 						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4||($resmode && $i>4)):?>loading="lazy"<?php endif;?>>
 					<?php else:?>
@@ -248,8 +248,3 @@
 	<hr>
 	<?php endif;?>
 <?php endforeach;?>
-<!-- Luminousのギャラリーモードを使うかどうかを判定 -->
-<?php $luminous_gallery = ($resmode &&(!$find_hide_thumbnail||(isset($set_nsfw_show_hide) && $set_nsfw_show_hide)))
- ? "true" :"false";?>
-<!-- common.jsで使用 -->
-<script>const luminous_gallery=<?=h($luminous_gallery);?></script>
