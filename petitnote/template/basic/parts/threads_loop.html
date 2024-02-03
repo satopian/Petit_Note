@@ -2,7 +2,6 @@
 	<?php if($sort_comments_by_newest){
 		krsort($ress);
 	}
-	$find_hide_thumbnail=false;
 	$findimage=false;
 
 	if(!$resmode){//レス画面では必要がない
@@ -40,9 +39,6 @@
 	<?php
 	 if($res['img']){
 		$findimage=true;
-	}
-	if($res['hide_thumbnail']){
-		$find_hide_thumbnail=true;
 	}
 	$res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));
 	?>
@@ -99,7 +95,7 @@
 				</div>
 				<?php endif;?>
 				<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
-					<a href="src/<?=h($res['img'])?>" target="_blank" data-lightbox="<?php if($lightbox_gallery):?><?=h($res['no'])?><?php else:?><?=h($res['no'])?>_<?=h($res['time'])?><?php endif;?>">
+					<a href="src/<?=h($res['img'])?>" target="_blank" data-lightbox="<?php if(isset($ress[0]['find_hide_thumbnail'])&&!$ress[0]['find_hide_thumbnail']||$set_nsfw_show_hide):?><?=h($res['no'])?><?php else:?><?=h($res['no'])?>_<?=h($res['time'])?><?php endif;?>">
 					<?php if($res['thumbnail']):?>
 						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4||($resmode && $i>4)):?>loading="lazy"<?php endif;?>>
 					<?php else:?>

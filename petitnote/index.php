@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.16.1';
+$petit_ver='v1.16.5';
 $petit_lot='lot.20240202';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2422,6 +2422,7 @@ function view(){
 			}
 			$_res=[];
 			$out[$oya]=[];
+			$find_hide_thumbnail=false;
 			check_open_no($no);
 			$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
 				while ($line = fgets($rp)) {
@@ -2429,9 +2430,15 @@ function view(){
 						continue;
 					}
 					$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
+					if($_res['img']){
+						if($_res['hide_thumbnail']){
+							$find_hide_thumbnail=true;
+						}
+					}
 					$out[$oya][]=$_res;
 				}	
 			fclose($rp);
+			$out[$oya][0]['find_hide_thumbnail']=$find_hide_thumbnail;
 			if(empty($out[$oya])||$out[$oya][0]['oya']!=='oya'){
 				unset($out[$oya]);
 			}
@@ -2511,7 +2518,6 @@ function res (){
 	check_open_no($resno);
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 		$out[0]=[];
-		$findimage=false;
 		while ($line = fgets($rp)) {
 			if(!trim($line)){
 				continue;
@@ -2521,7 +2527,6 @@ function res (){
 				continue;
 			}
 			if($_res['img']){
-				$findimage = true;
 				if($_res['hide_thumbnail']){
 					$find_hide_thumbnail=true;	
 				}
@@ -2538,6 +2543,7 @@ function res (){
 					$rresname[] = $_res['name'];
 				}
 		$out[0][]=$_res;
+		$out[0][0]['find_hide_thumbnail']=$find_hide_thumbnail;
 		}	
 	fclose($rp);
 	if(empty($out[0])||$out[0][0]['oya']!=='oya'){
@@ -2662,8 +2668,6 @@ function res (){
 	$token=get_csrf_token();
 	
 	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
-
-	$lightbox_gallery = (!$find_hide_thumbnail||$set_nsfw_show_hide);
 	$resmode=true;
 
 	$page=0;
