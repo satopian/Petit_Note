@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.16.6';
-$petit_lot='lot.20240203';
+$petit_ver='v1.16.8';
+$petit_lot='lot.20240207';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20231227){
+if(!isset($functions_ver)||$functions_ver<20240207){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -925,7 +925,10 @@ function paint(){
 			}
 			$palettes=$initial_palette.implode('',$arr_pal);
 			$palsize = count($arr_dynp) + 1;
-
+			$max_pch=0;
+			if (function_exists('ini_get')){
+				$max_pch = min((int)ini_get('post_max_size'),(int)ini_get('upload_max_filesize'));
+			} 
 			$admin_pass= null;
 			// HTML出力
 			$templete='paint_neo.html';
@@ -1063,7 +1066,7 @@ function to_continue(){
 	$hide_animation_checkd = ($_pchext==='hide_animation');
 
 	$pchext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
-
+	$pch_kb = $pchext ?  ceil(filesize(IMG_DIR.$time) * 1024) : '';
 	$pchext=basename($pchext);
 	$select_app = false;
 	$app_to_use = false;

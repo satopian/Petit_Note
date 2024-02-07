@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240127;
+$functions_ver=20240207;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -520,7 +520,7 @@ function h($str){
 	return htmlspecialchars($str,ENT_QUOTES,"utf-8",false);
 }
 //コメント出力
-function com($str){
+function com($str,$verified=false){
 	global $use_autolink;
 
 	if(!$str){
@@ -528,22 +528,30 @@ function com($str){
 	}
 
 	if($use_autolink){
-	$str=md_link($str);
-	$str=auto_link($str);
+	$str=md_link($str,$verified);
+	$str=auto_link($str,$verified);
 	}
 	return nl2br($str,false);
 
 }
 //マークダウン記法のリンクをHTMLに変換
-function md_link($str){
-	$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)\)}",'<a href="$2" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
+function md_link($str,$verified=false){
+	if($verified){
+		$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)\)}",'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',$str);
+	}else{
+		$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)\)}",'<a href="$2" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
+	}
 	return $str;
 }
 
 // 自動リンク
-function auto_link($str){
+function auto_link($str,$verified=false){
 	if(strpos($str,'<a')===false){//マークダウン記法がなかった時
-		$str= preg_replace("{(https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)}",'<a href="$1" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
+		if($verified){
+			$str= preg_replace("{(https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)}",'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',$str);
+		}else{
+			$str= preg_replace("{(https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)}",'<a href="$1" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
+		}
 	}
 	return $str;
 }

@@ -59,7 +59,7 @@
 				<?php if($res['verified']):?>
 				<span class="icon-checkmark2"></span>
 				<?php endif?>
-				<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="nofollow noopener noreferrer">URL</a>]</span><?php endif;?>
+				<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="<?php if(!$res['verified']):?>nofollow <?php endif;?>noopener noreferrer">URL</a>]</span><?php endif;?>
 					<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
 					<span><?=h($res['date'])?></span>		
 				<?php if($res['img']):?>
@@ -114,7 +114,7 @@
 				</div>
 			<?php endif;?> 
 			<?php endif;?>
-			<div class="comment"><?=com(h($res['com']))?>
+			<div class="comment"><?=com(h($res['com']),h($res['verified']))?>
 			<?php if(isset($res['not_deleted']) && !$res['not_deleted']):?>
 			<?php if($en):?>This post does not exist.<?php else:?>この記事はありません。<?php endif;?>
 			<?php endif;?>
