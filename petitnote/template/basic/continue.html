@@ -42,6 +42,7 @@
 		<span class="continue_menu"><?php if($en):?>Password<?php else:?>パスワード<?php endif;?>:<input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>		
 		<?php endif;?>
 		<input type="submit" value="<?php if($en):?>Download <?=h($pchext)?> file.<?php else:?><?=h($pchext)?>ファイルをダウンロード<?php endif;?>">
+			(file size:<?=h($pch_kb)?>kb)<br>
 		</form>
 <?php endif;?>
 

@@ -131,6 +131,9 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <applet-dummy CODE="pbbs.PaintBBS.class" ARCHIVE="./PaintBBS.jar" NAME="paintbbs" WIDTH="<?=h($appw)?>"
 	 HEIGHT="<?=h($apph)?>" MAYSCRIPT>
 <!-- ページ移動の警告 -->
+<?php if(isset($max_pch)):?>
+<param name="neo_max_pch" value="<?=h($max_pch)?>">
+<?php endif;?>
 <param name="neo_send_with_formdata" value="true">
 <param name="neo_confirm_unload" value="true">
 <param name="neo_show_right_button" value="true">
