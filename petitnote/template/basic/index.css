@@ -372,7 +372,10 @@ form.admin {
 }
 form.paint_form {
     margin: 3px 0 5px;
-	
+}
+form#download_forme span.pch_kb  {
+	display: inline-block;
+	margin: 0 0 0 8px;
 }
 form.aikotoba {
 	text-align: right;

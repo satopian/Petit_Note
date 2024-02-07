@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.16.8';
+$petit_ver='v1.17.0';
 $petit_lot='lot.20240207';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1066,7 +1066,7 @@ function to_continue(){
 	$hide_animation_checkd = ($_pchext==='hide_animation');
 
 	$pchext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
-	$pch_kb = $pchext ?  ceil(filesize(IMG_DIR.$time) * 1024) : '';
+	$pch_kb = $pchext ?  ceil(filesize(IMG_DIR.$time.$pchext) / 1024) : '';
 	$pchext=basename($pchext);
 	$select_app = false;
 	$app_to_use = false;
