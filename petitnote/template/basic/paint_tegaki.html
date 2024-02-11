@@ -81,10 +81,16 @@ Tegaki.open({
     Tegaki.flatten().toBlob(
       function(blob) {
         // console.log(blob);
-		var tgkr = Tegaki.replayRecorder ? Tegaki.replayRecorder.toBlob() : null;
-		var formData = new FormData();
+		const tgkr = Tegaki.replayRecorder ? Tegaki.replayRecorder.toBlob() : null;
+		const formData = new FormData();
+		let DataSize = 1000;
+		let max_pch = <?=h($max_pch)?>;
+		max_pch = parseInt(max_pch)*1024*1024;
 		if(tgkr){
-			formData.append("tgkr",tgkr,'blob');
+			DataSize = DataSize + blob.size + tgkr.size;
+			if(!max_pch||isNaN(max_pch)||(DataSize<max_pch)){
+				formData.append("tgkr",tgkr,'blob');
+			}
 		}
 		formData.append("picture",blob,'blob');
 		formData.append("usercode", "<?=h($usercode)?>");
