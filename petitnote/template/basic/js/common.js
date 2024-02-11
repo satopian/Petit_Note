@@ -138,7 +138,7 @@ if (elem_form_submit && (elem_attach_image||paintcom)) {
 			if(elem_check_nsfw){
 				elem_check_nsfw.style.display = "inline-block"; // チェックボックスを表示
 			}
-			if(hide_thumbnail.checked){
+			if(elem_hide_thumbnail && elem_hide_thumbnail.checked){
 				elem_form_submit.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
 				elem_form_submit.style.backgroundColor = "white"; // ボーダーを設定
 				elem_form_submit.style.borderRadius = "3px"; // ボーダーを設定
