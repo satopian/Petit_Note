@@ -92,15 +92,24 @@ textarea.rescom {
 	margin: 10px 0;
 }
 form.postform  span {
-    margin: 10px 0 0px 10px;
+    margin: 5px 10px 0px 0;
     display: inline-block;
 }
 
+span#check_nsfw {
+    display: none;
+}
+
+form.postform .nsfw {
+    margin: 15px 10px 0 0;
+    display: inline-block;
+}
 form.resform ,form.misskey_form {
 	text-align: right;
 }
 form.resform >span {
-    margin: 0 10px 0 0;
+    margin: 15px 10px 0 0;
+    display: inline-block;
 }
 form.misskey_form > span {
     display: inline-block;
@@ -406,7 +415,6 @@ span.continue_menu {
 }
 
 /* カタログ */
-
 .catalog_wrap span:nth-of-type(5n) {
 	margin-right: 0
 }

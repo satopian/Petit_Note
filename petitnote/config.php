@@ -216,6 +216,13 @@ $set_nsfw = false;
 // $mark_sensitive_image = true;
 $mark_sensitive_image = false;
 
+//閲覧注意にするにデフォルトでチェックする
+//する: trueに設定すると｢閲覧注意にする｣設定のチェックボックスがデフォルトでオンになります。
+// する: true しない: false
+
+$nsfw_checked = true;
+// $nsfw_checked = false;
+
 // 描画時間非表示の設定
 // する: trueで投稿時にペイント時間の表示/非表示を切り替える事ができるようになります。
 // する: true しない: false

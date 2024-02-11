@@ -120,6 +120,51 @@ function form_submit_set_nsfw_show_hide(event) {
 	}
 }
 
+//ファイルが添付されていない時は｢閲覧注意にする｣のチェックボックスを表示しない
+const elem_attach_image = document.getElementById("attach_image");
+const elem_check_nsfw = document.getElementById("check_nsfw");
+const elem_hide_thumbnail = document.getElementById("hide_thumbnail");
+const elem_form_submit = document.getElementById("form_submit");
+
+//お絵かきコメント用処理
+if (typeof paintcom === "undefined") {
+	paintcom = false;
+}
+
+if (elem_form_submit && (elem_attach_image||paintcom)) {
+
+	const updateFormStyle = function() {
+		if (paintcom || elem_attach_image.files.length > 0){
+			if(elem_check_nsfw){
+				elem_check_nsfw.style.display = "inline-block"; // チェックボックスを表示
+			}
+			if(hide_thumbnail.checked){
+				elem_form_submit.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
+				elem_form_submit.style.backgroundColor = "white"; // ボーダーを設定
+				elem_form_submit.style.borderRadius = "3px"; // ボーダーを設定
+			}else{
+				elem_form_submit.style.border = ""; // ボーダーを設定
+				elem_form_submit.style.backgroundColor = ""; // ボーダーを設定
+				elem_form_submit.style.borderRadius = ""; // ボーダーを設定
+			}
+		}else{
+			elem_form_submit.style.border = ""; // ボーダーを設定
+			elem_form_submit.style.backgroundColor = ""; // ボーダーを設定
+			elem_form_submit.style.borderRadius = ""; // ボーダーを設定
+			if(elem_check_nsfw){
+				elem_check_nsfw.style.display = "none"; // チェックボックスを非表示
+			}
+		}
+	};
+	if(elem_attach_image){
+		elem_attach_image.addEventListener("change", updateFormStyle);
+	}
+	if(elem_hide_thumbnail){
+		elem_hide_thumbnail.addEventListener("change", updateFormStyle);
+	}
+	document.addEventListener("DOMContentLoaded",updateFormStyle);	
+}
+
 //shareするSNSのserver一覧を開く
 var snsWindow = null; // グローバル変数としてウィンドウオブジェクトを保存する
 
@@ -187,12 +232,14 @@ jQuery(function() {
 		}, 500); //0.5秒かけてトップへ移動
 		return false;
 	});
-	lightbox.option({
+	if(typeof lightbox!=='undefined'){
+		lightbox.option({
 		'alwaysShowNavOnTouchDevices': true,
 		'disableScrolling': true,
 		'fadeDuration': 0,
 		'resizeDuration': 500,
 		'imageFadeDuration': 500,
 		'wrapAround': true
-	});
+		});
+	}
 });

@@ -50,7 +50,7 @@
 	<input type="checkbox" name="hide_content" id="hide_content" value="on" ><label for="hide_content"><?php if($en):?>Hide content<?php else:?>内容を隠す<?php endif;?></label>
 </span>
 <div>
-	<span class="icon-Simpleicons-Team-Simple-Misskey misskey_form_misskey_icon"></span><input type="submit" value="<?php if($en):?>Note<?php else:?>ノート<?php endif;?>" class="form_button">
+	<span class="icon-Simpleicons-Team-Simple-Misskey misskey_form_misskey_icon"></span><input type="submit" value="<?php if($en):?>Note<?php else:?>ノート<?php endif;?>" class="form_button" id="form_submit">
 </div>		
 </form>
 <!-- 内容を隠すをチェックした時に注釈のテキストエリアを表示 -->
@@ -82,6 +82,7 @@ document.getElementById('hide_content').addEventListener('change', function() {
 </div>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
+<script>const paintcom = true;</script> 
 <?php include __DIR__.'/parts/footer_js.html';?>
 </body>
 </html>

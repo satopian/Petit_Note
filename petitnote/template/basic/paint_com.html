@@ -108,21 +108,20 @@
 			<input type="checkbox" name="hide_painttime" id="hide_painttime" value="on"><label for="hide_painttime"><?php if($en):?>Hide paint time<?php else:?>描画時間を表示しない<?php endif;?></label>
 		</span>
 	<?php endif;?>
-
 	<br>
 		</div>
-	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>">
 
 	<?php if(!$sage_all):?>
 	<span id="paintcom_sage">
-	<input type="checkbox" name="sage" id="sage" value="on"><label for="sage">sage</label>	
+	<input type="checkbox" name="sage" value="on" id="sage"><label for="sage">sage</label>	
 	</span>
 	<?php endif;?>
 	<?php if($mark_sensitive_image):?>
 		<span>
-			<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on"><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
+			<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" <?php if($nsfw_checked):?>checked="checked"<?php endif;?>><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
 		</span>
 	<?php endif;?>
+	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>" id="form_submit">
 </form>
 <?php else:?>
 <?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
@@ -144,6 +143,7 @@
 </div>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
+<script>const paintcom = true;</script> 
 <?php include __DIR__.'/parts/footer_js.html';?>
 </body>
 </html>
