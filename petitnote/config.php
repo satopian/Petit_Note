@@ -216,7 +216,7 @@ $set_nsfw = false;
 // $mark_sensitive_image = true;
 $mark_sensitive_image = false;
 
-//閲覧注意にするにデフォルトでチェックする
+//｢閲覧注意にする｣をデフォルトでチェックする
 //する: trueに設定すると｢閲覧注意にする｣設定のチェックボックスがデフォルトでチェックされます。
 // する: true しない: false
 
