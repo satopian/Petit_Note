@@ -129,6 +129,11 @@ input.pchup_button {
 input.paint_button {
     padding: 1px 10px;
 }
+input.delete_button {
+	border: 2px solid rgb(255, 170, 192);
+	background-color: white;
+	border-radius: 3px;
+}
 
 /* 投稿者名から検索文字列にリンク */
 
