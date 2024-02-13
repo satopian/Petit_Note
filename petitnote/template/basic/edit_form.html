@@ -61,8 +61,9 @@
 <?php endif;?>
 <?php if($imgfile && $mark_sensitive_image):?>
 <input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" value="on" <?php if($hide_thumb_checkd):?>checked="checked"<?php endif;?>><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
+<script>const paintcom = true;</script>
 <?php endif;?>
-<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>" class="form_button">
+<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>" class="form_button" id="form_submit">
 </form>
 
 <hr>
