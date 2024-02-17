@@ -2,7 +2,7 @@
 //Petit Note 2021-2024 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20240129;
+$save_inc_ver=2024217;
 class image_save{
 
 	private $security_timer,$imgfile,$en,$count,$errtext,$session_usercode; // プロパティとして宣言
@@ -66,17 +66,12 @@ class image_save{
 		$sendheader = str_replace("&amp;", "&", $sendheader);
 		$this->tool = 'neo';
 		
-		$this->repcode = t(filter_input(INPUT_GET, 'repcode'));
-		$this->resto = t(filter_input(INPUT_GET, 'resto',FILTER_VALIDATE_INT));
-		$this->stime = t(filter_input(INPUT_GET, 'stime',FILTER_VALIDATE_INT));
-		$this->hide_animation = t(filter_input(INPUT_GET, 'hide_animation'));
-		
-		//GETで取得できなかった時は、拡張ヘッダから取得		
+		//拡張ヘッダから情報を取得		
 		parse_str($sendheader, $u);
-		$this->repcode = $this->repcode ? $this->repcode: (isset($u['repcode']) ? t($u['repcode']) : '');
-		$this->resto = $this->resto ? $this->resto : (isset($u['resto']) ? t($u['resto']) : '');
-		$this->stime = $this->stime ? $this->stime : (isset($u['stime']) ? t($u['stime']) : '');
-		$this->hide_animation = $this->hide_animation ? $this->hide_animation : (isset($u['hide_animation']) ? t($u['hide_animation']) : '');
+		$this->repcode = isset($u['repcode']) ? t($u['repcode']) : '';
+		$this->resto = isset($u['resto']) ? t($u['resto']) : '';
+		$this->stime = isset($u['stime']) ? t($u['stime']) : '';
+		$this->hide_animation = isset($u['hide_animation']) ? t($u['hide_animation']) : '';
 
 		$this->count = isset($u['count']) ? t($u['count']) : 0;
 
@@ -169,7 +164,7 @@ class image_save{
 			$this->error_msg($this->en ? "Your picture upload failed!\nPlease try again!" : "投稿に失敗。\n時間を置いて再度投稿してみてください。");
 		}
 		chmod(TEMP_DIR.$this->imgfile.'.dat',PERMISSION_FOR_LOG);
-			
+
 	}
 					
 	private function move_uploaded_image(){

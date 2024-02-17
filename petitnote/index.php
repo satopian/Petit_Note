@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20240207){
+if(!isset($functions_ver)||$functions_ver<20240217){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -1171,19 +1171,21 @@ function img_replace(){
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
 	$id = t((string)filter_input(INPUT_POST, 'id'));//intの範囲外
-	$id = $id ? $id :t((string)filter_input(INPUT_GET, 'id'));
+	$id = $id ? $id :t((string)filter_input(INPUT_GET, 'id'));//intの範囲外
 
-	$getpwd = t((string)filter_input(INPUT_GET, 'pwd'));
-	$repcode = t((string)filter_input(INPUT_GET, 'repcode'));
+	$enc_pwd =t((string)filter_input(INPUT_POST, 'enc_pwd'));
+	$enc_pwd = $enc_pwd ? $enc_pwd : t((string)filter_input(INPUT_GET, 'pwd'));
+	$repcode = t((string)filter_input(INPUT_POST, 'repcode'));
+	$repcode = $repcode ? $repcode : t((string)filter_input(INPUT_GET, 'repcode'));
 	$userip = t(get_uip());
 	//ホスト取得
 	$host = $userip ? t(gethostbyaddr($userip)) : '';
 	//ユーザーid
 	$userid = t(getId($userip));
-	$getpwd= basename($getpwd);
-	$getpwd = $getpwd ? hex2bin($getpwd): '';//バイナリに
-	$pwd = $getpwd ? 
-	openssl_decrypt($getpwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV):'';//復号化
+	$enc_pwd= $enc_pwd ? basename($enc_pwd): '';
+	$enc_pwd = $enc_pwd ? hex2bin($enc_pwd): '';//バイナリに
+	$pwd = $enc_pwd ? 
+	openssl_decrypt($enc_pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV):'';//復号化
 
 	if(strlen($pwd) > 100) return error($en? 'Password is too long.':'パスワードが長すぎます。');
 
@@ -1242,7 +1244,7 @@ function img_replace(){
 		}
 		closedir($handle);
 		if(!$repfind){//見つからなかった時は
-			return paintcom();//新規投稿
+			return location_paintcom();//新規投稿
 		}
 		$tempfile=TEMP_DIR.$file_name.$imgext;
 	}
@@ -1255,7 +1257,7 @@ function img_replace(){
 		if($is_upload){//該当記事が無い時はエラー
 			return error($en? 'The article does not exist.':'記事がありません。');
 		} 
-		return paintcom();//該当記事が無い時は新規投稿。
+		return location_paintcom();//該当記事が無い時は新規投稿。
 	}
 
 	$fp=fopen(LOG_DIR."alllog.log","r+");
@@ -1268,7 +1270,7 @@ function img_replace(){
 		if($is_upload){//該当記事が無い時はエラー
 			return error($en?'This operation has failed.':'失敗しました。');
 		} 
-		return paintcom();//該当記事が無い時は新規投稿。
+		return location_paintcom();//該当記事が無い時は新規投稿。
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
@@ -1282,7 +1284,7 @@ function img_replace(){
 		if($is_upload){//該当記事が無い時はエラー
 			return error($en?'This operation has failed.':'失敗しました。');
 		} 
-		return paintcom();//該当記事が無い時は新規投稿。
+		return location_paintcom();//該当記事が無い時は新規投稿。
 	}
 
 	$flag=false;
@@ -1310,7 +1312,7 @@ function img_replace(){
 		if($is_upload){
 			return error($en?'This operation has failed.':'失敗しました。');
 		} 
-		return paintcom();
+		return location_paintcom();
 	}
 
 	if(!$flag){
@@ -1319,7 +1321,7 @@ function img_replace(){
 		if($is_upload){//該当記事が無い時はエラー
 			return error($en?'This operation has failed.':'失敗しました。');
 		} 
-		return paintcom();//該当記事が無い時は新規投稿。
+		return location_paintcom();//該当記事が無い時は新規投稿。
 	}
 	$time=create_post_time();//ファイル名が重複しない投稿時刻を作成
 	$upfile=TEMP_DIR.$time.'.tmp';
@@ -1337,10 +1339,14 @@ function img_replace(){
 		copy($tempfile, $upfile);
 	}
 
+
 	if(!is_file($upfile)){
 		closeFile($rp);
 		closeFile($fp);
-		return error($en?'This operation has failed.':'失敗しました。');
+		if($is_upload){
+			return error($en?'This operation has failed.':'失敗しました。');
+		}
+		return location_paintcom();
 	} 
 	chmod($upfile,0606);
 	if($is_upload){//実体データの縮小
