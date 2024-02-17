@@ -250,6 +250,7 @@ function branch_destination_of_location(){
 	}
 	return header('Location: ./?page='.h($page));
 }
+//非同期通信の時にpaintcom()を呼び出すためのリダイレクト
 function location_paintcom(){
 	header('Location: ./?mode=paintcom');
 }
@@ -821,6 +822,7 @@ function check_AsyncRequest($upfile='') {
 	$asyncflag = (bool)filter_input(INPUT_POST,'asyncflag',FILTER_VALIDATE_BOOLEAN);
 	$paint_picrep = (bool)filter_input(INPUT_POST,'paint_picrep',FILTER_VALIDATE_BOOLEAN);
 	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
+	//Paintの画像差し換えの時はAsyncリクエストを継続
 	if(!$paint_picrep && ($http_x_requested_with || $asyncflag)){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
 		safe_unlink($upfile);
 		exit;
