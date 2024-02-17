@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.18.6';
-$petit_lot='lot.20240215';
+$petit_ver='v1.19.1';
+$petit_lot='lot.20240217';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1503,7 +1503,7 @@ function img_replace(){
 	if($is_upload){
 		return edit_form($time,$no);//編集画面にもどる
 	}
-	return header("Location: ./?resno={$no}#{$time}");
+	return header("Location: ./?resno={$no}&resid={$time}#{$time}");
 
 }
 
