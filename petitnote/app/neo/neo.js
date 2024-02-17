@@ -1254,9 +1254,6 @@ Neo.submit = function (board, blob, thumbnail, thumbnail2) {
 				exitURL = responseURL.replace(/^URL:/, "");
 				}
 				Neo.uploaded = true;
-				if (Neo.config.neo_send_replace_data) {
-				return repdata();
-				}
 				return location.href = exitURL;
 				})
 			}else{
@@ -1279,47 +1276,6 @@ Neo.submit = function (board, blob, thumbnail, thumbnail2) {
 			return alert(errorMessage + 
 				Neo.translate("投稿に失敗。時間を置いて再度投稿してみてください。"));
 		})
-	}
-	//画像差し換え処理のためのデータをPOSTして
-	//サーバから返って来たリダイレクト先に移動
-	const repdata = ()=>{
-
-		if (Neo.config.neo_send_replace_data) {
-			const formData = new FormData();
-			// キーと値を含む文字列
-			const queryString = Neo.config.neo_send_replace_data;
-			// FormDataオブジェクトを作成
-			// キーと値のペアを解析してFormDataにセット
-			queryString.split("&").forEach(param => {
-				const [key, value] = param.split("=");
-				formData.append(key, value);
-			});
-			// リクエストオプションを設定
-			const requestOptions = {
-				method: 'POST',
-				mode: 'same-origin',
-				headers: {
-					'X-Requested-With': 'PaintBBS'
-				},
-				body: formData
-			};
-			// fetchリクエストを作成
-			const exitURL=Neo.getAbsoluteURL(board, Neo.config.url_exit);
-			fetch(exitURL, requestOptions)
-			.then(response => {
-				if (!response.ok) {
-					return alert(Neo.translate("投稿に失敗。時間を置いて再度投稿してみてください。"));
-				}
-				// サーバからのリダイレクトがあった場合は、そのリダイレクト先のURLに移動。
-				console.log("response.redirected",response.redirected);
-				if(response.redirected){
-					return window.location.href = response.url;
-				}
-			})
-			.catch(error => {
-				return alert(Neo.translate("投稿に失敗。時間を置いて再度投稿してみてください。"));
-			});
-		};
 	}
 	if (Neo.config.neo_send_with_formdata == "true") {
 

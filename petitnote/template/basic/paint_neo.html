@@ -136,7 +136,6 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <param name="neo_max_pch" value="<?=h($max_pch)?>">
 <?php endif;?>
 <param name="neo_send_with_formdata" value="true">
-<param name="neo_send_replace_data" value="<?php if($rep):?>mode=<?=h($paintmode)?>&paint_picrep=on&no=<?=h($no)?>&id=<?=h($id)?>&enc_pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>">
 <param name="neo_confirm_unload" value="true">
 <param name="neo_show_right_button" value="true">
 <param name="send_header_count" value="true">
@@ -154,7 +153,7 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <param name="thumbnail_width" value="100%">
 <param name="thumbnail_height" value="100%">
 <param name="url_save" value="./?mode=saveimage&tool=neo">
-<param name="url_exit" value="./?mode=<?=h($paintmode)?>">
+<param name="url_exit" value="./?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>">
 <?php if($anime):?>
 <param name="thumbnail_type" value="animation">
 <?php endif;?>
