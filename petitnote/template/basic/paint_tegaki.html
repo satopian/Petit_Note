@@ -106,8 +106,8 @@ const repData = () => {
     .then(response => {
         if (response.ok) {
 			if (response.redirected) {
-					return window.location.href = response.url;
-				}
+				return window.location.href = response.url;
+			}
 			response.text().then((text) => {
 				if (text.startsWith("error\n")) {
 						console.log(text);
