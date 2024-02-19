@@ -62,6 +62,50 @@ return;
 			e.preventDefault(); // Alt キーのデフォルトの動作をキャンセル
 		}
 	});
+	//NEOの画像受信後の処理と画面移動
+	Neo.handleExit = ()=>{
+	<?php if($rep):?>
+    // 画像差し換えに必要なフォームデータをセット
+    const formData = new FormData();
+    formData.append("mode", "picrep"); 
+    formData.append("no", "<?= h($no)?>"); 
+    formData.append("id", "<?= h($id)?>"); 
+    formData.append("enc_pwd", "<?= h($pwd)?>"); 
+	formData.append("repcode", "<?= h($repcode)?>");
+	formData.append("paint_picrep", true);
+
+    // 画像差し換え
+    fetch("./", {
+        method: 'POST',
+		mode: 'same-origin',
+		headers: {
+			'X-Requested-With': 'PaintBBS'
+			,
+		},
+       body: formData
+    })
+    .then(response => {
+        if (response.ok) {
+
+			if (response.redirected) {
+				return window.location.href = response.url;
+				}
+			response.text().then((text) => {
+				if (text.startsWith("error\n")) {
+						console.log(text);
+						const error_message = text.split("\n").slice(1).join("\n");//"error\n"を除去
+						return alert(error_message);
+				}
+			})
+        }
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+	<?php else:?>
+	return window.location.href = "./?mode=paintcom";
+	<?php endif;?>
+	}
 
 </script>
 </head>
