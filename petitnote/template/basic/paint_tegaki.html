@@ -110,13 +110,15 @@ const repData = () => {
 			response.text().then((text) => {
 				if (text.startsWith("error\n")) {
 					console.log(text);
+					Tegaki.hide();//｢このサイトを離れますか?｣を解除
 					return window.location.href="./?mode=paintcom";
 				}
 			})
         }
     })
     .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
+		console.error('There was a problem with the fetch operation:', error);
+		Tegaki.hide();//｢このサイトを離れますか?｣を解除
 		return window.location.href="./?mode=paintcom";
     });
 }
