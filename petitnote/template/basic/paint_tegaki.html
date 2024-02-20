@@ -109,15 +109,15 @@ const repData = () => {
 			}
 			response.text().then((text) => {
 				if (text.startsWith("error\n")) {
-						console.log(text);
-						const error_message = text.split("\n").slice(1).join("\n");//"error\n"を除去
-						return showAlert(error_message);
+					console.log(text);
+					return window.location.href="./?mode=paintcom";
 				}
 			})
         }
     })
     .catch(error => {
         console.error('There was a problem with the fetch operation:', error);
+		return window.location.href="./?mode=paintcom";
     });
 }
 <?php endif;?>

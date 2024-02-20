@@ -89,18 +89,18 @@ return;
 
 			if (response.redirected) {
 				return window.location.href = response.url;
-				}
+			}
 			response.text().then((text) => {
 				if (text.startsWith("error\n")) {
 						console.log(text);
-						const error_message = text.split("\n").slice(1).join("\n");//"error\n"を除去
-						return alert(error_message);
+						return window.location.href = "./?mode=paintcom";
 				}
 			})
         }
     })
     .catch(error => {
         console.error('There was a problem with the fetch operation:', error);
+		return window.location.href = "./?mode=paintcom";
     });
 	<?php else:?>
 	return window.location.href = "./?mode=paintcom";
