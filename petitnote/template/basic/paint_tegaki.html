@@ -6,7 +6,6 @@
 <script src="app/tegaki/tegaki.js?<?=h($parameter_day)?><?=h($petit_lot)?>"></script>
 <link rel="stylesheet" href="app/tegaki/tegaki.css?<?=h($parameter_day)?><?=h($petit_lot)?>">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
-
 <style>
 	:not(input){
 	-moz-user-select: none;
@@ -20,7 +19,6 @@
 	document.addEventListener('dblclick', (e)=>{ e.preventDefault()}, { passive: false });
 	});
 </script>
-
 </head>
 <body>
 <script>
@@ -34,7 +32,7 @@ Tegaki.open({
 // when the user clicks on Finish
   onDone: function() {
 	
-	//Petit Note 2021-2023 (c)satopian MIT Licence
+	//Petit Note 2021-2024 (c)satopian MIT Licence
 	//この箇所はさとぴあが作成したMIT Licenceのコードです。
 
 	if (Tegaki.saveReplay) {
@@ -56,10 +54,10 @@ Tegaki.open({
 				response.text().then((text) => {
 				console.log(text)
 					if(text==='ok'){
-						Tegaki.hide();//｢このサイトを離れますか?｣を解除
 						<?php if($rep):?>
 						return repData();
 						<?php endif;?>
+						Tegaki.hide();//｢このサイトを離れますか?｣を解除
 						return window.location.href="./?mode=paintcom";
 					}
 					return showAlert(text);
@@ -106,6 +104,7 @@ const repData = () => {
     .then(response => {
         if (response.ok) {
 			if (response.redirected) {
+				Tegaki.hide();//｢このサイトを離れますか?｣を解除
 				return window.location.href = response.url;
 			}
 			response.text().then((text) => {

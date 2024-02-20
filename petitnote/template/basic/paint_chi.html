@@ -49,7 +49,7 @@ fullScreenMode: "force"
 });
 //画像受信後の処理と画面移動
 handleExit = ()=>{
-<?php if($rep):?>
+	<?php if($rep):?>
 // 画像差し換えに必要なフォームデータをセット
 const formData = new FormData();
 formData.append("mode", "picrep"); 
@@ -74,7 +74,7 @@ fetch("./", {
 
 		if (response.redirected) {
 			return window.location.href = response.url;
-		}
+			}
 		response.text().then((text) => {
 			if (text.startsWith("error\n")) {
 					console.log(text);
