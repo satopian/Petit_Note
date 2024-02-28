@@ -1,0 +1,6 @@
+<?php global $darkmode_by_default,$darkmode;?>
+<html
+<?php if(isset($darkmode) && $darkmode||!isset($_COOKIE["p_n_set_darkmode"])&&isset($darkmode_by_default) && $darkmode_by_default):?>
+class="darkmode"
+<?php endif;?>
+>

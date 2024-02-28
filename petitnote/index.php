@@ -96,13 +96,17 @@ $step_of_canvas_size = isset($step_of_canvas_size) ? $step_of_canvas_size : 50;
 $use_url_input_field = isset($use_url_input_field) ? $use_url_input_field : true;
 $max_px = isset($max_px) ? $max_px : 1024;
 $nsfw_checked = isset($nsfw_checked) ? $nsfw_checked : true;
+$use_darkmode = isset($use_darkmode) ? $use_darkmode : true;
+$darkmode_by_default = isset($darkmode_by_default) ? $darkmode_by_default : false;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 $userip = get_uip();
 //user-codeの発行
 $usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
+//初期設定でダークモードにする
 session_sta();
+
 $session_usercode = isset($_SESSION['usercode']) ? t((string)$_SESSION['usercode']) : "";
 $usercode = $usercode ? $usercode : $session_usercode;
 if(!$usercode){//user-codeがなければ発行
@@ -117,6 +121,12 @@ $x_frame_options_deny = isset($x_frame_options_deny) ? $x_frame_options_deny : t
 if($x_frame_options_deny){
 	header('X-Frame-Options: DENY');
 }
+//ダークモード
+if(!isset($_COOKIE["p_n_set_darkmode"])&&$darkmode_by_default){
+	setcookie("p_n_set_darkmode","1",time()+(60*60*24*180),"","",false,true);
+}
+$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
+
 //初期化
 init();
 deltemp();//テンポラリ自動削除
@@ -886,7 +896,6 @@ function paint(){
 	if (function_exists('ini_get')){
 		$max_pch = min((int)ini_get('post_max_size'),(int)ini_get('upload_max_filesize'));
 	} 
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	switch($app){
 		case 'chi'://ChickenPaint
@@ -1006,7 +1015,6 @@ function paintcom(){
 	$adminpost = adminpost_valid();
 	$use_hide_painttime = isset($use_hide_painttime) ? $use_hide_painttime : false;
 	$use_hide_painttime = ($adminpost || $use_hide_painttime);
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 	$admin_pass= null;
 	// HTML出力
 	$templete='paint_com.html';
@@ -1104,7 +1112,6 @@ function to_continue(){
 	$admindel=admindel_valid();
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	$is_badhost=is_badhost();
 	$admin_pass= null;
@@ -1552,7 +1559,6 @@ function pchview(){
 	$appw = $picw < 200 ? 200 : $picw;
 	$apph = $pich < 200 ? 200 : $pich + 26;
 	$parameter_day = date("Ymd");
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	// HTML出力
 	if($pchext==='.pch'){
@@ -1633,7 +1639,6 @@ function confirmation_before_deletion ($edit_mode=''){
 	// nsfw
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	$count_r_arr=count($r_arr);
 
@@ -1736,7 +1741,6 @@ function edit_form($id='',$no=''){
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 	$hide_thumb_checkd = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	$admin = ($admindel||$adminpost||is_adminpass($pwd));
 	
@@ -2092,7 +2096,6 @@ function set_share_server(){
 	$encoded_u=filter_input(INPUT_GET,"encoded_u");
 	$sns_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"sns_server_radio_cookie");
 	$sns_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"sns_server_direct_input_cookie");
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	$admin_pass= null;
 	//HTML出力
@@ -2329,7 +2332,6 @@ function search(){
 	$admindel=admindel_valid();
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 	$admin_pass= null;
 	//HTML出力
 	$templete='search.html';
@@ -2388,7 +2390,6 @@ function catalog(){
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	$admin_pass= null;
 	// HTML出力
@@ -2481,7 +2482,6 @@ function view(){
 	$urlc=h((string)filter_input(INPUT_COOKIE,'urlc'));
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	//token
 	$token=get_csrf_token();
@@ -2681,7 +2681,6 @@ function res (){
 	$urlc=h((string)filter_input(INPUT_COOKIE,'urlc'));
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
-	$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	$arr_apps=app_to_use();
 	$count_arr_apps=count($arr_apps);

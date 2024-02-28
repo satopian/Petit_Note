@@ -75,10 +75,8 @@
 </form>
 </div>
 <?php endif;?>
-<?php if($mark_sensitive_image):?>
 	<!-- 閲覧注意画像を隠す/隠さない -->
 	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
-<?php endif;?>
 <hr>
 <?php if(isset($out)):?>
 	<?php include __DIR__.'/parts/threads_loop.html'?>

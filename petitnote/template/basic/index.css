@@ -6,8 +6,8 @@
 	--background-color:#fff;
 	--accent-background-color:#ffe6e6;
 	--strong-accent-background-color:#ffcfcf;
-	--checked-background-color:#ffe6e6;
-	--border-color:#ffe6e6;
+	--checked-background-color:var(--accent-background-color);
+	--border-color:var(--accent-background-color);
 	--border-dashed:#888;
 	--soft-hover-color:#fff7f7;
     --posted-image-span-color: #fff;
@@ -25,7 +25,7 @@
 	--accent-background-color:#34424f;
 	--strong-accent-background-color:#4e626b;
 	--checked-background-color:var(--accent-background-color);
-	--border-color:#ffe6e6;
+	--border-color:var(--accent-background-color);
 	--border-dashed:#67767d;
 	--soft-hover-color:#2e3439;
     --posted-image-span-color: #fff;

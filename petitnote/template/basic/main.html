@@ -48,7 +48,7 @@
 	<a href="#bottom">▽</a>
 </nav>
 
-<?php if($mark_sensitive_image && ($userdel||$admindel)):?>
+<?php if($userdel||$admindel):?>
 	<!-- 閲覧注意画像を隠す/隠さない -->
 	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
 <?php endif;?>

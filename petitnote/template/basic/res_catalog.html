@@ -48,10 +48,8 @@
 <?php endif;?>
 <a href="#bottom">▽</a>
 </nav>
-<?php if($mark_sensitive_image):?>
 	<!-- 閲覧注意画像を隠す/隠さない -->
 	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
-<?php endif;?>
 <?php if($misskey_note):?>
 <h2 class="article_title"><?php if($en):?>Which image would you like to note on Misskey?<?php else:?>どの画像をMisskeyにノートしますか?<?php endif;?></h2>
 <?php endif;?>

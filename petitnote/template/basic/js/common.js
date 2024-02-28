@@ -116,6 +116,29 @@ if(set_nsfw_show_hide){
 			return false;
 	});
 }
+//検索画面設定項目 閲覧注意画像を隠す/隠さない
+const set_darkmode = document.getElementById("set_darkmode");
+if(set_darkmode){
+	set_darkmode.addEventListener("change",()=>{
+			const formData = new FormData(set_darkmode);
+			fetch("./", {
+			method: "post",
+			mode: 'same-origin',
+			body: formData
+			})
+			.then(response => {
+			// レスポンスの処理
+			console.log("Data sent successfully");
+			location.reload();
+			})
+			.catch(error => {
+			// エラーハンドリング
+			console.error("Error:", error);
+			// submitBtn.disabled = false;
+			});
+	});
+}
+  
 
 //ファイルが添付されていない時は｢閲覧注意にする｣のチェックボックスを表示しない
 const elem_attach_image = document.getElementById("attach_image");
