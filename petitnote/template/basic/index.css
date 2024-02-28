@@ -1,13 +1,49 @@
 @charset "utf-8";
+:root{
+	--text-color:#555;
+	--a-color:var(--text-color);
+	--a-hover-color:var(--text-color);
+	--background-color:#fff;
+	--accent-background-color:#ffe6e6;
+	--strong-accent-background-color:#ffcfcf;
+	--checked-background-color:#ffe6e6;
+	--border-color:#ffe6e6;
+	--border-dashed:#888;
+	--soft-hover-color:#fff7f7;
+    --posted-image-span-color: #fff;
+    --posted-image-span-background-color: #555;
+    --page-top-color: #fff;
+	--error-message-background-color:hsl(60 100% 88% / 1);
+	--warning-color:rgb(255, 170, 192);
+	--warning-border-color:#fff;
+}
+.darkmode{
+	--text-color:#e7ebf1;
+	--a-color:#c8d2df;
+	--a-hover-color:var(--text-color);
+	--background-color:#20262f;
+	--accent-background-color:#34424f;
+	--strong-accent-background-color:#4e626b;
+	--checked-background-color:var(--accent-background-color);
+	--border-color:#ffe6e6;
+	--border-dashed:#67767d;
+	--soft-hover-color:#2e3439;
+    --posted-image-span-color: #fff;
+    --posted-image-span-background-color: #555;
+    --page-top-color: #fff;
+	--error-message-background-color:var(--accent-background-color);
+	--warning-color:var(--text-color);
+	--warning-border-color:rgb(255, 170, 192);
+}
 /* 全体 */
 body {
 	margin: 10px;
 }
 body,td {
-	color: #555;
+	color: var(--text-color);
 	overflow-wrap: anywhere;
 	font-family: "Hiragino Sans", meiryo, ヒラギノ角ゴシック, メイリオ, sans-serif;
-	background-color: #fff;
+	background-color: var(--background-color);
 }
 
 .container {
@@ -16,7 +52,7 @@ body,td {
 }
 hr {
 	border: none;
-	border-bottom: 1px dashed #888;
+	border-bottom: 1px dashed var(--border-dashed);
 	}
 
 ul {
@@ -32,11 +68,12 @@ ul {
 	
 /* リンク */
 a {
-	color: #555;
+	color: var(--a-color);
 	}
 	
 a:hover{
 	text-decoration: none;
+	color:var(--a-hover-color);
 }
 	
 /* 見出し */
@@ -52,9 +89,9 @@ h1.title a {
 
 h2 {
 	font-size: 18px;
-	background-color: #ffe6e6;
-	border-left: 8px solid #ffcfcf;
-	border-bottom: 1px dashed #888;
+	background-color: var(--accent-background-color);
+	border-left: 8px solid var(--strong-accent-background-color);
+	border-bottom: 1px dashed var(--border-dashed);
 	padding: 2px 6px 2px;
 	margin: 8px 0;
 }
@@ -130,8 +167,8 @@ input.paint_button {
     padding: 1px 10px;
 }
 input.delete_button {
-	border: 2px solid rgb(255, 170, 192);
-	background-color: white;
+	border: 2px solid var(--warning-border-color);
+	background-color:var(--warning-color);
 	border-radius: 3px;
 }
 
@@ -139,12 +176,12 @@ input.delete_button {
 
 span.info_name {
     display: inline-block;
-    border: 1px solid #ffcfcf;
+    border: 1px solid var(--strong-accent-background-color);
     border-radius: 5px;
     line-height: 1;
     margin: 0 2px 2px 0px;
 }
-span.info_name:hover a {background-color: #fff7f7;}
+span.info_name:hover a {background-color: var(--soft-hover-color);}
 span.info_name a ,span.info_name > span {
     display: block;
     padding: 5px;
@@ -192,8 +229,8 @@ span.info_name a ,span.info_name > span {
 	top: 13px;
     left: 13px;
     display: inline-block;
-    background-color: #555;
-    color: white;
+    background-color: var(--posted-image-span-background-color);
+    color: var(--posted-image-span-color);
     padding: 3px;
     border-radius: 5px;
     font-weight: 600;
@@ -235,12 +272,12 @@ span.share_button {
 button.copy_button {
     background-color: transparent;
     border-radius: 6px;
-    border: 1px solid #ffcfcf;
-    color: #555;
+    border: 1px solid var(--strong-accent-background-color);
+    color: var(--text-color);
 }
 
 button.copy_button:hover {
-    background-color: #fff7f7;
+    background-color: var(--soft-hover-color);
 }
 /* 編集･削除ボタン */
 div.edit_button {
@@ -280,11 +317,11 @@ label {
 	border-radius: 5px;
 }
 .form_radio_sns_server label:hover{
-	background-color: #ffe6e6;
+	background-color: var(--accent-background-color);
 }
 
-input[type="checkbox"]:checked + label{background-color: #ffe6e6;font-weight: 600;}
-input[type="radio"]:checked + label{background-color: #ffe6e6;font-weight: 600;}
+input[type="checkbox"]:checked + label{background-color: var(--checked-background-color);font-weight: 600;}
+input[type="radio"]:checked + label{background-color: var(--checked-background-color);font-weight: 600;}
 /* チェックボックスが選択された場合のスタイル */
 input[type="checkbox"]:checked + label .info_name {
 	border: none;
@@ -472,7 +509,7 @@ span.continue_menu {
 
 /* NSFW表示ボタン */
 .view_nsfw {
-    background-color: #ffe6e6;
+    background-color: var(--accent-background-color);
     padding: 10px;
     line-height: 2;
 }
@@ -558,7 +595,7 @@ span.continue_menu {
 	position: fixed;
 	right: 0;
 	bottom: 50px;
-	background: #ffcfcf;
+	background: var(--strong-accent-background-color);
 	opacity: .6;
 	border-radius: 50%
 }
@@ -574,7 +611,7 @@ span.continue_menu {
 #page_top a::before {
 	font-weight: 900;
 	font-size: 25px;
-	color: #fff;
+	color: var(--page-top-color);
 	position: absolute;
 	width: 25px;
 	height: 25px;
@@ -596,7 +633,7 @@ span.continue_menu {
 /* エラーメッセージ */
 div#error_message , div#error_message_imgrep , div#error_message_paintform , div#error_message_download , div#error_message_beforedelete {
 	line-height: initial;
-	background-color: hsl(60 100% 88% / 1);
+	background-color: var(--error-message-background-color);
 	font-size: 20px;
 	padding: 1px 4px 1px;
 	margin: 5px 0 5px;

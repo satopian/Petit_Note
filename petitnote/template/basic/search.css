@@ -1,4 +1,8 @@
 @charset "utf-8";
+:root{
+	--accent-background-color:#ffe6e6;
+    --posted-image-span-color: #fff;
+}
 
 form.searchform {
     margin: 1em 0 0;
@@ -21,8 +25,8 @@ form.searchform {
 	top: 13px;
     left: 13px;
     display: inline-block;
-    background-color: #555;
-    color: white;
+    background-color: var(--posted-image-span-background-color);
+    color: var(--posted-image-span-color);
     padding: 3px;
     border-radius: 5px;
     font-weight: 600;
@@ -77,23 +81,21 @@ form.searchform {
 }
 
 .searchform .label {
-	color: #6f6f6f;
 	display: inline-block;
 	padding: 0 10px;
 	text-align: center;
 	cursor: pointer;
-	border: 2px solid #ffe6e6;
+	border: 2px solid var(--border-color);
 	border-radius: 15px;
 	margin: 0 3px 0 0;
 }
 
 .searchform input[type=radio]:checked+label {
-	color: #626262;
-	background: #ffe6e6;
+	background: var(--accent-background-color);
 }
 
 .searchform .label:hover {
-	background-color: #ffe6e6;
+	background-color: var(--accent-background-color);
 }
 
 .searchform .radio {

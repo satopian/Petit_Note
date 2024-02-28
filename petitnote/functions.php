@@ -105,6 +105,7 @@ function admin_in(){
 	}
 	$admin_pass= null;
 	// HTML出力
+	$set_darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 	$templete='admin_in.html';
 	return include __DIR__.'/'.$skindir.$templete;
 	
@@ -216,6 +217,17 @@ function set_nsfw_show_hide(){
 		setcookie("p_n_set_nsfw_show_hide",true,time()+(60*60*24*180),"","",false,true);
 	}else{
 		setcookie("p_n_set_nsfw_show_hide",false,time()+(60*60*24*180),"","",false,true);
+	}
+
+	return branch_destination_of_location();
+}
+function set_darkmode(){
+
+	$darkmode=(bool)filter_input(INPUT_POST,'darkmode');
+	if($darkmode){
+		setcookie("p_n_set_darkmode",true,time()+(60*60*24*180),"","",false,true);
+	}else{
+		setcookie("p_n_set_darkmode",false,time()+(60*60*24*180),"","",false,true);
 	}
 
 	return branch_destination_of_location();
@@ -737,7 +749,9 @@ function error($str,$historyback=true){
 	$boardname = ($aikotoba_required_to_view && !aikotoba_valid()) ? '' : $boardname; 
 
 	$admin_pass= null;
+	$set_darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
+	$set_darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 	$templete='error.html';
 	include __DIR__.'/'.$skindir.$templete;
 	exit;
