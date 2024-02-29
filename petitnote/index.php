@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.20.2';
-$petit_lot='lot.20240226';
+$petit_ver='v1.22.2';
+$petit_lot='lot.20240229';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -125,7 +125,6 @@ if($x_frame_options_deny){
 if(!isset($_COOKIE["p_n_set_darkmode"])&&$darkmode_by_default){
 	setcookie("p_n_set_darkmode","1",time()+(60*60*24*180),"","",false,true);
 }
-$darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 //初期化
 init();

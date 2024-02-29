@@ -42,6 +42,18 @@ $subject_input_required = false;
 //本文の制限文字数。半角で
 $max_com=1000;
 
+//ダークモードを使用する
+// する: true しない: false
+
+$use_darkmode = true;
+// $use_darkmode = false;
+
+//デフォルトの表示をダークモードにする
+// する: true しない: false
+
+// $darkmode_by_default = true;
+$darkmode_by_default = false;
+
 /*-----絶対に変更が必要な項目ここまで-----*/
 
 /*SNS連携*/

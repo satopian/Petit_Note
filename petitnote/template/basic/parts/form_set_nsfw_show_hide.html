@@ -1,5 +1,6 @@
 <div>
-<?php if($mark_sensitive_image):?>
+<?php global $mark_sensitive_image,$darkmode_by_default,$use_darkmode;?>
+<?php if(isset($mark_sensitive_image) && $mark_sensitive_image):?>
 <?php if($en):?>NSFW:<?php else:?>閲覧注意画像:<?php endif;?>
 <form action="./" method="post" id="set_nsfw_show_hide" class="aikotoba">
 <input type="radio" name="set_nsfw_show_hide" value="" id="nsfw_hide" <?php if(!$set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_hide"><?php if($en):?>Hide<?php else:?>隠す<?php endif;?></label>
@@ -8,10 +9,9 @@
 <input type="hidden" name="postpage" value="<?=h($page)?>">
 </form>
 <?php endif;?>
-<?php global $darkmode_by_default,$use_darkmode;?>
-<?php if($use_darkmode):?>
+<?php if(isset($use_darkmode) && $use_darkmode):?>
 <form action="./" method="post" id="set_darkmode" class="aikotoba">
-<input type="checkbox" name="darkmode" value="on" id="darkmode" <?php if($darkmode||!isset($_COOKIE["p_n_set_darkmode"])&&$darkmode_by_default):?>checked="checked"<?php endif;?>><label for="darkmode"><?php if($en):?>Dark mode<?php else:?>ダークモード<?php endif;?></label>
+<input type="checkbox" name="darkmode" value="on" id="darkmode" <?php if((isset($darkmode) && $darkmode)||!isset($_COOKIE["p_n_set_darkmode"])&&isset($darkmode_by_default) && $darkmode_by_default):?>checked="checked"<?php endif;?>><label for="darkmode"><?php if($en):?>Dark mode<?php else:?>ダークモード<?php endif;?></label>
 <input type="hidden" name="mode" value="set_darkmode">
 <input type="hidden" name="postpage" value="<?=h($page)?>">
 </form>

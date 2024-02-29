@@ -92,7 +92,7 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 			});
 	}
 }
-//検索画面設定項目 閲覧注意画像を隠す/隠さない
+//閲覧注意画像を隠す/隠さない
 const set_nsfw_show_hide = document.getElementById("set_nsfw_show_hide");
 if(set_nsfw_show_hide){
 	set_nsfw_show_hide.addEventListener("change",()=>{
@@ -110,13 +110,11 @@ if(set_nsfw_show_hide){
 			.catch(error => {
 			// エラーハンドリング
 			console.error("Error:", error);
-			// submitBtn.disabled = false;
 			});
 			
-			return false;
 	});
 }
-//検索画面設定項目 閲覧注意画像を隠す/隠さない
+//ダークモード
 const set_darkmode = document.getElementById("set_darkmode");
 if(set_darkmode){
 	set_darkmode.addEventListener("change",()=>{
@@ -139,7 +137,6 @@ if(set_darkmode){
 	});
 }
   
-
 //ファイルが添付されていない時は｢閲覧注意にする｣のチェックボックスを表示しない
 const elem_attach_image = document.getElementById("attach_image");
 const elem_check_nsfw = document.getElementById("check_nsfw");

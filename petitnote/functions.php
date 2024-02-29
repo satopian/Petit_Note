@@ -64,7 +64,6 @@ function aikotoba_required_to_view($required_flag=false){
 
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
-
 	$admin_pass= null;
 
 	if(!aikotoba_valid()){
@@ -105,7 +104,6 @@ function admin_in(){
 	}
 	$admin_pass= null;
 	// HTML出力
-	$set_darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 	$templete='admin_in.html';
 	return include __DIR__.'/'.$skindir.$templete;
 	
@@ -749,7 +747,6 @@ function error($str,$historyback=true){
 	$boardname = ($aikotoba_required_to_view && !aikotoba_valid()) ? '' : $boardname; 
 
 	$admin_pass= null;
-	$set_darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');
 
 	$templete='error.html';
 	include __DIR__.'/'.$skindir.$templete;
