@@ -523,6 +523,10 @@ span.continue_menu {
 .app_toolleft {
     margin: 16px auto;
 }
+/* お絵かき画面の時計 */
+input.input_count_timer {
+    vertical-align: middle;
+}
 /* 描画アニメ再生画面 */
 .pch_download {
     line-height: 1.8;
