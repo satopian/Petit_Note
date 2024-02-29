@@ -69,7 +69,7 @@
 	/* フォーム入力欄の背景色 */
 	--form-input-background-color: #e5eaeb;
 
-	input[type="text"], input[type="password"], input[type="url"], input[type="search"], input[type="radio"] ,input[type="checkbox"], textarea, select {
+	input[type="text"], input[type="password"], input[type="url"], input[type="search"], textarea, select {
 		background-color:var(--form-input-background-color);
 	}
 	
