@@ -1,83 +1,54 @@
 @charset "utf-8";
 :root{/* ライトモードの配色 */
 
-	/* 文字色 */
-	--text-color:#555;
-	/* リンクの色 */
-	--a-color:var(--text-color);
-	/* リンクホバー */
-	--a-hover-color:var(--text-color);
-	/* 背景色 */
-	--background-color:#fff;
-	/* 記事タイトルの背景色 */
-	--accent-background-color:#ffe6e6;
-	/* 記事タイトル背景色のアクセント */
-	--strong-accent-background-color:#ffcfcf;
-	/* チェック済みのフォームのラベルの色 */
-	--checked-background-color:var(--accent-background-color);
-	/* ボーダー */
-	--border-color:var(--accent-background-color);
-	/* 点線 */
-	--border-dashed:#888;
-	/* 名前のリンクのホバー */
-	--soft-hover-color:#fff7f7;
-	/* 閲覧注意の文字色 */
-	--posted-image-span-color: #fff;
-	/* 閲覧注意の背景色 */
-	--posted-image-span-background-color: #555;
-	/* 上に戻るボタンの矢印の色 */
-	--page-top-color: #fff;
-	/* エラーメッセージの背景色 */
-	--error-message-background-color:hsl(60 100% 88% / 1);
-	/* 注意が必要な項目の背景色 */
-	--warning-color:#fff;
-	/* 注意が必要な項目のボーダー */
-	--warning-border-color:rgb(255, 170, 192);
+	/* 文字色 */--text-color:#555;
+	/* リンクの色 */--a-color:var(--text-color);
+	/* リンクホバー */--a-hover-color:var(--text-color);
+	/* 背景色 */--background-color:#fff;
+	/* 記事タイトルの背景色 */--accent-background-color: #ffd2ef;
+	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: #ffbde8;
+	/* チェック済みのフォームのラベルの色 */--checked-background-color:var(--accent-background-color);
+	/* ボーダー */--border-color:var(--accent-background-color);
+	/* 点線 */--border-dashed-color:#888;
+	/* ラベルのボーダー */--border-label:var(--border-color);
+	/* 名前のリンクのホバー */--soft-hover-color:#fff7f7;
+	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
+	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
+	/* 上に戻るボタンの矢印の色 */--page-top-color: #fff;
+	/* 上に戻るボタンの背景色 */--page-top-background-color: var(--strong-accent-background-color);
+	/* エラーメッセージの背景色 */--error-message-background-color:hsl(60 100% 88% / 1);
+	/* 注意が必要な項目の背景色 */--warning-color:#fff;
+	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);
+	--background-image: url('bk.png');
 }
+
 .darkmode{/* ダークモードの配色 */
 
-	/* 文字色 */
-	--text-color:#e7ebf1;
-	/* リンクの色 */
-	--a-color:#b8c4cb;
-	/* リンクホバー */
-	--a-hover-color:var(--a-color);
-	/* 背景色 */
-	--background-color:#1f282d;
-	/* 記事タイトルの背景色 */
-	--accent-background-color:#34424f;
-	/* 記事タイトル背景色のアクセント */
-	--strong-accent-background-color:#4e626b;
-	/* チェック済みのフォームのラベルの色 */
-	--checked-background-color:var(--accent-background-color);
-	/* ボーダー */
-	--border-color:#54697f;
-	/* 点線 */
-	--border-dashed:#67767d;
-	/* 名前のリンクのホバー */
-	--soft-hover-color:#2b3439;
-  	/* 閲覧注意の文字色 */
-	--posted-image-span-color: #fff;
-	/* 閲覧注意の背景色 */
-	--posted-image-span-background-color: #555;
-	/* 上に戻るボタンの矢印の色 */
-	--page-top-color: #fff;
-	/* エラーメッセージの背景色 */
-	--error-message-background-color:var(--accent-background-color);
-	/* 注意が必要な項目のボーダー */
-	--warning-border-color:rgb(255, 170, 192);
-	/* フォーム入力欄の背景色 */
-	--form-input-background-color: #e5eaeb;
-
-	input[type="text"], input[type="password"], input[type="url"], input[type="search"], textarea, select {
+	/* 文字色 */--text-color:#e7ebf1;
+	/* リンクの色 */--a-color: #b8bfcb;
+	/* リンクホバー */--a-hover-color:var(--a-color);
+	/* 背景色 */--background-color: hsl(218.77deg 24.08% 12.81%);
+	/* 記事タイトルの背景色 */--accent-background-color: hsl(223.62deg 29.34% 18.99%);
+	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(341.48deg 78.93% 25.61%);
+	/* チェック済みのフォームのラベルの色 */--checked-background-color: hsl(220.8deg 32.67% 20.88%);
+	/* ボーダー */--border-color: var(--strong-accent-background-color);
+	/* 点線 */--border-dashed-color: hsl(341.48deg 78.93% 25.61%);
+	/* ラベルのボーダー */--border-label:var(--border-color);
+	/* 名前のリンクのホバー */--soft-hover-color: #21273b;
+  	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
+	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
+	/* 上に戻るボタンの矢印の色 */--page-top-color: #fff;
+	/* 上に戻るボタンの背景色 */--page-top-background-color: hsl(208.89deg 31.38% 28.88%);
+	/* エラーメッセージの背景色 */--error-message-background-color:var(--accent-background-color);
+	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);--background-image: none;--background-image: none;
+	/* フォーム入力欄の背景色 */--form-input-background-color: #e5eaeb;input[type="text"], input[type="password"], input[type="url"], textarea, select {
 		background-color:var(--form-input-background-color);
-	}
-	
-}
+	}}
 /* 全体 */
 body {
 	margin: 10px;
-}
+	background-image :var(--background-image)}
+
 body,td {
 	color: var(--text-color);
 	overflow-wrap: anywhere;
@@ -91,7 +62,7 @@ body,td {
 }
 hr {
 	border: none;
-	border-bottom: 1px dashed var(--border-dashed);
+	border-bottom: 1px dashed var(--border-dashed-color);
 	}
 
 ul {
@@ -130,13 +101,16 @@ h2 {
 	font-size: 18px;
 	background-color: var(--accent-background-color);
 	border-left: 8px solid var(--strong-accent-background-color);
-	border-bottom: 1px dashed var(--border-dashed);
+	border-bottom: 1px dashed var(--border-dashed-color);
 	padding: 2px 6px 2px;
 	margin: 8px 0;
 }
 h2.article_title a {
-		text-decoration: none;
-		display: block;
+	text-decoration: none;
+	display: block;
+}
+h2.article_title {
+	color: var(--a-color);
 }
 /* フォーム入力 */
 textarea.post_com {
@@ -523,10 +497,6 @@ span.continue_menu {
 .app_toolleft {
     margin: 16px auto;
 }
-/* お絵かき画面の時計 */
-input.input_count_timer {
-    vertical-align: middle;
-}
 /* 描画アニメ再生画面 */
 .pch_download {
     line-height: 1.8;
@@ -637,7 +607,7 @@ input.input_count_timer {
 	position: fixed;
 	right: 0;
 	bottom: 50px;
-	background: var(--strong-accent-background-color);
+	background: var(--page-top-background-color);
 	opacity: .6;
 	border-radius: 50%
 }
