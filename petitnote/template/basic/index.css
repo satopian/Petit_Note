@@ -107,6 +107,9 @@ h2.article_title a {
 		text-decoration: none;
 		display: block;
 }
+h2.article_title{
+	color: var(--a-color);
+}
 /* フォーム入力 */
 textarea.post_com {
 	width: 300px;
