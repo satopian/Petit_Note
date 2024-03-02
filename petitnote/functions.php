@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240217;
+$functions_ver=20240301;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -212,9 +212,9 @@ function set_nsfw_show_hide(){
 
 	$view=(bool)filter_input(INPUT_POST,'set_nsfw_show_hide');
 	if($view){
-		setcookie("p_n_set_nsfw_show_hide",true,time()+(60*60*24*180),"","",false,true);
+		setcookie("p_n_set_nsfw_show_hide",true,time()+(60*60*24*365),"","",false,true);
 	}else{
-		setcookie("p_n_set_nsfw_show_hide",false,time()+(60*60*24*180),"","",false,true);
+		setcookie("p_n_set_nsfw_show_hide",false,time()+(60*60*24*365),"","",false,true);
 	}
 
 	return branch_destination_of_location();
@@ -223,9 +223,9 @@ function set_darkmode(){
 
 	$darkmode=(bool)filter_input(INPUT_POST,'darkmode');
 	if($darkmode){
-		setcookie("p_n_set_darkmode","1",time()+(60*60*24*180),"","",false,true);
+		setcookie("p_n_set_darkmode","1",time()+(60*60*24*365),"","",false,true);
 	}else{
-		setcookie("p_n_set_darkmode","0",time()+(60*60*24*180),"","",false,true);
+		setcookie("p_n_set_darkmode","0",time()+(60*60*24*365),"","",false,true);
 	}
 
 	return branch_destination_of_location();

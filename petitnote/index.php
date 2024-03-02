@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.22.2';
-$petit_lot='lot.20240229';
+$petit_ver='v1.22.8';
+$petit_lot='lot.20240302';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20240217){
+if(!isset($functions_ver)||$functions_ver<20240301){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -102,11 +102,11 @@ $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 $userip = get_uip();
+
 //user-codeの発行
 $usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
-//初期設定でダークモードにする
-session_sta();
 
+session_sta();
 $session_usercode = isset($_SESSION['usercode']) ? t((string)$_SESSION['usercode']) : "";
 $usercode = $usercode ? $usercode : $session_usercode;
 if(!$usercode){//user-codeがなければ発行
