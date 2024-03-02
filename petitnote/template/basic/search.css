@@ -45,6 +45,9 @@ form.searchform {
 	height: auto;
 }
 
+h2.search_h2 {
+    color: var(--a-color);
+}
 .s_article h3 {
 	font-size: 1em;
 	font-weight: 400;
@@ -81,17 +84,17 @@ form.searchform {
 	padding: 0 10px;
 	text-align: center;
 	cursor: pointer;
-	border: 2px solid var(--border-color);
+	border: 2px solid var(--border-label-color);
 	border-radius: 15px;
 	margin: 0 3px 0 0;
 }
 
 .searchform input[type=radio]:checked+label {
-	background: var(--accent-background-color);
+	background: var(--checked-background-color);
 }
 
 .searchform .label:hover {
-	background-color: var(--accent-background-color);
+	background-color: var(--checked-background-color);
 }
 
 .searchform .radio {
