@@ -26,7 +26,7 @@
 	/* リンクの色 */--a-color: #b8bfcb;
 	/* リンクホバー */--a-hover-color:var(--a-color);
 	/* 背景色 */--background-color: hsl(205 15% 16% / 1);
-	/* 記事タイトルの背景色 */--accent-background-color: hsl(202.54deg 29% 24%);
+	/* 記事タイトルの背景色 */--accent-background-color: hsl(208deg 23.36% 26.29%);
 	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(198 63% 27% / 1);
 	/* チェック済みのフォームのラベルの色 */--checked-background-color: var(--accent-background-color);
 	/* ボーダー */--border-color: var(--strong-accent-background-color);
