@@ -1,16 +1,18 @@
 @charset "utf-8";
 :root{/* ライトモードの配色 */
 
-	/* 文字色 */--text-color: #555;
+	/* 文字色 */--text-color: hsl(200 5% 28% / 1);
 	/* リンクの色 */--a-color:var(--text-color);
 	/* リンクホバー */--a-hover-color:var(--text-color);
 	/* 背景色 */--background-color:#fff;
+	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
 	/* 記事タイトルの背景色 */--accent-background-color:#ffe6e6;
 	/* 記事タイトル背景色のアクセント */--strong-accent-background-color:#ffcfcf;
 	/* チェック済みのフォームのラベルの色 */--checked-background-color:var(--accent-background-color);
 	/* ボーダー */--border-color: var(--strong-accent-background-color);
 	/* 点線 */--border-dashed-color:#888;
 	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
+	/* ダイナミックパレットのボーダー */--border-dynamic-palette-color: #555;
 	/* 名前のリンクのホバー */--soft-hover-color:#fff7f7;
 	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
 	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
@@ -18,27 +20,30 @@
 	/* 上に戻るボタンの背景色 */--page-top-background-color:var(--strong-accent-background-color);
 	/* エラーメッセージの背景色 */--error-message-background-color:hsl(60 100% 88% / 1);
 	/* 注意が必要な項目の背景色 */--warning-color:#fff;
-	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);}
+	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);
+}
 
 .darkmode{/* ダークモードの配色 */
 
-	/* 文字色 */--text-color: hsl(216 16% 90% / 1);
-	/* リンクの色 */--a-color: #b8bfcb;
+	/* 文字色 */--text-color: hsl(210 16% 90% / 1);
+	/* リンクの色 */--a-color: hsl(210 18% 79% / 1);
 	/* リンクホバー */--a-hover-color:var(--a-color);
-	/* 背景色 */--background-color: hsl(205 15% 16% / 1);
-	/* 記事タイトルの背景色 */--accent-background-color: hsl(208deg 23.36% 26.29%);
-	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(198 63% 27% / 1);
-	/* チェック済みのフォームのラベルの色 */--checked-background-color: var(--accent-background-color);
+	/* 背景色 */--background-color: hsl(210 16% 14% / 1);
+	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
+	/* 記事タイトルの背景色 */--accent-background-color: hsl(210 23% 26% / 1);
+	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(210 53% 37% / 1);
+	/* チェック済みのフォームのラベルの色 */--checked-background-color:var(--accent-background-color);
 	/* ボーダー */--border-color: var(--strong-accent-background-color);
-	/* 点線 */--border-dashed-color: var(--strong-accent-background-color);
+	/* 点線 */--border-dashed-color: hsl(210 38% 33% / 1);
 	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
-	/* 名前のリンクのホバー */--soft-hover-color: #1c2e37;
+	/* ダイナミックパレットのボーダー */--border-dynamic-palette-color: hsl(210 39% 35% / 1);
+	/* 名前のリンクのホバー */--soft-hover-color: hsl(210 26% 17% / 1);
 	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
 	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
 	/* 上に戻るボタンの矢印の色 */--page-top-color: #fff;
-	/* 上に戻るボタンの背景色 */--page-top-background-color: hsl(197.52deg 43.06% 24.32%);
+	/* 上に戻るボタンの背景色 */--page-top-background-color: hsl(210 33% 28% / 1);
 	/* エラーメッセージの背景色 */--error-message-background-color:var(--accent-background-color);
-	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);--background-image: none;--background-image: none;
+	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);
 	/* フォーム入力欄の背景色 */--form-input-background-color: #e5eaeb;input[type="text"], input[type="password"], input[type="url"], textarea, select {
 		background-color:var(--form-input-background-color);
 	}
@@ -77,8 +82,8 @@ ul {
 /* リンク */
 a {
 	color: var(--a-color);
-	}
-	
+}
+
 a:hover{
 	text-decoration: none;
 	color:var(--a-hover-color);
@@ -106,6 +111,7 @@ h2 {
 h2.article_title a {
 		text-decoration: none;
 		display: block;
+		color: var(--article-title-color);
 }
 h2.article_title{
 	color: var(--a-color);
