@@ -1,5 +1,4 @@
 @charset "utf-8";
-
 /* 
 CSS カスタムプロパティ（変数）の使用 - CSS: カスケーディングスタイルシート | MDN
 https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
@@ -31,25 +30,25 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 
 .darkmode{/* ダークモードの配色 */
 
-	/* 文字色 */--text-color: hsl(211 16% 90% / 1);
+	/* 文字色 */--text-color: hsl(205 16% 90% / 1);
 	/* リンクの色 */--a-color: hsl(211 18% 79% / 1);
 	/* リンクホバー */--a-hover-color:var(--a-color);
-	/* 背景色 */--background-color: hsl(208 18% 14% / 1);
+	/* 背景色 */--background-color: hsl(205 18% 14% / 1);
 	/* 掲示板タイトルの文字色 */--title-a-color: var(--a-color);
 	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
-	/* 記事タイトルの背景色 */--accent-background-color: hsl(211 23% 26% / 1);
-	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(211 33% 40% / 1);
+	/* 記事タイトルの背景色 */--accent-background-color: hsl(205 25% 26% / 1);
+	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(205 30% 37% / 1);
 	/* チェック済みのフォームのラベルの色 */--checked-background-color:var(--accent-background-color);
 	/* ボーダー */--border-color: var(--strong-accent-background-color);
 	/* 点線 */--border-dashed-color: var(--border-color);
 	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
 	/* ダイナミックパレットのボーダー */--border-dynamic-palette-color: hsl(211 30% 38% / 1);
 	/* 名前のリンクの色 */--name-a-color:var(--title-a-color);
-	/* 名前のリンクのホバー */--soft-hover-color: hsl(211 26% 17% / 1);
+	/* 名前のリンクのホバー */--soft-hover-color: hsl(205 20% 18% / 1);
 	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
 	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
 	/* 上に戻るボタンの矢印の色 */--page-top-color: #fff;
-	/* 上に戻るボタンの背景色 */--page-top-background-color: hsl(211 33% 28% / 1);
+	/* 上に戻るボタンの背景色 */--page-top-background-color: hsl(205 33% 29% / 1);
 	/* エラーメッセージの背景色 */--error-message-background-color:var(--accent-background-color);
 	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);
 	/* フォーム入力欄の背景色 */--form-input-background-color: #e5eaeb;input[type="text"], input[type="password"], input[type="url"], textarea, select {
