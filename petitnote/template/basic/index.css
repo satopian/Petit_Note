@@ -1,7 +1,7 @@
 @charset "utf-8";
 :root{/* ライトモードの配色 */
 
-	/* 文字色 */--text-color: hsl(200 5% 28% / 1);
+	/* 文字色 */--text-color: hsl(200 5% 30% / 1);
 	/* リンクの色 */--a-color:var(--text-color);
 	/* リンクホバー */--a-hover-color:var(--text-color);
 	/* 背景色 */--background-color:#fff;
@@ -14,7 +14,7 @@
 	/* 点線 */--border-dashed-color:#888;
 	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
 	/* ダイナミックパレットのボーダー */--border-dynamic-palette-color: #555;
-	/* 名前のリンクの色 */--name-a-color: hsl(211 26% 17% / 1);
+	/* 名前のリンクの色 */--name-a-color:var(--a-color);
 	/* 名前のリンクのホバー */--soft-hover-color:#fff7f7;
 	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
 	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
@@ -22,25 +22,24 @@
 	/* 上に戻るボタンの背景色 */--page-top-background-color:var(--strong-accent-background-color);
 	/* エラーメッセージの背景色 */--error-message-background-color:hsl(60 100% 88% / 1);
 	/* 注意が必要な項目の背景色 */--warning-color:#fff;
-	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);
-}
+	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);}
 
 .darkmode{/* ダークモードの配色 */
 
 	/* 文字色 */--text-color: hsl(211 16% 90% / 1);
 	/* リンクの色 */--a-color: hsl(211 18% 79% / 1);
 	/* リンクホバー */--a-hover-color:var(--a-color);
-	/* 背景色 */--background-color: hsl(215 20% 12% / 1);
+	/* 背景色 */--background-color: hsl(208 18% 14% / 1);
 	/* 掲示板タイトルの文字色 */--title-a-color: var(--a-color);
 	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
 	/* 記事タイトルの背景色 */--accent-background-color: hsl(211 23% 26% / 1);
 	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(211 50% 35% / 1);
 	/* チェック済みのフォームのラベルの色 */--checked-background-color:var(--accent-background-color);
-	/* ボーダー */--border-color: var(--strong-accent-background-color);
-	/* 点線 */--border-dashed-color: hsl(211 38% 33% / 1);
+	/* ボーダー */--border-color: hsl(211 26% 45% / 1);
+	/* 点線 */--border-dashed-color: hsl(211 26% 39% / 1);
 	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
 	/* ダイナミックパレットのボーダー */--border-dynamic-palette-color: hsl(211 30% 38% / 1);
-	/* 名前のリンクの色 */--name-a-color: hsl(211 26% 17% / 1);
+	/* 名前のリンクの色 */--name-a-color:var(--title-a-color);
 	/* 名前のリンクのホバー */--soft-hover-color: hsl(211 26% 17% / 1);
 	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
 	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
