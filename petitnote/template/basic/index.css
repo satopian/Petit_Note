@@ -33,7 +33,7 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 	/* 文字色 */--text-color: hsl(205 16% 90% / 1);
 	/* リンクの色 */--a-color: hsl(211 18% 79% / 1);
 	/* リンクホバー */--a-hover-color:var(--a-color);
-	/* 背景色 */--background-color: hsl(205 18% 14% / 1);
+	/* 背景色 */--background-color: hsl(202 22% 14% / 1);
 	/* 掲示板タイトルの文字色 */--title-a-color: var(--a-color);
 	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
 	/* 記事タイトルの背景色 */--accent-background-color: hsl(205 25% 26% / 1);
