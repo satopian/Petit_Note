@@ -20,7 +20,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	if(!gd_check()||!function_exists("ImageCreate")||!function_exists("ImageCreateFromJPEG")){
 		return;
 	}
-	if(isset($options['webp']) &&(!function_exists("ImageWEBP")||version_compare(PHP_VERSION, '7.0.0', '<'))){
+	if((isset($options['webp'])||isset($options['thumbnail_webp'])) && (!function_exists("ImageWEBP")||version_compare(PHP_VERSION, '7.0.0', '<'))){
 		return;
 	}
 
@@ -72,7 +72,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$exists_ImageCopyResampled = false;
 	if(function_exists("ImageCreateTrueColor")&&get_gd_ver()=="2"){
 		$im_out = ImageCreateTrueColor($out_w, $out_h);
-		if((isset($options['toolarge'])||isset($options['webp'])) && in_array($mime_type,["image/png","image/gif","image/webp"])){
+		if((isset($options['toolarge'])||isset($options['webp'])||isset($options['thumbnail_webp'])) && in_array($mime_type,["image/png","image/gif","image/webp"])){
 			if(function_exists("imagealphablending") && function_exists("imagesavealpha")){
 				imagealphablending($im_out, false);
 				imagesavealpha($im_out, true);//透明
@@ -127,6 +127,9 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 		$outfile='webp/'.$time.'t.webp';
 		ImageWEBP($im_out, $outfile,90);
 
+	}elseif(isset($options['thumbnail_webp'])){
+		$outfile=THUMB_DIR.$time.'s.webp';
+		ImageWEBP($im_out, $outfile,90);
 	}else{
 		$outfile=THUMB_DIR.$time.'s.jpg';
 		// サムネイル画像を保存

@@ -4,7 +4,6 @@ $functions_ver=20240301;
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	session_sta();
-	unset($_SESSION['admindel']);
 	unset($_SESSION['userdel']);
 	if($resno){
 		return header('Location: ./?resno='.$resno);
@@ -322,6 +321,8 @@ function create_res($line,$options=[]){
 	}
 
 	$thumbnail = ($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail') ? $time.'s.jpg' : false; 
+	$thumbnail_webp = $thumbnail && is_file(THUMB_DIR.$time.'s.webp') ? $time.'s.webp' : false; 
+
 	$link_thumbnail= ($thumbnail || $hide_thumbnail); 
 	$painttime = !$isset_catalog ? calcPtime($paintsec) : false;  
 	
@@ -344,6 +345,7 @@ function create_res($line,$options=[]){
 		'url' => $url ? filter_var($url,FILTER_VALIDATE_URL) : '',
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail,
+		'thumbnail_webp' => $thumbnail_webp,
 		'painttime' => $painttime ? $painttime['ja'] : '',
 		'painttime_en' => $painttime ? $painttime['en'] : '',
 		'paintsec' => $paintsec,
