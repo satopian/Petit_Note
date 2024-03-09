@@ -322,8 +322,8 @@ function create_res($line,$options=[]){
 	list($w,$h)=image_reduction_display($w,$h,300,300);
 	}
 
-	$thumbnail = ($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail') ? $time.'s.jpg' : false; 
-	$thumbnail_webp = $thumbnail && is_file(THUMB_DIR.$time.'s.webp') ? $time.'s.webp' : false; 
+	$thumbnail = (strpos('thumbnail',$thumbnail)!==false) ? $time.'s.jpg' : false; 
+	$thumbnail_webp = $thumbnail && (strpos('thumbnail_webp',$thumbnail)!==false) ? $time.'s.webp' : false; 
 
 	$link_thumbnail= ($thumbnail || $hide_thumbnail); 
 	$painttime = !$isset_catalog ? calcPtime($paintsec) : false;  
