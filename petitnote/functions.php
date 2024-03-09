@@ -1,9 +1,10 @@
 <?php
-$functions_ver=20240301;
+$functions_ver=20240309;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	session_sta();
+	unset($_SESSION['admindel']);
 	unset($_SESSION['userdel']);
 	if($resno){
 		return header('Location: ./?resno='.$resno);
@@ -298,6 +299,7 @@ function check_cont_pass(){
 function create_res($line,$options=[]){
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_md5,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+	$time = basename($time);
 	$isset_catalog = isset($options['catalog']);
 	$isset_search = isset($options['search']);
 	$res=[];
@@ -603,6 +605,7 @@ function delete_files ($imgfile, $time) {
 	$time=basename($time);
 	safe_unlink(IMG_DIR.$imgfile);
 	safe_unlink(THUMB_DIR.$time.'s.jpg');
+	safe_unlink(THUMB_DIR.$time.'s.webp');
 	safe_unlink('webp/'.$time.'t.webp');
 	safe_unlink(IMG_DIR.$time.'.pch');
 	safe_unlink(IMG_DIR.$time.'.spch');

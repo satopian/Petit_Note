@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.25.0';
+$petit_ver='v1.25.3';
 $petit_lot='lot.20240309';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20240301){
+if(!isset($functions_ver)||$functions_ver<20240309){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -48,7 +48,7 @@ require_once(__DIR__.'/noticemail.inc');
 //テンプレート
 $skindir='template/'.$skindir;
 
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20230220){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20240309){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
 
@@ -1070,10 +1070,11 @@ function to_continue(){
 	if(!check_elapsed_days($time)&&!$adminpost){
 		return error($en? "Article older than {$elapsed_days} days cannot be edited.":"{$elapsed_days}日以上前の記事は編集できません。");
 	}
-
 	$hidethumbnail = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
 	$thumbnail=($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail');
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
+	$time = basename($time);
+	$imgfile = basename($imgfile);
 	$picfile = $thumbnail ? THUMB_DIR.$time.'s.jpg' : IMG_DIR.$imgfile;
 	$picfile_webp = $thumbnail && is_file(THUMB_DIR.$time.'s.webp') ? THUMB_DIR.$time.'s.webp' : "";
 	$pch_exists = in_array($_pchext,['hide_animation','.pch']);
@@ -1351,7 +1352,6 @@ function img_replace(){
 		copy($tempfile, $upfile);
 	}
 
-
 	if(!is_file($upfile)){
 		closeFile($rp);
 		closeFile($fp);
@@ -1560,7 +1560,6 @@ function pchview(){
 	$appw = $picw < 200 ? 200 : $picw;
 	$apph = $pich < 200 ? 200 : $pich + 26;
 	$parameter_day = date("Ymd");
-
 	// HTML出力
 	if($pchext==='.pch'){
 		$templete='pch_view.html';
