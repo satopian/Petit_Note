@@ -314,7 +314,7 @@ function create_res($line,$options=[]){
 	}
 
 	$anime = ($pchext==='.pch'||$pchext==='.tgkr'); 
-	$hide_thumbnail = $mark_sensitive_image ? ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_') :'';
+	$hide_thumbnail = $mark_sensitive_image ? (strpos('hide_',$thumbnail)!==false) :'';
 
 	$_w=$w;
 	$_h=$h;

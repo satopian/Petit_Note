@@ -1072,8 +1072,8 @@ function to_continue(){
 	if(!check_elapsed_days($time)&&!$adminpost){
 		return error($en? "Article older than {$elapsed_days} days cannot be edited.":"{$elapsed_days}日以上前の記事は編集できません。");
 	}
-	$hidethumbnail = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
-	$thumbnail=($thumbnail==='thumbnail'||$thumbnail==='hide_thumbnail');
+	$hidethumbnail = (strpos('hide_',$thumbnail)!==false);
+	$thumbnail=(strpos('thumbnail',$thumbnail)!==false);
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
 	$time = basename($time);
 	$imgfile = basename($imgfile);
@@ -1457,7 +1457,7 @@ function img_replace(){
 	}
 	//webpサムネイル
 	thumb(IMG_DIR,$imgfile,$time,300,800,['webp'=>true]);
-	$hide_thumbnail = ($_imgfile && ($_thumbnail==='hide_thumbnail'||$_thumbnail==='hide_')) ? 'hide_' : '';
+	$hide_thumbnail = ($_imgfile &&strpos('hide_',$_thumbnail)!==false) ? 'hide_' : '';
 
 	$thumbnail =  $hide_thumbnail.$thumbnail;
 
