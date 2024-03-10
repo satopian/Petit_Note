@@ -1072,8 +1072,8 @@ function to_continue(){
 	if(!check_elapsed_days($time)&&!$adminpost){
 		return error($en? "Article older than {$elapsed_days} days cannot be edited.":"{$elapsed_days}日以上前の記事は編集できません。");
 	}
-	$hidethumbnail = (strpos('hide_',$thumbnail)!==false);
-	$thumbnail=(strpos('thumbnail',$thumbnail)!==false);
+	$hidethumbnail = (strpos($thumbnail,'hide_')!==false);
+	$thumbnail=(strpos($thumbnail,'thumbnail')!==false);
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
 	$time = basename($time);
 	$imgfile = basename($imgfile);
@@ -1457,7 +1457,7 @@ function img_replace(){
 	}
 	//webpサムネイル
 	thumb(IMG_DIR,$imgfile,$time,300,800,['webp'=>true]);
-	$hide_thumbnail = ($_imgfile &&strpos('hide_',$_thumbnail)!==false) ? 'hide_' : '';
+	$hide_thumbnail = ($_imgfile && strpos($_thumbnail,'hide_')!==false) ? 'hide_' : '';
 
 	$thumbnail =  $hide_thumbnail.$thumbnail;
 
@@ -1744,7 +1744,7 @@ function edit_form($id='',$no=''){
 	$hide_animation_checkd = ($pchext==='hide_animation'||$pchext==='hide_tgkr');
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
-	$hide_thumb_checkd = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
+	$hide_thumb_checkd = (strpos($thumbnail,'hide_')!==false);
 
 	$admin = ($admindel||$adminpost||is_adminpass($pwd));
 	
@@ -2219,10 +2219,6 @@ function search(){
 				$check_q!==''&&($radio===1||$radio===0)&&strpos($s_name,$check_q)===0||//作者名が含まれる
 				$check_q!==''&&($radio===2&&$s_name===$check_q)//作者名完全一致
 				){
-					$hidethumb = ($thumbnail==='hide_thumbnail'||$thumbnail==='hide_');
-
-					$thumb= ($thumbnail==='hide_thumbnail'||$thumbnail==='thumbnail');
-
 					$arr[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
 					++$i;
 					if($i>=$max_search&&$j>10){break 2;}//1掲示板あたりの最大検索数 最低でも10スレッド分は取得

@@ -299,7 +299,9 @@ function check_cont_pass(){
 function create_res($line,$options=[]){
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_md5,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+
 	$time = basename($time);
+
 	$isset_catalog = isset($options['catalog']);
 	$isset_search = isset($options['search']);
 	$res=[];
@@ -314,18 +316,17 @@ function create_res($line,$options=[]){
 	}
 
 	$anime = ($pchext==='.pch'||$pchext==='.tgkr'); 
-	$hide_thumbnail = $mark_sensitive_image ? (strpos('hide_',$thumbnail)!==false) :'';
+	$hide_thumbnail = $mark_sensitive_image ? (strpos($thumbnail,'hide_')!==false) :'';
 
 	$_w=$w;
 	$_h=$h;
 	if($hide_thumbnail){
 	list($w,$h)=image_reduction_display($w,$h,300,300);
 	}
+	$thumbnail_jpg = (strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
+	$thumbnail_webp = $thumbnail_jpg && (strpos($thumbnail,'thumbnail_webp')!==false) ? $time.'s.webp' : false; 
 
-	$thumbnail = (strpos('thumbnail',$thumbnail)!==false) ? $time.'s.jpg' : false; 
-	$thumbnail_webp = $thumbnail && (strpos('thumbnail_webp',$thumbnail)!==false) ? $time.'s.webp' : false; 
-
-	$link_thumbnail= ($thumbnail || $hide_thumbnail); 
+	$link_thumbnail= ($thumbnail_jpg || $hide_thumbnail); 
 	$painttime = !$isset_catalog ? calcPtime($paintsec) : false;  
 	
 	$datetime = $do_not_change_posts_time ? microtime2time($first_posted_time) : microtime2time($time);
@@ -346,7 +347,7 @@ function create_res($line,$options=[]){
 		'com' => $com,
 		'url' => $url ? filter_var($url,FILTER_VALIDATE_URL) : '',
 		'img' => $imgfile,
-		'thumbnail' => $thumbnail,
+		'thumbnail' => $thumbnail_jpg,
 		'thumbnail_webp' => $thumbnail_webp,
 		'painttime' => $painttime ? $painttime['ja'] : '',
 		'painttime_en' => $painttime ? $painttime['en'] : '',
