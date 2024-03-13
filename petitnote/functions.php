@@ -728,6 +728,24 @@ global $max_px;
 	imagedestroy($im_out);
 }
 
+//サムネイル作成
+function make_thumbnail($imgfile,$time,$max_w,$max_h){
+	global $use_thumb; 
+	$thumbnail='';
+	if($use_thumb){//スレッドの画像のサムネイルを使う時
+		if(thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
+			$thumbnail='thumbnail';
+		}
+		if($thumbnail && thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h,['thumbnail_webp'=>true])){
+			$thumbnail='thumbnail_webp';
+		}
+	}
+	//カタログ用webpサムネイル 
+	thumb(IMG_DIR,$imgfile,$time,300,800,['webp'=>true]);
+
+	return $thumbnail;
+}
+
 //アップロード画像のファイルサイズが大きすぎる時は削除
 function delete_file_if_sizeexceeds($upfile,$fp,$rp){
 	global $max_kb,$en;
