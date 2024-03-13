@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.26.2';
+$petit_ver='v1.26.5';
 $petit_lot='lot.20240313';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2529,7 +2529,7 @@ function res (){
 			if(!trim($line)){
 				continue;
 			}
-			$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
+			$_res = create_res(explode("\t",trim($line)),($res_catalog ? ['catalog'=>true] :''));//$lineから、情報を取り出す
 			if($res_catalog && !$_res['img'] && $_res['oya']!=='oya'){
 				continue;
 			}
