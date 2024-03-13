@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.26.5';
+$petit_ver='v1.26.6';
 $petit_lot='lot.20240313';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -505,7 +505,7 @@ function post(){
 	if($is_file_upfile){
 
 		if(!$pictmp2){//実体データの縮小
-			thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
+			thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 		}	
 		clearstatcache();
 		$filesize=filesize($upfile);
@@ -811,7 +811,7 @@ function paint(){
 				$img_klecks = $pchup;
 			} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
 				$file_name=pathinfo($pchup,PATHINFO_FILENAME);
-				thumb(TEMP_DIR,$basename_pchup,$time,$max_px,$max_px,['toolarge'=>1]);
+				thumb(TEMP_DIR,$basename_pchup,$time,$max_px,$max_px,['toolarge'=>true]);
 				list($picw,$pich) = getimagesize($pchup);
 				$imgfile = $pchup;
 				$anime = false;
@@ -1356,7 +1356,7 @@ function img_replace(){
 	} 
 	chmod($upfile,0606);
 	if($is_upload){//実体データの縮小
-		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>1]);
+		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 	}	
 	clearstatcache();
 	$filesize=filesize($upfile);
@@ -2529,7 +2529,7 @@ function res (){
 			if(!trim($line)){
 				continue;
 			}
-			$_res = create_res(explode("\t",trim($line)),($res_catalog ? ['catalog'=>true] :''));//$lineから、情報を取り出す
+			$_res = create_res(explode("\t",trim($line)),($res_catalog ? ['catalog'=>true] : []));//$lineから、情報を取り出す
 			if($res_catalog && !$_res['img'] && $_res['oya']!=='oya'){
 				continue;
 			}
