@@ -9,7 +9,7 @@
 	<?php if(($misskey_note||$res_catalog) && !$res['img']){
 		continue;
 	}?>
-	<span class="catalog_image ">
+		<span class="catalog_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>">	
 		<?php if($res['img']):?>
 			<?php if($misskey_note):?>
 				<a href="./?mode=before_misskey_note&no=<?= h($res['no'])?>&id=<?=h($res['time'])?>" target="_blank" rel="nofollow noopener">
