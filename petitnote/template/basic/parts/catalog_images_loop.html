@@ -1,15 +1,11 @@
 <?php $misskey_note = isset($misskey_note) ? $misskey_note : false;?>
 <?php $res_catalog = isset($res_catalog) ? $res_catalog : false;?>
 <?php if(isset($out)):?>
-<?php foreach($out as $t => $ress):?>
-	<?php if(($misskey_note||$res_catalog)&&$sort_comments_by_newest){
+<?php foreach($out as $t => $ress):?><?php if(($misskey_note||$res_catalog)&&$sort_comments_by_newest){
 		krsort($ress);
-	}?>
-	<?php foreach($ress as  $res):?>
-	<?php if(($misskey_note||$res_catalog) && !$res['img']){
+	}?><?php foreach($ress as $i => $res):?><?php if(($misskey_note||$res_catalog) && !$res['img']){
 		continue;
-	}?>
-		<span class="catalog_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>">	
+	}?><span class="catalog_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>">	
 		<?php if($res['img']):?>
 			<?php if($misskey_note):?>
 				<a href="./?mode=before_misskey_note&no=<?= h($res['no'])?>&id=<?=h($res['time'])?>" target="_blank" rel="nofollow noopener">
@@ -20,9 +16,9 @@
 			<picture><source srcset="<?=h($res['webpimg'])?>" type="image/webp">
 			<?php endif;?>
 			<?php if($res['thumbnail']):?>
-				<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
+				<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>=20||$i>=20):?>loading="lazy"<?php endif;?>>
 			<?php else:?>
-				<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>11):?>loading="lazy"<?php endif;?>>
+				<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>=20||$i>=20):?>loading="lazy"<?php endif;?>>
 			<?php endif;?>
 			<?php if($res['webpimg']):?>
 			</picture>
@@ -33,8 +29,5 @@
 			</a>
 		<?php else:?>
 				<a href="./?resno=<?= h($res['no'])?>" target="_blank"><?php if($en):?>No image.<?php else:?>画像なし<?php endif;?></a>
-		<?php endif;?>
-	</span>
-	<?php endforeach; ?>
-<?php endforeach; ?>
+		<?php endif;?></span><?php endforeach; ?><?php endforeach; ?>
 <?php endif;?>
