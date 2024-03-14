@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.26.6';
-$petit_lot='lot.20240313';
+$petit_ver='v1.26.7';
+$petit_lot='lot.20240314';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2226,14 +2226,14 @@ function search(){
 	$txt_search = !$imgsearch ? ['search' => true] : [];//本文の検索の時にtrue
 	foreach($articles as $i => $line){
 
-		$out[$i] = create_res($line,(['catalog' => true] + $txt_search));//$lineから、情報を取り出す
+		$out['search'][$i] = create_res($line,(['catalog' => true] + $txt_search));//$lineから、情報を取り出す
 
 			// マークダウン
-			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)\)}","$1",$out[$i]['com']);
+			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)\)}","$1",$out['search'][$i]['com']);
 			$com=h(strip_tags($com));
 			$com=mb_strcut($com,0,180);
-			$out[$i]['com']=$com;
-			$out[$i]['date']=$out[$i]['datetime'] ? (date("y/m/d G:i", $out[$i]['datetime'])) : '';
+			$out['search'][$i]['com']=$com;
+			$out['search'][$i]['date']=$out['search'][$i]['datetime'] ? (date("y/m/d G:i", $out['search'][$i]['datetime'])) : '';
 
 			$j=$page+$i+1;//表示件数
 		}
@@ -2287,7 +2287,6 @@ function search(){
 		$result_subject=$en ? 'Recent '.$pageno.' Posts' : $boardname.'に投稿された最新の';
 		$pageno=$en ? '':$pageno;
 	}
-
 
 	$count_alllog=count($arr);//配列の数
 	$countarr=$count_alllog;//古いテンプレート互換

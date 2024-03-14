@@ -85,58 +85,48 @@
 
 		</nav>
 		<!-- 反復 -->
-		<?php if($out):?>
-		<?php if($imgsearch):?>
-		<div class="catalog_wrap">
-			<?php foreach($out as $i => $res):?><span class="catalog_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
-				<?php if($res['webpimg']):?>
-				<picture>
-				<source srcset="<?=h($res['webpimg'])?>" type="image/webp">
-
-				<?php endif;?>
-				<?php if($res['thumbnail']):?>
-					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>15):?>loading="lazy"<?php endif;?>>
-				<?php else:?>
-					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>10):?>loading="lazy"<?php endif;?>>
-				<?php endif;?>
-				<?php if($res['webpimg']):?>
-				</picture>
-				<?php endif;?>
-					<?php if($res['hide_thumbnail']):?><span>NSFW</span><?php endif;?></a></span><?php endforeach;?></div>
-		<?php else:?>
-		<?php foreach($out as $i => $res):?>
-		<article>
-			<div class="s_article">
-				<div class="s_comments_title_wrap">
-				<h3><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><?=h($res['sub'])?>
-				<?=h($res['date'])?></a></h3>
-					<br>
-					<h3><span class="info_name"><a
-							href="?mode=search&page=0&q=<?=h($res['encoded_name'])?>&radio=2"
-							target="_blank"><?=h($res['name'])?></a></span></h3>
-				</div>
-				<?php if($res['img']):?>
-				<div class="s_posted_image<?php if($res['hide_thumbnail']):?> hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
-					<?php if($res['webpimg']):?>
-					<picture>
-						<source srcset="<?=h($res['webpimg'])?>">
-					<?php endif;?>
-						<?php if($res['thumbnail']):?>
-							<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>5):?>loading="lazy"<?php endif;?>>
-						<?php else:?>
-							<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>5):?>loading="lazy"<?php endif;?>>
-						<?php endif;?>
-					<?php if($res['webpimg']):?>
-					</picture>	
-					<?php endif;?><?php if($res['hide_thumbnail']):?><span>NSFW</span><?php endif;?></a></div>
-				<?php endif;?>
-				<?=h($res['com'])?>
-				<div class="res_button_wrap">
-					<form action="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" method="post" target="_blank"><input type="submit" value="<?php if($en):?>View thread<?php else:?>スレッドを表示<?php endif;?>"
-						class="form_button"></form>
-				</div>
+		<?php if($out && isset($out['search'])):?>
+			<?php if($imgsearch):?>
+			<div class="catalog_wrap">
+			<!-- 画像一覧 -->
+			<?php include 'parts/catalog_images_loop.html';?>
 			</div>
-		</article>
+		<?php else:?>
+		<?php foreach($out as $t => $ress):?>
+			<?php foreach($ress as $i => $res):?>
+				<article>
+				<div class="s_article">
+					<div class="s_comments_title_wrap">
+					<h3><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><?=h($res['sub'])?>
+					<?=h($res['date'])?></a></h3>
+						<br>
+						<h3><span class="info_name"><a
+								href="?mode=search&page=0&q=<?=h($res['encoded_name'])?>&radio=2"
+								target="_blank"><?=h($res['name'])?></a></span></h3>
+					</div>
+					<?php if($res['img']):?>
+					<div class="s_posted_image<?php if($res['hide_thumbnail']):?> hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
+						<?php if($res['webpimg']):?>
+						<picture>
+							<source srcset="<?=h($res['webpimg'])?>">
+						<?php endif;?>
+							<?php if($res['thumbnail']):?>
+								<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>5):?>loading="lazy"<?php endif;?>>
+							<?php else:?>
+								<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>5):?>loading="lazy"<?php endif;?>>
+							<?php endif;?>
+						<?php if($res['webpimg']):?>
+						</picture>	
+						<?php endif;?><?php if($res['hide_thumbnail']):?><span>NSFW</span><?php endif;?></a></div>
+					<?php endif;?>
+					<?=h($res['com'])?>
+					<div class="res_button_wrap">
+						<form action="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" method="post" target="_blank"><input type="submit" value="<?php if($en):?>View thread<?php else:?>スレッドを表示<?php endif;?>"
+							class="form_button"></form>
+					</div>
+				</div>
+			</article>
+			<?php endforeach;?>
 		<?php endforeach;?>
 		<?php endif;?>
 		<?php endif;?>
@@ -164,9 +154,9 @@
 <?php include __DIR__.'/parts/copyright.html';?>
 </div>
 </div>
-</div>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
 <?php include __DIR__.'/parts/footer_js.html';?>
+</div>
 </body>
 </html>
