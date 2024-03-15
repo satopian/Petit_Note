@@ -2166,7 +2166,8 @@ function search(){
 		$rp=fopen("log/{$resno}.log","r");
 		while($line=fgets($rp)){
 
-			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",$line);
+			$lines=explode("\t",$line);
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$lines;
 
 			if(!$name && !$com && !$url && !$imgfile && !$userid){//この記事はありませんの時は表示しない
 				continue;
@@ -2201,7 +2202,7 @@ function search(){
 				$check_q!==''&&($radio===1||$radio===0)&&strpos($s_name,$check_q)===0||//作者名が含まれる
 				$check_q!==''&&($radio===2&&$s_name===$check_q)//作者名完全一致
 				){
-					$arr[$time]=[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya];
+					$arr[$time]=$lines;
 					++$i;
 					if($i>=$max_search&&$j>10){break 2;}//1掲示板あたりの最大検索数 最低でも10スレッド分は取得
 				}
