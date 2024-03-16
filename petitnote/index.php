@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.26.8';
-$petit_lot='lot.20240315';
+$petit_ver='v1.26.9';
+$petit_lot='lot.20240316';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1437,6 +1437,7 @@ function img_replace(){
 
 	list($w,$h)=image_reduction_display($w,$h,$max_w,$max_h);
 	
+	//サムネイル作成
 	$thumbnail = make_thumbnail($imgfile,$time,$max_w,$max_h);//サムネイル作成
 	
 	$hide_thumbnail = ($_imgfile && strpos($_thumbnail,'hide_')!==false) ? 'hide_' : '';
