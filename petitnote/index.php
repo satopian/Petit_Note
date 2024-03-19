@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.27.0';
-$petit_lot='lot.20240317';
+$petit_ver='v1.27.1';
+$petit_lot='lot.20240319';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2607,8 +2607,8 @@ function res (){
 	}
 	fclose($fp);
 
-	$next=isset($articles2[$i+1])? rtrim($articles2[$i+1]) :'';
-	$prev=isset($articles1[$i-1])? rtrim($articles1[$i-1]) :'';
+	$next=isset($articles2[$i+1])? $articles2[$i+1] :'';
+	$prev=isset($articles1[$i-1])? $articles1[$i-1] :'';
 	$next=$next ? (create_res(explode("\t",trim($next)),['catalog'=>true])):[];
 	$prev=$prev ? (create_res(explode("\t",trim($prev)),['catalog'=>true])):[];
 	$next=(!empty($next) && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
