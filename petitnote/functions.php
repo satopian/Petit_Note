@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240315;
+$functions_ver=20240410;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -51,7 +51,7 @@ function aikotoba(){
 //記事の表示に合言葉を必須にする
 function aikotoba_required_to_view($required_flag=false){
 
-	global $use_aikotoba,$aikotoba_required_to_view,$skindir,$en,$petit_lot;
+	global $use_aikotoba,$aikotoba_required_to_view,$skindir,$en,$petit_lot,$boardname;
 
 	$mode = (string)filter_input(INPUT_POST,'mode');
 	$mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
