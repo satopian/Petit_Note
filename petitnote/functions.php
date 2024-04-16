@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240410;
+$functions_ver=20240416;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -555,23 +555,25 @@ function com($str,$verified=false){
 //マークダウン記法のリンクをHTMLに変換
 function md_link($str,$verified=false){
 	if($verified){
-		$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)\)}",'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>',$str);
+		$rel='rel="noopener noreferrer"';
 	}else{
-		$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)\)}",'<a href="$2" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
+		$rel='rel="nofollow noopener noreferrer"';
 	}
+	$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;:\.,\*&@#\$%\(\)'\[\]]+)\)}",'<a href="$2" target="_blank" '.$rel.'>$1</a>',$str);
+
 	return $str;
 }
 
 // 自動リンク
-function auto_link($str,$verified=false){
-	if(strpos($str,'<a')===false){//マークダウン記法がなかった時
+function auto_link($str, $verified = false){
+	if(strpos($str, '<a') === false){ // マークダウン記法がなかった時
 		if($verified){
-			$str= preg_replace("{(https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)}",'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>',$str);
+			$rel = 'rel="noopener noreferrer"';
 		}else{
-			$str= preg_replace("{(https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)}",'<a href="$1" target="_blank" rel="nofollow noopener noreferrer">$1</a>',$str);
+			$rel = 'rel="nofollow noopener noreferrer"';
 		}
-	}
-	return $str;
+		$str= preg_replace("{(https?://[\w!\?/\+\-_~=;:\.,\*&@#\$%\(\)'\[\]]+)}",'<a href="$1" target="_blank" '.$rel.'>$1</a>',$str);
+		return $str;
 }
 
 //mime typeを取得して拡張子を返す
