@@ -560,7 +560,7 @@ function md_link($str,$verified=false){
 		$rel='rel="nofollow noopener noreferrer"';
 	}
 	$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;:\.,\*&@#\$%\(\)'\[\]]+)\)}",'<a href="$2" target="_blank" '.$rel.'>$1</a>',$str);
-
+	
 	return $str;
 }
 
@@ -573,6 +573,7 @@ function auto_link($str, $verified = false){
 			$rel = 'rel="nofollow noopener noreferrer"';
 		}
 		$str= preg_replace("{(https?://[\w!\?/\+\-_~=;:\.,\*&@#\$%\(\)'\[\]]+)}",'<a href="$1" target="_blank" '.$rel.'>$1</a>',$str);
+	}
 		return $str;
 }
 
