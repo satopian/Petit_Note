@@ -61,7 +61,7 @@ h2.search_h2 {
 }
 .s_comments_title_wrap a {
 	text-decoration: none;
-	color: var(--article-title-color);
+	color: var(--a-color);
 }
 
 .searchform input[type="search"] {
