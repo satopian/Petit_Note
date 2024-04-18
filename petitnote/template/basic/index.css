@@ -9,16 +9,17 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 	/* リンクの色 */--a-color:var(--text-color);
 	/* リンクホバー */--a-hover-color:var(--text-color);
 	/* 背景色 */--background-color:#fff;
-	/* 掲示板タイトルの文字色 */--title-a-color: var(--a-color);
-	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
+	/* 掲示板タイトルの文字色 */--title-a-color: #555;
+	/* 記事タイトルの文字色 */--article-title-color: var(--title-a-color);
 	/* 記事タイトルの背景色 */--accent-background-color:#ffe6e6;
 	/* 記事タイトル背景色のアクセント */--strong-accent-background-color:#ffcfcf;
-	/* チェック済みのフォームのラベルの色 */--checked-background-color:var(--accent-background-color);
+	/* チェック済みのフォームのラベルの色 */--checked-color:var(--title-a-color);
+	/* チェック済みのフォームのラベルの背景色 */--checked-background-color:var(--accent-background-color);
 	/* ボーダー */--border-color: var(--strong-accent-background-color);
 	/* 点線 */--border-dashed-color:#888;
 	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
 	/* ダイナミックパレットのボーダー */--border-dynamic-palette-color: #555;
-	/* 名前のリンクの色 */--name-a-color:var(--a-color);
+	/* 名前のリンクの色 */--name-a-color:var(--title-a-color);
 	/* 名前のリンクのホバー */--soft-hover-color:#fff7f7;
 	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
 	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
@@ -38,7 +39,8 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
 	/* 記事タイトルの背景色 */--accent-background-color: hsl(205 25% 26% / 1);
 	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(205 30% 37% / 1);
-	/* チェック済みのフォームのラベルの色 */--checked-background-color:var(--accent-background-color);
+	/* チェック済みのフォームのラベルの色 */--checked-color:var(--title-a-color);
+	/* チェック済みのフォームの背景色 */--checked-background-color:var(--accent-background-color);
 	/* ボーダー */--border-color: var(--strong-accent-background-color);
 	/* 点線 */--border-dashed-color: var(--border-color);
 	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
@@ -121,7 +123,7 @@ h2.article_title a {
 		color: var(--article-title-color);
 }
 h2.article_title{
-	color: var(--a-color);
+	color: var(--article-title-color);
 }
 /* フォーム入力 */
 textarea.post_com {
@@ -344,8 +346,14 @@ label {
 	background-color: var(--checked-background-color);
 }
 
-input[type="checkbox"]:checked + label{background-color: var(--checked-background-color);font-weight: 600;}
-input[type="radio"]:checked + label{background-color: var(--checked-background-color);font-weight: 600;}
+input[type="checkbox"]:checked + label{
+	color: var(--checked-color);
+	background-color: var(--checked-background-color);font-weight: 600;
+}
+input[type="radio"]:checked + label{
+	color: var(--checked-color);
+	background-color: var(--checked-background-color);font-weight: 600;
+}
 /* チェックボックスが選択された場合のスタイル */
 input[type="checkbox"]:checked + label .info_name {
 	border: none;

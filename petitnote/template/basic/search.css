@@ -90,10 +90,12 @@ h2.search_h2 {
 }
 
 .searchform input[type=radio]:checked+label {
+	color: var(--checked-color);
 	background: var(--checked-background-color);
 }
 
 .searchform .label:hover {
+	color: var(--checked-color);
 	background-color: var(--checked-background-color);
 }
 
