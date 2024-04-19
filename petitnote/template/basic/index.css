@@ -5,7 +5,7 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 */
 :root{/* ライトモードの配色 */
 
-	/* 文字色 */--text-color: hsl(200 5% 30% / 1);
+	/* 文字色 */--text-color: hsl(0 0% 31% / 1);
 	/* リンクの色 */--a-color:var(--text-color);
 	/* リンクホバー */--a-hover-color:var(--text-color);
 	/* 背景色 */--background-color:#fff;
@@ -34,7 +34,7 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 	/* 文字色 */--text-color: hsl(205 16% 90% / 1);
 	/* リンクの色 */--a-color: hsl(211 18% 79% / 1);
 	/* リンクホバー */--a-hover-color:var(--a-color);
-	/* 背景色 */--background-color: hsl(205 22% 14% / 1);
+	/* 背景色 */--background-color: hsl(215 22% 14% / 1);
 	/* 掲示板タイトルの文字色 */--title-a-color: var(--a-color);
 	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
 	/* 記事タイトルの背景色 */--accent-background-color: hsl(205 25% 26% / 1);
@@ -46,7 +46,7 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
 	/* ダイナミックパレットのボーダー */--border-dynamic-palette-color: hsl(205 30% 38% / 1);
 	/* 名前のリンクの色 */--name-a-color:var(--title-a-color);
-	/* 名前のリンクのホバー */--soft-hover-color: hsl(205 20% 18% / 1);
+	/* 名前のリンクのホバー */--soft-hover-color: hsl(215 20% 18% / 1);
 	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
 	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
 	/* 上に戻るボタンの矢印の色 */--page-top-color: #fff;
