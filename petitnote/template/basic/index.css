@@ -37,8 +37,8 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 	/* 背景色 */--background-color: hsl(215 22% 14% / 1);
 	/* 掲示板タイトルの文字色 */--title-a-color: var(--a-color);
 	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
-	/* 記事タイトルの背景色 */--accent-background-color: hsl(205 25% 26% / 1);
-	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(205 30% 37% / 1);
+	/* 記事タイトルの背景色 */--accent-background-color: hsl(208 23% 26% / 1);
+	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(208 28% 37% / 1);
 	/* チェック済みのフォームのラベルの色 */--checked-color:var(--title-a-color);
 	/* チェック済みのフォームの背景色 */--checked-background-color:var(--accent-background-color);
 	/* ボーダー */--border-color: var(--strong-accent-background-color);
@@ -50,7 +50,7 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
 	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
 	/* 上に戻るボタンの矢印の色 */--page-top-color: #fff;
-	/* 上に戻るボタンの背景色 */--page-top-background-color: hsl(205 33% 29% / 1);
+	/* 上に戻るボタンの背景色 */--page-top-background-color: var(--strong-accent-background-color);
 	/* エラーメッセージの背景色 */--error-message-background-color:var(--accent-background-color);
 	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);
 	/* フォーム入力欄の背景色 */--form-input-background-color: #e5eaeb;input[type="text"], input[type="password"], input[type="url"], textarea, select {
