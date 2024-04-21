@@ -28,16 +28,16 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 	/* エラーメッセージの背景色 */--error-message-background-color:hsl(60 100% 88% / 1);
 	/* 注意が必要な項目の背景色 */--warning-color:#fff;
 	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);}
-
-.darkmode{/* ダークモードの配色 */
-
+	
+	.darkmode{/* ダークモードの配色 */
+	
 	/* 文字色 */--text-color: hsl(211 12% 92% / 1);
 	/* リンクの色 */--a-color: hsl(211 18% 79% / 1);
 	/* リンクホバー */--a-hover-color:var(--a-color);
 	/* 背景色 */--background-color: hsl(211 22% 14% / 1);
 	/* 掲示板タイトルの文字色 */--title-a-color: var(--a-color);
 	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
-	/* 記事タイトルの背景色 */--accent-background-color: hsl(208 23% 26% / 1);
+	/* 記事タイトルの背景色 */--accent-background-color: hsl(211 23% 25% / 1);
 	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(208 28% 37% / 1);
 	/* チェック済みのフォームのラベルの色 */--checked-color:var(--title-a-color);
 	/* チェック済みのフォームの背景色 */--checked-background-color:var(--accent-background-color);
