@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.28.5';
+$petit_ver='v1.28.6';
 $petit_lot='lot.20240423';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -739,9 +739,6 @@ function paint(){
 	$resto = t((string)filter_input(INPUT_POST, 'resto',FILTER_VALIDATE_INT));
 	if(strlen($resto)>1000){
 		return error($en?'Unknown error':'問題が発生しました。');
-	}
-	if(!$usercode){
-		error($en? 'User code does not exist.' :'ユーザーコードがありません。');
 	}
 
 	$picw = ($picw < $pmin_w) ? $pmin_w : $picw;//最低の幅チェック
