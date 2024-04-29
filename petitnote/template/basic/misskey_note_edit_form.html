@@ -55,18 +55,18 @@
 </form>
 <!-- 内容を隠すをチェックした時に注釈のテキストエリアを表示 -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-
-document.getElementById('cw').style.display = "none";
-document.getElementById('hide_content').addEventListener('change', function() {
-	
-	if(document.getElementById('hide_content').checked){
-		document.getElementById('cw').style.display = "inline-block";
-	}else{
-		document.getElementById('cw').style.display = "none";
-
-	}
-});
+document.addEventListener("DOMContentLoaded", ()=> {
+	const cw = document.getElementById('cw');
+	cw.style.display = "none";
+	const hide_content = document.getElementById('hide_content');
+	hide_content.addEventListener('change', ()=> {
+		
+		if(hide_content.checked){
+			cw.style.display = "inline-block";
+		}else{
+			cw.style.display = "none";
+		}
+	});
 });
 </script>
 
