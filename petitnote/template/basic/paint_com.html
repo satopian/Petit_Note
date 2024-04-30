@@ -7,32 +7,36 @@
 	<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
 	<?php include __DIR__.'/parts/head_preload_css_js.html';?>
 	<title><?=h($boardname)?></title> 
-
 	<script>
 	function select_pic(){
-		if(document.getElementById('select_picfile')){
-		var id = document.getElementById('select_picfile').value;
+		const select_picfile = document.getElementById('select_picfile');
+		const paintcom_title = document.getElementById('paintcom_title');
+		const paintcom_sage = document.getElementById('paintcom_sage');
+		const paintcom_hide_animation = document.getElementById('paintcom_hide_animation');
 
-		var csvString = id;
-		var csvArray = csvString.split(',');
+		if(select_picfile){
+			const csvString = select_picfile.value;
+			const csvArray = csvString.split(',');
 		
 			if(csvArray[1] == 'res'){
-			document.getElementById('paintcom_title').style.display = "none";
-			document.getElementById('paintcom_sage').style.display = "";
+				paintcom_title.style.display = "none";
+				paintcom_sage.style.display = "";
 			}else{
-				document.getElementById('paintcom_title').style.display = "";
-				document.getElementById('paintcom_sage').style.display = "none";
+				paintcom_title.style.display = "";
+				paintcom_sage.style.display = "none";
 			}
 			if(csvArray[2] == '.pch' || csvArray[2] == '.tgkr'){
-			document.getElementById('paintcom_hide_animation').style.display = "";
+				paintcom_hide_animation.style.display = "";
 			}else{
-				document.getElementById('paintcom_hide_animation').style.display = "none";
+				paintcom_hide_animation.style.display = "none";
 			}
 		}
 	}
-	window.addEventListener('DOMContentLoaded',select_pic,false);
+	document.addEventListener('DOMContentLoaded',()=>{
+		select_pic();
+		document.getElementById('select_picfile').addEventListener('change',select_pic);
+	});
 	</script>
-
 </head>
 <body>
 	<div class="container">
@@ -90,7 +94,7 @@
 <input type="hidden" name="token" value="<?=h($token)?>">
 <input type="hidden" name="pictmp" value="<?=h($pictmp)?>">
 <div class="post_table_title"><?php if($en):?>Images<?php else:?>画像<?php endif;?>
-	<select name="picfile" class="post_select_image" onchange="select_pic();" id="select_picfile">
+	<select name="picfile" class="post_select_image" id="select_picfile">
 	<?php foreach($out as $i=>$val):?>
 	<?php krsort($val);?>
 
