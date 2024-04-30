@@ -279,7 +279,7 @@ function post(){
 		$userdata = fread($fp, 1024);
 		fclose($fp);
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
-		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip) && (!$uhost || ($uhost != $host)))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
+		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
 		$tool= in_array($tool,['neo','chi','klecks','tegaki']) ? $tool : '???';
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
@@ -952,7 +952,6 @@ function paintcom(){
 	aikotoba_required_to_view(true);
 	$token=get_csrf_token();
 	$userip = get_uip();
-	$host = $userip ? gethostbyaddr($userip) :'';
 	//テンポラリ画像リスト作成
 	$uresto = '';
 	$handle = opendir(TEMP_DIR);
@@ -972,7 +971,7 @@ function paintcom(){
 			if(is_file(TEMP_DIR.$file_name.$imgext)){ //画像があればリストに追加
 				$pchext = check_pch_ext(TEMP_DIR . $file_name);
 				$pchext = !$hide_animation ? $pchext : ''; 
-				if(($ucode && ($ucode === $usercode))||($uip && ($uip === $userip)||($uhost && ($uhost === $host)))){
+				if(($ucode && ($ucode === $usercode))||($uip && ($uip === $userip))){
 					$tmps[$file_name] = [$file_name.$imgext,$uresto,$pchext];
 				}
 			}
