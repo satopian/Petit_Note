@@ -12,20 +12,10 @@
 </head>
 <body>
 <div class="container" id="top">
-	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
-	<nav class="menu_wrap">
-		<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
-<?php if($userdel || $admindel):?>
-	<span>
-		<?php if($postresno):?>
-		[<a href="./?mode=logout&resno=<?=h($postresno)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
-		<?php endif;?>
-		<?php if(!$postresno):?>
-		[<a href="./?mode=logout&page=<?=h($postpage)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
-		<?php endif;?>
-	</span>
-<?php endif;?>
-<a href="#bottom">▽</a>
+<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
+<nav class="menu_wrap">
+	<?php include __DIR__.'/parts/before_edit_nav_menu.html';?>
+	<a href="#bottom">▽</a>
 </nav>
 <h2 class="article_title"><?php if($en):?>Edit mode<?php else:?>編集モード<?php endif;?></h2>
 <?php if($userdel && !$deny_all_posts && $out[0][0]['check_elapsed_days'] || $admindel):?>

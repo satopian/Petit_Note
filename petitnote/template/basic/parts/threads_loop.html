@@ -157,10 +157,11 @@
 					<form action="./" method="POST" class="aikotoba">
 					<input type="hidden" name="mode" value="before_misskey_note">
 					<input type="hidden" name="edit_mode" value="editmode">
-					<input type="hidden" name="resmode" value="true">
+					<input type="hidden" name="resmode" value="<?=h($resmode)?>">
 					<input type="hidden" name="id" value="<?=h($res['time'])?>">
 					<input type="hidden" name="no" value="<?=h($res['no'])?>">
 					<input type="hidden" name="postpage" value="<?=h($page)?>">
+					<input type="hidden" name="postresno" value="<?=h($resno)?>">
 
 					<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <input type="submit" value="<?php if($en):?>Note to Misskey<?php else:?>Misskeyにノート<?php endif;?>">
 					</form>

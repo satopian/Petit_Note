@@ -24,7 +24,10 @@ class misskey_note{
 		$no = $no ? $no : t((string)filter_input(INPUT_GET,'no',FILTER_VALIDATE_INT));
 		$misskey_note = (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-		$postresno = (int)$no;
+		$resmode = (bool)filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
+		$postpage = (int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+		$postresno = (int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
+		$postresno = $postresno ? $postresno : false; 
 	
 		check_open_no($no);
 		if(!is_file(LOG_DIR."{$no}.log")){
@@ -138,7 +141,7 @@ class misskey_note{
 
 		$resno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
 		$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-
+	
 		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 
 		$image_rep=false;
