@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240507;
+$functions_ver=20240511;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1395,8 +1395,8 @@ function post_share_server(){
 		$share_url=$sns_server_direct_input."/share?text=";
 	}
 	$share_url.=$encoded_t.'&url='.$encoded_u;
-	if($sns_server_radio==="https://bsky.app"){
-	$share_url="https://bsky.app/intent/compose?text=";
+	if($sns_server_radio === "https://bsky.app"||!$sns_server_radio && ($sns_server_direct_input === "https://bsky.app")){
+		$share_url="https://bsky.app/intent/compose?text=";
 	$share_url.=$encoded_t.'%20'.$encoded_u;
 	}
 	$share_url = filter_var($share_url, FILTER_VALIDATE_URL) ? $share_url : ''; 

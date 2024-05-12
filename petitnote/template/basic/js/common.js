@@ -194,14 +194,21 @@ function open_sns_server_window(event,width=350,height=490) {
 		width = 350; // デフォルト値
 		height = 490; // デフォルト値
 	}		
-	var url = event.currentTarget.href;
-	var windowFeatures = "width="+width+",height="+height; // ウィンドウのサイズを指定
+	let url = event.currentTarget.href;
+	let windowFeatures = "width="+width+",height="+height; // ウィンドウのサイズを指定
 	
 	if (snsWindow && !snsWindow.closed) {
 		snsWindow.focus(); // 既に開かれているウィンドウがあればフォーカスする
-		} else {
+	} else {
 		snsWindow = window.open(url, "_blank", windowFeatures); // 新しいウィンドウを開く
+	}
+	// ウィンドウがフォーカスを失った時の処理
+	snsWindow.addEventListener("blur", () => {
+
+		if (snsWindow.location.href === url) {
+			snsWindow.close(); // URLが変更されていない場合はウィンドウを閉じる
 		}
+	});
 }
 // (c)satopian MIT Licence ここまで
 
