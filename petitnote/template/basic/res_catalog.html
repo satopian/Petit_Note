@@ -38,15 +38,18 @@
 
 <span>[<a href="./?resno=<?= h($out[0][0]['no'])?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]</span>
 
-
 <?php if($resform):?>
+	<span>
 	<?php if($misskey_note):?>
-		<span>[<a href="./?resno=<?= h($out[0][0]['no'])?>&res_catalog=on"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
+		[<a href="./?resno=<?= h($out[0][0]['no'])?>&res_catalog=on"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]
 	<?php else:?>
-		<span>[<a href="./?resno=<?= h($out[0][0]['no'])?>&misskey_note=on"><span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>]</span>
+		[<a href="./?resno=<?= h($out[0][0]['no'])?>&misskey_note=on"><span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>]
 	<?php endif;?>
 <?php endif;?>
 <a href="#bottom">▽</a>
+<?php if($resform):?>
+	</span>
+<?php endif;?>
 </nav>
 	<!-- 閲覧注意画像を隠す/隠さない -->
 	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>

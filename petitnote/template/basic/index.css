@@ -219,7 +219,7 @@ span.info_name a ,span.info_name > span {
 
 .imginfo_wrap {
     margin: 3px 0 10px;
-	font-size: 1em;
+	font-size: 1rem;
 	font-weight: normal;
 }
 .imginfo_wrap span {
@@ -598,10 +598,16 @@ input.input_count_timer {
 	.catalog_wrap span:nth-of-type(4n) {
 		margin-right: 0
 	}
+	body{
+		font-size: 1.1rem;
+	}
+	.imginfo_wrap {
+		font-size: 1.1rem;
+	}
 
 }
 
-@media screen and (max-width:610px) {
+@media screen and (max-width:700px) {
 
 	.catalog_image p {
 		display: none;
