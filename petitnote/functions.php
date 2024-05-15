@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240515;
+$functions_ver=20240516;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -300,8 +300,6 @@ function create_res($line,$options=[]){
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_md5,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 
-	$admindel=admindel_valid();
-
 	$time = basename($time);
 
 	$isset_catalog = isset($options['catalog']);
@@ -322,8 +320,8 @@ function create_res($line,$options=[]){
 
 	$_w=$w;
 	$_h=$h;
-	if(!$admindel && $hide_thumbnail){
-	list($w,$h)=image_reduction_display($w,$h,300,300);
+	if($hide_thumbnail){
+		list($w,$h)=image_reduction_display($w,$h,300,300);
 	}
 	$thumbnail_jpg = (strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
 	$thumbnail_webp = $thumbnail_jpg && (strpos($thumbnail,'thumbnail_webp')!==false) ? $time.'s.webp' : false; 
