@@ -143,6 +143,7 @@ class misskey_note{
 		$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	
 		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+		$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
 		$image_rep=false;
 		$admin_pass= null;

@@ -4,6 +4,8 @@
 <h2 class="article_title">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></h2>
 	<!-- スレッドのループ -->
 <?php foreach($ress as $res) : ?>
+	<!-- 縮小のかかったNSFW画像を元のサイズへ -->
+	<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
 	<hr>
 <div class="imginfo_wrap">
 	<span class="info_name"><span><?= h($res['name'])?></span></span>
@@ -44,18 +46,21 @@
 				</div>
 			<?php endif;?>
 
-			<div class="posted_image" <?php if($res['_w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
+			<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" <?php if($res['_w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
 				<a href="src/<?=h($res['img'])?>" target="_blank" data-lightbox="<?=h($res['no'])?>_<?=h($res['time'])?>">
 				<?php if($res['thumbnail']):?>
 					<?php if(isset($res['thumbnail_webp']) && $res['thumbnail_webp']):?>
 						<picture><source srcset="thumbnail/<?=h($res['thumbnail_webp'])?>" type="image/webp">
 					<?php endif;?>
-					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>">
+					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 					<?php if(isset($res['thumbnail_webp']) && $res['thumbnail_webp']):?>
 						</picture>
 					<?php endif;?>
 				<?php else:?>
-					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['_w'])?>" height="<?=h($res['_h'])?>">
+					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
+				<?php endif;?>
+				<?php if($res['hide_thumbnail']):?>
+					<span>NSFW</span>
 				<?php endif;?>
 				</a>
 			</div>

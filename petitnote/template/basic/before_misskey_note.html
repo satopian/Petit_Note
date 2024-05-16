@@ -17,6 +17,8 @@
 <?php include __DIR__.'/parts/before_edit_nav_menu.html';?>
 	<a href="#bottom">▽</a>
 </nav>
+	<!-- 閲覧注意画像を隠す/隠さない -->
+	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
 <h2 class="article_title"><?php if($en):?>Note to Misskey<?php else:?>Misskeyにノート<?php endif;?></h2>
 
 <?php if(!$deny_all_posts && $out[0][0]['check_elapsed_days'] || $adminpost || $admindel):?>
