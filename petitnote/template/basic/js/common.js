@@ -1,8 +1,10 @@
 //Petit Note 2021-2024 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
+let isForm_Submit=false;//ページ離脱処理で使う
 function res_form_submit(event, formId = 'res_form') {//第二引数が未指定の時はformId = 'res_form'
 	let error_message_Id;
 	if (formId === "res_form") {
+		isForm_Submit=true;//ページ離脱処理で使う
 		error_message_Id = "error_message";//エラーメッセージを表示する箇所のidを指定
 	} else if (formId === "image_rep") {
 		error_message_Id = "error_message_imgrep";
@@ -92,6 +94,23 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 			});
 	}
 }
+// コメント入力中画面からの離脱防止
+let isForm_Changed = false;
+// Function to mark the form as changed
+document.addEventListener("DOMContentLoaded", (e) => {
+	isForm_Changed = false;
+	const resForm = document.getElementById('res_form');
+    const textarea = resForm.querySelector('textarea');
+
+	textarea.addEventListener("change", ()=>{
+		isForm_Changed = true;
+	});
+	window.addEventListener("beforeunload", (e) => {
+		if (isForm_Changed && !isForm_Submit) {//isForm_submitは非同期通信で設定
+			e.preventDefault();
+		}
+	});
+});
 //閲覧注意画像を隠す/隠さない
 const set_nsfw_show_hide = document.getElementById("set_nsfw_show_hide");
 if(set_nsfw_show_hide){
