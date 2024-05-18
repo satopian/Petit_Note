@@ -104,7 +104,7 @@ let isForm_Changed = false;
 document.addEventListener("DOMContentLoaded", (e) => {
 	isForm_Changed = false;
 	const resForm = document.getElementById('res_form');
-    const textarea = resForm.querySelector('textarea');
+	const textarea = resForm.querySelector('textarea');
 
 	textarea.addEventListener("change", ()=>{
 		isForm_Changed = true;
