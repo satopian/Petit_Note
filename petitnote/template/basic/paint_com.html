@@ -33,8 +33,11 @@
 		}
 	}
 	document.addEventListener('DOMContentLoaded',()=>{
-		select_pic();
-		document.getElementById('select_picfile').addEventListener('change',select_pic);
+		const select_picfile = document.getElementById('select_picfile');
+		if(select_picfile){
+			select_pic();
+			select_picfile.addEventListener('change',select_pic);
+		}
 	});
 	</script>
 </head>

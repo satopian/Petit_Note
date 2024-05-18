@@ -97,14 +97,17 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 		.finally(() => {
 			isForm_Submit = false;//ページ離脱処理で使う
 		});
-	}
+}
 }
 // コメント入力中画面からの離脱防止
 let isForm_Changed = false;
 document.addEventListener("DOMContentLoaded", (e) => {
 	isForm_Changed = false;
 	const resForm = document.getElementById('res_form');
-	const textarea = resForm.querySelector('textarea');
+	if(!resForm){
+		return;
+	}
+    const textarea = resForm.querySelector('textarea');
 
 	textarea.addEventListener("change", ()=>{
 		isForm_Changed = true;
