@@ -1,6 +1,8 @@
 //Petit Note 2021-2024 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
+// コメント入力中画面からの離脱防止
 let isForm_Submit=false;//ページ離脱処理で使う
+//非同期通信
 function res_form_submit(event, formId = 'res_form') {//第二引数が未指定の時はformId = 'res_form'
 	let error_message_Id;
 	if (formId === "res_form") {
@@ -88,15 +90,17 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 			return document.getElementById(error_message_Id).innerText = response_status + ' ' + resp_error_msg;
 
 		})
-			.catch(error => {
-				submitBtn.disabled = false;
-				return document.getElementById(error_message_Id).innerText = 'There was a problem with the fetch operation:';
-			});
-	}
+		.catch(error => {
+			submitBtn.disabled = false;
+			return document.getElementById(error_message_Id).innerText = 'There was a problem with the fetch operation:';
+		})
+		.finally(() => {
+			isForm_Submit = false;//ページ離脱処理で使う
+		});
+}
 }
 // コメント入力中画面からの離脱防止
 let isForm_Changed = false;
-// Function to mark the form as changed
 document.addEventListener("DOMContentLoaded", (e) => {
 	isForm_Changed = false;
 	const resForm = document.getElementById('res_form');
