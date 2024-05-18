@@ -97,7 +97,7 @@ function res_form_submit(event, formId = 'res_form') {//第二引数が未指定
 		.finally(() => {
 			isForm_Submit = false;//ページ離脱処理で使う
 		});
-}
+	}
 }
 // コメント入力中画面からの離脱防止
 let isForm_Changed = false;
@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
 	if(!resForm){
 		return;
 	}
-    const textarea = resForm.querySelector('textarea');
+	const textarea = resForm.querySelector('textarea');
 
 	textarea.addEventListener("change", ()=>{
 		isForm_Changed = true;
@@ -122,21 +122,21 @@ document.addEventListener("DOMContentLoaded", (e) => {
 const set_nsfw_show_hide = document.getElementById("set_nsfw_show_hide");
 if(set_nsfw_show_hide){
 	set_nsfw_show_hide.addEventListener("change",()=>{
-			const formData = new FormData(set_nsfw_show_hide);
-			fetch("./", {
-			method: "post",
-			mode: 'same-origin',
-			body: formData
-			})
-			.then(response => {
-			// レスポンスの処理
-			console.log("Data sent successfully");
-			location.reload();
-			})
-			.catch(error => {
-			// エラーハンドリング
-			console.error("Error:", error);
-			});
+		const formData = new FormData(set_nsfw_show_hide);
+		fetch("./", {
+		method: "post",
+		mode: 'same-origin',
+		body: formData
+		})
+		.then(response => {
+		// レスポンスの処理
+		console.log("Data sent successfully");
+		location.reload();
+		})
+		.catch(error => {
+		// エラーハンドリング
+		console.error("Error:", error);
+		});
 			
 	});
 }
@@ -144,22 +144,22 @@ if(set_nsfw_show_hide){
 const set_darkmode = document.getElementById("set_darkmode");
 if(set_darkmode){
 	set_darkmode.addEventListener("change",()=>{
-			const formData = new FormData(set_darkmode);
-			fetch("./", {
-			method: "post",
-			mode: 'same-origin',
-			body: formData
-			})
-			.then(response => {
-			// レスポンスの処理
-			console.log("Data sent successfully");
-			location.reload();
-			})
-			.catch(error => {
-			// エラーハンドリング
-			console.error("Error:", error);
-			// submitBtn.disabled = false;
-			});
+		const formData = new FormData(set_darkmode);
+		fetch("./", {
+		method: "post",
+		mode: 'same-origin',
+		body: formData
+		})
+		.then(response => {
+		// レスポンスの処理
+		console.log("Data sent successfully");
+		location.reload();
+		})
+		.catch(error => {
+		// エラーハンドリング
+		console.error("Error:", error);
+		// submitBtn.disabled = false;
+		});
 	});
 }
   
