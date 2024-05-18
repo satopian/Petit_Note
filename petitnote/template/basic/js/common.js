@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
 		isForm_Changed = true;
 	});
 	window.addEventListener("beforeunload", (e) => {
-		if (isForm_Changed && !isForm_Submit) {//isForm_submitは非同期通信で設定
+		if (isForm_Changed && !isForm_Submit) {//isForm_Submitは非同期通信で設定
 			e.preventDefault();
 		}
 	});
