@@ -1,9 +1,10 @@
+"use strict";
 //Petit Note 2021-2024 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 // コメント入力中画面からの離脱防止
 let isForm_Submit=false;//ページ離脱処理で使う
 //非同期通信
-function res_form_submit(event, formId = 'res_form') {//第二引数が未指定の時はformId = 'res_form'
+const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指定の時はformId = 'res_form'
 	let error_message_Id;
 	if (formId === "res_form") {
 		isForm_Submit=true;//ページ離脱処理で使う
@@ -168,16 +169,16 @@ const elem_attach_image = document.getElementById("attach_image");
 const elem_check_nsfw = document.getElementById("check_nsfw");
 const elem_hide_thumbnail = document.getElementById("hide_thumbnail");
 const elem_form_submit = document.getElementById("form_submit");
-
+let paint_com=true;
 //お絵かきコメント用処理
 if (typeof paintcom === "undefined") {
-	paintcom = false;
+	paint_com = false;
 }
 
-if (elem_form_submit && (elem_attach_image||paintcom)) {
+if (elem_form_submit && (elem_attach_image||paint_com)) {
 
-	const updateFormStyle = function() {
-		if (paintcom || elem_attach_image.files.length > 0){
+	const updateFormStyle = ()=> {
+		if (paint_com || elem_attach_image.files.length > 0){
 			if(elem_check_nsfw){
 				elem_check_nsfw.style.display = "inline-block"; // チェックボックスを表示
 			}
@@ -211,7 +212,7 @@ if (elem_form_submit && (elem_attach_image||paintcom)) {
 //shareするSNSのserver一覧を開く
 var snsWindow = null; // グローバル変数としてウィンドウオブジェクトを保存する
 
-function open_sns_server_window(event,width=350,height=490) {
+const open_sns_server_window = (event,width=350,height=490)=> {
 	event.preventDefault(); // デフォルトのリンクの挙動を中断
 
 	// 幅と高さが数値であることを確認
