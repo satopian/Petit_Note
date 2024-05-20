@@ -7,7 +7,6 @@ let isForm_Submit=false;//ページ離脱処理で使う
 const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指定の時はformId = 'res_form'
 	let error_message_Id;
 	if (formId === "res_form") {
-		isForm_Submit=true;//ページ離脱処理で使う
 		error_message_Id = "error_message";//エラーメッセージを表示する箇所のidを指定
 	} else if (formId === "image_rep") {
 		error_message_Id = "error_message_imgrep";
@@ -41,6 +40,7 @@ const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指
 				console.log(response.url);
 				console.log(response.redirected);
 				if (response.redirected) {
+					isForm_Submit=true;//ページ離脱処理で使う
 					submitBtn.disabled = true;
 					return window.location.href = response.url;
 				}
@@ -94,12 +94,10 @@ const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指
 		.catch(error => {
 			submitBtn.disabled = false;
 			return document.getElementById(error_message_Id).innerText = 'There was a problem with the fetch operation:';
-		})
-		.finally(() => {
-			isForm_Submit = false;//ページ離脱処理で使う
 		});
 	}
 }
+
 // コメント入力中画面からの離脱防止
 let isForm_Changed = false;
 document.addEventListener("DOMContentLoaded", (e) => {
