@@ -487,7 +487,7 @@ $switch_sns = true;
 $servers =
 [
 		
-	["Twitter","https://twitter.com"],
+	["X","https://x.com"],
 	["Bluesky","https://bsky.app"],
 	["pawoo.net","https://pawoo.net"],
 	["fedibird.com","https://fedibird.com"],

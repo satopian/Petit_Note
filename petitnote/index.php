@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.33.9';
-$petit_lot='lot.20240520';
+$petit_ver='v1.35.0';
+$petit_lot='lot.20240521';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -2064,7 +2064,7 @@ function set_share_server(){
 	$servers=isset($servers)?$servers:
 	[
 	
-		["Twitter","https://twitter.com"],
+		["X","https://x.com"],
 		["Bluesky","https://bsky.app"],
 		["pawoo.net","https://pawoo.net"],
 		["fedibird.com","https://fedibird.com"],
