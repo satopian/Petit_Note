@@ -870,17 +870,14 @@ function deltemp(){
 			$file=basename($file);
 			//pchアップロードペイントファイル削除
 			//仮差し換えアップロードファイル削除
-			if(is_file(TEMP_DIR.$file)){
-
-				$lapse = time() - filemtime(TEMP_DIR.$file);
-				if(strpos($file,'pchup-')===0){
-					if($lapse > (300)){//5分
-						safe_unlink(TEMP_DIR.$file);
-					}
-				}else{
-					if($lapse > (3*24*3600)){//3日
-						safe_unlink(TEMP_DIR.$file);
-					}
+			$lapse = time() - filemtime(TEMP_DIR.$file);
+			if(strpos($file,'pchup-')===0){
+				if($lapse > (300)){//5分
+					safe_unlink(TEMP_DIR.$file);
+				}
+			}else{
+				if($lapse > (3*24*3600)){//3日
+					safe_unlink(TEMP_DIR.$file);
 				}
 			}
 		}
