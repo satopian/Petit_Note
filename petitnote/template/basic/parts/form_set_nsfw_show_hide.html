@@ -6,14 +6,12 @@
 <input type="radio" name="set_nsfw_show_hide" value="" id="nsfw_hide" <?php if(!$set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_hide"><?php if($en):?>Hide<?php else:?>隠す<?php endif;?></label>
 <input type="radio" name="set_nsfw_show_hide" value="on" id="nsfw_dont_hide" <?php if($set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_dont_hide"><?php if($en):?>Don't hide<?php else:?>隠さない<?php endif;?></label>
 <input type="hidden" name="mode" value="set_nsfw_show_hide">
-<input type="hidden" name="postpage" value="<?=h($page)?>">
 </form>
 <?php endif;?>
 <?php if(isset($use_darkmode) && $use_darkmode):?>
 <form action="./" method="post" id="set_darkmode" class="aikotoba">
 <input type="checkbox" name="darkmode" value="on" id="darkmode" <?php if((isset($darkmode) && $darkmode)||!isset($_COOKIE["p_n_set_darkmode"])&&isset($darkmode_by_default) && $darkmode_by_default):?>checked="checked"<?php endif;?>><label for="darkmode"><?php if($en):?>Dark mode<?php else:?>ダークモード<?php endif;?></label>
 <input type="hidden" name="mode" value="set_darkmode">
-<input type="hidden" name="postpage" value="<?=h($page)?>">
 </form>
 <?php endif;?>
 </div>

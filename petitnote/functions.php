@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240521;
+$functions_ver=20240524;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -216,8 +216,6 @@ function set_nsfw_show_hide(){
 	}else{
 		setcookie("p_n_set_nsfw_show_hide",false,time()+(60*60*24*365),"","",false,true);
 	}
-
-	return branch_destination_of_location();
 }
 function set_darkmode(){
 
@@ -227,8 +225,6 @@ function set_darkmode(){
 	}else{
 		setcookie("p_n_set_darkmode","0",time()+(60*60*24*365),"","",false,true);
 	}
-
-	return branch_destination_of_location();
 }
 
 //ログイン・ログアウト時のLocationを分岐
@@ -874,14 +870,17 @@ function deltemp(){
 			$file=basename($file);
 			//pchアップロードペイントファイル削除
 			//仮差し換えアップロードファイル削除
-			$lapse = time() - filemtime(TEMP_DIR.$file);
-			if(strpos($file,'pchup-')===0){
-				if($lapse > (300)){//5分
-					safe_unlink(TEMP_DIR.$file);
-				}
-			}else{
-				if($lapse > (3*24*3600)){//3日
-					safe_unlink(TEMP_DIR.$file);
+			if(is_file(TEMP_DIR.$file)){
+
+				$lapse = time() - filemtime(TEMP_DIR.$file);
+				if(strpos($file,'pchup-')===0){
+					if($lapse > (300)){//5分
+						safe_unlink(TEMP_DIR.$file);
+					}
+				}else{
+					if($lapse > (3*24*3600)){//3日
+						safe_unlink(TEMP_DIR.$file);
+					}
 				}
 			}
 		}
