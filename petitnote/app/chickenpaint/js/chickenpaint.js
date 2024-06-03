@@ -23541,30 +23541,32 @@ function CPMainGUI(controller, uiElem) {
   });
 
   // デバイスの向きの変更時にパレットの配置を初期化
-  screen.orientation.addEventListener("change", function (e) {
-    //何通りも、試してどれかが有効になる事を期待
-    _this.resize();
-    // パレット初期化
-    controller.actionPerformed({
-      action: "CPArrangePalettes"
-    });
-    setTimeout(function () {
+  if (screen.orientation) {
+    //非対応ブラウザ対策
+    screen.orientation.addEventListener("change", function (e) {
+      //何通りも、試してどれかが有効になる事を期待
       _this.resize();
       // パレット初期化
       controller.actionPerformed({
         action: "CPArrangePalettes"
       });
-    }, 10);
-    Promise.resolve().then(function () {
-      _this.resize();
-    }).then(function () {
-      // パレット初期化
-      controller.actionPerformed({
-        action: "CPArrangePalettes"
+      setTimeout(function () {
+        _this.resize();
+        // パレット初期化
+        controller.actionPerformed({
+          action: "CPArrangePalettes"
+        });
+      }, 10);
+      Promise.resolve().then(function () {
+        _this.resize();
+      }).then(function () {
+        // パレット初期化
+        controller.actionPerformed({
+          action: "CPArrangePalettes"
+        });
       });
     });
-  });
-
+  }
   // ハンバガーメニューとモーダルの二重表示防止
   document.addEventListener('show.bs.modal', function () {
     // chickenpaint-main-menu-contentのIDを持つcollapse要素を閉じる
