@@ -167,10 +167,10 @@ const elem_attach_image = document.getElementById("attach_image");
 const elem_check_nsfw = document.getElementById("check_nsfw");
 const elem_hide_thumbnail = document.getElementById("hide_thumbnail");
 const elem_form_submit = document.getElementById("form_submit");
-let paint_com=true;
+let paint_com=false;
 //お絵かきコメント用処理
-if (typeof paintcom === "undefined") {
-	paint_com = false;
+if (typeof paintcom !== "undefined") {
+	paint_com = paintcom;
 }
 
 if (elem_form_submit && (elem_attach_image||paint_com)) {
