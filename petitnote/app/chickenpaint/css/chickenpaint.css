@@ -1447,7 +1447,8 @@
   background-color: transparent;
   border: 1px solid rgba(0, 0, 0, 0.2117647059);
   border-radius: 0.25rem;
-  margin-left: 0.25rem;
+  margin-right: 0.25rem;
+  margin-left: 0.3rem;
 }
 
 .chickenpaint .widget-nav .widget-toggler.selected {
