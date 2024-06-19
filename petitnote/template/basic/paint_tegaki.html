@@ -69,7 +69,7 @@ Tegaki.open({
 					return showAlert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
 				}
 				if(response_status===404){
-					return showAlert(<?php if($en):?>'404 not found\nThe PHP file to save the image does not exist.'<?php else:?>'エラー404\n画像を保存するPHPファイルがありません。'<?php endif;?>);	
+					return showAlert(<?php if($en):?>'404 not found\nsave.inc.php does not exist.'<?php else:?>'エラー404\nsave.inc.phpがありません。'<?php endif;?>);	
 				}
 				return showAlert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗。\n時間を置いて再度投稿してみてください。'<?php endif;?>);
 			}
