@@ -1,4 +1,8 @@
 <files ~ "(^config\.php$|\.(ini|log|dat|json|inc)$)">
-	order allow,deny
-	deny from all
+	Order allow,deny
+	Deny from all
 </files>
+<Files "manifest.json">
+	Order allow,deny
+	Allow from all
+</Files>
