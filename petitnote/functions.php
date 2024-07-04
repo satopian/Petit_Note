@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240703;
+$functions_ver=20240704;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -609,9 +609,8 @@ function delete_files ($imgfile, $time) {
 	safe_unlink(IMG_DIR.$time.'.chi');
 	safe_unlink(IMG_DIR.$time.'.psd');
 	safe_unlink(IMG_DIR.$time.'.tgkr');
-	safe_unlink(__DIR__.'/template/cache/index_cache.json');
+	delete_res_cache();
 }
-
 function delete_res_cache () {
 	safe_unlink(__DIR__.'/template/cache/index_cache.json');
 }

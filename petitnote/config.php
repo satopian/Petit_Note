@@ -58,8 +58,8 @@ $darkmode_by_default = false;
 
 /*SNS連携*/
 
-// ツイートボタンを使う
-// スレッドのurlと内容をツイートするリンクがでます。
+// SNS共有ボタンを使う
+// スレッドのURLと内容をSNSにシェアできます。
 // 使う: true 使わない: false
 
 $use_sns_button = true;
