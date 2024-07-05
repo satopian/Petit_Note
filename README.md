@@ -132,8 +132,8 @@ https://github.com/satopian/Petit_Note/assets/44894014/e2519331-4898-462f-b911-c
 ## 2024/06/07 v1.36.23
 ### ChickenPaint Be更新
 - スマホ時にもあえてブランドロゴを表示して、ブラウザのホームボタンの誤タップが発生しないようにしました。  
-- パレット表示非表示のショートカットメニューがデバイスの幅いっぱいに広がるようにしました。
-これまでは、間隔が狭すぎて意図した箇所の黄色いショートカットメニューをタップできない事がありました。  
+- パレット表示非表示のショートカットメニューがデバイスの幅いっぱいに広がるようにしました。  
+これまでは、間隔が狭すぎて意図した箇所の黄色いショートカットメニューをタップできない事がありました。    
 
 ![Screenshot_20240607-214641](https://github.com/satopian/Petit_Note/assets/44894014/fe33539d-959d-477d-ab33-008a9b431e7d) ![Screenshot_20240607-214737](https://github.com/satopian/Petit_Note/assets/44894014/1885f673-b6a5-49fe-801b-13b9e01e5841) ![Screenshot_20240607-214650](https://github.com/satopian/Petit_Note/assets/44894014/d9726f15-f5c8-4956-b611-e0f8c0f78a05)  
 縦表示。 
