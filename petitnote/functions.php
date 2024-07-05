@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240704;
+$functions_ver=20240705;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -967,9 +967,7 @@ function is_ngword ($ngwords, $strs) {
 	if (empty($ngwords)||empty($strs)) {
 		return false;
 	}
-	if (!is_array($strs)) {
-		$strs = [$strs];
-	}
+	$strs = (array)$strs;//配列に変換
 	foreach($ngwords as $i => $ngword){//拒絶する文字列
 		$ngwords[$i]  = str_replace([" ", "　"], "", $ngword);
 		$ngwords[$i]  = str_replace("/", "\/", $ngwords[$i]);
