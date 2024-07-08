@@ -693,12 +693,15 @@ function post(){
 	if($send_email){
 	//template_ini.phpで未定義の時の初期値
 	//このままでよければ定義不要
+	defined('NOTICE_MAIL_NAME') or define('NOTICE_MAIL_NAME', '名前');
+	defined('NOTICE_MAIL_SUBJECT') or define('NOTICE_MAIL_SUBJECT', '題名');
 	defined('NOTICE_MAIL_IMG') or define('NOTICE_MAIL_IMG', '投稿画像');
 	defined('NOTICE_MAIL_THUMBNAIL') or define('NOTICE_MAIL_THUMBNAIL', 'サムネイル画像');
 	defined('NOTICE_MAIL_URL') or define('NOTICE_MAIL_URL', '記事URL');
 	defined('NOTICE_MAIL_REPLY') or define('NOTICE_MAIL_REPLY', 'へのレスがありました');
 	defined('NOTICE_MAIL_NEWPOST') or define('NOTICE_MAIL_NEWPOST', '新規投稿がありました');
-
+		$data['notice_mail_name']=NOTICE_MAIL_NAME;
+		$data['notice_mail_subject']=NOTICE_MAIL_SUBJECT;
 		$data['to'] = $to_mail;
 		$data['name'] = $name;
 		$data['url'] = filter_var($url,FILTER_VALIDATE_URL) ? $url:'';

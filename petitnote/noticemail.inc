@@ -1,6 +1,6 @@
 <?php
 /*
-** メール通知クラス(UTF-8) lot.231020 for PetitNote
+** メール通知クラス(UTF-8) lot.20240708 for PetitNote
 ** https://paintbbs.sakura.ne.jp/
 ** 
 ** originalscript (C)SakaQ 2004-2007
@@ -96,6 +96,9 @@ class noticemail{
 	mb_language( 'uni' );
 	mb_internal_encoding("UTF-8");
 
+	$notice_mail_name= isset($data['notice_mail_name']) ? $data['notice_mail_name'] : "Name";
+	$notice_mail_subject = isset($data['notice_mail_subject']) ? $data['notice_mail_subject'] : "Subject";
+
 	$name = isset($data['name']) ? $data['name'] : '';
 	$url = isset($data['url']) ? $data['url'] : '';
 	$title = isset($data['title']) ? $data['title'] : '';
@@ -120,9 +123,9 @@ class noticemail{
 	$Message .= 'Host: '.$host."\n";
 	$Message .= 'UserAgent: '.$_SERVER["HTTP_USER_AGENT"]."\n";
 	$Message .= $line;
-	$Message .= $name ? ('Name: '.$name."\n") :'';
+	$Message .= $name ? ($notice_mail_name.': '.$name."\n") :'';
 	$Message .= filter_var($url,FILTER_VALIDATE_URL) ? ('URL: '.$url."\n") : '';
-	$Message .= $title ? ('Subject: '.$title."\n") : '';
+	$Message .= $title ? ($notice_mail_subject.': '.$title."\n") : '';
 	if(is_array($option)){
 		foreach($option as $value){
 			list($optitle,$opvalue)=explode(",", rtrim($value));
