@@ -96,8 +96,8 @@ class noticemail{
 	mb_language( 'uni' );
 	mb_internal_encoding("UTF-8");
 
-	$notice_mail_name= isset($data['notice_mail_name']) ? $data['notice_mail_name'] : "Name";
-	$notice_mail_subject = isset($data['notice_mail_subject']) ? $data['notice_mail_subject'] : "Subject";
+	$label_name= isset($data['label_name']) ? $data['label_name'] : "Name";
+	$label_subject = isset($data['label_subject']) ? $data['label_subject'] : "Subject";
 
 	$name = isset($data['name']) ? $data['name'] : '';
 	$url = isset($data['url']) ? $data['url'] : '';
@@ -123,9 +123,9 @@ class noticemail{
 	$Message .= 'Host: '.$host."\n";
 	$Message .= 'UserAgent: '.$_SERVER["HTTP_USER_AGENT"]."\n";
 	$Message .= $line;
-	$Message .= $name ? ($notice_mail_name.': '.$name."\n") :'';
+	$Message .= $name ? ($label_name.': '.$name."\n") :'';
 	$Message .= filter_var($url,FILTER_VALIDATE_URL) ? ('URL: '.$url."\n") : '';
-	$Message .= $title ? ($notice_mail_subject.': '.$title."\n") : '';
+	$Message .= $title ? ($label_subject.': '.$title."\n") : '';
 	if(is_array($option)){
 		foreach($option as $value){
 			list($optitle,$opvalue) = $value;

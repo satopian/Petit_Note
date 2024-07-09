@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2023
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.38.2';
+$petit_ver='v1.38.3';
 $petit_lot='lot.20240709';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -700,8 +700,8 @@ function post(){
 	defined('NOTICE_MAIL_URL') or define('NOTICE_MAIL_URL', '記事URL');
 	defined('NOTICE_MAIL_REPLY') or define('NOTICE_MAIL_REPLY', 'へのレスがありました');
 	defined('NOTICE_MAIL_NEWPOST') or define('NOTICE_MAIL_NEWPOST', '新規投稿がありました');
-		$data['notice_mail_name']=NOTICE_MAIL_NAME;
-		$data['notice_mail_subject']=NOTICE_MAIL_SUBJECT;
+		$data['label_name']=NOTICE_MAIL_NAME;
+		$data['label_subject']=NOTICE_MAIL_SUBJECT;
 		$data['to'] = $to_mail;
 		$data['name'] = $name;
 		$data['url'] = filter_var($url,FILTER_VALIDATE_URL) ? $url:'';
