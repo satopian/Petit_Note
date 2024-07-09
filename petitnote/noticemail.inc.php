@@ -7,7 +7,7 @@
 ** http://www.punyu.net/php/
 ** 
 **
-** 2023/10/20 Subjectのダブルクオートをエスケープ。
+** 2024/07/09 Name、Subjectの個所を変数設定で変更できるようにした。
 ** 2022/12/19 コード整理。
 ** 2022/09/18 URLがURLとして正しい事を確認できるようにした。
 ** 2022/09/18 多国語対応。mb_language( 'uni' )。
@@ -142,6 +142,7 @@ class noticemail{
 		// 半角対応
 		$Message = mb_convert_kana($Message);
 		$name = mb_convert_kana($name);
+		$name = str_replace('"', "", $name);//ダブルクオートを除去
 	
 		// メールアドレスの入力欄が無いので代替え
 		$from = 'nomail@'.$_SERVER["HTTP_HOST"];
@@ -149,11 +150,10 @@ class noticemail{
 		// ヘッダにFrom追加
 		$MailHeaders .= 'From: '.$name.' <'.$from.'>'."\n";
 		// メール送信
-		$subject = str_replace('"', '\"', $subject);//ダブルクオートをエスケープ
-			mb_send_mail($data['to'],
-			$subject,
-			$Message,$MailHeaders);
+		mb_send_mail($data['to'],
+		$subject,
+		$Message,$MailHeaders);
 
-			return true;
+		return true;
 	}
 }
