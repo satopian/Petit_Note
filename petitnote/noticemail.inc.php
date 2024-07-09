@@ -128,7 +128,8 @@ class noticemail{
 	$Message .= $title ? ($notice_mail_subject.': '.$title."\n") : '';
 	if(is_array($option)){
 		foreach($option as $value){
-			list($optitle,$opvalue)=explode(",", rtrim($value));
+			$array_value = is_array($value) ? $value : explode(",", rtrim($value));//旧形式互換
+			list($optitle,$opvalue)= $array_value;
 			$Message .=$optitle.': '.$opvalue." \n"; 
 		}
 	}
