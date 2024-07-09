@@ -691,10 +691,10 @@ function post(){
 	global $send_email,$to_mail,$root_url,$boardname;
 
 	if($send_email){
-	//template_ini.phpで未定義の時の初期値
+	//config.phpで未定義の時の初期値
 	//このままでよければ定義不要
 	defined('NOTICE_MAIL_NAME') or define('NOTICE_MAIL_NAME', '名前');
-	defined('NOTICE_MAIL_SUBJECT') or define('NOTICE_MAIL_SUBJECT', '題名');
+	defined('NOTICE_MAIL_SUBJECT') or define('NOTICE_MAIL_SUBJECT', '記事題名');
 	defined('NOTICE_MAIL_IMG') or define('NOTICE_MAIL_IMG', '投稿画像');
 	defined('NOTICE_MAIL_THUMBNAIL') or define('NOTICE_MAIL_THUMBNAIL', 'サムネイル画像');
 	defined('NOTICE_MAIL_URL') or define('NOTICE_MAIL_URL', '記事URL');
