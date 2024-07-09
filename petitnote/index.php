@@ -39,11 +39,11 @@ check_file(__DIR__.'/lib/lightbox/css/lightbox.min.css');
 
 check_file(__DIR__.'/config.php');
 check_file(__DIR__.'/thumbnail_gd.php');
-check_file(__DIR__.'/noticemail.inc');
+check_file(__DIR__.'/noticemail.inc.php');
 
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/thumbnail_gd.php');
-require_once(__DIR__.'/noticemail.inc');
+require_once(__DIR__.'/noticemail.inc.php');
 
 //テンプレート
 $skindir='template/'.$skindir;
