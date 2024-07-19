@@ -129,9 +129,6 @@ const view_nsfw = (event) => {
 		fetch("./", {
 			method: "POST",
 			mode: 'same-origin',
-			headers: {
-				'X-Requested-With': 'asyncflag',
-			},
 			body: formData
 		})
 		.then(response => {
@@ -139,8 +136,6 @@ const view_nsfw = (event) => {
 				// レスポンスの処理
 				console.log("Data sent successfully");
 				location.reload();
-				submitBtn.disabled = false;
-				return;
 			}
 		})
 		.catch(error => {
@@ -189,7 +184,6 @@ if(set_darkmode){
 		.catch(error => {
 		// エラーハンドリング
 		console.error("Error:", error);
-		// submitBtn.disabled = false;
 		});
 	});
 }
