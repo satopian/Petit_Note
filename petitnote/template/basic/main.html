@@ -13,17 +13,8 @@
 
 <div class="container" id="top">
 
-<?php if($set_nsfw && !$nsfwc):?>
-	<div class="view_nsfw">
-	<span><?php if($en):?>View NSFW images?<?php else:?>年齢制限付きのコンテンツを表示してもよろしいでしょうか?<?php endif;?></span>
-	<form action="./" method="post">
-	<input type="hidden" name="mode" value="view_nsfw">
-	<input type="hidden" name="view_nsfw" value="on">
-	<input type="hidden" name="postpage" value="<?=h($page)?>">
-	<input type="submit" value="<?php if($en):?>Yes<?php else:?>はい表示します。<?php endif;?>">
-	</form>
-	</div>
-<?php endif;?>
+<!-- 閲覧注意警告 -->
+<?php include __DIR__.'/parts/form_view_nsfw.html'?>
 
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <!-- ナビゲーション -->

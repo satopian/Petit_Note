@@ -117,6 +117,39 @@ document.addEventListener("DOMContentLoaded", (e) => {
 		}
 	});
 });
+//掲示板全体が閲覧注意に設定されている時は警告
+const view_nsfw = (event) => {
+	const form = document.getElementById("view_nsfw");
+	const submitBtn = form.querySelector('input[type="submit"]');
+	if (form) {
+		event.preventDefault(); // 通常フォームの送信を中断
+		const formData = new FormData();
+		formData.append('mode', 'view_nsfw');
+		formData.append('view_nsfw', 'on');
+		fetch("./", {
+			method: "POST",
+			mode: 'same-origin',
+			headers: {
+				'X-Requested-With': 'asyncflag',
+			},
+			body: formData
+		})
+		.then(response => {
+			if (response.ok) {
+				// レスポンスの処理
+				console.log("Data sent successfully");
+				location.reload();
+				submitBtn.disabled = false;
+				return;
+			}
+		})
+		.catch(error => {
+			submitBtn.disabled = false;
+			console.error("Error:", error);
+		});
+	}
+}
+
 //閲覧注意画像を隠す/隠さない
 const set_nsfw_show_hide = document.getElementById("set_nsfw_show_hide");
 if(set_nsfw_show_hide){
@@ -136,7 +169,6 @@ if(set_nsfw_show_hide){
 		// エラーハンドリング
 		console.error("Error:", error);
 		});
-			
 	});
 }
 //ダークモード
