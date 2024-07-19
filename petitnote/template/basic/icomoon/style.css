@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?wi1skq');
-  src:  url('fonts/icomoon.eot?wi1skq#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?wi1skq') format('truetype'),
-    url('fonts/icomoon.woff?wi1skq') format('woff'),
-    url('fonts/icomoon.svg?wi1skq#icomoon') format('svg');
+  src:  url('fonts/icomoon.eot?md8nv9');
+  src:  url('fonts/icomoon.eot?md8nv9#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?md8nv9') format('truetype'),
+    url('fonts/icomoon.woff?md8nv9') format('woff'),
+    url('fonts/icomoon.svg?md8nv9#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -13,7 +13,6 @@
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
-  speak: never;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -28,17 +27,17 @@
 .icon-Simpleicons-Team-Simple-Misskey:before {
   content: "\e900";
 }
-.icon-share-from-square-solid:before {
-  content: "\e908";
-}
-.icon-facebook2:before {
-  content: "\ea91";
-}
 .icon-angles-up-solid:before {
   content: "\e903";
 }
+.icon-share-from-square-solid:before {
+  content: "\e908";
+}
 .icon-checkmark2:before {
   content: "\ea11";
+}
+.icon-facebook2:before {
+  content: "\ea91";
 }
 .icon-twitter:before {
   content: "\ea96";
