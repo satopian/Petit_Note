@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240705;
+$functions_ver=20240720;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -45,7 +45,7 @@ function aikotoba(){
 
 	$_SESSION['aikotoba']='aikotoba';
 
-	return branch_destination_of_location();
+	// return branch_destination_of_location();
 
 }
 //記事の表示に合言葉を必須にする
