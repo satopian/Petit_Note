@@ -19,11 +19,8 @@
 	<span>[<a href="./?mode=logout&resno=<?=h($no)?>#<?=h($time)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]</span>
  <a href="#bottom">▽</a>
 	</nav>
-	<!-- 閲覧注意画像を隠す/隠さない -->
-	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
 
 	<h2 class="article_title"><?php if($en):?>Editing an article<?php else:?>記事編集中<?php endif;?></h2>
-
 
 <hr>
 <?php include __DIR__.'/parts/edit_form_res_loop.html'?>
