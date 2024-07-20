@@ -107,10 +107,11 @@ document.addEventListener("DOMContentLoaded", (e) => {
 		return;
 	}
 	const textarea = resForm.querySelector('textarea');
-
-	textarea.addEventListener("change", ()=>{
-		isForm_Changed = true;
-	});
+	if(textarea){
+		textarea.addEventListener("change", ()=>{
+			isForm_Changed = true;
+		});
+	}
 	window.addEventListener("beforeunload", (e) => {
 		if (isForm_Changed && !isForm_Submit) {//isForm_Submitは非同期通信で設定
 			e.preventDefault();
