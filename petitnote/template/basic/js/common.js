@@ -16,6 +16,8 @@ const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指
 		error_message_Id = "error_message_download";
 	} else if (formId === "before_delete") {
 		error_message_Id = "error_message_beforedelete";
+	} else if (formId === "aikotoba_form") {
+		error_message_Id = "error_message_aikotobaform";
 	} else {
 		console.error("Invalid form ID specified!");
 		return;
@@ -50,6 +52,9 @@ const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指
 							console.log(text);
 							const error_message = text.split("\n").slice(1).join("\n");//"error\n"を除去
 							return document.getElementById(error_message_Id).innerText = error_message;
+					}
+					if(formId === "aikotoba_form"){
+						return location.reload();
 					}
 					if (formId !== "res_form") {
 						//ヘッダX-Requested-Withをチェックしてfetchでの投稿をPHP側で中断し、
@@ -118,7 +123,7 @@ document.addEventListener("DOMContentLoaded", (e) => {
 		}
 	});
 });
-//掲示板全体が閲覧注意に設定されている時は警告
+//年齢制限付きの掲示板に設定されている時はボタンを押下するまで表示しない
 const view_nsfw = (event) => {
 	const form = document.getElementById("view_nsfw");
 	const submitBtn = form.querySelector('input[type="submit"]');

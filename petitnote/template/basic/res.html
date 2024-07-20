@@ -57,18 +57,8 @@
 		</span>
 	<?php endif;?>
 </nav>
-<?php if(!$aikotoba):?>
-<div>
-<div id="error_message"></div>
-<?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?>
-<form action="./" method="post" class="aikotoba" id="res_form" onsubmit="return res_form_submit(event)">
-	<input type="text" name="aikotoba" class="input_txt"> 
-	<input type="hidden" name="mode" value="aikotoba">
-	<input type="hidden" name="resno" value="<?=h($out[0][0]['no'])?>">
-	<input type="submit" value="<?php if($en):?>Answer<?php else:?>秘密の答え<?php endif;?>">
-</form>
-</div>
-<?php endif;?>
+<!-- 合言葉認証 -->
+<?php include __DIR__.'/parts/form_aikotoba.html'?>
 	<!-- 閲覧注意画像を隠す/隠さない -->
 	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
 <hr>

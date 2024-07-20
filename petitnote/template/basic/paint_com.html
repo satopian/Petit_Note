@@ -130,17 +130,9 @@
 	<?php endif;?>
 	<input type="submit" value="<?php if($en):?>Post<?php else:?>投稿する<?php endif;?>" id="form_submit">
 </form>
-<?php else:?>
-<?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
-<form action="./" method="post" class="aikotoba">
-	<input type="text" name="aikotoba" class="input_txt">
-	<input type="hidden" name="mode" value="aikotoba">
-	<input type="hidden" name="paintcom" value="true">
-	<input type="submit" value="<?php if($en):?>Answer<?php else:?>秘密の答え<?php endif;?>">
-	</form>
-<?php endif;?>
+<?php endif; ?>
 
-			<?php endif; ?>
+<?php endif; ?>
 
 <br>
 <?php if($tmps):?>

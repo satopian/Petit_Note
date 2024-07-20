@@ -693,13 +693,13 @@ input.input_count_timer {
 	filter: blur(15px);
 }
 /* エラーメッセージ */
-div#error_message , div#error_message_imgrep , div#error_message_paintform , div#error_message_download , div#error_message_beforedelete {
+div#error_message , div#error_message_imgrep , div#error_message_paintform , div#error_message_download , div#error_message_beforedelete , div#error_message_aikotobaform {
 	line-height: initial;
 	background-color: var(--error-message-background-color);
 	font-size: 20px;
 	padding: 1px 4px 1px;
 	margin: 5px 0 5px;
 }
-div#error_message:empty , div#error_message_imgrep:empty , div#error_message_paintform:empty , div#error_message_download:empty , div#error_message_beforedelete:empty {
+div#error_message:empty , div#error_message_imgrep:empty , div#error_message_paintform:empty , div#error_message_download:empty , div#error_message_beforedelete:empty , div#error_message_aikotobaform:empty {
 	display: none;
 }

@@ -1,0 +1,12 @@
+<?php if(!isset($aikotoba)||!$aikotoba):?>
+<div>
+<div id="error_message_aikotobaform"></div>
+<?php if($en):?>What's the secret word?:<?php else:?>この掲示板の合言葉はなんですか?:<?php endif;?> 
+<form action="./" method="post" class="aikotoba" id="aikotoba_form" onsubmit="return res_form_submit(event,'aikotoba_form')">
+	<input type="text" name="aikotoba" class="input_txt">
+	<input type="hidden" name="mode" value="aikotoba">
+	<input type="hidden" name="postpage" value="<?=h($page)?>">
+	<input type="submit" value="<?php if($en):?>Answer<?php else:?>秘密の答え<?php endif;?>">
+</form>
+</div>
+<?php endif;?>
