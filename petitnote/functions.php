@@ -239,7 +239,7 @@ function branch_destination_of_location(){
 	}
 	if($resno){
 		$res_catalog = $res_catalog ? '&res_catalog=on' : ''; 
-		return header('Location: ./?resno='.h($resno).h($res_catalog));
+		return header('Location: ./?resno='.h($resno).$res_catalog);
 	}
 	if($catalog){
 		return header('Location: ./?mode=catalog&page='.h($page));
