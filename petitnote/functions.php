@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240720;
+$functions_ver=20240721;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -45,7 +45,7 @@ function aikotoba(){
 
 	$_SESSION['aikotoba']='aikotoba';
 
-	// return branch_destination_of_location();
+	// 処理が終了したらJavaScriptでリロード
 
 }
 //記事の表示に合言葉を必須にする
@@ -86,6 +86,7 @@ function admin_in(){
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	$catalog=(bool)filter_input(INPUT_GET,'catalog',FILTER_VALIDATE_BOOLEAN);
+	$res_catalog=(bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
 	$search=(bool)filter_input(INPUT_GET,'search',FILTER_VALIDATE_BOOLEAN);
 	$radio=(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
@@ -231,14 +232,14 @@ function branch_destination_of_location(){
 	$catalog=(bool)filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 	$search=(bool)filter_input(INPUT_POST,'search',FILTER_VALIDATE_BOOLEAN);
 	$paintcom=(bool)filter_input(INPUT_POST,'paintcom',FILTER_VALIDATE_BOOLEAN);
-	$misskey_note=(bool)filter_input(INPUT_POST,'misskey_note',FILTER_VALIDATE_BOOLEAN);
+	$res_catalog=(bool)filter_input(INPUT_POST,'res_catalog',FILTER_VALIDATE_BOOLEAN);
 
 	if($paintcom){
 		return header('Location: ./?mode=paintcom');
 	}
 	if($resno){
-		$misskey_note = $misskey_note ? '&misskey_note=on':'';
-		return header('Location: ./?resno='.h($resno).$misskey_note);
+		$res_catalog = $res_catalog ? '&res_catalog=on' : ''; 
+		return header('Location: ./?resno='.h($resno).h($res_catalog));
 	}
 	if($catalog){
 		return header('Location: ./?mode=catalog&page='.h($page));
