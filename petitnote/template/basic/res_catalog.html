@@ -19,7 +19,7 @@
 <nav class="menu_wrap" >
 	
 <?php if(!($adminpost||$admindel) && !$out[0][0]['check_elapsed_days']||!$use_misskey_note){
-	$resform=false;//指定した日数を超えた古いスレッドはレスフォームを閉じる
+	$resform=false;//指定した日数を超えた古いスレッドはMisskey Noteのリンクを出さない
 	$misskey_note=false;
 
 }?>
