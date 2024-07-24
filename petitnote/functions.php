@@ -861,6 +861,7 @@ function check_AsyncRequest($upfile='') {
 
 // テンポラリ内のゴミ除去 
 function deltemp(){
+	global $check_password_input_error_count;
 	$handle = opendir(TEMP_DIR);
 	while ($file = readdir($handle)) {
 		if(!is_dir($file)) {
@@ -880,11 +881,14 @@ function deltemp(){
 		}
 	}
 	closedir($handle);
-	$file=__DIR__.'/template/errorlog/error.log';
-	if(is_file($file)){
-		$lapse = time() - filemtime($file);
+	$_file=__DIR__.'/template/errorlog/error.log';
+	if(!$check_password_input_error_count){
+		safe_unlink($_file);
+	}
+	if(is_file($_file)){
+		$lapse = time() - filemtime($_file);
 		if($lapse > (3*24*3600)){//3日
-			safe_unlink($file);
+			safe_unlink($_file);
 		}
 	}
 }
@@ -1314,7 +1318,6 @@ function check_password_input_error_count(){
 	global $second_pass,$en,$check_password_input_error_count;
 	$file=__DIR__.'/template/errorlog/error.log';
 	if(!$check_password_input_error_count){
-		safe_unlink($file);
 		return;
 	}
 	$userip = get_uip();
