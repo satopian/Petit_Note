@@ -98,7 +98,7 @@ const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指
 		})
 		.catch(error => {
 			submitBtn.disabled = false;
-			return document.getElementById(error_message_Id).innerText = 'There was a problem with the fetch operation:';
+			return document.getElementById(error_message_Id).innerText = 'There was a problem with the fetch operation';
 		});
 	}
 }
@@ -123,6 +123,25 @@ document.addEventListener("DOMContentLoaded", (e) => {
 		}
 	});
 });
+
+//formDataの送信とリロード
+const postFormAndReload=(formData)=>{
+	fetch("./", {
+		method: "post",
+		mode: 'same-origin',
+		body: formData
+		})
+		.then(response => {
+		// レスポンスの処理
+		console.log("Data sent successfully");
+		location.reload();
+		})
+		.catch(error => {
+		// エラーハンドリング
+		console.error("Error:", error);
+	});
+}
+
 //年齢制限付きの掲示板に設定されている時はボタンを押下するまで表示しない
 const view_nsfw = (event) => {
 	const form = document.getElementById("view_nsfw");
@@ -132,22 +151,7 @@ const view_nsfw = (event) => {
 		const formData = new FormData();
 		formData.append('mode', 'view_nsfw');
 		formData.append('view_nsfw', 'on');
-		fetch("./", {
-			method: "POST",
-			mode: 'same-origin',
-			body: formData
-		})
-		.then(response => {
-			if (response.ok) {
-				// レスポンスの処理
-				console.log("Data sent successfully");
-				location.reload();
-			}
-		})
-		.catch(error => {
-			submitBtn.disabled = false;
-			console.error("Error:", error);
-		});
+		postFormAndReload(formData);
 	}
 }
 
@@ -156,20 +160,7 @@ const set_nsfw_show_hide = document.getElementById("set_nsfw_show_hide");
 if(set_nsfw_show_hide){
 	set_nsfw_show_hide.addEventListener("change",()=>{
 		const formData = new FormData(set_nsfw_show_hide);
-		fetch("./", {
-		method: "post",
-		mode: 'same-origin',
-		body: formData
-		})
-		.then(response => {
-		// レスポンスの処理
-		console.log("Data sent successfully");
-		location.reload();
-		})
-		.catch(error => {
-		// エラーハンドリング
-		console.error("Error:", error);
-		});
+		postFormAndReload(formData);
 	});
 }
 //ダークモード
@@ -177,23 +168,10 @@ const set_darkmode = document.getElementById("set_darkmode");
 if(set_darkmode){
 	set_darkmode.addEventListener("change",()=>{
 		const formData = new FormData(set_darkmode);
-		fetch("./", {
-		method: "post",
-		mode: 'same-origin',
-		body: formData
-		})
-		.then(response => {
-		// レスポンスの処理
-		console.log("Data sent successfully");
-		location.reload();
-		})
-		.catch(error => {
-		// エラーハンドリング
-		console.error("Error:", error);
-		});
+		postFormAndReload(formData);
 	});
 }
-  
+
 //ファイルが添付されていない時は｢閲覧注意にする｣のチェックボックスを表示しない
 const elem_attach_image = document.getElementById("attach_image");
 const elem_check_nsfw = document.getElementById("check_nsfw");

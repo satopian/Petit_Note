@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240721;
+$functions_ver=20240724;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1312,22 +1312,24 @@ function app_to_use(){
 //パスワードを5回連続して間違えた時は拒絶
 function check_password_input_error_count(){
 	global $second_pass,$en,$check_password_input_error_count;
+	$file=__DIR__.'/template/errorlog/error.log';
 	if(!$check_password_input_error_count){
+		safe_unlink($file);
 		return;
 	}
 	$userip = get_uip();
 	check_dir(__DIR__.'/template/errorlog/');
-	$arr_err=is_file(__DIR__.'/template/errorlog/error.log') ? file(__DIR__.'/template/errorlog/error.log'):[];
+	$arr_err=is_file($file) ? file($file):[];
 	if(count($arr_err)>=5){
 		error($en?'Rejected.':'拒絶されました。');
 	}
 	if(!is_adminpass(filter_input(INPUT_POST,'adminpass'))){
 
 		$errlog=$userip."\n";
-		file_put_contents(__DIR__.'/template/errorlog/error.log',$errlog,FILE_APPEND);
-		chmod(__DIR__.'/template/errorlog/error.log',0600);
+		file_put_contents($file,$errlog,FILE_APPEND);
+		chmod($file,0600);
 		}else{
-			safe_unlink(__DIR__.'/template/errorlog/error.log');
+			safe_unlink($file);
 		}
 }
 
