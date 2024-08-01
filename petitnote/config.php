@@ -436,7 +436,7 @@ $check_password_input_error_count = false;
 // `template/errorlog/error.log`
 // を削除すると、再度ログインできるようになります。
 // このファイルには、間違った管理者パスワードを入力したクライアントのIPアドレスが保存されています。
-// 上記ファイルは手動で削除しなくても、ロック発生から3日経過すると自動的に解除されます。
+// 上記ファイルは手動で削除しなくても、ロック発生から3日経過すると自動的に削除され、ロックが解除されます。
 // また、 しない: false に設定しなおせば上記ファイルは削除され、ロックが解除されます。
 
 
@@ -480,6 +480,7 @@ $x_frame_options_deny=true;
 
 //シェア機能に、Mastodon、Misskeyの各サーバを含める 
 // 含める: true 含めない: false
+
 $switch_sns = true;
 // $switch_sns = false;
 
