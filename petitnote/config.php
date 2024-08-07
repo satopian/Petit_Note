@@ -141,6 +141,12 @@ $use_paintbbs_neo= true;
 $use_tegaki= true;
 // $use_tegaki= false;
 
+// Axnos Paintを使う
+// 使う:true 使わない:false
+
+$use_axnos = true;
+// $use_axnos = false;
+
 // ChickenPaintを使う
 // 使う:true 使わない:false
 
