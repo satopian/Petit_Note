@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240724;
+$functions_ver=20240807;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -289,6 +289,11 @@ function check_cont_pass(){
 	return error($en?'password is wrong.':'パスワードが違います。');
 }
 
+//設定済みのペイントツール名かどうか調べる
+function is_paint_tool_name($tool){
+	return in_array($tool,['neo','chi','klecks','tegaki','axnos']) ? $tool : '???';
+}
+	
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line,$options=[]){
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
@@ -309,7 +314,7 @@ function create_res($line,$options=[]){
 		$upload_image = true;
 	}
 
-	$anime = ($pchext==='.pch'||$pchext==='.tgkr'); 
+	$anime = in_array($pchext,['.pch','.tgkr']); 
 	$hide_thumbnail = $mark_sensitive_image ? (strpos($thumbnail,'hide_')!==false) :'';
 
 	$_w=$w;
@@ -404,6 +409,9 @@ function switch_tool($tool){
 			break;
 		case 'tegaki';
 			$tool='Tegaki';
+			break;
+		case 'axnos';
+			$tool='Axnos Paint';
 			break;
 		case 'upload':
 			$tool=$en?'Upload':'アップロード';
@@ -1296,7 +1304,7 @@ function get_pch_size($src) {
 
 //使用するペイントアプリの配列化
 function app_to_use(){
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos;
 		$arr_apps=[];
 		if($use_paintbbs_neo){
 			$arr_apps[]='neo';
@@ -1309,6 +1317,9 @@ function app_to_use(){
 		}
 		if($use_tegaki){
 			$arr_apps[]='tegaki';
+		}
+		if($use_axnos){
+			$arr_apps[]='axnos';
 		}
 		return $arr_apps;
 	}

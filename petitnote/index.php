@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.39.10';
-$petit_lot='lot.20240803';
+$petit_ver='v1.50.0';
+$petit_lot='lot.20240807';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20240721){
+if(!isset($functions_ver)||$functions_ver<20240807){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -79,6 +79,7 @@ $max_file_size_in_png_format_paint = isset($max_file_size_in_png_format_paint) ?
 $max_file_size_in_png_format_upload = isset($max_file_size_in_png_format_upload) ? $max_file_size_in_png_format_upload : 800;
 $use_klecs=isset($use_klecs) ? $use_klecs : true;
 $use_tegaki=isset($use_tegaki) ? $use_tegaki : true;
+$use_axnos=isset($use_axnos) ? $use_axnos : true;
 $display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_back_to_home : true;
 $password_require_to_continue = isset($password_require_to_continue) ? (bool)$password_require_to_continue : false;
 $subject_input_required = isset($subject_input_required) ? $subject_input_required : false;
@@ -280,7 +281,7 @@ function post(){
 		fclose($fp);
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
 		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
-		$tool= in_array($tool,['neo','chi','klecks','tegaki']) ? $tool : '???';
+		$tool= is_paint_tool_name($tool);
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
@@ -756,6 +757,7 @@ function paint(){
 	$mode = (string)filter_input(INPUT_POST, 'mode');
 
 	$imgfile='';
+	$oekaki_id='';
 	$pchfile='';
 	$img_chi='';
 	$img_klecks='';
@@ -851,6 +853,8 @@ function paint(){
 		if($ctype=='img'){//画像から続き
 			$animeform = false;
 			$anime= false;
+			// Axnos Paintではフォルダ名を付けない
+			$oekaki_id = $imgfile;
 			$imgfile = IMG_DIR.$imgfile;
 			if($_pch_ext==='.chi'){
 				$img_chi =IMG_DIR.$time.'.chi';
@@ -903,6 +907,12 @@ function paint(){
 
 			$tool ='tegaki';
 			$templete='paint_tegaki.html';
+			return include __DIR__.'/'.$skindir.$templete;
+
+		case 'axnos':
+
+			$tool ='axnos';
+			$templete='paint_axnos.html';
 			return include __DIR__.'/'.$skindir.$templete;
 
 		case 'klecks':
@@ -1019,7 +1029,7 @@ function paintcom(){
 function to_continue(){
 
 	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en,$password_require_to_continue;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$petit_lot,$elapsed_days,$max_res;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$petit_lot,$elapsed_days,$max_res;
 
 	aikotoba_required_to_view(true);
 
@@ -1239,7 +1249,7 @@ function img_replace(){
 				fclose($fp);
 				list($uip,$uhost,$uagent,$imgext,$ucode,$urepcode,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");//区切りの"\t"を行末に
 				$hide_animation = ($u_hide_animation==='true');
-				$tool= in_array($tool,['neo','chi','klecks','tegaki']) ? $tool : '???';
+				$tool= is_paint_tool_name($tool);
 				$file_name = pathinfo($file, PATHINFO_FILENAME );//拡張子除去
 				//画像があり、認識コードがhitすれば抜ける
 				$imgext=basename($imgext);
@@ -2386,7 +2396,7 @@ function catalog(){
 function view(){
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
 	global $disp_image_res,$nsfw_checked; 
 
 	aikotoba_required_to_view();
@@ -2501,7 +2511,7 @@ function view(){
 function res (){
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
 	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary,$nsfw_checked;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
 
 	aikotoba_required_to_view();
 
