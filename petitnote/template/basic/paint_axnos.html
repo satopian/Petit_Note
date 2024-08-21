@@ -19,10 +19,11 @@
                 headerText: HEADER_TEXT,
 				width: <?=h($picw)?>,
 				height: <?=h($pich)?>,
-                //     name: 'ヘルプ',
-                //     msg: '説明書（ニコニコ大百科のAXNOS Paint:ヘルプの記事）を別タブで開きます。',
-                //     link: 'https://dic.nicovideo.jp/id/5703111',
-                // },
+                expansionTab: {
+                    name: 'ヘルプ',
+                    msg: '説明書（ニコニコ大百科のAXNOS Paint:ヘルプの記事）を別タブで開きます。',
+                    link: 'https://dic.nicovideo.jp/id/5703111',
+                },
                 post: axnospaint_post,
             });
 
@@ -47,7 +48,9 @@
 		}
 
 		function axnospaint_post(postObj) {
-			const BlobPng = toBlob(postObj.strEncodeImg)
+			return new Promise(resolve => {
+
+				const BlobPng = toBlob(postObj.strEncodeImg)
 			// console.log(BlobPng);
 			//この箇所はさとぴあが作成したMIT Licenceのコードです。
 			const postData = (path, data) => {
@@ -71,21 +74,26 @@
 									<?php endif;?>
 									return window.location.href="./?mode=paintcom";
 								}
+								resolve(false);
 								return alert(text);
 							})
 						}else{
 							let response_status = response.status; 
 
 							if(response_status===403){
+								resolve(false);
 								return alert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
 							}
 							if(response_status===404){
+								resolve(false);
 								return alert(<?php if($en):?>'404 not found\nsave.inc.php does not exist.'<?php else:?>'エラー404\nsave.inc.phpがありません。'<?php endif;?>);	
 							}
+							resolve(false);
 							return alert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗。\n時間を置いて再度投稿してみてください。'<?php endif;?>);
 						}
 					})
 					.catch((error) => {
+						resolve(false);
 						return alert(<?php if($en):?>'Server or line is unstable.\nPlease try again!'<?php else:?>'サーバまたは回線が不安定です。\n時間を置いて再度投稿してみてください。'<?php endif;?>);	
 					})
 				}
@@ -98,8 +106,9 @@
 					postData("./?mode=saveimage&tool=tegaki", formData);
 				// (c)satopian MIT Licence ここまで
 				// location.reload();
+				})
 			}
-	});
+		});
 //Petit Note 2021-2024 (c)satopian MIT Licence
 //この箇所はさとぴあが作成したMIT Licenceのコードです。
 <?php if($rep):?>
