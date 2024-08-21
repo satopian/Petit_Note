@@ -8,7 +8,6 @@
 		// ページ遷移を防止する場合アンコメントする
         window.onbeforeunload = function (event) {
             event.preventDefault();
-            event.returnValue = "";
         }
         document.addEventListener("DOMContentLoaded", function () {
             var axp = new AXNOSPaint({
@@ -127,7 +126,7 @@ const repData = () => {
         method: 'POST',
 		mode: 'same-origin',
 		headers: {
-			'X-Requested-With': 'klecks'
+			'X-Requested-With': 'axnos'
 			,
 		},
        body: formData
