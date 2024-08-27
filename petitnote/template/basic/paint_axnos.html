@@ -13,9 +13,14 @@
 
 		var axp = new AXNOSPaint({
 			bodyId: 'axnospaint_body',
+			minWidth:<?=h($pmin_w)?>,
+			minHeight:<?=h($pmin_h)?>,
+			maxWidth:<?=h($pmax_w)?>,
+			maxHeight:<?=h($pmax_h)?>,
 			checkSameBBS: true,
 			oekakiURL: './src/',
 			oekaki_id:'<?=h($oekaki_id)?>',
+			draftImageFile:'<?=h($imgfile)?>',
 			headerText: HEADER_TEXT,
 			width: <?=h($picw)?>,
 			height: <?=h($pich)?>,
