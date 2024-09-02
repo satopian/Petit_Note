@@ -43,15 +43,14 @@ const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指
 				console.log(response.redirected);
 				if (response.redirected) {
 					isForm_Submit=true;//ページ離脱処理で使う
-					submitBtn.disabled = true;
 					return window.location.href = response.url;
 				}
-				submitBtn.disabled = false;
 				response.text().then((text) => {
 					if (text.startsWith("error\n")) {
-							console.log(text);
-							const error_message = text.split("\n").slice(1).join("\n");//"error\n"を除去
-							return document.getElementById(error_message_Id).innerText = error_message;
+						submitBtn.disabled = false;
+						console.log(text);
+						const error_message = text.split("\n").slice(1).join("\n");//"error\n"を除去
+						return document.getElementById(error_message_Id).innerText = error_message;
 					}
 					if(formId === "aikotoba_form"){
 						return location.reload();
@@ -98,7 +97,7 @@ const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指
 		})
 		.catch(error => {
 			submitBtn.disabled = false;
-			return document.getElementById(error_message_Id).innerText = 'There was a problem with the fetch operation';
+			return document.getElementById(error_message_Id).innerText = 'There was a problem with the fetch operation.';
 		});
 	}
 }
@@ -145,7 +144,6 @@ const postFormAndReload=(formData)=>{
 //年齢制限付きの掲示板に設定されている時はボタンを押下するまで表示しない
 const view_nsfw = (event) => {
 	const form = document.getElementById("view_nsfw");
-	const submitBtn = form.querySelector('input[type="submit"]');
 	if (form) {
 		event.preventDefault(); // 通常フォームの送信を中断
 		const formData = new FormData();
