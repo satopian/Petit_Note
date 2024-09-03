@@ -2,7 +2,6 @@
 <style>canvas#axp_post_canvas_postingImage{max-width:100%}</style>
 
 <title><?=h($boardname)?></title> 
-
 <script>
 	// 画面上部のお知らせ領域に表示するテキスト（掲示板名を想定）
 	const HEADER_TEXT = "AXNOS Paint（アクノスペイント）";
@@ -28,18 +27,29 @@
 			minHeight:<?=h($pmin_h)?>,
 			maxWidth:<?=h($pmax_w)?>,
 			maxHeight:<?=h($pmax_h)?>,
+			width: <?=h($picw)?>,
+			height: <?=h($pich)?>,
 			checkSameBBS: true,
 			draftImageFile:'<?=h($imgfile)?>',
 			headerText: HEADER_TEXT,
-			width: <?=h($picw)?>,
-			height: <?=h($pich)?>,
 			expansionTab: {
 				name: <?php if($en):?>'Help'<?php else:?>'ヘルプ'<?php endif;?>,
 				msg: '説明書（ニコニコ大百科のAXNOS Paint:ヘルプの記事）を別タブで開きます。',
 				link: 'https://dic.nicovideo.jp/id/5703111',
 			},
+			postForm: {
+				// 投稿フォーム
+				input: {
+					isDisplay: false, 
+				},
+				// 注意事項
+				notice: {
+					isDisplay: true,
+					// 文章はユーザー辞書を使用して書き換えが可能 
+				},
+			},
 			dictionary:<?php if($en):?>"./app/axnos/en.txt?<?=h($parameter_day)?><?=h($petit_lot)?>"<?php else:?>null<?php endif;?>,
-				post: axnospaint_post,
+			post: axnospaint_post,
 		});
 
 		// 投稿処理
@@ -47,18 +57,18 @@
 		//Base64からBlob
 		const toBlob = (base64) => {
 			try {
-			const binaryString = atob(base64);
-			const len = binaryString.length;
-			const bytes = new Uint8Array(len);
+				const binaryString = atob(base64);
+				const len = binaryString.length;
+				const bytes = new Uint8Array(len);
 
-			for (let i = 0; i < len; i++) {
-			bytes[i] = binaryString.charCodeAt(i);
-			}
+				for (let i = 0; i < len; i++) {
+				bytes[i] = binaryString.charCodeAt(i);
+				}
 
-			return new Blob([bytes], {type: 'image/png'});
+				return new Blob([bytes], {type: 'image/png'});
 			} catch (error) {
-				console.error('Error converting base64 to Blob:', error);
-				throw error;
+					console.error('Error converting base64 to Blob:', error);
+					throw error;
 			}
 		}
 
@@ -83,7 +93,7 @@
 					.then((response) => {
 						if (response.ok) {
 							response.text().then((text) => {
-							console.log(text)
+								console.log(text)
 								if(text==='ok'){
 									window.onbeforeunload = null;
 									<?php if($rep):?>
@@ -129,44 +139,44 @@
 //Petit Note 2021-2024 (c)satopian MIT Licence
 //この箇所はさとぴあが作成したMIT Licenceのコードです。
 <?php if($rep):?>
-const repData = () => {
-    // 画像差し換えに必要なフォームデータをセット
-    const formData = new FormData();
-    formData.append("mode", "picrep"); 
-    formData.append("no", "<?= h($no)?>"); 
-    formData.append("id", "<?= h($id)?>"); 
-    formData.append("enc_pwd", "<?= h($pwd)?>"); 
+	const repData = () => {
+	// 画像差し換えに必要なフォームデータをセット
+	const formData = new FormData();
+	formData.append("mode", "picrep"); 
+	formData.append("no", "<?= h($no)?>"); 
+	formData.append("id", "<?= h($id)?>"); 
+	formData.append("enc_pwd", "<?= h($pwd)?>"); 
 	formData.append("repcode", "<?= h($repcode)?>");
 	formData.append("paint_picrep", true);
 
-    // 画像差し換え
-    fetch("./", {
-        method: 'POST',
+	// 画像差し換え
+	fetch("./", {
+		method: 'POST',
 		mode: 'same-origin',
 		headers: {
 			'X-Requested-With': 'axnos'
 			,
 		},
-       body: formData
-    })
-    .then(response => {
-        if (response.ok) {
+		body: formData
+	})
+	.then(response => {
+		if (response.ok) {
 			if (response.redirected) {
-					return window.location.href = response.url;
-				}
+				return window.location.href = response.url;
+			}
 			response.text().then((text) => {
 				if (text.startsWith("error\n")) {
 						console.log(text);
 						return window.location.href="./?mode=paintcom";
 				}
 			})
-        }
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
+		}
+	})
+	.catch(error => {
+		console.error('There was a problem with the fetch operation:', error);
 		return window.location.href="./?mode=paintcom";
-    });
-}
+	});
+	}
 <?php endif;?>
 // (c)satopian MIT Licence ここまで
 

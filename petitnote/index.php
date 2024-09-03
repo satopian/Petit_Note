@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.50.7';
-$petit_lot='lot.20240902';
+$petit_ver='v1.50.8';
+$petit_lot='lot.20240903.6';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -745,10 +745,10 @@ function paint(){
 		return error($en?'Unknown error':'問題が発生しました。');
 	}
 
-	$picw = ($picw < $pmin_w) ? $pmin_w : $picw;//最低の幅チェック
-	$pich = ($pich < $pmin_h) ? $pmin_h : $pich;//最低の高さチェック
-	$picw = ($picw > $pmax_w) ? $pmax_w : $picw;//最大の幅チェック
-	$pich = ($pich > $pmax_h) ? $pmax_h : $pich;//最大の高さチェック
+	$picw = max($picw, $pmin_w); // 最低の幅チェック
+	$pich = max($pich, $pmin_h); // 最低の高さチェック
+	$picw = min($picw, $pmax_w); // 最大の幅チェック
+	$pich = min($pich, $pmax_h); // 最大の高さチェック
 
 	setcookie("appc", $app , time()+(60*60*24*30),"","",false,true);//アプレット選択
 	setcookie("picwc", $picw , time()+(60*60*24*30),"","",false,true);//幅
@@ -853,9 +853,8 @@ function paint(){
 		if($ctype=='img'){//画像から続き
 			$animeform = false;
 			$anime= false;
-			// Axnos Paintではフォルダ名を付けない
-			$oekaki_id = $imgfile;
 			$imgfile = IMG_DIR.$imgfile;
+
 			if($_pch_ext==='.chi'){
 				$img_chi =IMG_DIR.$time.'.chi';
 			}
@@ -885,6 +884,13 @@ function paint(){
 	}
 
 	check_AsyncRequest();//Asyncリクエストの時は処理を中断
+
+	//AXNOS Paint用
+	//画像の幅と高さが最大値を超えている時は、画像の幅と高さを優先する
+	$pmax_w = max($picw, $pmax_w); // 最大幅を元画像にあわせる
+	$pmax_h = max($pich, $pmax_h); // 最大高を元画像にあわせる
+	$pmax_w = min($pmax_w,1800); // 1800px以上にはならない
+	$pmax_h = min($pmax_h,1800); // 1800px以上にはならない
 
 	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
 
@@ -926,8 +932,8 @@ function paint(){
 			$tool='neo';
 			$appw = $picw + 150;//NEOの幅
 			$apph = $pich + 172;//NEOの高さ
-			$appw = ($appw < 450) ? 450 : $appw;//最低幅
-			$apph = ($apph < 560) ? 560 : $apph;//最低高
+			$appw = max($appw,450);//最低幅
+			$apph = max($apph,560);//最低高
 			//動的パレット
 			$palettetxt = $en? 'palette_en.txt' : 'palette.txt';
 			check_file(__DIR__.'/'.$palettetxt);  
@@ -1449,7 +1455,7 @@ function img_replace(){
 	
 	//サムネイル作成
 	$thumbnail = make_thumbnail($imgfile,$time,$max_w,$max_h);//サムネイル作成
-	
+
 	$hide_thumbnail = ($_imgfile && strpos($_thumbnail,'hide_')!==false) ? 'hide_' : '';
 
 	$thumbnail =  $hide_thumbnail.$thumbnail;
@@ -2535,34 +2541,34 @@ function res (){
 	$find_hide_thumbnail=false;	
 	check_open_no($resno);
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
-		$out[0]=[];
-		while ($line = fgets($rp)) {
-			if(!trim($line)){
-				continue;
+	$out[0]=[];
+	while ($line = fgets($rp)) {
+		if(!trim($line)){
+			continue;
+		}
+		$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
+		if($res_catalog && !$_res['img'] && $_res['oya']!=='oya'){
+			continue;
+		}
+		if($_res['img']){
+			if($_res['hide_thumbnail']){
+				$find_hide_thumbnail=true;	
 			}
-			$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
-			if($res_catalog && !$_res['img'] && $_res['oya']!=='oya'){
-				continue;
-			}
-			if($_res['img']){
-				if($_res['hide_thumbnail']){
-					$find_hide_thumbnail=true;	
-				}
-			}
-			if($_res['oya']==='oya'){
+		}
+		if($_res['oya']==='oya'){
 
-				$_res['time_left_to_close_the_thread'] = time_left_to_close_the_thread($_res['time']);
-				$_res['descriptioncom']= $_res['com'] ? h(s(mb_strcut(str_replace('"\n"'," ",$_res['com']),0,300))) : '';
+			$_res['time_left_to_close_the_thread'] = time_left_to_close_the_thread($_res['time']);
+			$_res['descriptioncom']= $_res['com'] ? h(s(mb_strcut(str_replace('"\n"'," ",$_res['com']),0,300))) : '';
 
-				$oyaname = $_res['name'];
-			} 
-			// 投稿者名を配列にいれる
-				if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
-					$rresname[] = $_res['name'];
-				}
+			$oyaname = $_res['name'];
+		} 
+		// 投稿者名を配列にいれる
+			if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
+				$rresname[] = $_res['name'];
+			}
 		$out[0][]=$_res;
 		$out[0][0]['find_hide_thumbnail']=$find_hide_thumbnail;
-		}	
+	}	
 	fclose($rp);
 	if(empty($out[0])||$out[0][0]['oya']!=='oya'){
 		return error($en? 'The article does not exist.':'記事がありません。');
