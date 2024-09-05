@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.50.10';
-$petit_lot='lot.20240904';
+$petit_ver='v1.51.1';
+$petit_lot='lot.20240905.1';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -891,6 +891,11 @@ function paint(){
 	$pmax_h = max($pich, $pmax_h); // 最大高を元画像にあわせる
 	$pmax_w = min($pmax_w,1800); // 1800px以上にはならない
 	$pmax_h = min($pmax_h,1800); // 1800px以上にはならない
+
+	$pmin_w = min($picw, $pmin_w); // 最小幅を元画像にあわせる
+	$pmin_h = min($pich, $pmin_h); // 最小高を元画像にあわせる
+	$pmin_w = max($pmin_w, 8); // 8px以下にはならない
+	$pmin_h = max($pmin_h, 8); // 8px以下にはならない
 
 	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
 
