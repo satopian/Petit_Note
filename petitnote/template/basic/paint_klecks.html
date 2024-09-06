@@ -107,8 +107,8 @@
 								return alert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
 							}
 							if(response_status===404){
-								return alert(<?php if($en):?>'404 not found\nsave.inc.php does not exist.'<?php else:?>'エラー404\nsave.inc.phpがありません。'<?php endif;?>);	
-							}
+								return alert(<?php if($en):?>'404 not found\nThe PHP file to save the image does not exist.'<?php else:?>'エラー404\n画像を保存するPHPファイルがありません。'<?php endif;?>);	
+								}
 							return alert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗。\n時間を置いて再度投稿してみてください。'<?php endif;?>);
 						}
 					})
@@ -175,6 +175,8 @@ const repData = () => {
 <?php endif;?>
 // (c)satopian MIT Licence ここまで
 
+
+
 	if (psdURL) {
 		fetch(new Request(psdURL)).then(response => {
 			return response.arrayBuffer();
@@ -188,44 +190,62 @@ const repData = () => {
 
 	} else {
 
-		klecks.openProject({
+	const loadImage = (src) => {
+	return new Promise((resolve, reject) => {
+		const img = new Image();
+		img.onload = () => resolve(img);
+		img.onerror = () => reject(new Error('Failed to load image'));
+		img.src = src;
+	});
+	};
+
+	(async () => {
+	const createCanvasWithImage = async () => {
+		const canvas = document.createElement('canvas');
+		canvas.width = <?=h($picw)?>;
+		canvas.height = <?=h($pich)?>;
+		const ctx = canvas.getContext('2d');
+
+		ctx.save();
+		ctx.fillStyle = '#fff';
+		ctx.fillRect(0, 0, canvas.width, canvas.height);
+		ctx.restore();
+
+		<?php if($imgfile): ?>
+		try {
+		const img = await loadImage("<?=h($imgfile)?>");
+		ctx.drawImage(img, 0, 0);
+		} catch (error) {
+		console.error(error);
+		// 画像の読み込みに失敗した場合の処理
+		}
+		<?php endif; ?>
+
+		return canvas;
+	};
+
+	const backgroundCanvas = await createCanvasWithImage();
+	const emptyCanvas = document.createElement('canvas');
+	emptyCanvas.width = <?=h($picw)?>;
+	emptyCanvas.height = <?=h($pich)?>;
+
+	klecks.openProject({
 		width: <?=h($picw)?>,
 		height: <?=h($pich)?>,
 		layers: [{
-			name: <?php if($en):?>'Background'<?php else:?>'背景'<?php endif;?>,
-				opacity: 1,
-				mixModeStr: 'source-over',
-				image: (() => {
-					const canvas = document.createElement('canvas');
-					canvas.width = <?=h($picw)?>;
-					canvas.height = <?=h($pich)?>;
-					const ctx = canvas.getContext('2d');
-					<?php if($imgfile):?>
-					var img = new Image();
-					img.src = "<?=h($imgfile)?>";
-					img.onload = function(){
-					ctx.drawImage(img, 0, 0);
-					}
-					<?php endif;?>
-					ctx.save();
-					ctx.fillStyle = '#fff';
-					ctx.fillRect(0, 0, canvas.width, canvas.height);
-					ctx.restore();
-					return canvas;
-				})()
-			},{
-				name: '<?=h(getTranslatedLayerName())?> 1',
-				opacity: 1,
-				mixModeStr: 'source-over',
-				image: (() => {
-					const canvas = document.createElement('canvas');
-					canvas.width = <?=h($picw)?>;
-					canvas.height = <?=h($pich)?>;
-					return canvas;
-				})()
-			}
-		]});
-	}
+		name: <?php if($en):?>'Background'<?php else:?>'背景'<?php endif;?>,
+		opacity: 1,
+		mixModeStr: 'source-over',
+		image: backgroundCanvas
+		}, {
+		name: '<?=h(getTranslatedLayerName())?> 1',
+		opacity: 1,
+		mixModeStr: 'source-over',
+		image: emptyCanvas
+		}]
+	});
+})();
+}
 </script>
 <!-- embed end -->
 </body>
