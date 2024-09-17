@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240807;
+$functions_ver=20240917;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1113,12 +1113,12 @@ function calcPtime ($psec) {
 
 	$result=[
 		'ja'=>
-			($D ? $D.'日'  : '')
+			($D ? $D.'日' : '')
 			. ($H ? $H.'時間' : '')
 			. ($M ? $M.'分' : '')
 			. ($S ? $S.'秒' : ''),
 		'en'=>
-			($D ? $D.'day '  : '')
+			($D ? $D.'day ' : '')
 			. ($H ? $H.'hr ' : '')
 			. ($M ? $M.'min ' : '')
 			. ($S ? $S.'sec' : '')
@@ -1135,18 +1135,25 @@ function calc_remaining_time_to_close_thread ($sec) {
 
 	$D = floor($sec / 86400);
 	$H = floor($sec % 86400 / 3600);
+	$M = floor($sec % 3600 / 60);
 
 	if($en){
 			if($D){
-				return $D.'days';
+				return (int)$D.'days';
 			}
-			return  (int)$H.'hours';
+			if($H){
+				return  (int)$H.'hours';
+			}
+			return  (int)$M.'min';
 	}
 
 	if($D){
-		return $D.'日';
+		return (int)$D.'日';
 	}
+	if($H){
 		return (int)$H.'時間';
+	}
+	return  (int)$M.'分';
 }
 
 /**

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 
@@ -180,10 +182,10 @@ final class CommonFunctionTest extends TestCase
     public function imageReductionDisplayProvider(): array
     {
         return [
-            ['', 0, 0, 0, ['','']],
-            [0, '', 0, 0, ['','']],
-            ['', '', 0, 0, ['','']],
-            [500, '', 400, 400,  ['','']],
+            ['', 0, 0, 0, ['', '']],
+            [0, '', 0, 0, ['', '']],
+            ['', '', 0, 0, ['', '']],
+            [500, '', 400, 400,  ['', '']],
             [0, 0, 0, 0, [0, 0]],
             [400, 400, 0, 0, [0, 0]],
             [400, 400, 400, 400, [400, 400]],
@@ -201,7 +203,7 @@ final class CommonFunctionTest extends TestCase
      */
     public function testCalcPtime($psec, array $expected): void
     {
-        
+
         $actual = calcPtime($psec);
 
         $this->assertEquals($expected, $actual);
@@ -209,18 +211,57 @@ final class CommonFunctionTest extends TestCase
 
     public function calculatePaintTimeProvider(): array
     {
-		return [
-			[0, ['ja' => '', 'en' => '']],
-			[1, ['ja' => '1秒', 'en' => '1sec']],
-			[60, ['ja' => '1分', 'en' => '1min ']],
-			[61, ['ja' => '1分1秒', 'en' => '1min 1sec']],
-			[3600, ['ja' => '1時間', 'en' => '1hr ']],
-			[3661, ['ja' => '1時間1分1秒', 'en' => '1hr 1min 1sec']],
-			[86400, ['ja' => '1日', 'en' => '1day ']],
-			[86461, ['ja' => '1日1分1秒', 'en' => '1day 1min 1sec']],
-			[172861, ['ja' => '2日1分1秒', 'en' => '2day 1min 1sec']],
-		];
-	}
+        return [
+            [0, ['ja' => '', 'en' => '']],
+            [1, ['ja' => '1秒', 'en' => '1sec']],
+            [60, ['ja' => '1分', 'en' => '1min ']],
+            [61, ['ja' => '1分1秒', 'en' => '1min 1sec']],
+            [3600, ['ja' => '1時間', 'en' => '1hr ']],
+            [3661, ['ja' => '1時間1分1秒', 'en' => '1hr 1min 1sec']],
+            [86400, ['ja' => '1日', 'en' => '1day ']],
+            [86461, ['ja' => '1日1分1秒', 'en' => '1day 1min 1sec']],
+            [172861, ['ja' => '2日1分1秒', 'en' => '2day 1min 1sec']],
+        ];
+    }
+    /**
+     * @dataProvider calc_remaining_time_to_close_thread_Provider
+     * @covers       calc_remaining_time_to_close_thread
+     */
+    public function test_calc_remaining_time_to_close_thread(bool $globalEn, $psec, string $expected): void
+    {
+        global $en;
+        $en = $globalEn;
+        $actual = calc_remaining_time_to_close_thread($psec);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function calc_remaining_time_to_close_thread_Provider(): array
+    {
+
+        return [
+            // $en = false (日本語)
+            [false, 0, '0分'],
+            [false, 1, '0分'],
+            [false, 60, '1分'],
+            [false, 61, '1分'],
+            [false, 3600, '1時間'],
+            [false, 3661, '1時間'],
+            [false, 86400, '1日'],
+            [false, 86461, '1日'],
+            [false, 172861, '2日'],
+            // $en = true (英語)
+            [true, 0, '0min'],
+            [true, 1, '0min'],
+            [true, 60, '1min'],
+            [true, 61, '1min'],
+            [true, 3600, '1hours'],
+            [true, 3661, '1hours'],
+            [true, 86400, '1days'],
+            [true, 86461, '1days'],
+            [true, 172861, '2days'],
+        ];
+    }
 
     /**
      * @dataProvider createFormattedTextFromPostProvider
@@ -228,10 +269,10 @@ final class CommonFunctionTest extends TestCase
      */
     public function testCreateFormattedTextFromPost(bool $globalEn, $name, $subject, $url, $comment, array $expected): void
     {
-        global $en,$name_input_required,$subject_input_required;
+        global $en, $name_input_required, $subject_input_required;
         $en = $globalEn;
-		$name_input_required=false;
-		$subject_input_required=false;
+        $name_input_required = false;
+        $subject_input_required = false;
 
         $actual = create_formatted_text_from_post($name, $subject, $url, $comment);
 
@@ -294,7 +335,7 @@ final class CommonFunctionTest extends TestCase
                 false,
                 "fo\to",
                 "ba\tr",
-				"https://example.com/ba\tz",
+                "https://example.com/ba\tz",
                 "qux\tquuxcorge",
                 ['name' => 'foo', 'sub' => 'bar', 'url' => '', 'com' => 'quxquuxcorge']
             ],
