@@ -1111,6 +1111,7 @@ function calcPtime ($psec) {
 	$M = floor($psec % 3600 / 60);
 	$S = $psec % 60;
 
+	$en_day = ($D>1) ? 'days ' : 'day ';
 	$result=[
 		'ja'=>
 			($D ? $D.'日' : '')
@@ -1118,10 +1119,10 @@ function calcPtime ($psec) {
 			. ($M ? $M.'分' : '')
 			. ($S ? $S.'秒' : ''),
 		'en'=>
-			($D ? $D.'day ' : '')
-			. ($H ? $H.'hr ' : '')
-			. ($M ? $M.'min ' : '')
-			. ($S ? $S.'sec' : '')
+			($D ? $D.$en_day : '')
+			. ($H ? $H.' hr ' : '')
+			. ($M ? $M.' min ' : '')
+			. ($S ? $S.' sec' : '')
 		];
 	return $result;
 	}
@@ -1149,8 +1150,7 @@ function calc_remaining_time_to_close_thread ($sec) {
 
 		return  (int)$H.$hour;
 	}
-	$min = ($M>1) ? ' mins' : ' min';
-	$min = $en ? $min : '分';
+	$min = $en ? ' min' : '分';
 
 	return  (int)$M.$min;
 }
