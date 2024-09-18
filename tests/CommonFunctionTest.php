@@ -218,7 +218,7 @@ final class CommonFunctionTest extends TestCase
             [61, ['ja' => '1分1秒', 'en' => '1 min 1 sec']],
             [3600, ['ja' => '1時間', 'en' => '1 hr ']],
             [3661, ['ja' => '1時間1分1秒', 'en' => '1 hr 1 min 1 sec']],
-            [86400, ['ja' => '1日', 'en' => '1day ']],
+            [86400, ['ja' => '1日', 'en' => '1 day ']],
             [86461, ['ja' => '1日1分1秒', 'en' => '1 day 1 min 1 sec']],
             [172861, ['ja' => '2日1分1秒', 'en' => '2 days 1 min 1 sec']],
         ];

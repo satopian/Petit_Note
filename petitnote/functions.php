@@ -1111,7 +1111,7 @@ function calcPtime ($psec) {
 	$M = floor($psec % 3600 / 60);
 	$S = $psec % 60;
 
-	$en_day = ($D>1) ? 'days ' : 'day ';
+	$en_day = ($D>1) ? ' days ' : ' day ';
 	$result=[
 		'ja'=>
 			($D ? $D.'日' : '')
