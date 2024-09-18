@@ -46,7 +46,10 @@
 	<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
 	<?php if($skipres && $i===$skipres):?>
 	<hr>
-	<?php if($en):?><?=h($skipres)?> posts omitted.<?php else:?>レス<?=h($skipres)?>件省略中。<?php endif;?>
+	<?php if($en):?>
+		<?=h($skipres)?>
+		<?php if($skipres>1):?> posts<?php else:?> post<?php endif;?> omitted.
+	<?php else:?>レス<?=h($skipres)?>件省略中。<?php endif;?>
 	<?php endif;?>	
 	<?php if($i===0 || $i>$skipres):?>
 		<hr>
@@ -183,7 +186,8 @@
 			<?php if(($maxres_current<=20) && !$adminpost && $resform && !$res_max_over):?>
 				<hr>
 					<?php if($en):?>
-						This thread will be closed with <?=h($maxres_current)?> more posts.
+						This thread will be closed with <?=h($maxres_current)?>more 
+						<?php if($maxres_current>1):?>posts.<?php else:?>post.<?php endif;?>
 					<?php else:?>
 						あと<?=h($maxres_current)?>件投稿できます。
 					<?php endif;?>

@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20240917;
+$functions_ver=20240918;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1137,23 +1137,22 @@ function calc_remaining_time_to_close_thread ($sec) {
 	$H = floor($sec % 86400 / 3600);
 	$M = floor($sec % 3600 / 60);
 
-	if($en){
-			if($D){
-				return (int)$D.'days';
-			}
-			if($H){
-				return  (int)$H.'hours';
-			}
-			return  (int)$M.'min';
-	}
-
 	if($D){
-		return (int)$D.'日';
+		$day = ($D>1) ? ' days' : ' day';
+		$day = $en ? $day : '日';
+
+		return (int)$D.$day;
 	}
 	if($H){
-		return (int)$H.'時間';
+		$hour = ($H>1) ? ' hours' : ' hour'; 
+		$hour = $en ? $hour : '時間';
+
+		return  (int)$H.$hour;
 	}
-	return  (int)$M.'分';
+	$min = ($M>1) ? ' mins' : ' min';
+	$min = $en ? $min : '分';
+
+	return  (int)$M.$min;
 }
 
 /**
