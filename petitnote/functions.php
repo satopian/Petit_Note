@@ -1115,17 +1115,18 @@ function calcPtime ($psec) {
 	$result=[
 		'ja'=>
 			($D ? $D.'日' : '')
-			. ($H ? $H.'時間' : '')
-			. ($M ? $M.'分' : '')
-			. ($S ? $S.'秒' : ''),
+			. (($D||$H) ? $H.'時間' : '')
+			. (($D||$H||$M) ? $M.'分' : '')
+			. $S.'秒'
+			,
 		'en'=>
 			($D ? $D.$en_day : '')
-			. ($H ? $H.' hr ' : '')
-			. ($M ? $M.' min ' : '')
-			. ($S ? $S.' sec' : '')
+			. (($D||$H) ? $H.' hr ' : '')
+			. (($D||$H||$M) ? $M.' min ' : '')
+			. $S.' sec'
 		];
 	return $result;
-	}
+}
 /**
  * 残り時間を計算
  * @param $starttime
@@ -1260,7 +1261,7 @@ function create_formatted_text_from_post($name,$sub,$url,$com){
 			$sub= $en ? 'No subject':'無題';
 		}
 	}
-		$formatted_post=[
+	$formatted_post=[
 		'name'=>$name,
 		'sub'=>$sub,
 		'url'=>$url,
@@ -1333,10 +1334,10 @@ function app_to_use(){
 //パスワードを5回連続して間違えた時は拒絶
 function check_password_input_error_count(){
 	global $second_pass,$en,$check_password_input_error_count;
-	$file=__DIR__.'/template/errorlog/error.log';
 	if(!$check_password_input_error_count){
 		return;
 	}
+	$file=__DIR__.'/template/errorlog/error.log';
 	$userip = get_uip();
 	check_dir(__DIR__.'/template/errorlog/');
 	$arr_err=is_file($file) ? file($file):[];
@@ -1348,9 +1349,9 @@ function check_password_input_error_count(){
 		$errlog=$userip."\n";
 		file_put_contents($file,$errlog,FILE_APPEND);
 		chmod($file,0600);
-		}else{
+	}else{
 			safe_unlink($file);
-		}
+	}
 }
 
 // 優先言語のリストをチェックして対応する言語があればその翻訳されたレイヤー名を返す
@@ -1410,7 +1411,7 @@ function post_share_server(){
 	$share_url.=$encoded_t.'&url='.$encoded_u;
 	if($sns_server_radio === "https://bsky.app"||!$sns_server_radio && ($sns_server_direct_input === "https://bsky.app")){
 		$share_url="https://bsky.app/intent/compose?text=";
-	$share_url.=$encoded_t.'%20'.$encoded_u;
+		$share_url.=$encoded_t.'%20'.$encoded_u;
 	}
 	$share_url = filter_var($share_url, FILTER_VALIDATE_URL) ? $share_url : ''; 
 	if(!$share_url){

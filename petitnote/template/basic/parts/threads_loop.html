@@ -186,7 +186,7 @@
 			<?php if(($maxres_current<=20) && !$adminpost && $resform && !$res_max_over):?>
 				<hr>
 					<?php if($en):?>
-						This thread will be closed with <?=h($maxres_current)?>more 
+						This thread will be closed with <?=h($maxres_current)?> more 
 						<?php if($maxres_current>1):?>posts.<?php else:?>post.<?php endif;?>
 					<?php else:?>
 						あと<?=h($maxres_current)?>件投稿できます。
@@ -208,15 +208,15 @@
 			<?php if($resmode && $resform && $resname && !$res_max_over):?>
 				<script>
 				function add_to_com() {
-					var textField = document.getElementById("res_com");
-					var postername = "<?=h($resname)?><?php if($en):?>-san<?php else:?>さん<?php endif;?>";
+					const textField = document.getElementById("res_com");
+					const postername = "<?=h($resname)?><?php if($en):?>-san<?php else:?>さん<?php endif;?>";
 					// テキストフィールドの現在のカーソル位置を取得
-					var startPos = textField.selectionStart;
-					var endPos = textField.selectionEnd;
+					const startPos = textField.selectionStart;
+					const endPos = textField.selectionEnd;
 					// カーソル位置に指定した文字列を挿入
 					textField.value = textField.value.substring(0, startPos) + postername + textField.value.substring(endPos);
 					// カーソル位置を更新
-					var newCursorPosition = startPos + postername.length;
+					const newCursorPosition = startPos + postername.length;
 					textField.setSelectionRange(newCursorPosition, newCursorPosition);						// テキストフィールドにフォーカスを設定
 					textField.focus();
 				}

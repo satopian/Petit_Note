@@ -212,15 +212,15 @@ final class CommonFunctionTest extends TestCase
     public function calculatePaintTimeProvider(): array
     {
         return [
-            [0, ['ja' => '', 'en' => '']],
+            [0, ['ja' => '0秒', 'en' => '0 sec']],
             [1, ['ja' => '1秒', 'en' => '1 sec']],
-            [60, ['ja' => '1分', 'en' => '1 min ']],
+            [60, ['ja' => '1分0秒', 'en' => '1 min 0 sec']],
             [61, ['ja' => '1分1秒', 'en' => '1 min 1 sec']],
-            [3600, ['ja' => '1時間', 'en' => '1 hr ']],
+            [3600, ['ja' => '1時間0分0秒', 'en' => '1 hr 0 min 0 sec']],
             [3661, ['ja' => '1時間1分1秒', 'en' => '1 hr 1 min 1 sec']],
-            [86400, ['ja' => '1日', 'en' => '1 day ']],
-            [86461, ['ja' => '1日1分1秒', 'en' => '1 day 1 min 1 sec']],
-            [172861, ['ja' => '2日1分1秒', 'en' => '2 days 1 min 1 sec']],
+            [86400, ['ja' => '1日0時間0分0秒', 'en' => '1 day 0 hr 0 min 0 sec']],
+            [86461, ['ja' => '1日0時間1分1秒', 'en' => '1 day 0 hr 1 min 1 sec']],
+            [172861, ['ja' => '2日0時間1分1秒', 'en' => '2 days 0 hr 1 min 1 sec']],
         ];
     }
     /**
