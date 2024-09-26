@@ -14,7 +14,6 @@
     display: none;
 }
 </style>
-	
 </head>
 <div class="container">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
@@ -122,12 +121,11 @@
 </div>
 <script>
 // 新規投稿時にのみ、同じスレッドに投稿するボタンを表示
-document.getElementById('select_post').addEventListener('change',()=>{
+document.getElementById('select_post').addEventListener('change', (e) => {
 
-	const idx=document.getElementById('select_post').selectedIndex;
 	const cont_paint_same_thread=document.getElementById('span_cont_paint_same_thread');
 	const cont_pass=document.getElementById('span_cont_pass');
-	if(idx === 1){
+	if(e.target.value === 'new'){//新規投稿時
 		if(cont_paint_same_thread){
 			cont_paint_same_thread.style.display = "inline-block";
 		}
@@ -148,6 +146,8 @@ document.getElementById('select_post').addEventListener('change',()=>{
 	}
 });
 </script>
+<div id="bottom"></div>
+<div id="page_top"><a class="icon-angles-up-solid"></a></div>
 <?php include __DIR__.'/parts/footer_js.html';?>
 </body>
 </html>

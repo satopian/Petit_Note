@@ -26,7 +26,7 @@ return;
 <script src="./app/neo/neo.js?<?=h($parameter_day)?><?=h($petit_lot)?>"></script>
 <script>
 	// https://qiita.com/tsmd/items/cfb5dcbec8433b87dc36
-	function isPinchZooming () {//ピンチズームを検知
+	const isPinchZooming = () => {//ピンチズームを検知
 		if ('visualViewport' in window) {
 			return window.visualViewport.scale > 1
 		} else {
@@ -34,7 +34,7 @@ return;
 		}
 	}
 
-	function neo_disable_touch_move (e) {//NEOの網目でスワイプしない
+	const neo_disable_touch_move = (e) => {//NEOの網目でスワイプしない
 		let screenwidth = Number(screen.width);
 		let appw = Number(<?=h($appw)?>);
 		if((screenwidth-appw)>100){
@@ -45,7 +45,7 @@ return;
 		}
 	}
 
-	function neo_add_disable_touch_move() {
+	const neo_add_disable_touch_move = () => {
 		document.getElementById('NEO').addEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
 	}
 	document.addEventListener('touchmove', (e)=> {
@@ -54,7 +54,7 @@ return;
 			document.getElementById('NEO').removeEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
 		}
 	});
-	window.addEventListener('DOMContentLoaded',neo_add_disable_touch_move,false);
+	document.addEventListener('DOMContentLoaded',neo_add_disable_touch_move,false);
 	//Firefoxでメニューバーが開閉するのため、Altキーのデフォルトの処理をキャンセル
 	document.addEventListener('keyup', (e)=> {
 		// e.key を利用して特定のキーのアップイベントを検知する
