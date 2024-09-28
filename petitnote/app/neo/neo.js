@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 var Neo = function () {};
 
-Neo.version = "1.6.3";
+Neo.version = "1.6.4";
 Neo.painter;
 Neo.fullScreen = false;
 Neo.uploaded = false;
@@ -2289,6 +2289,10 @@ Neo.Painter.prototype._mouseDownHandler = function (e) {
   this.prevMouseX = this.mouseX;
   this.prevMouseY = this.mouseY;
   this.securityCount++;
+  let autosaveCount = this.securityCount;
+  if (autosaveCount % 10 === 0 && Neo.painter.isDirty()) {
+    Neo.painter.saveSession(); //10ストロークごとに自動バックアップ
+  }
 
   if (this.isMouseDownRight) {
     this.isMouseDownRight = false;
