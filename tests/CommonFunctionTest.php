@@ -348,4 +348,34 @@ final class CommonFunctionTest extends TestCase
             [true, '', '', '', '', ['name' => 'anonymous', 'sub' => 'No subject', 'url' => '', 'com' => '']],
         ];
     }
+    /**
+     * @dataProvider createFormattedTextForSearchProvider
+     * @covers       create_formatted_text_for_search
+     */
+    public function createFormattedTextForSearch($str,string $expected): void
+    {
+
+        $actual = create_formatted_text_for_search($str);
+
+        $this->assertEquals($expected,$actual);
+    }
+
+    public function createFormattedTextForSearchProvider(): array
+    {
+        return [
+            ['Hello World', 'helloWorld'], // スペース削除、全角から半角変換
+            ['　全角スペース　', '全角スペース'], // 全角スペースを削除
+            ['テスト〜です', 'テスト～です'], // 波ダッシュを全角チルダに
+            ['abc123', 'abc123'], // 半角英数字そのまま
+            ['ＡＢＣ 123', 'abc123'],      // 全角英字と半角数字
+            ['１２３', '123'],              // 全角数字の変換
+            ['123 456', '123456'], // スペース削除
+            ['あいうえお', 'あいうえお'], // ひらがなはそのまま
+            ['HELLO', 'hello'], // 大文字を小文字に変換
+            ['半角英数ＡＢＣ', '半角英数abc'], // 全角英数から半角変換
+            ['A〜B', 'a～b'], // 大文字から小文字変換と波ダッシュ
+            ['   Hello   ', 'hello'], // スペースの前後を削除
+            ['~ test', '~test'], // 前のスペース削除、チルダはそのまま
+        ];
+    }
 }

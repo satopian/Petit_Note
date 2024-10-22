@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.53.7';
-$petit_lot='lot.20241015';
+$petit_ver='v1.55.0';
+$petit_lot='lot.20241022';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20240807){
+if(!isset($functions_ver)||$functions_ver<20241022){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -2159,10 +2159,7 @@ function search(){
 	$q=urldecode($q);
 	$q_len=strlen((string)$q);
 	$q=1000<$q_len ? "" :$q; 
-	$check_q=mb_convert_kana($q, 'rn', 'UTF-8');
-	$check_q=str_replace(array(" ", "　"), "", $check_q);
-	$check_q=str_replace("〜","～",$check_q);//波ダッシュを全角チルダに
-	$check_q=strtolower($check_q);//小文字に
+	$check_q=create_formatted_text_for_search($q);
 	$radio =(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
 
 	if($imgsearch){
@@ -2202,20 +2199,11 @@ function search(){
 
 			if($continue_to_search){
 				if($radio===1||$radio===2||$radio===0){
-					$s_name=mb_convert_kana($name, 'rn', 'UTF-8');//全角英数を半角に
-					$s_name=str_replace(array(" ", "　"), "", $s_name);
-					$s_name=str_replace("〜","～", $s_name);//波ダッシュを全角チルダに
-					$s_name=strtolower($s_name);//小文字に
+					$s_name=create_formatted_text_for_search($name);
 				}
 				else{
-					$s_sub=mb_convert_kana($sub, 'rn', 'UTF-8');//全角英数を半角に
-					$s_sub=str_replace(array(" ", "　"), "", $s_sub);
-					$s_sub=str_replace("〜","～", $s_sub);//波ダッシュを全角チルダに
-					$s_sub=strtolower($s_sub);//小文字に
-					$s_com=mb_convert_kana($com, 'rn', 'UTF-8');//全角英数を半角に
-					$s_com=str_replace(array(" ", "　"), "", $s_com);
-					$s_com=str_replace("〜","～", $s_com);//波ダッシュを全角チルダに
-					$s_com=strtolower($s_com);//小文字に
+					$s_sub=create_formatted_text_for_search($sub);
+					$s_com=create_formatted_text_for_search($com);
 				}
 				
 				//ログとクエリを照合
