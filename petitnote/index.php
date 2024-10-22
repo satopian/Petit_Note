@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.55.0';
+$petit_ver='v1.55.1';
 $petit_lot='lot.20241022';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2241,7 +2241,7 @@ function search(){
 		$out[0][$i] = create_res($line,(['catalog' => true] + $txt_search));//$lineから、情報を取り出す
 
 			// マークダウン
-			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;\.,\*&@#\$%\(\)'\[\]]+)\)}","$1",$out[0][$i]['com']);
+			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;:\.,\*&@#\$%\(\)'\[\]]+)\)}","$1",$out[0][$i]['com']);
 			$com=h(strip_tags($com));
 			$com=mb_strcut($com,0,180);
 			$out[0][$i]['com']=$com;
