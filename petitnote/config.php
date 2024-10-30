@@ -376,11 +376,11 @@ $use_thumb = true;
 // $use_thumb = false;
 
 //アップロード時にpng形式で保存する最大ファイルサイズ
-// このファイルサイズを超える時はJPEGに変換(単位kb)
+// このファイルサイズを超える時はwebpに変換(単位kb)
 $max_file_size_in_png_format_upload = 800;
 
 // ペイント時にpng形式で保存する最大ファイルサイズ
-// このファイルサイズを超える時はJPEGに変換(単位kb)
+// このファイルサイズを超える時はwebpに変換(単位kb)
 $max_file_size_in_png_format_paint = 1024;
 
 /*合言葉設定*/

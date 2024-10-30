@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.55.7';
-$petit_lot='lot.20241026';
+$petit_ver='v1.56.0';
+$petit_lot='lot.20241031';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20241022){
+if(!isset($functions_ver)||$functions_ver<20241031){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -48,7 +48,7 @@ require_once(__DIR__.'/noticemail.inc.php');
 //テンプレート
 $skindir='template/'.$skindir;
 
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20240309){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241031){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
 
@@ -215,7 +215,7 @@ switch($mode){
 function post(){
 	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$mark_sensitive_image;
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
-	global $usercode,$max_file_size_in_png_format_upload,$max_file_size_in_png_format_paint,$use_url_input_field;
+	global $usercode,$use_url_input_field;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -505,17 +505,12 @@ function post(){
 	$img_md5='';
 	if($is_file_upfile){
 
-		if(!$pictmp2){//実体データの縮小
+		if($is_upload){//実体データの縮小
 			thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 		}	
-		clearstatcache();
-		$filesize=filesize($upfile);
-		if(($pictmp2 && ($filesize > ($max_file_size_in_png_format_paint * 1024))) ||
-		 ($is_upload && ($filesize > ($max_file_size_in_png_format_upload * 1024)))){//指定サイズを超えていたら
-			//pngをjpegに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
-			convert_andsave_if_smaller_png2jpg($upfile);
-		}
-		if(!$pictmp2){//アップロード画像のファイルサイズが大きすぎる時は削除
+		//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
+		convert_andsave_if_smaller_png2webp($is_upload,TEMP_DIR,$time.'.tmp',$time);
+		if($is_upload){//アップロード画像のファイルサイズが大きすぎる時は削除
 			delete_file_if_sizeexceeds($upfile,$fp,$rp);
 		}
 
@@ -1194,7 +1189,6 @@ function download_app_dat(){
 function img_replace(){
 
 	global $max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image;
-	global $max_file_size_in_png_format_upload,$max_file_size_in_png_format_paint,$max_kb;
 
 	$no = t((string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT));
 	$no = $no ? $no :t((string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT));
@@ -1379,12 +1373,9 @@ function img_replace(){
 	if($is_upload){//実体データの縮小
 		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 	}	
-	clearstatcache();
-	$filesize=filesize($upfile);
-	if((!$is_upload && ($filesize > ($max_file_size_in_png_format_paint * 1024))) || ($is_upload && ($filesize > ($max_file_size_in_png_format_upload * 1024)))){//指定サイズを超えていたら
-		//pngをjpegに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
-		convert_andsave_if_smaller_png2jpg($upfile);
-	}
+	//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
+	convert_andsave_if_smaller_png2webp($is_upload,TEMP_DIR,$time.'.tmp',$time);
+
 	if($is_upload){//アップロード画像のファイルサイズが大きすぎる時は削除
 		delete_file_if_sizeexceeds($upfile,$fp,$rp);
 	}

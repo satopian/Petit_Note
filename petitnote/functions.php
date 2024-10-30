@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241022;
+$functions_ver=20241030;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -624,46 +624,30 @@ function delete_res_cache () {
 	safe_unlink(__DIR__.'/template/cache/index_cache.json');
 }
 
-//png2jpg
-function png2jpg ($src) {
+//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
+function convert_andsave_if_smaller_png2webp($is_upload,$dir,$fname,$time){
+	global $max_px,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
+	$upfile=TEMP_DIR.$fname;
 
-	if(mime_content_type($src)!=="image/png" || !function_exists("ImageCreateFromPNG")){
+	if(mime_content_type($upfile)!=="image/png"){
 		return;
 	}
-	//pngならJPEGに変換
-	if($im_in=ImageCreateFromPNG($src)){
-		if(function_exists("ImageCreateTrueColor") && function_exists("ImageColorAlLocate") &&
-		function_exists("imagefill") && function_exists("ImageCopyResampled")){
-			list($out_w, $out_h)=getimagesize($src);
-			$im_out = ImageCreateTrueColor($out_w, $out_h);
-			$background = imagecolorallocate($im_out, 0xFF, 0xFF, 0xFF);//背景色を白に
-			imagefill($im_out, 0, 0, $background);
-			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $out_w, $out_h);
-		}else{
-			$im_out=$im_in;
-		}
-		$dst = TEMP_DIR.pathinfo($src, PATHINFO_FILENAME ).'.jpg.tmp';
-		ImageJPEG($im_out,$dst,98);
-		ImageDestroy($im_in);// 作成したイメージを破棄
-		ImageDestroy($im_out);// 作成したイメージを破棄
-		chmod($dst,0606);
-		if(is_file($dst)){
-			return $dst;//jpegファイル生成に成功
-		}
-		return false;
+	clearstatcache();
+	$filesize=filesize($upfile);
+	if((!$is_upload && $filesize < ($max_file_size_in_png_format_paint * 1024))&&	
+	($is_upload && $filesize < ($max_file_size_in_png_format_upload * 1024))){
+		return;
 	}
-	return false;
-}
-//pngをjpegに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
-function convert_andsave_if_smaller_png2jpg($upfile){
-	if ($im_jpg = png2jpg($upfile)) {//PNG→JPEG自動変換
+	//webp作成が可能ならwebpに、でなければjpegに変換する。
+	$im_webp = thumb(TEMP_DIR,$fname,$time,$max_px,$max_px,['png2webp'=>true]);
+
+	if($im_webp){
 		clearstatcache();
-		$filesize=filesize($upfile);
-		if(filesize($im_jpg)<$filesize){//JPEGのほうが小さい時だけ
-			rename($im_jpg,$upfile);//JPEGで保存
+		if(filesize($im_webp)<$filesize){//JPEGのほうが小さい時だけ
+			rename($im_webp,$upfile);//JPEGで保存
 			chmod($upfile,0606);
 		} else{//PNGよりファイルサイズが大きくなる時は
-			unlink($im_jpg);//作成したJPEG画像を削除
+			unlink($im_webp);//作成したJPEG画像を削除
 		}
 	}
 }
