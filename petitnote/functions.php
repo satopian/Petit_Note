@@ -293,7 +293,7 @@ function check_cont_pass(){
 function is_paint_tool_name($tool){
 	return in_array($tool,['neo','chi','klecks','tegaki','axnos']) ? $tool : '???';
 }
-	
+
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line,$options=[]){
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
@@ -327,7 +327,7 @@ function create_res($line,$options=[]){
 
 	$link_thumbnail= ($thumbnail_jpg || $hide_thumbnail); 
 	$painttime = !$isset_catalog ? calcPtime($paintsec) : false;  
-	
+
 	$datetime = $do_not_change_posts_time ? microtime2time($first_posted_time) : microtime2time($time);
 	$date=$datetime ? date('y/m/d',(int)$datetime):'';
 
@@ -624,7 +624,7 @@ function delete_res_cache () {
 	safe_unlink(__DIR__.'/template/cache/index_cache.json');
 }
 
-//pngをjpegに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
+//pngをwebpに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
 function convert_andsave_if_smaller_png2webp($is_upload,$dir,$fname,$time){
 	global $max_kb,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
 	$upfile=TEMP_DIR.$fname;
@@ -655,7 +655,7 @@ function convert_andsave_if_smaller_png2webp($is_upload,$dir,$fname,$time){
 
 //Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
 function check_jpeg_exif($upfile){
-global $max_px;
+	global $max_px;
 
 	if((exif_imagetype($upfile) !== IMAGETYPE_JPEG ) || !function_exists("imagecreatefromjpeg")){
 		return;
@@ -746,7 +746,7 @@ function delete_file_if_sizeexceeds($upfile,$fp,$rp){
 	return error($en? "Upload failed.\nFile size exceeds {$max_kb}kb.":"アップロードに失敗しました。\nファイル容量が{$max_kb}kbを超えています。");
 	}
 }
-	
+
 function error($str,$historyback=true){
 
 	global $boardname,$skindir,$en,$aikotoba_required_to_view,$petit_lot;
