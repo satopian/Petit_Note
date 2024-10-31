@@ -28,7 +28,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	list($w,$h) = GetImageSize($fname); // 画像の幅と高さとタイプを取得
 	$w_h_size_over=($w > $max_w || $h > $max_h);
 	$f_size_over=!isset($options['toolarge']) ? ($fsize>1024*1024) : false;
-	if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !$options['png2webp']){
+	if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['png2webp'])){
 		return;
 	}
 	// リサイズ

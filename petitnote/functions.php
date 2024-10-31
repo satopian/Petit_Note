@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241030;
+$functions_ver=20241031;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -626,15 +626,15 @@ function delete_res_cache () {
 
 //サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
 function convert_andsave_if_smaller_png2webp($is_upload,$dir,$fname,$time){
-	global $max_px,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
+	global $max_kb,$max_px,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
 	$upfile=TEMP_DIR.$fname;
 
-	if(mime_content_type($upfile)!=="image/png"){
-		return;
-	}
 	clearstatcache();
 	$filesize=filesize($upfile);
-	if((!$is_upload && $filesize < ($max_file_size_in_png_format_paint * 1024))&&	
+	if(mime_content_type($upfile)!=="image/png" && $filesize < $max_kb * 1024){
+		return;//ファイルサイズが$max_kbを超えている時は形式にかかわらず処理続行
+	}
+	if((!$is_upload && $filesize < ($max_file_size_in_png_format_paint * 1024))||	
 	($is_upload && $filesize < ($max_file_size_in_png_format_upload * 1024))){
 		return;
 	}
