@@ -9,7 +9,7 @@
 //210920 PetitNote版。
 $thumbnail_gd_ver=20241031;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
-function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
+function thumb($path,$fname,$time,$max_w="",$max_h="",$options=[]){
 	$path=basename($path).'/';
 	$fname=basename($fname);
 	$time=basename($time);
@@ -20,7 +20,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	if(!gd_check()||!function_exists("ImageCreate")||!function_exists("ImageCreateFromJPEG")){
 		return;
 	}
-	if((isset($options['webp'])||isset($options['thumbnail_webp']) && (!function_exists("ImageWEBP")||version_compare(PHP_VERSION, '7.0.0', '<')))){
+	if((isset($options['webp'])||isset($options['thumbnail_webp'])) && (!function_exists("ImageWEBP")||version_compare(PHP_VERSION, '7.0.0', '<'))){
 		return;
 	}
 
@@ -31,12 +31,17 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['png2webp'])){
 		return;
 	}
-	// リサイズ
-	$w_ratio = $max_w / $w;
-	$h_ratio = $max_h / $h;
-	$ratio = min($w_ratio, $h_ratio);
-	$out_w = $w_h_size_over ? ceil($w * $ratio):$w;//端数の切り上げ
-	$out_h = $w_h_size_over ? ceil($h * $ratio):$h;
+	
+	if(isset($options['png2webp'])||!$max_w||!$max_h){//リサイズしない
+		$out_w = $w;
+		$out_h = $h;
+	}else{// リサイズ
+		$w_ratio = $max_w / $w;
+		$h_ratio = $max_h / $h;
+		$ratio = min($w_ratio, $h_ratio);
+		$out_w = $w_h_size_over ? ceil($w * $ratio):$w;//端数の切り上げ
+		$out_h = $w_h_size_over ? ceil($h * $ratio):$h;
+	}
 
 	switch ($mime_type = mime_content_type($fname)) {
 		case "image/gif";
@@ -136,10 +141,6 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 			$outfile=THUMB_DIR.$time.'.jpg.tmp';
 			ImageJPEG($im_out, $outfile,98);
 		}
-			// 作成したイメージを破棄
-			ImageDestroy($im_in);
-			ImageDestroy($im_out);
-			return $outfile;
 	
 	} elseif(isset($options['webp'])){
 		$outfile='webp/'.$time.'t.webp';
@@ -167,4 +168,3 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	return false;
 
 }
-

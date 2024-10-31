@@ -624,9 +624,9 @@ function delete_res_cache () {
 	safe_unlink(__DIR__.'/template/cache/index_cache.json');
 }
 
-//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
+//pngをjpegに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
 function convert_andsave_if_smaller_png2webp($is_upload,$dir,$fname,$time){
-	global $max_kb,$max_px,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
+	global $max_kb,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
 	$upfile=TEMP_DIR.$fname;
 
 	clearstatcache();
@@ -639,7 +639,7 @@ function convert_andsave_if_smaller_png2webp($is_upload,$dir,$fname,$time){
 		return;
 	}
 	//webp作成が可能ならwebpに、でなければjpegに変換する。
-	$im_webp = thumb(TEMP_DIR,$fname,$time,$max_px,$max_px,['png2webp'=>true]);
+	$im_webp = thumb(TEMP_DIR,$fname,$time,null,null,['png2webp'=>true]);
 
 	if($im_webp){
 		clearstatcache();
