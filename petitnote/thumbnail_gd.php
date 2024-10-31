@@ -9,7 +9,7 @@
 //210920 PetitNote版。
 $thumbnail_gd_ver=20241031;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
-function thumb($path,$fname,$time,$max_w="",$max_h="",$options=[]){
+function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	$path=basename($path).'/';
 	$fname=basename($fname);
 	$time=basename($time);
@@ -26,7 +26,7 @@ function thumb($path,$fname,$time,$max_w="",$max_h="",$options=[]){
 
 	$fsize = filesize($fname);    // ファイルサイズを取得
 	list($w,$h) = GetImageSize($fname); // 画像の幅と高さとタイプを取得
-	$w_h_size_over=($w > $max_w || $h > $max_h);
+	$w_h_size_over=$max_w && $max_h && ($w > $max_w || $h > $max_h);
 	$f_size_over=!isset($options['toolarge']) ? ($fsize>1024*1024) : false;
 	if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['png2webp'])){
 		return;
