@@ -644,11 +644,11 @@ function convert_andsave_if_smaller_png2webp($is_upload,$dir,$fname,$time){
 
 	if($im_webp){
 		clearstatcache();
-		if(filesize($im_webp)<$filesize){//JPEGのほうが小さい時だけ
-			rename($im_webp,$upfile);//JPEGで保存
+		if(filesize($im_webp)<$filesize){//webpのほうが小さい時だけ
+			rename($im_webp,$upfile);//webpで保存
 			chmod($upfile,0606);
-		} else{//PNGよりファイルサイズが大きくなる時は
-			unlink($im_webp);//作成したJPEG画像を削除
+		} else{//pngよりファイルサイズが大きくなる時は
+			unlink($im_webp);//作成したwebp画像を削除
 		}
 	}
 }
