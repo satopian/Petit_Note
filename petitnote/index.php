@@ -48,7 +48,7 @@ require_once(__DIR__.'/noticemail.inc.php');
 //テンプレート
 $skindir='template/'.$skindir;
 
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241031){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241101){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
 
