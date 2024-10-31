@@ -631,11 +631,12 @@ function convert_andsave_if_smaller_png2webp($is_upload,$dir,$fname,$time){
 
 	clearstatcache();
 	$filesize=filesize($upfile);
-	if(mime_content_type($upfile)!=="image/png" && $filesize < $max_kb * 1024){
+	$max_kb_size_over = ($filesize > ($max_kb * 1024));
+	if(mime_content_type($upfile)!=="image/png" && !$max_kb_size_over){
 		return;//ファイルサイズが$max_kbを超えている時は形式にかかわらず処理続行
 	}
-	if((!$is_upload && $filesize < ($max_file_size_in_png_format_paint * 1024))||	
-	($is_upload && $filesize < ($max_file_size_in_png_format_upload * 1024))){
+	if(((!$is_upload && $filesize < ($max_file_size_in_png_format_paint * 1024))||	
+	($is_upload && $filesize < ($max_file_size_in_png_format_upload * 1024))) && !$max_kb_size_over){
 		return;
 	}
 	//webp作成が可能ならwebpに、でなければjpegに変換する。
