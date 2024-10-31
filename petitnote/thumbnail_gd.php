@@ -1,6 +1,7 @@
 <?php
-// thumbnail_gd.php for PetitNote (C)さとぴあ 2021 - 2023
+// thumbnail_gd.php for PetitNote (C)さとぴあ 2021 - 2024
 // originalscript (C)SakaQ 2005 >> http://www.punyu.net/php/
+//241031 pngフォーマットで投稿できる最大サイズを超過した時の処理を追加。
 //230220 幅と高さが拡大されたwebpサムネイルが作成される問題を修正。
 //230217 webpサムネイル作成オプションを追加。
 //220729 処理が成功した時の返り値をtrueに変更。
@@ -31,7 +32,6 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 	if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['png2webp'])){
 		return;
 	}
-	
 	if(isset($options['png2webp'])||!$max_w||!$max_h){//リサイズしない
 		$out_w = $w;
 		$out_h = $h;
@@ -50,8 +50,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 			}
 				$im_in = @ImageCreateFromGIF($fname);
 				if(!$im_in)return;
-		
-		break;
+			break;
 		case "image/jpeg";
 			$im_in = @ImageCreateFromJPEG($fname);//jpg
 				if(!$im_in)return;
@@ -141,7 +140,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 			$outfile=THUMB_DIR.$time.'.jpg.tmp';
 			ImageJPEG($im_out, $outfile,98);
 		}
-	
+
 	} elseif(isset($options['webp'])){
 		$outfile='webp/'.$time.'t.webp';
 		ImageWEBP($im_out, $outfile,90);
