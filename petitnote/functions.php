@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241031;
+$functions_ver=20241101;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -620,14 +620,15 @@ function delete_files ($imgfile, $time) {
 	safe_unlink(IMG_DIR.$time.'.tgkr');
 	delete_res_cache();
 }
+
 function delete_res_cache () {
 	safe_unlink(__DIR__.'/template/cache/index_cache.json');
 }
 
 //pngをwebpに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
-function convert_andsave_if_smaller_png2webp($is_upload,$dir,$fname,$time){
+function convert_andsave_if_smaller_png2webp($is_upload,$fname,$time){
 	global $max_kb,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
-	$upfile=TEMP_DIR.$fname;
+	$upfile=TEMP_DIR.basename($fname);
 
 	clearstatcache();
 	$filesize=filesize($upfile);

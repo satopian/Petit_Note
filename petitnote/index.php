@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.56.0';
-$petit_lot='lot.20241031';
+$petit_ver='v1.56.2';
+$petit_lot='lot.20241101';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20241031){
+if(!isset($functions_ver)||$functions_ver<20241101){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -509,7 +509,7 @@ function post(){
 			thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 		}	
 		//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
-		convert_andsave_if_smaller_png2webp($is_upload,TEMP_DIR,$time.'.tmp',$time);
+		convert_andsave_if_smaller_png2webp($is_upload,$time.'.tmp',$time);
 		if($is_upload){//アップロード画像のファイルサイズが大きすぎる時は削除
 			delete_file_if_sizeexceeds($upfile,$fp,$rp);
 		}
@@ -1374,7 +1374,7 @@ function img_replace(){
 		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 	}	
 	//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
-	convert_andsave_if_smaller_png2webp($is_upload,TEMP_DIR,$time.'.tmp',$time);
+	convert_andsave_if_smaller_png2webp($is_upload,$time.'.tmp',$time);
 
 	if($is_upload){//アップロード画像のファイルサイズが大きすぎる時は削除
 		delete_file_if_sizeexceeds($upfile,$fp,$rp);
