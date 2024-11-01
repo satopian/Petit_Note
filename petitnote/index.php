@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.56.3';
+$petit_ver='v1.56.5';
 $petit_lot='lot.20241102';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -38,18 +38,18 @@ check_file(__DIR__.'/lib/lightbox/js/lightbox.min.js');
 check_file(__DIR__.'/lib/lightbox/css/lightbox.min.css');
 
 check_file(__DIR__.'/config.php');
-check_file(__DIR__.'/thumbnail_gd.php');
+check_file(__DIR__.'/thumbnail_gd.inc.php');
 check_file(__DIR__.'/noticemail.inc.php');
 
 require_once(__DIR__.'/config.php');
-require_once(__DIR__.'/thumbnail_gd.php');
+require_once(__DIR__.'/thumbnail_gd.inc.php');
 require_once(__DIR__.'/noticemail.inc.php');
 
 //テンプレート
 $skindir='template/'.$skindir;
 
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241102){
-	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
+	return error($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
 }
 
 if(!$max_log){

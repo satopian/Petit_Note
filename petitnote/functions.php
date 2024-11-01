@@ -334,7 +334,7 @@ function create_res($line,$options=[]){
 	$check_elapsed_days = !$isset_catalog ? check_elapsed_days($time) : true;//念のためtrueに
 	$verified = ($verified==='adminpost');
 	$three_point_sub = ($isset_catalog && (mb_strlen($sub)>15)) ? '…' :'';
-	$webpimg = $isset_catalog ? is_file('webp/'.$time.'t.webp') : false;
+	$webpimg = is_file('webp/'.$time.'t.webp');
 	$com = (!$isset_catalog || $isset_search) ? $com : '';
 
 	$res=[

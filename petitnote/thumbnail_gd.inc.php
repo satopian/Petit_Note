@@ -1,13 +1,7 @@
 <?php
-// thumbnail_gd.php for PetitNote (C)さとぴあ 2021 - 2024
-// originalscript (C)SakaQ 2005 >> http://www.punyu.net/php/
-//241101 pngフォーマットで投稿できる最大サイズを超過した時の処理を追加。
-//230220 幅と高さが拡大されたwebpサムネイルが作成される問題を修正。
-//230217 webpサムネイル作成オプションを追加。
-//220729 処理が成功した時の返り値をtrueに変更。
-//220321 透過GIF、透過PNGの時は透明を出力、または透明色を白に変換。
-//220320 本体画像のリサイズにPNG→PNG、GIF→PNG、WEBP→JPEGの各処理を追加。
-//210920 PetitNote版。
+//Petit Note 2021-2024 (c)satopian MIT Licence
+//https://paintbbs.sakura.ne.jp/
+
 $thumbnail_gd_ver=20241102;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 class thumbnail_gd {
@@ -27,11 +21,11 @@ class thumbnail_gd {
 			return;
 		}
 
-		$fsize = filesize($fname);    // ファイルサイズを取得
-		list($w,$h) = GetImageSize($fname); // 画像の幅と高さとタイプを取得
+		$fsize = filesize($fname); // ファイルサイズを取得
+		list($w,$h) = GetImageSize($fname); // 画像の幅と高さを取得
 		$w_h_size_over=$max_w && $max_h && ($w > $max_w || $h > $max_h);
 		$f_size_over=!isset($options['toolarge']) ? ($fsize>1024*1024) : false;
-		if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['png2webp'])){
+		if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['png2webp']) && !isset($options['png2jpeg'])){
 			return;
 		}
 		if(isset($options['png2webp'])||!$max_w||!$max_h){//リサイズしない
@@ -67,13 +61,14 @@ class thumbnail_gd {
 				if(function_exists("ImageCopyResampled")){
 					ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
 					$exists_ImageCopyResampled = true;//"ImageCopyResampled"が有効
-
 				}
 			}else{
 				$im_out = ImageCreate($out_w, $out_h);
 			}
 			// コピー＆縮小
-			if(!$exists_ImageCopyResampled) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);//"ImageCopyResampled"が無効の時
+			if(!$exists_ImageCopyResampled){
+				ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);//"ImageCopyResampled"が無効の時
+			} 
 			if(isset($options['toolarge'])){
 				if(!$outfile = self::overwriteResizedImage($im_out, $fname, $mime_type)){
 					return;
@@ -98,7 +93,8 @@ class thumbnail_gd {
 		return false;
 
 	}
-  private static function isTransparencyEnabled($options, $mime_type) {
+	// 透明度の処理を行う必要があるかを判断
+	private static function isTransparencyEnabled($options, $mime_type) {
 		// 透明度を扱うオプションが設定されているか確認
 		$transparencyOptionsSet = isset($options['toolarge']) || isset($options['webp']) || isset($options['thumbnail_webp']) || isset($options['png2webp']);
 		
@@ -110,7 +106,7 @@ class thumbnail_gd {
 		
 		return $transparencyOptionsSet && in_array($mime_type, $transparencySupportedFormats) && $transparencyFunctionsAvailable;
 	}
-
+	//各画像フォーマットのリソースを作成
 	private static function createImageResource($fname,$mime_type) {
 		switch ($mime_type) {
 			case "image/gif";
@@ -144,9 +140,10 @@ class thumbnail_gd {
 		return $im_in;
 	}
 
-private static function overwriteResizedImage($im_out, $fname, $mime_type) {
-	$outfile=$fname;
-	//本体画像を縮小
+	//縮小した画像で上書き
+	private static function overwriteResizedImage($im_out, $fname, $mime_type) {
+		$outfile=$fname;
+		//本体画像を縮小
 		switch ($mime_type) {
 			case "image/gif";
 				if(function_exists("ImagePNG")){
@@ -154,7 +151,7 @@ private static function overwriteResizedImage($im_out, $fname, $mime_type) {
 				}else{
 					ImageJPEG($im_out, $outfile,98);
 				}
-				break;
+					break;
 			case "image/jpeg";
 				ImageJPEG($im_out, $outfile,98);
 				break;
@@ -164,23 +161,29 @@ private static function overwriteResizedImage($im_out, $fname, $mime_type) {
 				}else{
 					ImageJPEG($im_out, $outfile,98);
 				}
-				break;
+					break;
 			case "image/webp";
 				if(function_exists("ImageWEBP")&&version_compare(PHP_VERSION, '7.0.0', '>=')){
 					ImageWEBP($im_out, $outfile,98);
 				}else{
 					ImageJPEG($im_out, $outfile,98);
 				}
-				break;
+					break;
 
 				default : return;
 			return $outfile;
 		}
 	}
+	//サムネイル作成
 	private static function createThumbnailImage($im_out, $time, $options) {
 
-		if(isset($options['png2webp'])){
-	
+		if(isset($options['png2jpeg'])){
+
+			$outfile=TEMP_DIR.$time.'.jpg.tmp';//一時ファイル
+			ImageJPEG($im_out, $outfile,98);
+
+		} elseif(isset($options['png2webp'])){
+
 				if(function_exists("ImageWEBP")&& version_compare(PHP_VERSION, '7.0.0', '>=')){
 					$outfile=TEMP_DIR.$time.'.webp.tmp';//一時ファイル
 					ImageWEBP($im_out, $outfile,98);
@@ -207,5 +210,5 @@ private static function overwriteResizedImage($im_out, $fname, $mime_type) {
 
 		}
 			return $outfile;
-		}
 	}
+}
