@@ -79,24 +79,26 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 		if((isset($options['toolarge'])||
 		isset($options['webp'])||
 		isset($options['thumbnail_webp'])||
-		isset($options['png2webp'])) &&
-		in_array($mime_type,["image/png","image/gif","image/webp"])){
-			if(function_exists("imagealphablending") && function_exists("imagesavealpha")){
+		isset($options['png2webp']))&&//透明度を扱うオプションが設定されている時
+		in_array($mime_type,["image/png","image/gif","image/webp"])&&//透明度を扱うフォーマット
+		function_exists("imagealphablending")&&
+		function_exists("imagesavealpha")){//透明度のための機能はあるか?
 				imagealphablending($im_out, false);
 				imagesavealpha($im_out, true);//透明
+		}else{//透明度を扱わない時
+			if(function_exists("ImageColorAlLocate") && function_exists("imagefill")){
+				$background = ImageColorAlLocate($im_out, 0xFF, 0xFF, 0xFF);//背景色を白に
+				imagefill($im_out, 0, 0, $background);
 			}
-			}else{
-				if(function_exists("ImageColorAlLocate") && function_exists("imagefill")){
-					$background = ImageColorAlLocate($im_out, 0xFF, 0xFF, 0xFF);//背景色を白に
-					imagefill($im_out, 0, 0, $background);
-				}
-			}
+		}
 		// コピー＆再サンプリング＆縮小
 		if(function_exists("ImageCopyResampled")){
 			ImageCopyResampled($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
 			$exists_ImageCopyResampled = true;
 		}
-	}else{$im_out = ImageCreate($out_w, $out_h);}
+	}else{
+		$im_out = ImageCreate($out_w, $out_h);
+	}
 	// コピー＆縮小
 	if(!$exists_ImageCopyResampled) ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);
 	if(isset($options['toolarge'])){
