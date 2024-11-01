@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241101;
+$functions_ver=20241102;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -641,7 +641,7 @@ function convert_andsave_if_smaller_png2webp($is_upload,$fname,$time){
 		return;
 	}
 	//webp作成が可能ならwebpに、でなければjpegに変換する。
-	$im_webp = thumb(TEMP_DIR,$fname,$time,null,null,['png2webp'=>true]);
+	$im_webp = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['png2webp'=>true]);
 
 	if($im_webp){
 		clearstatcache();
@@ -723,15 +723,15 @@ function make_thumbnail($imgfile,$time,$max_w,$max_h){
 	global $use_thumb; 
 	$thumbnail='';
 	if($use_thumb){//スレッドの画像のサムネイルを使う時
-		if(thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
+		if(thumbnail_gd::thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
 			$thumbnail='thumbnail';
 		}
-		if($thumbnail && thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h,['thumbnail_webp'=>true])){
+		if($thumbnail && thumbnail_gd::thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h,['thumbnail_webp'=>true])){
 			$thumbnail='thumbnail_webp';
 		}
 	}
 	//カタログ用webpサムネイル 
-	thumb(IMG_DIR,$imgfile,$time,300,800,['webp'=>true]);
+	thumbnail_gd::thumb(IMG_DIR,$imgfile,$time,300,800,['webp'=>true]);
 
 	return $thumbnail;
 }

@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.56.2';
-$petit_lot='lot.20241101';
+$petit_ver='v1.56.3';
+$petit_lot='lot.20241102';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -16,7 +16,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20241101){
+if(!isset($functions_ver)||$functions_ver<20241102){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -48,7 +48,7 @@ require_once(__DIR__.'/noticemail.inc.php');
 //テンプレート
 $skindir='template/'.$skindir;
 
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241101){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241102){
 	return error($en?'Please update thumbmail_gd.php to the latest version.':'thumbnail_gd.phpを最新版に更新してください。');
 }
 
@@ -506,7 +506,7 @@ function post(){
 	if($is_file_upfile){
 
 		if($is_upload){//実体データの縮小
-			thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
+			thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 		}	
 		//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
 		convert_andsave_if_smaller_png2webp($is_upload,$time.'.tmp',$time);
@@ -808,7 +808,7 @@ function paint(){
 				$img_klecks = $pchup;
 			} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
 				$file_name=pathinfo($pchup,PATHINFO_FILENAME);
-				thumb(TEMP_DIR,$basename_pchup,$time,$max_px,$max_px,['toolarge'=>true]);
+				thumbnail_gd::thumb(TEMP_DIR,$basename_pchup,$time,$max_px,$max_px,['toolarge'=>true]);
 				list($picw,$pich) = getimagesize($pchup);
 				$imgfile = $pchup;
 				$anime = false;
@@ -1371,7 +1371,7 @@ function img_replace(){
 	} 
 	chmod($upfile,0606);
 	if($is_upload){//実体データの縮小
-		thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
+		thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 	}	
 	//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
 	convert_andsave_if_smaller_png2webp($is_upload,$time.'.tmp',$time);
