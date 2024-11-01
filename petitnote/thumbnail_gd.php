@@ -165,7 +165,7 @@ function thumb($path,$fname,$time,$max_w,$max_h,$options=[]){
 
 	if(is_file($outfile)){
 		return $outfile;
-	};
+	}
 	return false;
 
 }
