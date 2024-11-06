@@ -44,7 +44,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
 	allowDownload: true,
 	resourcesRoot: "./app/chickenpaint/",
 	disableBootstrapAPI: true,
-	fullScreenMode: "force"
+	fullScreenMode: "force",
+	post_max_size: <?=h($max_pch)?>
 	});
 });
 //画像受信後の処理と画面移動
