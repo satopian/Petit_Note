@@ -91,7 +91,7 @@
 					.then((response) => {
 						if (response.ok) {
 							response.text().then((text) => {
-							console.log(text)
+								console.log(text)
 								if(text==='ok'){
 									<?php if($rep):?>
 									return repData();
@@ -117,8 +117,13 @@
 					})
 				}
 				klecks.getPSD().then((psd)=>{
+					const png = klecks.getPNG();
+					const TotalSiz=((png.size+psd.size)/1024/1024).toFixed(3);
+					if(TotalSiz><?=h($max_pch)?>){
+						return alert(`<?php if($en):?>File size is too large.<?php else:?>ファイルサイズが大きすぎます。<?php endif;?>\n<?php if($en):?>limit size<?php else:?>制限値<?php endif;?>:<?=h($max_pch)?>MB\n<?php if($en):?>Current size<?php else:?>現在値<?php endif;?>:${TotalSiz}MB`)
+					}
 					const formData = new FormData();
-					formData.append("picture", klecks.getPNG(),'blob');
+					formData.append("picture", png,'blob');
 					formData.append("psd", psd,'blob');
 					<?php if($rep):?>formData.append("repcode", "<?=h($repcode)?>");<?php endif;?>
 					formData.append("tool", "klecks");

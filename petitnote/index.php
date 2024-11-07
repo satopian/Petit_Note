@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.56.7';
-$petit_lot='lot.20241106';
+$petit_ver='v1.56.8';
+$petit_lot='lot.20241107';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -376,7 +376,7 @@ function post(){
 	//ファイルアップロード
 	$up_tempfile = isset($_FILES['imgfile']['tmp_name']) ? $_FILES['imgfile']['tmp_name'] : ''; // 一時ファイル名
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		return error($en? "Upload failed.\nThe file size is too big.":"アップロードに失敗しました。\nファイルサイズが大きすぎます。");
+		return error($en? "Upload failed.\nThe file size is too large.":"アップロードに失敗しました。\nファイルサイズが大きすぎます。");
 	} 
 	$is_upload=false;
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
@@ -770,7 +770,7 @@ function paint(){
 		$pchtmp=isset($_FILES['pchup']['tmp_name']) ? $_FILES['pchup']['tmp_name'] : '';
 
 		if(isset($_FILES['pchup']['error']) && in_array($_FILES['pchup']['error'],[1,2])){//容量オーバー
-			return error($en? 'The file size is too big.':'ファイルサイズが大きすぎます。');
+			return error($en? 'The file size is too large.':'ファイルサイズが大きすぎます。');
 		} 
 
 		if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK){
@@ -1220,7 +1220,7 @@ function img_replace(){
 		return error($en?'Please attach an image.':'画像を添付してください。');
 	} 
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		return error($en? "Upload failed.\nThe file size is too big.":"アップロードに失敗しました。\nファイルサイズが大きすぎます。");
+		return error($en? "Upload failed.\nThe file size is too large.":"アップロードに失敗しました。\nファイルサイズが大きすぎます。");
 	} 
 	$is_upload=false;
 	$tool = '';
