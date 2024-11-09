@@ -49,13 +49,7 @@
 			<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" <?php if($res['_w']>747):?>style="float:none;margin-right:0"<?php endif;?>>
 				<a href="src/<?=h($res['img'])?>" target="_blank" data-lightbox="<?=h($res['no'])?>_<?=h($res['time'])?>">
 				<?php if($res['thumbnail']):?>
-					<?php if(isset($res['thumbnail_webp']) && $res['thumbnail_webp']):?>
-						<picture><source srcset="thumbnail/<?=h($res['thumbnail_webp'])?>" type="image/webp">
-					<?php endif;?>
 					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
-					<?php if(isset($res['thumbnail_webp']) && $res['thumbnail_webp']):?>
-						</picture>
-					<?php endif;?>
 				<?php else:?>
 					<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 				<?php endif;?>

@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241102;
+$functions_ver=20241109;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -322,11 +322,13 @@ function create_res($line,$options=[]){
 	if($hide_thumbnail){
 		list($w,$h)=image_reduction_display($w,$h,300,300);
 	}
-	$thumbnail_jpg = (strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
-	$thumbnail_webp = $thumbnail_jpg && (strpos($thumbnail,'thumbnail_webp')!==false) ? $time.'s.webp' : false; 
+	$thumbnail_webp = ((strpos($thumbnail,'thumbnail_webp')!==false)) ? $time.'s.webp' : false; 
+	$thumbnail_jpg = (!$thumbnail_webp && strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
 
-	$link_thumbnail= ($thumbnail_jpg || $hide_thumbnail); 
-	$painttime = !$isset_catalog ? calcPtime($paintsec) : false;  
+	$thumbnail_img = $thumbnail_webp ? $thumbnail_webp : $thumbnail_jpg;
+
+	$link_thumbnail= ($thumbnail_img || $hide_thumbnail); 
+	$painttime = !$isset_catalog ? calcPtime($paintsec) : false;
 
 	$datetime = $do_not_change_posts_time ? microtime2time($first_posted_time) : microtime2time($time);
 	$date=$datetime ? date('y/m/d',(int)$datetime):'';
@@ -346,8 +348,7 @@ function create_res($line,$options=[]){
 		'com' => $com,
 		'url' => $url ? filter_var($url,FILTER_VALIDATE_URL) : '',
 		'img' => $imgfile,
-		'thumbnail' => $thumbnail_jpg,
-		'thumbnail_webp' => $thumbnail_webp,
+		'thumbnail' => $thumbnail_img,//webp or jpegのサムネイルのファイル名
 		'painttime' => $painttime ? $painttime['ja'] : '',
 		'painttime_en' => $painttime ? $painttime['en'] : '',
 		'paintsec' => $paintsec,
@@ -723,11 +724,12 @@ function make_thumbnail($imgfile,$time,$max_w,$max_h){
 	global $use_thumb; 
 	$thumbnail='';
 	if($use_thumb){//スレッドの画像のサムネイルを使う時
-		if(thumbnail_gd::thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
-			$thumbnail='thumbnail';
-		}
-		if($thumbnail && thumbnail_gd::thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h,['thumbnail_webp'=>true])){
+		if(thumbnail_gd::thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h,['thumbnail_webp'=>true])){
 			$thumbnail='thumbnail_webp';
+		}
+		//webpサムネイルが作成されなかった時はjpegのサムネイルを作る
+		if(!$thumbnail && thumbnail_gd::thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
+			$thumbnail='thumbnail';
 		}
 	}
 	//カタログ用webpサムネイル 

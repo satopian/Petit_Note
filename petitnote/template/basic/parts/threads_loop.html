@@ -100,14 +100,7 @@
 				<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
 					<a href="src/<?=h($res['img'])?>" target="_blank" data-lightbox="<?php if(isset($ress[0]['find_hide_thumbnail'])&&!$ress[0]['find_hide_thumbnail']||$set_nsfw_show_hide):?><?=h($res['no'])?><?php else:?><?=h($res['no'])?>_<?=h($res['time'])?><?php endif;?>">
 				<?php if($res['thumbnail']):?>
-					<?php if(isset($res['thumbnail_webp']) && $res['thumbnail_webp']):?>
-						<picture><source srcset="thumbnail/<?=h($res['thumbnail_webp'])?>" type="image/webp">
-					<?php endif;?>
 						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4||($resmode && $i>4)):?>loading="lazy"<?php endif;?>>
-					<?php if(isset($res['thumbnail_webp']) && $res['thumbnail_webp']):?>
-						</picture>
-					<?php endif;?>
-
 				<?php else:?>
 						<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4||($resmode && $i>4)):?>loading="lazy"<?php endif;?>>
 				<?php endif;?>
