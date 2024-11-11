@@ -1,4 +1,4 @@
 <Files ~ "\.(html?|ini|log|dat|json|inc)$">
-	deny from all
+	Require all denied
 </Files>
 
