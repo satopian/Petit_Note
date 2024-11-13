@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241109;
+$functions_ver=20241113;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1100,6 +1100,7 @@ function calcPtime ($psec) {
 	$S = $psec % 60;
 
 	$en_day = ($D>1) ? ' days ' : ' day ';
+	$en_hour = ($H>1) ? ' hours ' : ' hour '; 
 	$result=[
 		'ja'=>
 			($D ? $D.'日' : '')
@@ -1109,7 +1110,7 @@ function calcPtime ($psec) {
 			,
 		'en'=>
 			($D ? $D.$en_day : '')
-			. (($D||$H) ? $H.' hr ' : '')
+			. (($D||$H) ? $H.$en_hour : '')
 			. (($D||$H||$M) ? $M.' min ' : '')
 			. $S.' sec'
 		];

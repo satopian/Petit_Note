@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.57.2';
-$petit_lot='lot.20241111';
+$petit_ver='v1.57.5';
+$petit_lot='lot.20241115';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -276,9 +276,7 @@ function post(){
 			return error($en? 'Posting failed.':'投稿に失敗しました。');
 		}
 		//ユーザーデータから情報を取り出す
-		$fp = fopen(TEMP_DIR.$picfile.".dat", "r");
-		$userdata = fread($fp, 1024);
-		fclose($fp);
+		$userdata = file_get_contents(TEMP_DIR.$picfile.".dat");
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
 		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
 		$tool= is_paint_tool_name($tool);
@@ -325,7 +323,6 @@ function post(){
 		$r_arr = create_array_from_fp($rp);
 		if(empty($r_arr)){
 			closeFile($rp);
-			closeFile($fp);
 			if(!$pictmp2){
 				return error($en?'This operation has failed.':'失敗しました。');
 			}
@@ -979,9 +976,7 @@ function paintcom(){
 	while ($file = readdir($handle)) {
 		if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
 			$file=basename($file);
-			$fp = fopen(TEMP_DIR.$file, "r");
-			$userdata = fread($fp, 1024);
-			fclose($fp);
+			$userdata = file_get_contents(TEMP_DIR.$file);
 			list($uip,$uhost,$uagent,$imgext,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
 			$hide_animation=($u_hide_animation==='true');
 			$imgext=basename($imgext);
@@ -1249,9 +1244,7 @@ function img_replace(){
 		while ($file = readdir($handle)) {
 			if(!is_dir($file) && pathinfo($file, PATHINFO_EXTENSION)==='dat') {
 				$file=basename($file);
-				$fp = fopen(TEMP_DIR.$file, "r");
-				$userdata = fread($fp, 1024);
-				fclose($fp);
+				$userdata = file_get_contents(TEMP_DIR.$file);
 				list($uip,$uhost,$uagent,$imgext,$ucode,$urepcode,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");//区切りの"\t"を行末に
 				$hide_animation = ($u_hide_animation==='true');
 				$tool= is_paint_tool_name($tool);
@@ -2676,7 +2669,7 @@ function res (){
 
 	//token
 	$token=get_csrf_token();
-	
+
 	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
 	$resmode=true;
 
