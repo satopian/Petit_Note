@@ -1,15 +1,15 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.57.5';
-$petit_lot='lot.20241115';
+$petit_ver='v1.58.3';
+$petit_lot='lot.20241118';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
 
-if (version_compare(PHP_VERSION, '5.6.0', '<')) {
-	die($en? "Error. PHP version 5.6.0 or higher is required for this program to work. <br>\n(Current PHP version:".PHP_VERSION.")":
-		"エラー。本プログラムの動作には PHPバージョン 5.6.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
+if (version_compare(PHP_VERSION, '7.0.0', '<')) {
+	die($en? "Error. PHP version 7.0.0 or higher is required for this program to work. <br>\n(Current PHP version:".PHP_VERSION.")":
+		"エラー。本プログラムの動作には PHPバージョン 7.0.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
 	);
 }
 if(!is_file(__DIR__.'/functions.php')){
@@ -111,9 +111,7 @@ session_sta();
 $session_usercode = isset($_SESSION['usercode']) ? t((string)$_SESSION['usercode']) : "";
 $usercode = $usercode ? $usercode : $session_usercode;
 if(!$usercode){//user-codeがなければ発行
-	$usercode = substr(crypt(md5($userip.uniqid()),'id'),-12);
-	//念の為にエスケープ文字があればアルファベットに変換
-	$usercode = t(strtr($usercode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno"));
+	$usercode = substr(hash('sha256', $userip.random_bytes(16)), 0, 32);
 }
 setcookie("usercode", $usercode, time()+(86400*365),"","",false,true);//1年間
 $_SESSION['usercode']=$usercode;
@@ -245,9 +243,7 @@ function post(){
 
 	$pwd=$pwd ? $pwd : t((string)filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
-		srand();
-		$pwd = substr(md5(uniqid(rand(),true)),2,15);
-		$pwd = strtr($pwd,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno");
+		$pwd = substr(hash('sha256', $userip.random_bytes(16)), 0, 15);
 	}
 	if(strlen($pwd) < 6) return error($en? 'The password is too short. At least 6 characters.':'パスワードが短すぎます。最低6文字。');
 
@@ -461,7 +457,7 @@ function post(){
 	$m2time=microtime2time($time);
 	foreach($chk_lines as $chk_line){
 		$chk_ex_line=explode("\t",trim($chk_line));
-		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
+		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
 		if($m2time===microtime2time($time_)){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
@@ -480,7 +476,7 @@ function post(){
 	$chk_com=array_slice($chk_com,0,20,false);
 
 	foreach($chk_com as $line){
-		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
+		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_img_hash_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=$line;
 
 		if(!$adminpost && ($com && ($com === $_com_))){
 			closeFile($fp);
@@ -499,7 +495,7 @@ function post(){
 		}
 	}
 
-	$img_md5='';
+	$up_img_hash='';
 	if($is_file_upfile){
 
 		if($is_upload){//実体データの縮小
@@ -520,12 +516,13 @@ function post(){
 		}
 
 		//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
-		$img_md5=md5_file($upfile);
+		$up_img_hash=substr(hash_file('sha256', $upfile), 0, 32);
+		
 		if(!$pictmp2){
 
 			foreach($chk_images as $line){
-				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
-				if(!adminpost_valid() && ($log_md5 && ($log_md5 === $img_md5))){
+				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
+				if(!adminpost_valid() && ($log_img_hash && ($log_img_hash === $up_img_hash))){
 					closeFile($fp);
 					closeFile($rp);
 					safe_unlink($upfile);
@@ -603,7 +600,7 @@ function post(){
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 
-		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
+		$r_line = "$resto\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$up_img_hash\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\tres\n";
 		$new_rline=	implode("",$r_arr).$r_line;
 
 		writeFile($rp,$new_rline);
@@ -628,8 +625,8 @@ function post(){
 		$no=$max_no+1;
 		//コメントを120バイトに短縮
 		$strcut_com=mb_strcut($com,0,120);
-		$newline = "$no\t$sub\t$name\t$verified\t$strcut_com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
-		$new_r_line = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
+		$newline = "$no\t$sub\t$name\t$verified\t$strcut_com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$up_img_hash\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
+		$new_r_line = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$up_img_hash\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
 		check_open_no($no);
 		file_put_contents(LOG_DIR.$no.'.log',$new_r_line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
 		chmod(LOG_DIR.$no.'.log',0600);
@@ -653,7 +650,7 @@ function post(){
 				if(!trim($line)){
 					continue;
 				}
-				list($d_no,$_sub,$_name,$_verified,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$d_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
+				list($d_no,$_sub,$_name,$_verified,$_com,$_url,$d_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$d_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 
 				delete_files ($d_imgfile, $d_time);//一連のファイルを削除
 
@@ -869,9 +866,7 @@ function paint(){
 			$userip = get_uip();
 			$paintmode='picrep';
 			$id=$time;	//テンプレートでも使用。
-			$repcode = substr(crypt(md5($no.$id.$userip.$pwd.uniqid()),'id'),-12);
-			//念の為にエスケープ文字があればアルファベットに変換
-			$repcode = strtr($repcode,"!\"#$%&'()+,/:;<=>?@[\\]^`/{|}~\t","ABCDEFGHIJKLMNOabcdefghijklmno");
+			$repcode = substr(hash('sha256', $no.$id.$userip.$pwd.random_bytes(16)), 0, 32);
 		}
 	}
 
@@ -1052,7 +1047,7 @@ function to_continue(){
 		//スレッドが閉じてるかどうか
 		foreach ($lines as $i => $line) {
 
-			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash,$oya_)=explode("\t",trim($line));
+			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash,$oya_)=explode("\t",trim($line));
 			if($oya_==="oya"){
 				$oya_time=$time_;
 			}
@@ -1062,7 +1057,7 @@ function to_continue(){
 
 		foreach ($lines as $line) {
 
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id===$time && $no===$_no){
 				$flag=true;
 				break;
@@ -1151,7 +1146,7 @@ function download_app_dat(){
 		if(!trim($line)){
 			continue;
 		}
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 		if($id===$time && $no===$_no){
 			if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
 				return error($en?'Password is incorrect.':'パスワードが違います。');
@@ -1304,7 +1299,7 @@ function img_replace(){
 
 	$flag=false;
 	foreach($r_arr as $i => $line){
-		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
+		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id===$_time && $no===$_no){
 
 			if(($is_upload) && ($_tool!=='upload')) {
@@ -1382,7 +1377,7 @@ function img_replace(){
 		return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
 	}
 	list($w, $h) = getimagesize($upfile);
-	$img_md5=md5_file($upfile);
+	$up_img_hash=substr(hash_file('sha256', $upfile), 0, 32);
 	
 	//チェックするスレッド数。 
 	$n= 15;
@@ -1392,7 +1387,7 @@ function img_replace(){
 	$chk_images=array_merge($chk_lines,$r_arr);
 	$m2time=microtime2time($time);
 	foreach($chk_images as $chk_line){
-		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_md5,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
+		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_img_hash,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
 
 		if($is_upload && ($m2time === microtime2time($chk_time))){//投稿時刻の重複回避
 			safe_unlink($upfile);
@@ -1403,7 +1398,7 @@ function img_replace(){
 		if(!$is_upload && ((string)$time === (string)$chk_time)){
 			$time=(string)($m2time+1).(string)substr($time,-6);
 		}
-		if(!$admindel && $is_upload && ($chk_log_md5 && ($chk_log_md5 === $img_md5))){
+		if(!$admindel && $is_upload && ($chk_log_img_hash && ($chk_log_img_hash === $up_img_hash))){
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
@@ -1457,14 +1452,14 @@ function img_replace(){
 		$painttime=(int)$_painttime+(int)$psec;
 	}
 	
-	$r_line= "$_no\t$_sub\t$_name\t$_verified\t$_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
+	$r_line= "$_no\t$_sub\t$_name\t$_verified\t$_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$up_img_hash\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 
 	$r_arr[$i] = $r_line;
 
 	if($_oya ==='oya'){
 
 		$strcut_com=mb_strcut($_com,0,120);
-		$newline = "$_no\t$_sub\t$_name\t$_verified\t$strcut_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$img_md5\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
+		$newline = "$_no\t$_sub\t$_name\t$_verified\t$strcut_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$up_img_hash\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
 
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
@@ -1472,9 +1467,9 @@ function img_replace(){
 				break;
 			}
 		}
-		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
+		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 		if(($id===$time_ && $no===$no_) &&
-		(($admindel && $is_upload ||
+		((($is_upload && $admindel) ||
 		($pwd && password_verify($pwd,$hash_))))){
 			$alllog_arr[$i] = $newline;
 			$flag=true;
@@ -1532,7 +1527,7 @@ function pchview(){
 		if(!trim($line)){
 			continue;
 		}
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 		if($id===$time && $no===$_no){
 			$flag=true;
 			break;
@@ -1609,7 +1604,7 @@ function confirmation_before_deletion ($edit_mode=''){
 	$find=false;
 	foreach($r_arr as $i =>$val){
 		$_line=explode("\t",trim($val));
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
 		if($id===$time && $no===$_no){
 
 			$out[0][]=create_res($_line);
@@ -1695,7 +1690,7 @@ function edit_form($id='',$no=''){
 
 		$line=explode("\t",trim($val));
 
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 		if($id===$time && $no===$_no){
 		
 			if(!$admindel&&(!$pwd||!password_verify($pwd,$hash))){
@@ -1724,7 +1719,7 @@ function edit_form($id='',$no=''){
 	foreach($line as $i => $val){//エスケープ処理
 		$line[$i]=h($val);
 	}
-	list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+	list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 
 	$com=h(str_replace('"\n"',"\n",$com));
 
@@ -1803,7 +1798,7 @@ function edit(){
 	$flag=false;
 	foreach($r_arr as $i => $line){
 
-		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
+		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 
 		if($id===$_time && $no===$_no){
 
@@ -1845,7 +1840,7 @@ function edit(){
 	$_chk_lines = create_chk_lins($chk_log_arr,$no);//取得済みの$chk_restoの配列を除外
 	$chk_lines=array_merge($_chk_lines,$r_arr);
 	foreach($chk_lines as $line){
-		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_md5_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",trim($line));
+		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_img_hash_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",trim($line));
 
 		if(!$admindel && ($userid===$_userid_) && ($id!==$_time_) && ($com && ($com!==$_com) && ($com === $_com_))){
 			closeFile($fp);
@@ -1871,14 +1866,14 @@ function edit(){
 	$host = $is_admin_set_nsfw ? $_host : $host;//管理者による閲覧注意への変更時は投稿者のホスト名を変更しない
 	$userid = $admindel ? $_userid : $userid;//管理者による変更時は投稿者のidを変更しない
 
-	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
+	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_img_hash\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\t$_oya\n";
 	
 	$r_arr[$i] = $r_line;
 
 	if($_oya==='oya'){
 		//コメントを120バイトに短縮
 		$strcut_com=mb_strcut($com,0,120);
-		$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_md5\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
+		$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_img_hash\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
 
 		if(empty($alllog_arr)){
 			closeFile($rp);
@@ -1891,7 +1886,7 @@ function edit(){
 				break;
 			}
 		}
-		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
+		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 		if(($id===$time_ && $no===$no_) &&
 		($admindel || ($pwd && password_verify($pwd,$hash_)))){
 
@@ -1966,7 +1961,7 @@ function del(){
 
 	$find=false;
 	foreach($r_arr as $i =>$val){
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
+		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
 		if($id===$time && $no===$_no){
 			if(!$admindel){
 				if(!$pwd||!password_verify($pwd,$hash)){
@@ -1984,7 +1979,7 @@ function del(){
 	}
 
 	$count_r_arr=count($r_arr);
-	list($d_no,$d_sub,$d_name,$s_verified,$d_com,$d_url,$d_imgfile,$d_w,$d_h,$d_thumbnail,$d_painttime,$d_log_md5,$d_tool,$d_pchext,$d_time,$d_first_posted_time,$d_host,$d_userid,$d_hash,$d_oya)=explode("\t",trim($r_arr[0]));
+	list($d_no,$d_sub,$d_name,$s_verified,$d_com,$d_url,$d_imgfile,$d_w,$d_h,$d_thumbnail,$d_painttime,$d_log_img_hash,$d_tool,$d_pchext,$d_time,$d_first_posted_time,$d_host,$d_userid,$d_hash,$d_oya)=explode("\t",trim($r_arr[0]));
 	$res_oya_deleted=(!$d_name && !$d_com && !$d_url && !$d_imgfile && !$d_userid && ($d_oya==='oya'));
 
 	if(($oya==='oya')||(($count_r_arr===2) && $res_oya_deleted)){//スレッド削除?
@@ -2003,7 +1998,7 @@ function del(){
 			}
 		}
 
-		list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_md5_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
+		list($no_,$sub_,$name_,$verified_,$com_,$url_,$_imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=explode("\t",trim($_val));
 		$alllog_oya_deleted=($no===$no_ && !$name_ && !$com_ && !$url_ && !$_imgfile_ && !$userid_ && ($oya_==='oya'));
 
 		if(($alllog_oya_deleted && ($no===$no_))||($id===$time_ && $no===$no_)){
@@ -2024,7 +2019,7 @@ function del(){
 
 				unset($alllog_arr[$j]);
 				foreach($r_arr as $r_line) {//スレッドの一連のファイルを削除
-					list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_md5,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
+					list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($r_line));
 					
 					delete_files ($_imgfile, $_time);//一連のファイルを削除
 					
@@ -2173,7 +2168,7 @@ function search(){
 		while($line=fgets($rp)){
 
 			$lines=explode("\t",$line);
-			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$lines;
+			list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$lines;
 
 			if(!$name && !$com && !$url && !$imgfile && !$userid){//この記事はありませんの時は表示しない
 				continue;
@@ -2306,7 +2301,7 @@ function search(){
 	}
 
 	unset($arr);
-	unset($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya);
+	unset($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya);
 
 	$admindel=admindel_valid();
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);

@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241113;
+$functions_ver=20241117;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -727,7 +727,7 @@ function make_thumbnail($imgfile,$time,$max_w,$max_h){
 		if(thumbnail_gd::thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h,['thumbnail_webp'=>true])){
 			$thumbnail='thumbnail_webp';
 		}
-		//webpサムネイルが作成されなかった時はjpegのサムネイルを作る
+		//webpのサムネイルが作成できなかった時はjpegのサムネイルを作る
 		if(!$thumbnail && thumbnail_gd::thumb(IMG_DIR,$imgfile,$time,$max_w,$max_h)){
 			$thumbnail='thumbnail';
 		}
@@ -1017,7 +1017,7 @@ function init(){
 	check_dir(__DIR__."/webp");
 	check_dir(__DIR__."/template/cache");
 	if(!is_file(LOG_DIR.'alllog.log')){
-	file_put_contents(LOG_DIR.'alllog.log','',FILE_APPEND|LOCK_EX);
+	file_put_contents(LOG_DIR.'alllog.log','',LOCK_EX);
 	chmod(LOG_DIR.'alllog.log',0600);	
 	}
 }
