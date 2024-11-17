@@ -6,8 +6,8 @@
 - [Petit Note EN](https://github.com/satopian/Petit_Note_EN) 
 
 ##  動作環境
-- PHP5.6以上の環境が必要です。  
-PHP5.6,PHP7.2,PHP8.2,PHP8.3,PHP8.4で動作確認しています。  
+- PHP7.0以上の環境が必要です。  
+PHP7.2,PHP8.2,PHP8.3,PHP8.4で動作確認しています。  
 PHP8.0-PHP8.3での使用を推奨します。
 
 # ダウンロードと設置
