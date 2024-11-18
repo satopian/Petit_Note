@@ -259,7 +259,7 @@ function post(){
 	//お絵かきアップロード
 	$pictmp = (int)filter_input(INPUT_POST, 'pictmp',FILTER_VALIDATE_INT);
 	$painttime ='';
-	$pictmp2=false;
+	$is_painted_img=false;
 	$tempfile='';
 	$picfile='';
 	if($pictmp===2){//ユーザーデータを調べる
@@ -289,7 +289,7 @@ function post(){
 		if($resto && !$use_res_upload && !$adminpost){
 			return error($en? 'Only administrator can post.':'投稿できるのは管理者だけです。');
 		}
-		$pictmp2=true;//お絵かきでエラーがなかった時にtrue;
+		$is_painted_img=true;//お絵かきでエラーがなかった時にtrue;
 
 	}
 
@@ -301,7 +301,7 @@ function post(){
 	}
 
 	if($resto && !is_file(LOG_DIR."{$resto}.log")){//エラー処理
-		if(!$pictmp2){//お絵かきではない時は
+		if(!$is_painted_img){//お絵かきではない時は
 			return error($en? 'The article does not exist.':'記事がありません。');
 		}
 		$resto='';//レス先がないお絵かきは新規投稿扱いにする。
@@ -319,27 +319,27 @@ function post(){
 		$r_arr = create_array_from_fp($rp);
 		if(empty($r_arr)){
 			closeFile($rp);
-			if(!$pictmp2){
+			if(!$is_painted_img){
 				return error($en?'This operation has failed.':'失敗しました。');
 			}
 			$chk_resto=$resto;
 			$resto = '';
 		}
 
-		list($r_no,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$md5_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$r_oya)=explode("\t",trim($r_arr[0]));
+		list($r_no,$oyasub,$n_,$v_,$c_,$u_,$img_,$_,$_,$thumb_,$pt_,$hash_,$to_,$pch_,$postedtime,$fp_time_,$h_,$uid_,$h_,$r_oya)=explode("\t",trim($r_arr[0]));
 		//レスファイルの1行目のチェック。経過日数、ログの1行目が'oya'かどうか確認。
 		$check_elapsed_days = check_elapsed_days($postedtime);
 		$count_r_arr=count($r_arr);
 
 		//レス先のログファイルを再確認
 		if($resto && ($r_no!==$resto || $r_oya!=='oya')){
-			if(!$pictmp2){
+			if(!$is_painted_img){
 				return error($en? 'The article does not exist.':'記事がありません。');
 			}
 			$chk_resto=$resto;
 			$resto='';
 		}
-		if($pictmp2){//お絵かきの時は新規投稿にする
+		if($is_painted_img){//お絵かきの時は新規投稿にする
 			//お絵かきの時に日数を経過していたら新規投稿。
 			//お絵かきの時に最大レス数を超過していたら新規投稿。
 			if($resto && !$adminpost && (!$check_elapsed_days || $count_r_arr>$max_res)){
@@ -371,7 +371,7 @@ function post(){
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
 		return error($en? "Upload failed.\nThe file size is too large.":"アップロードに失敗しました。\nファイルサイズが大きすぎます。");
 	} 
-	$is_upload=false;
+	$is_upload_img=false;
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){
 
 		if($resto && !$use_res_upload && !$adminpost){
@@ -395,17 +395,17 @@ function post(){
 		}
 
 		$tool = 'upload'; 
-		$is_upload=true;	
+		$is_upload_img=true;	
 	}
 	//お絵かきアップロード
-	if($pictmp2 && is_file($tempfile)){
+	if($is_painted_img && is_file($tempfile)){
 
 		$upfile=TEMP_DIR.$time.'.tmp';
 			copy($tempfile, $upfile);
 			chmod($upfile,0606);
 	}
 	$is_file_upfile=false;
-	if($is_upload||$pictmp2){
+	if($is_upload_img||$is_painted_img){
 		if(!is_file($upfile)){
 			return error($en?'This operation has failed.':'失敗しました。');
 		}
@@ -498,12 +498,12 @@ function post(){
 	$up_img_hash='';
 	if($is_file_upfile){
 
-		if($is_upload){//実体データの縮小
+		if($is_upload_img){//実体データの縮小
 			thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 		}	
 		//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
-		convert_andsave_if_smaller_png2webp($is_upload,$time.'.tmp',$time);
-		if($is_upload){//アップロード画像のファイルサイズが大きすぎる時は削除
+		convert_andsave_if_smaller_png2webp($is_upload_img,$time.'.tmp',$time);
+		if($is_upload_img){//アップロード画像のファイルサイズが大きすぎる時は削除
 			delete_file_if_sizeexceeds($upfile,$fp,$rp);
 		}
 
@@ -518,7 +518,7 @@ function post(){
 		//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 		$up_img_hash=substr(hash_file('sha256', $upfile), 0, 32);
 		
-		if(!$pictmp2){
+		if(!$is_painted_img){
 
 			foreach($chk_images as $line){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
@@ -542,7 +542,7 @@ function post(){
 	$pchext = '';
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-	if ($pictmp2 && $imgfile && ($pchext = check_pch_ext(TEMP_DIR.$picfile,['upload'=>true]))) {
+	if ($is_painted_img && $imgfile && ($pchext = check_pch_ext(TEMP_DIR.$picfile,['upload'=>true]))) {
 
 		$src = TEMP_DIR.$picfile.$pchext;
 		$dst = IMG_DIR.$time.$pchext;
@@ -1212,7 +1212,7 @@ function img_replace(){
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
 		return error($en? "Upload failed.\nThe file size is too large.":"アップロードに失敗しました。\nファイルサイズが大きすぎます。");
 	} 
-	$is_upload=false;
+	$is_upload_img=false;
 	$tool = '';
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK){
 
@@ -1222,7 +1222,7 @@ function img_replace(){
 		}
 
 		check_csrf_token();
-		$is_upload = true;
+		$is_upload_img = true;
 		$tool = 'upload';
 		$pwd = t((string)filter_input(INPUT_POST, 'pwd'));//アップロードの時はpostのパスワード
 
@@ -1233,7 +1233,7 @@ function img_replace(){
 	$postedtime='';
 	$repfind=false;
 	$hide_animation=false;
-	if(!$is_upload){
+	if(!$is_upload_img){
 		/*--- テンポラリ捜査 ---*/
 		$handle = opendir(TEMP_DIR);
 		while ($file = readdir($handle)) {
@@ -1258,13 +1258,13 @@ function img_replace(){
 		}
 		$tempfile=TEMP_DIR.$file_name.$imgext;
 	}
-	if($up_tempfile && $is_upload && !is_file($up_tempfile)){
+	if($up_tempfile && $is_upload_img && !is_file($up_tempfile)){
 		return error($en?'Please attach an image.':'画像を添付してください。');
 	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
 
-		if($is_upload){//該当記事が無い時はエラー
+		if($is_upload_img){//該当記事が無い時はエラー
 			return error($en? 'The article does not exist.':'記事がありません。');
 		} 
 		return location_paintcom();//該当記事が無い時は新規投稿。
@@ -1277,7 +1277,7 @@ function img_replace(){
 
 	if(empty($alllog_arr)){
 		closeFile($fp);
-		if($is_upload){//該当記事が無い時はエラー
+		if($is_upload_img){//該当記事が無い時はエラー
 			return error($en?'This operation has failed.':'失敗しました。');
 		} 
 		return location_paintcom();//該当記事が無い時は新規投稿。
@@ -1291,7 +1291,7 @@ function img_replace(){
 	if(empty($r_arr)){
 		closeFile($rp);
 		closeFile($fp);
-		if($is_upload){//該当記事が無い時はエラー
+		if($is_upload_img){//該当記事が無い時はエラー
 			return error($en?'This operation has failed.':'失敗しました。');
 		} 
 		return location_paintcom();//該当記事が無い時は新規投稿。
@@ -1302,14 +1302,14 @@ function img_replace(){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id===$_time && $no===$_no){
 
-			if(($is_upload) && ($_tool!=='upload')) {
+			if(($is_upload_img) && ($_tool!=='upload')) {
 
 				closeFile($rp);
 				closeFile($fp);
 				return error($en?'This operation has failed.':'失敗しました。');
 			}
 
-			if(($is_upload && $admindel) || ($pwd && password_verify($pwd,$_hash))){
+			if(($is_upload_img && $admindel) || ($pwd && password_verify($pwd,$_hash))){
 				$flag=true;
 				break;
 			}
@@ -1319,7 +1319,7 @@ function img_replace(){
 
 		closeFile($rp);
 		closeFile($fp);
-		if($is_upload){
+		if($is_upload_img){
 			return error($en?'This operation has failed.':'失敗しました。');
 		} 
 		return location_paintcom();
@@ -1328,7 +1328,7 @@ function img_replace(){
 	if(!$flag){
 		closeFile($rp);
 		closeFile($fp);
-		if($is_upload){//該当記事が無い時はエラー
+		if($is_upload_img){//該当記事が無い時はエラー
 			return error($en?'This operation has failed.':'失敗しました。');
 		} 
 		return location_paintcom();//該当記事が無い時は新規投稿。
@@ -1336,7 +1336,7 @@ function img_replace(){
 	$time=create_post_time();//ファイル名が重複しない投稿時刻を作成
 	$upfile=TEMP_DIR.$time.'.tmp';
 
-	if($is_upload && ($_tool==='upload') && ( $use_upload || $adminpost || $admindel) && is_file($up_tempfile)){
+	if($is_upload_img && ($_tool==='upload') && ( $use_upload || $adminpost || $admindel) && is_file($up_tempfile)){
 		$move_uploaded = move_uploaded_file($up_tempfile,$upfile);
 		if(!$move_uploaded){//アップロード成功なら続行
 			safe_unlink($up_tempfile);
@@ -1345,26 +1345,26 @@ function img_replace(){
 		//Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
 		check_jpeg_exif($upfile);
 	}
-	if(!$is_upload && $repfind && is_file($tempfile) && ($_tool !== 'upload')){
+	if(!$is_upload_img && $repfind && is_file($tempfile) && ($_tool !== 'upload')){
 		copy($tempfile, $upfile);
 	}
 
 	if(!is_file($upfile)){
 		closeFile($rp);
 		closeFile($fp);
-		if($is_upload){
+		if($is_upload_img){
 			return error($en?'This operation has failed.':'失敗しました。');
 		}
 		return location_paintcom();
 	} 
 	chmod($upfile,0606);
-	if($is_upload){//実体データの縮小
+	if($is_upload_img){//実体データの縮小
 		thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 	}	
 	//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
-	convert_andsave_if_smaller_png2webp($is_upload,$time.'.tmp',$time);
+	convert_andsave_if_smaller_png2webp($is_upload_img,$time.'.tmp',$time);
 
-	if($is_upload){//アップロード画像のファイルサイズが大きすぎる時は削除
+	if($is_upload_img){//アップロード画像のファイルサイズが大きすぎる時は削除
 		delete_file_if_sizeexceeds($upfile,$fp,$rp);
 	}
 
@@ -1389,16 +1389,16 @@ function img_replace(){
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_img_hash,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
 
-		if($is_upload && ($m2time === microtime2time($chk_time))){//投稿時刻の重複回避
+		if($is_upload_img && ($m2time === microtime2time($chk_time))){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
 			return error($en? 'Please wait a little.':'少し待ってください。');
 		}
-		if(!$is_upload && ((string)$time === (string)$chk_time)){
+		if(!$is_upload_img && ((string)$time === (string)$chk_time)){
 			$time=(string)($m2time+1).(string)substr($time,-6);
 		}
-		if(!$admindel && $is_upload && ($chk_log_img_hash && ($chk_log_img_hash === $up_img_hash))){
+		if(!$admindel && $is_upload_img && ($chk_log_img_hash && ($chk_log_img_hash === $up_img_hash))){
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
@@ -1418,7 +1418,7 @@ function img_replace(){
 	$pchext='';
 	//PCHファイルアップロード
 	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-	if (!$is_upload && $repfind && ($pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true]))) {
+	if (!$is_upload_img && $repfind && ($pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true]))) {
 		$src = TEMP_DIR . $file_name . $pchext;
 		$dst = IMG_DIR . $time . $pchext;
 		if(copy($src, $dst)){
@@ -1469,7 +1469,7 @@ function img_replace(){
 		}
 		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 		if(($id===$time_ && $no===$no_) &&
-		((($is_upload && $admindel) ||
+		((($is_upload_img && $admindel) ||
 		($pwd && password_verify($pwd,$hash_))))){
 			$alllog_arr[$i] = $newline;
 			$flag=true;
@@ -1478,7 +1478,7 @@ function img_replace(){
 			closeFile($rp);
 			closeFile($fp);
 			safe_unlink(IMG_DIR.$imgfile);
-			if($is_upload){//該当記事が無い時はエラー
+			if($is_upload_img){//該当記事が無い時はエラー
 				return error($en?'This operation has failed.':'失敗しました。');
 			} 
 			return paintcom();//該当記事が無い時は新規投稿。
@@ -1500,7 +1500,7 @@ function img_replace(){
 	safe_unlink($upfile);
 	safe_unlink(TEMP_DIR.$file_name.".dat");
 
-	if($is_upload){
+	if($is_upload_img){
 		return edit_form($time,$no);//編集画面にもどる
 	}
 	return header("Location: ./?resno={$no}&resid={$time}#{$time}");

@@ -297,7 +297,7 @@ function is_paint_tool_name($tool){
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line,$options=[]){
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
-	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_md5,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 
 	$time = basename($time);
 
@@ -627,7 +627,7 @@ function delete_res_cache () {
 }
 
 //pngをwebpに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
-function convert_andsave_if_smaller_png2webp($is_upload,$fname,$time){
+function convert_andsave_if_smaller_png2webp($is_upload_img,$fname,$time){
 	global $max_kb,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
 	$upfile=TEMP_DIR.basename($fname);
 
@@ -637,8 +637,8 @@ function convert_andsave_if_smaller_png2webp($is_upload,$fname,$time){
 	if(mime_content_type($upfile)!=="image/png" && !$max_kb_size_over){
 		return;//ファイルサイズが$max_kbを超えている時は形式にかかわらず処理続行
 	}
-	if(((!$is_upload && $filesize < ($max_file_size_in_png_format_paint * 1024))||	
-	($is_upload && $filesize < ($max_file_size_in_png_format_upload * 1024))) && !$max_kb_size_over){
+	if(((!$is_upload_img && $filesize < ($max_file_size_in_png_format_paint * 1024))||	
+	($is_upload_img && $filesize < ($max_file_size_in_png_format_upload * 1024))) && !$max_kb_size_over){
 		return;
 	}
 	//webp作成が可能ならwebpに、でなければjpegに変換する。

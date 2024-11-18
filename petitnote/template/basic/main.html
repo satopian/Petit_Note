@@ -28,13 +28,13 @@
 	<?php endif;?>
 <?php if($aikotoba):?>
 	<?php if($use_paint):?>
-		<span> [<a href="./?mode=paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
+		<span> [<a href="./?mode=paintcom" rel="nofollow"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
 	<?php endif;?>
 	<span>
 	<?php if($userdel || $admindel):?>
-			[<a href="./?mode=logout&page=<?=h($page)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
+			[<a href="./?mode=logout&page=<?=h($page)?>" rel="nofollow"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
 	<?php else:?>
-		[<a href="./?mode=userdel&page=<?=h($page)?>"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]
+		[<a href="./?mode=userdel&page=<?=h($page)?>" rel="nofollow"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]
 	<?php endif;?>
 <?php endif;?>
 	<a href="#bottom">▽</a>

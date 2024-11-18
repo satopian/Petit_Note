@@ -45,7 +45,7 @@ class misskey_note{
 		$find=false;
 		foreach($r_arr as $i =>$val){
 			$_line=explode("\t",trim($val));
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_hash_img,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
 			if($id===$time && $no===$_no){
 
 				$out[0][]=create_res($_line);
@@ -116,7 +116,7 @@ class misskey_note{
 
 			$line=explode("\t",trim($val));
 
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_hash_img,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 			if($id===$time && $no===$_no){
 			
 				if((!$admin || $verified!=='adminpost')&&(!$pwd||!password_verify($pwd,$hash))){
@@ -242,7 +242,8 @@ class misskey_note{
 
 		session_sta();
 		// セッションIDとユニークIDを結合
-		$sns_api_session_id = session_id() . uniqid() . mt_rand();
+		$sns_api_session_id = session_id() . random_bytes(16);
+
 		// SHA256ハッシュ化
 		$sns_api_session_id=hash('sha256', $sns_api_session_id);
 
