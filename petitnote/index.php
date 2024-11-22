@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.58.5';
+$petit_ver='v1.58.7';
 $petit_lot='lot.20241122';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -279,7 +279,6 @@ function post(){
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
-		check_open_no($resto);
 		$resto=(string)$resto;//(string)厳密な型
 		//描画時間を$userdataをもとに計算
 		$hide_painttime=(bool)filter_input(INPUT_POST,'hide_painttime',FILTER_VALIDATE_BOOLEAN);
@@ -1136,10 +1135,10 @@ function download_app_dat(){
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'id');//intの範囲外
 
-	check_open_no($no);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	$flag=false;
 	while ($line = fgets($rp)) {
@@ -1517,10 +1516,10 @@ function pchview(){
 	$imagefile = basename((string)filter_input(INPUT_GET, 'imagefile'));
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$id = pathinfo($imagefile, PATHINFO_FILENAME);
-	check_open_no($no);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	$flag=false;
 	while ($line = fgets($rp)) {
@@ -1588,10 +1587,10 @@ function confirmation_before_deletion ($edit_mode=''){
 	$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
 	$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
 
-	check_open_no($no);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	flock($rp, LOCK_EX);
 
@@ -1671,10 +1670,10 @@ function edit_form($id='',$no=''){
 		list($id,$no)=explode(",",trim($id_and_no));
 	}
 
-	check_open_no($no);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	flock($rp, LOCK_EX);
 
@@ -1944,10 +1943,10 @@ function del(){
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
-	check_open_no($no);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		return error($en? 'The article does not exist.':'記事がありません。');
 	}
+	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 
