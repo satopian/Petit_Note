@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.58.7';
+$petit_ver='v1.58.8';
 $petit_lot='lot.20241122';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -680,15 +680,15 @@ function post(){
 	global $send_email,$to_mail,$root_url,$boardname;
 
 	if($send_email){
-	//config.phpで未定義の時の初期値
-	//このままでよければ定義不要
-	defined('NOTICE_MAIL_NAME') or define('NOTICE_MAIL_NAME', '名前');
-	defined('NOTICE_MAIL_SUBJECT') or define('NOTICE_MAIL_SUBJECT', '記事題名');
-	defined('NOTICE_MAIL_IMG') or define('NOTICE_MAIL_IMG', '投稿画像');
-	defined('NOTICE_MAIL_THUMBNAIL') or define('NOTICE_MAIL_THUMBNAIL', 'サムネイル画像');
-	defined('NOTICE_MAIL_URL') or define('NOTICE_MAIL_URL', '記事URL');
-	defined('NOTICE_MAIL_REPLY') or define('NOTICE_MAIL_REPLY', 'へのレスがありました');
-	defined('NOTICE_MAIL_NEWPOST') or define('NOTICE_MAIL_NEWPOST', '新規投稿がありました');
+		//config.phpで未定義の時の初期値
+		//このままでよければ定義不要
+		defined('NOTICE_MAIL_NAME') or define('NOTICE_MAIL_NAME', '名前');
+		defined('NOTICE_MAIL_SUBJECT') or define('NOTICE_MAIL_SUBJECT', '記事題名');
+		defined('NOTICE_MAIL_IMG') or define('NOTICE_MAIL_IMG', '投稿画像');
+		defined('NOTICE_MAIL_THUMBNAIL') or define('NOTICE_MAIL_THUMBNAIL', 'サムネイル画像');
+		defined('NOTICE_MAIL_URL') or define('NOTICE_MAIL_URL', '記事URL');
+		defined('NOTICE_MAIL_REPLY') or define('NOTICE_MAIL_REPLY', 'へのレスがありました');
+		defined('NOTICE_MAIL_NEWPOST') or define('NOTICE_MAIL_NEWPOST', '新規投稿がありました');
 		$data['label_name']=NOTICE_MAIL_NAME;
 		$data['label_subject']=NOTICE_MAIL_SUBJECT;
 		$data['to'] = $to_mail;
@@ -784,8 +784,6 @@ function paint(){
 				return error($en?'This operation has failed.':'失敗しました。');
 			
 			}
-			$basename_pchup=basename($pchup);
-			$pchup=TEMP_DIR.$basename_pchup;//ファイルを開くディレクトリを固定
 			$mime_type = mime_content_type($pchup);
 			if(($pchext==="pch") && ($mime_type === "application/octet-stream") && is_neo($pchup)){
 			$app='neo';
@@ -801,6 +799,7 @@ function paint(){
 				$img_klecks = $pchup;
 			} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
 				$file_name=pathinfo($pchup,PATHINFO_FILENAME);
+				$basename_pchup=basename($pchup);
 				thumbnail_gd::thumb(TEMP_DIR,$basename_pchup,$time,$max_px,$max_px,['toolarge'=>true]);
 				list($picw,$pich) = getimagesize($pchup);
 				$imgfile = $pchup;
