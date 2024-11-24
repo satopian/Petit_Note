@@ -66,7 +66,7 @@ function aikotoba_required_to_view($required_flag=false){
 	if(!aikotoba_valid()){
 		$templete='aikotoba.html';
 		include __DIR__.'/'.$skindir.$templete;
-		exit;//return include では処理が止まらない。 
+		exit();//return include では処理が止まらない。 
 	}
 }
 
@@ -766,7 +766,7 @@ function error($str,$historyback=true){
 
 	$templete='error.html';
 	include __DIR__.'/'.$skindir.$templete;
-	exit;
+	exit();
 }
 //csrfトークンを作成
 function get_csrf_token(){
@@ -851,7 +851,7 @@ function check_AsyncRequest($upfile='') {
 	//Paintの画像差し換えの時はAsyncリクエストを継続
 	if(!$paint_picrep && ($http_x_requested_with || $asyncflag)){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
 		safe_unlink($upfile);
-		exit;
+		exit();
 	}
 }
 
@@ -1169,35 +1169,6 @@ function check_pch_ext ($filepath,$options = []) {
 	return '';
 }
 
-//GD版が使えるかチェック
-function gd_check(){
-	$check = ["ImageCreate","ImageCopyResized","ImageCreateFromJPEG","ImageJPEG","ImageDestroy"];
-
-	//最低限のGD関数が使えるかチェック
-	if(!(get_gd_ver() && (ImageTypes() & IMG_JPG))){
-		return false;
-	}
-	foreach ( $check as $cmd ) {
-		if(!function_exists($cmd)){
-			return false;
-		}
-	}
-	return true;
-}
-
-//gdのバージョンを調べる
-function get_gd_ver(){
-	if(function_exists("gd_info")){
-	$gdver=gd_info();
-	$phpinfo=(string)$gdver["GD Version"];
-	$end=strpos($phpinfo,".");
-	$phpinfo=substr($phpinfo,0,$end);
-	$length = strlen($phpinfo)-1;
-	$phpinfo=substr($phpinfo,$length);
-	return $phpinfo;
-	} 
-	return false;
-}
 // 古いスレッドへの投稿を許可するかどうか
 function check_elapsed_days ($postedtime) {
 	global $elapsed_days;

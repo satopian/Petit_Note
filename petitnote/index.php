@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.58.8';
-$petit_lot='lot.20241122';
+$petit_ver='v1.59.0';
+$petit_lot='lot.20241124';
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -697,8 +697,10 @@ function post(){
 		$data['title'] = $sub;
 		if($imgfile){
 			$data['option'][] = [NOTICE_MAIL_IMG,$root_url.IMG_DIR.$imgfile];//拡張子があったら
-		} 
-		if(is_file(THUMB_DIR.$time.'s.jpg')){
+		}
+		if(is_file(THUMB_DIR.$time.'s.webp')){
+			$data['option'][] = [NOTICE_MAIL_THUMBNAIL,$root_url.THUMB_DIR.$time.'s.webp'];
+		}elseif(is_file(THUMB_DIR.$time.'s.jpg')){
 			$data['option'][] = [NOTICE_MAIL_THUMBNAIL,$root_url.THUMB_DIR.$time.'s.jpg'];
 		} 
 		if($resto){
@@ -799,8 +801,7 @@ function paint(){
 				$img_klecks = $pchup;
 			} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
 				$file_name=pathinfo($pchup,PATHINFO_FILENAME);
-				$basename_pchup=basename($pchup);
-				thumbnail_gd::thumb(TEMP_DIR,$basename_pchup,$time,$max_px,$max_px,['toolarge'=>true]);
+				thumbnail_gd::thumb(TEMP_DIR,$pchup,$time,$max_px,$max_px,['toolarge'=>true]);
 				list($picw,$pich) = getimagesize($pchup);
 				$imgfile = $pchup;
 				$anime = false;
