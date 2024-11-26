@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241124;
+$functions_ver=20241126;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1017,7 +1017,7 @@ function init(){
 	check_dir(__DIR__."/webp");
 	check_dir(__DIR__."/template/cache");
 	if(!is_file(LOG_DIR.'alllog.log')){
-	file_put_contents(LOG_DIR.'alllog.log','',LOCK_EX);
+	file_put_contents(LOG_DIR.'alllog.log','',FILE_APPEND|LOCK_EX);
 	chmod(LOG_DIR.'alllog.log',0600);	
 	}
 }
