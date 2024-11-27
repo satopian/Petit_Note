@@ -1115,6 +1115,12 @@ function to_continue(){
 	$use_paint=!empty($count_arr_apps);
 	$select_app= $select_app ? ($count_arr_apps>1) : false;
 	$app_to_use=($use_paint && !$select_app && !$app_to_use) ? $arr_apps[0]: $app_to_use;
+	if(!$use_paint){
+		error($en ? "The paint feature is disabled." : "ペイント機能が無効です。");
+	}
+	if(!$aikotoba){
+		error($en ? "The secret word has not been entered." : "合言葉が入力されていません。");
+	}
 	// nsfw
 	$admindel=admindel_valid();
 	$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
