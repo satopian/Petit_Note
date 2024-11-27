@@ -267,8 +267,8 @@ function check_cont_pass(){
 
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'time');//intの範囲外
-	$pwd=t((string)filter_input(INPUT_POST, 'pwd'));//パスワードを取得
-	$pwd=$pwd ? $pwd : t((string)filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
+	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 
 	if(is_file(LOG_DIR."$no.log")){
 		check_open_no($no);
@@ -809,8 +809,8 @@ function check_same_origin(){
 	global $en,$usercode;
 
 	session_sta();
-	$c_usercode = t((string)filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
-	$session_usercode = isset($_SESSION['usercode']) ? t((string)$_SESSION['usercode']) : "";
+	$c_usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
+	$session_usercode = isset($_SESSION['usercode']) ? t($_SESSION['usercode']) : "";
 	if(!$c_usercode){
 		return error($en?'Cookie check failed.':'Cookieが確認できません。');
 	}
@@ -895,11 +895,11 @@ function Reject_if_NGword_exists_in_the_post(){
 
 	$admin =(adminpost_valid()||admindel_valid());
 
-	$name = t((string)filter_input(INPUT_POST,'name'));
-	$sub = t((string)filter_input(INPUT_POST,'sub'));
-	$url = t((string)filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
-	$com = t((string)filter_input(INPUT_POST,'com'));
-	$pwd = t((string)filter_input(INPUT_POST,'pwd'));
+	$name = t(filter_input(INPUT_POST,'name'));
+	$sub = t(filter_input(INPUT_POST,'sub'));
+	$url = t(filter_input(INPUT_POST,'url',FILTER_VALIDATE_URL));
+	$com = t(filter_input(INPUT_POST,'com'));
+	$pwd = t(filter_input(INPUT_POST,'pwd'));
 
 	if($admin || is_adminpass($pwd)){
 		return;

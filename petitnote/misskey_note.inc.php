@@ -18,10 +18,10 @@ class misskey_note{
 		$admindel=admindel_valid();
 
 		$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
-		$id = t((string)filter_input(INPUT_POST,'id'));//intの範囲外
-		$id = $id ? $id : t((string)filter_input(INPUT_GET,'id'));//intの範囲外
-		$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
-		$no = $no ? $no : t((string)filter_input(INPUT_GET,'no',FILTER_VALIDATE_INT));
+		$id = t(filter_input(INPUT_POST,'id'));//intの範囲外
+		$id = $id ? $id : t(filter_input(INPUT_GET,'id'));//intの範囲外
+		$no = t(filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
+		$no = $no ? $no : t(filter_input(INPUT_GET,'no',FILTER_VALIDATE_INT));
 		$misskey_note = (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
 		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 		$resmode = (bool)filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
@@ -160,16 +160,16 @@ class misskey_note{
 
 		$userip =t(get_uip());
 
-		$no = t((string)filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
-		$src_image = t((string)filter_input(INPUT_POST,'src_image'));
-		$com = t((string)filter_input(INPUT_POST,'com'));
-		$abbr_toolname = t((string)filter_input(INPUT_POST,'abbr_toolname'));
+		$no = t(filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
+		$src_image = t(filter_input(INPUT_POST,'src_image'));
+		$com = t(filter_input(INPUT_POST,'com'));
+		$abbr_toolname = t(filter_input(INPUT_POST,'abbr_toolname'));
 		$paintsec = filter_input(INPUT_POST,'paintsec',FILTER_VALIDATE_INT);
 		$hide_thumbnail = (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
 		$show_painttime = (bool)filter_input(INPUT_POST,'show_painttime',FILTER_VALIDATE_BOOLEAN);
 		$article_url_link = (bool)filter_input(INPUT_POST,'article_url_link',FILTER_VALIDATE_BOOLEAN);
 		$hide_content = (bool)filter_input(INPUT_POST,'hide_content',FILTER_VALIDATE_BOOLEAN);
-		$cw = t((string)filter_input(INPUT_POST,'cw'));
+		$cw = t(filter_input(INPUT_POST,'cw'));
 		if($hide_content && !$cw){
 			return error($en?"Content warning field is empty.":"注釈がありません。");
 		}
