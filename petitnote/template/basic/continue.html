@@ -27,12 +27,7 @@
 
 <!--  画像と描画時間  -->
 <div class="continue_img <?php if($hidethumbnail):?>hide_thumbnail<?php endif;?>">
-	<?php if(isset($picfile_webp) && $picfile_webp):?>
-		<picture><source srcset="<?=h($picfile_webp)?>" type="image/webp">
-	<?php endif;?>
 	<img src="<?=h($picfile)?>" width="<?=h($w)?>" height="<?=h($h)?>" alt="<?=h($sub)?> by <?=h($name)?> <?=h($picw)?>x<?=h($pich)?> - <?=($boardname)?>" title="<?=h($sub)?> by <?=h($name)?> <?=h($picw)?>x<?=h($pich)?> - <?=($boardname)?>">
-	<?php if(isset($picfile_webp) && $picfile_webp):?>
-		</picture>
 	<?php endif;?>
 
 </div>

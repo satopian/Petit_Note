@@ -1,8 +1,9 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.59.1';
-$petit_lot='lot.20241125';
+$petit_ver='v1.59.3';
+$petit_lot='lot.20241127';
+
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
@@ -1072,12 +1073,16 @@ function to_continue(){
 		return error($en? "Article older than {$elapsed_days} days cannot be edited.":"{$elapsed_days}日以上前の記事は編集できません。");
 	}
 	$hidethumbnail = (strpos($thumbnail,'hide_')!==false);
-	$thumbnail=(strpos($thumbnail,'thumbnail')!==false);
+	
+	$thumbnail_webp = ((strpos($thumbnail,'thumbnail_webp')!==false)) ? $time.'s.webp' : false; 
+	$thumbnail_jpg = (!$thumbnail_webp && strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
+
+	$thumbnail_img = $thumbnail_webp ? $thumbnail_webp : $thumbnail_jpg;
+	
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
 	$time = basename($time);
 	$imgfile = basename($imgfile);
-	$picfile = $thumbnail ? THUMB_DIR.$time.'s.jpg' : IMG_DIR.$imgfile;
-	$picfile_webp = $thumbnail && is_file(THUMB_DIR.$time.'s.webp') ? THUMB_DIR.$time.'s.webp' : "";
+	$picfile = $thumbnail_img ? THUMB_DIR.$thumbnail_img : IMG_DIR.$imgfile;
 	$pch_exists = in_array($_pchext,['hide_animation','.pch']);
 	$hide_animation_checkd = ($_pchext==='hide_animation');
 
