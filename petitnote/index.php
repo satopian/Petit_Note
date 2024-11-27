@@ -274,7 +274,9 @@ function post(){
 		//ユーザーデータから情報を取り出す
 		$userdata = file_get_contents(TEMP_DIR.$picfile.".dat");
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
-		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){return error($en? 'Posting failed.':'投稿に失敗しました。');}
+		if((!$ucode || ($ucode != $usercode)) && (!$uip || ($uip != $userip))){
+			return error($en? 'Posting failed.':'投稿に失敗しました。');
+		}
 		$tool= is_paint_tool_name($tool);
 		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
