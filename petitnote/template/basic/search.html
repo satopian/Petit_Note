@@ -95,7 +95,7 @@
 					<div class="s_posted_image<?php if($res['hide_thumbnail']):?> hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
 						<?php if($res['webpimg']):?>
 						<picture>
-							<source srcset="<?=h($res['webpimg'])?>">
+							<source srcset="<?=h($res['webpimg'])?>" type="image/webp">
 						<?php endif;?>
 							<?php if($res['thumbnail']):?>
 								<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?> <?=h($res['date'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($i>5):?>loading="lazy"<?php endif;?>>
