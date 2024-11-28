@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.60.0';
+$petit_ver='v1.60.1';
 $petit_lot='lot.20241127';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -870,7 +870,7 @@ function paint(){
 			$userip = get_uip();
 			$paintmode='picrep';
 			$id=$time;	//テンプレートでも使用。
-			$repcode = substr(hash('sha256', $no.$id.$userip.$pwd.random_bytes(16)), 0, 32);
+			$repcode = substr(hash('sha256', $no.$id.$userip.random_bytes(16)), 0, 32);
 		}
 	}
 
