@@ -212,7 +212,7 @@ switch($mode){
 
 //投稿処理
 function post(){
-	global $max_log,$max_res,$max_kb,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$mark_sensitive_image;
+	global $max_log,$max_res,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$mark_sensitive_image;
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 	global $usercode,$use_url_input_field;
 

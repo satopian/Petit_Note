@@ -173,7 +173,8 @@ class misskey_note{
 		if($hide_content && !$cw){
 			return error($en?"Content warning field is empty.":"注釈がありません。");
 		}
-		check_AsyncRequest();
+		check_AsyncRequest();//Asyncリクエストの時は処理を中断
+
 		$cw = $hide_content ? $cw : null;
 
 		$tool=switch_tool($abbr_toolname);
