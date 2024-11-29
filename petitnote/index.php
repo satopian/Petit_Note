@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.60.3';
+$petit_ver='v1.60.5';
 $petit_lot='lot.20241129';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -244,7 +244,7 @@ function post(){
 
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
-		$pwd = substr(hash('sha256', $userip.random_bytes(16)), 0, 15);
+		$pwd = substr(hash('sha256', random_bytes(16)), 0, 15);
 	}
 	if(strlen($pwd) < 6) return error($en? 'The password is too short. At least 6 characters.':'パスワードが短すぎます。最低6文字。');
 
