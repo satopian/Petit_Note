@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.60.7';
-$petit_lot='lot.20241204';
+$petit_ver='v1.61.0';
+$petit_lot='lot.20241206';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -843,10 +843,11 @@ function paint(){
 			$pchfile = IMG_DIR.$time.$_pch_ext;
 		}
 
+		$imgfile = IMG_DIR.$imgfile;
+
 		if($ctype=='img'){//画像から続き
 			$animeform = false;
 			$anime= false;
-			$imgfile = IMG_DIR.$imgfile;
 
 			if($_pch_ext==='.chi'){
 				$img_chi =IMG_DIR.$time.'.chi';
@@ -1038,7 +1039,7 @@ function to_continue(){
 
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_GET, 'id');//intの範囲外
-
+	$enableappselect = (string)filter_input(INPUT_GET, 'enableappselect');
 	$adminpost = adminpost_valid();
 
 	$flag = false;
@@ -1095,18 +1096,21 @@ function to_continue(){
 	$app_to_use = false;
 	$ctype_pch = false;
 	$download_app_dat=true;
+	$current_app = '';
 	if($pchext==='.pch'){
 		$ctype_pch = true;
 		$app_to_use = "neo";
+		$current_app = "PaintBBS NEO";
 	}elseif($pchext==='.chi'){
 		$app_to_use = 'chi';
+		$current_app = "ChickenPaint";
 	}elseif($pchext==='.psd'){
 		$app_to_use = 'klecks';
+		$current_app = "Klecks";
 	}else{
 		$select_app = true;
 		$download_app_dat=false;
 	}
-
 	//日記判定処理
 	$adminpost=adminpost_valid();
 	$adminmode = ($adminpost||admindel_valid());
@@ -1115,8 +1119,9 @@ function to_continue(){
 	$arr_apps=app_to_use();
 	$count_arr_apps=count($arr_apps);
 	$use_paint=!empty($count_arr_apps);
-	$select_app= $select_app ? ($count_arr_apps>1) : false;
-	$app_to_use=($use_paint && !$select_app && !$app_to_use) ? $arr_apps[0]: $app_to_use;
+	$select_app= ($select_app||$enableappselect) ? ($count_arr_apps>1) : false;
+	$app_to_use=($use_paint && !$app_to_use) ? $arr_apps[0]: $app_to_use;
+	$app_to_use = $select_app ? false : $app_to_use;
 	if(!$use_paint){
 		error($en ? "The paint feature is disabled." : "ペイント機能が無効です。");
 	}

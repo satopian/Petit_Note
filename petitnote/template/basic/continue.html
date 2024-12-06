@@ -45,9 +45,28 @@
 		</form>
 <?php endif;?>
 
+<?php if(!$select_app && $count_arr_apps>1):?>
+	<form action="./" method="get">
+		<span class="continue_menu">	<?php if($en):?>Current tool<?php else:?>現在のアプリ<?php endif;?>:<?=h($current_app)?></span>
+		<input type="hidden" name="mode" value="to_continue">
+		<input type="hidden" name="id" value="<?=h($time)?>">
+		<input type="hidden" name="no" value="<?=h($no)?>">
+		<input type="hidden" name="enableappselect" value="on">
+		<input type="submit" value="<?php if($en):?>Select another tool<?php else:?>別のアプリを選択する<?php endif;?>">
+	</form>	
+<?php endif;?>
+
 <!-- コンティニューフォーム欄 -->
 <form action="./" method="post" id="paint_forme" onsubmit="return res_form_submit(event,'paint_forme')">
 <div id="error_message_paintform"></div>
+<?php if($select_app):?>
+<div>
+	Tool:<select name="app" class="paint_select">
+<!-- ペイントアプリ選択のプルダウンメニューをインクルード -->
+<?php include __DIR__.'/parts/select_apps.html'?>
+</select>
+</div>
+<?php endif;?>
  <input type="hidden" name="mode" value="contpaint">
  <input type="hidden" name="anime" value="true">
  <input type="hidden" name="picw" value="<?=h($picw)?>">
@@ -81,12 +100,6 @@
 <?php endif;?>
  <br>
 
-<?php if($select_app):?>
-<select name="app" class="paint_select">
-<!-- ペイントアプリ選択のプルダウンメニューをインクルード -->
-<?php include __DIR__.'/parts/select_apps.html'?>
-</select>
-<?php endif;?>
 <?php if($app_to_use):?>
 <input type="hidden" name="app" value="<?=($app_to_use)?>">
 <?php endif;?>
