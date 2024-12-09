@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.61.1';
-$petit_lot='lot.20241208';
+$petit_ver='v1.62.2';
+$petit_lot='lot.20241209';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -17,7 +17,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	return die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20241124){
+if(!isset($functions_ver)||$functions_ver<20241209){
 	return die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -2240,7 +2240,12 @@ function search(){
 		$out[0][$i] = create_res($line,(['catalog' => true] + $txt_search));//$lineから、情報を取り出す
 
 			// マークダウン
-			$com= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;:\.,\*&@#\$%\(\)'\[\]]+)\)}","$1",$out[0][$i]['com']);
+			$pattern = "{\[((?:[^\[\]\\\\]|\\\\.)+?)\]\((https?://[^\s\)]+)\)}";
+			$com = preg_replace_callback($pattern, function($matches) {
+				// エスケープされたバックスラッシュを特定の文字だけ解除
+				return str_replace(['\\[', '\\]', '\\(', '\\)'], ['[', ']', '(', ')'], $matches[1]);
+			}, $out[0][$i]['com']);
+
 			$com=h(strip_tags($com));
 			$com=mb_strcut($com,0,180);
 			$out[0][$i]['com']=$com;

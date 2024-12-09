@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241126;
+$functions_ver=20241209;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -555,15 +555,28 @@ function com($str,$verified=false){
 	return nl2br($str,false);
 
 }
+
 //マークダウン記法のリンクをHTMLに変換
-function md_link($str,$verified=false){
-	if($verified){
-		$rel='rel="noopener noreferrer"';
-	}else{
-		$rel='rel="nofollow noopener noreferrer"';
-	}
-	$str= preg_replace("{\[([^\[\]\(\)]+?)\]\((https?://[\w!\?/\+\-_~=;:\.,\*&@#\$%\(\)'\[\]]+)\)}",'<a href="$2" target="_blank" '.$rel.'>$1</a>',$str);
-	
+function md_link($str, $verified = false) {
+	$rel = $verified ? 'rel="noopener noreferrer"' : 'rel="nofollow noopener noreferrer"';
+
+	// 正規表現パターンを使用してマークダウンリンクを検出
+	$pattern = "{\[((?:[^\[\]\\\\]|\\\\.)+?)\]\((https?://[^\s\)]+)\)}";
+
+	// 変換処理
+	$str = preg_replace_callback($pattern, function($matches) use ($rel) {
+			// エスケープされたバックスラッシュを特定の文字だけ解除
+			$text = str_replace(['\\[', '\\]', '\\(', '\\)'], ['[', ']', '(', ')'], $matches[1]);
+			$url = filter_var($matches[2], FILTER_VALIDATE_URL) ? $matches[2] : '';
+			// 変換されたHTMLリンクを返す
+			if(!$url){
+				 // URLが無効ならテキストだけ返す
+				return $text;
+			}
+			// URLが有効ならHTMLリンクを返す
+			return '<a href="'.$url.'" target="_blank" '.$rel.'>'.$text.'</a>';
+	}, $str);
+
 	return $str;
 }
 
