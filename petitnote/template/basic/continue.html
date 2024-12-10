@@ -47,12 +47,12 @@
 
 <?php if(!$select_app && $count_arr_apps>1):?>
 	<form action="./" method="get">
-		<span class="continue_menu">	<?php if($en):?>Current tool<?php else:?>現在のアプリ<?php endif;?>:<?=h($current_app)?></span>
+		<span class="continue_menu">	<?php if($en):?>Current tool<?php else:?>現在のツール<?php endif;?>:<?=h($current_app)?></span>
 		<input type="hidden" name="mode" value="to_continue">
 		<input type="hidden" name="id" value="<?=h($time)?>">
 		<input type="hidden" name="no" value="<?=h($no)?>">
 		<input type="hidden" name="enableappselect" value="on">
-		<input type="submit" value="<?php if($en):?>Select another tool<?php else:?>別のアプリを選択する<?php endif;?>">
+		<input type="submit" value="<?php if($en):?>Select another tool<?php else:?>別のツールを選択する<?php endif;?>">
 	</form>	
 <?php endif;?>
 
@@ -75,10 +75,10 @@
  <input type="hidden" name="time" value="<?=h($time)?>">
  <input type="hidden" name="imgfile" value="<?=h($imgfile)?>">
  <select name="ctype" class="paint_select">
-   <?php if($ctype_pch):?>
-   <option value="pch"><?php if($en):?>from animation<?php else:?>動画から続きを描く<?php endif;?></option>
-   <?php endif;?>
-   <option value="img"><?php if($en):?>from picture<?php else:?>画像から続きを描く<?php endif;?></option>
+	<?php if($ctype_pch):?>
+	<option value="pch"><?php if($en):?>from animation<?php else:?>動画から続きを描く<?php endif;?></option>
+	<?php endif;?>
+	<option value="img"><?php if($en):?>from picture<?php else:?>画像から続きを描く<?php endif;?></option>
 </select>
 <span class="continue_menu">
 <?php if($en):?>The image is a<?php else:?>画像は<?php endif;?> <select name="type" class="paint_select" id="select_post">

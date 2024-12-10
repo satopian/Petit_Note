@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 var Neo = function () {};
 
-Neo.version = "1.6.8";
+Neo.version = "1.6.9";
 Neo.painter;
 Neo.fullScreen = false;
 Neo.uploaded = false;
@@ -1261,15 +1261,6 @@ Neo.submit = function (board, blob, thumbnail, thumbnail2) {
               Neo.submitButton.enable();
               return alert(text.replace(/^error\n/m, ""));
             }
-            if (text !== "ok") {
-              Neo.submitButton.enable();
-              return alert(
-                errorMessage +
-                  Neo.translate(
-                    "投稿に失敗。時間を置いて再度投稿してみてください。"
-                  )
-              );
-            }
             var exitURL = Neo.getAbsoluteURL(board, Neo.config.url_exit);
             var responseURL = text.replace(/&amp;/g, "&");
 
@@ -1320,22 +1311,20 @@ Neo.submit = function (board, blob, thumbnail, thumbnail2) {
         );
       });
   };
-  if (Neo.config.neo_send_with_formdata == "true") {
-    if (pchFileNotAppended) {
-      if (
-        window.confirm(
-          Neo.translate(
-            "画像のみが送信されます。\nレイヤー情報は保持されません。"
-          )
-        )
-      ) {
-        postData(url, formData);
-      } else {
-        console.log("中止しました。");
-      }
-    } else {
-      postData(url, formData);
+
+  if (Neo.config.neo_confirm_layer_info_notsaved && (!thumbnail2 || pchFileNotAppended)) {
+    const isConfirmed = window.confirm(
+      Neo.translate("レイヤー情報は保存されません。\n続行してよろしいですか?")
+    );
+  
+    if (!isConfirmed) {
+      console.log("中止しました。");
+      return;  // ユーザーが続行しない場合、処理を中断
     }
+  }
+
+  if (Neo.config.neo_send_with_formdata == "true") {
+    postData(url, formData);
   } else {
     postData(url, body);
   }
@@ -1578,8 +1567,8 @@ Neo.dictionary = {
     "投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。":
       "It may be a WAF false positive.\nTry to draw a little more.",
     "ファイルが見当たりません。": "File not found",
-    "画像のみが送信されます。\nレイヤー情報は保持されません。":
-      "Only image will be sent.\nLayer information will not be retained.",
+    "レイヤー情報は保存されません。\n続行してよろしいですか?":
+    "Layer information will not be saved.\nIs that okay?",
   },
   enx: {
     やり直し: "Redo",
@@ -1641,8 +1630,8 @@ Neo.dictionary = {
     "投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。":
       "It may be a WAF false positive.\nTry to draw a little more.",
     "ファイルが見当たりません。": "File not found.",
-    "画像のみが送信されます。\nレイヤー情報は保持されません。":
-      "Only image will be sent.\nLayer information will not be retained.",
+    "レイヤー情報は保存されません。\n続行してよろしいですか?":
+    "Layer information will not be saved.\nIs that okay?",
   },
   es: {
     やり直し: "Rehacer",
@@ -1704,8 +1693,8 @@ Neo.dictionary = {
     "投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。":
       "Puede ser un falso positivo de WAF.\nIntenta dibujar un poco más.",
     "ファイルが見当たりません。": "Archivo no encontrado.",
-    "画像のみが送信されます。\nレイヤー情報は保持されません。":
-      "Sólo se enviará la imagen.\nNo se conservará la información de la capa.",
+    "レイヤー情報は保存されません。\n続行してよろしいですか?":
+    "La información de las capas no se guardará.\n¿Está bien?",
   },
 };
 
@@ -4942,7 +4931,7 @@ Neo.DrawToolBase.prototype.freeHandUpMoveHandler = function (oe) {
 };
 
 Neo.DrawToolBase.prototype.drawCursor = function (oe) {
-  //   if (oe.lineWidth <= 8) return;
+  // if (oe.lineWidth <= 8) return;
   var mx = oe.mouseX;
   var my = oe.mouseY;
   var d = oe.lineWidth;
