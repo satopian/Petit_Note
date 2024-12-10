@@ -151,21 +151,21 @@ document.getElementById('select_post').addEventListener('change', (e) => {
 	<?php endif;?>
 	}
 });
-<?php if(!$pch_exists):?>
-document.getElementById('paint_select').addEventListener('change', (e) => {
+const paint_select = document.getElementById('paint_select');
+const hideAnimation = document.getElementById('span_hide_animation');
 
-	const hide_animation=document.getElementById('span_hide_animation');
-	if(e.target.value === 'neo'){//新規投稿時
-		if(hide_animation){
-			hide_animation.style.display = "inline-block";
-		}
-	}else{
-				if(hide_animation){
-					hide_animation.style.display = "none";
-			}
+function toggleHideAnimation(isNeo) {
+	if (hideAnimation) {
+		hideAnimation.style.display = isNeo ? "inline-block" : "none";
 	}
+}
+// セレクトメニューの変更イベント
+paint_select.addEventListener('change', (e) => {
+	toggleHideAnimation(e.target.value==='neo');
 });
-<?php endif;?>
+
+// 初期値の設定を反映
+toggleHideAnimation(paint_select.value==='neo');
 </script>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
