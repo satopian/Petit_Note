@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.63.2';
+$petit_ver='v1.63.3';
 $petit_lot='lot.20241210';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -1080,11 +1080,12 @@ function to_continue(){
 	$thumbnail_jpg = (!$thumbnail_webp && strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
 
 	$thumbnail_img = $thumbnail_webp ? $thumbnail_webp : $thumbnail_jpg;
-	
+
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
 	$time = basename($time);
 	$imgfile = basename($imgfile);
 	$picfile = $thumbnail_img ? THUMB_DIR.$thumbnail_img : IMG_DIR.$imgfile;
+	$pch_exists = in_array($_pchext,['hide_animation','.pch']);
 	$hide_animation_checkd = ($_pchext==='hide_animation');
 
 	$pchext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
@@ -1097,7 +1098,6 @@ function to_continue(){
 	$current_app = '';
 	if($pchext==='.pch'){
 		$ctype_pch = true;
-		$pch_exists = true;
 		$app_to_use = "neo";
 		$current_app = "PaintBBS NEO";
 	}elseif($pchext==='.chi'){
