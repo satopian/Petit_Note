@@ -159,16 +159,16 @@ const toggleHideAnimation = (isNeo) => {
 		hideAnimation.style.display = isNeo ? "inline-block" : "none";
 	}
 }
-<?php if($select_app):?>
 document.addEventListener('DOMContentLoaded', () => {
 	// セレクトメニューの変更イベント
-	paint_select.addEventListener('change', (e) => {
+	if(paint_select){
+		paint_select.addEventListener('change', (e) => {
 		toggleHideAnimation(e.target.value==='neo');
-	});
-	// 初期値の設定を反映
-	toggleHideAnimation(paint_select.value==='neo');
+		});
+		// 初期値の設定を反映
+		toggleHideAnimation(paint_select.value==='neo');
+	}
 });
-<?php endif;?>
 </script>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
