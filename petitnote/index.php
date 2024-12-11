@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.63.3';
-$petit_lot='lot.20241210';
+$petit_ver='v1.63.5';
+$petit_lot='lot.20241211';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -756,7 +756,6 @@ function paint(){
 	$pchfile='';
 	$img_chi='';
 	$img_klecks='';
-	$anime=true;
 	$rep=false;
 	$paintmode='paintcom';
 
@@ -809,7 +808,6 @@ function paint(){
 				thumbnail_gd::thumb(TEMP_DIR,$pchup,$time,$max_px,$max_px,['toolarge'=>true]);
 				list($picw,$pich) = getimagesize($pchup);
 				$imgfile = $pchup;
-				$anime = false;
 			}else{
 				safe_unlink($pchup);
 				return error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
@@ -844,7 +842,6 @@ function paint(){
 		}
 
 		$imgfile = IMG_DIR.$imgfile;
-		$anime= true;//常にtrue
 
 		if($ctype=='img'){//画像から続き
 			if($_pch_ext==='.chi'){
@@ -926,6 +923,7 @@ function paint(){
 		case 'neo'://PaintBBS NEO
 
 			$tool='neo';
+			$anime= true;//常にtrue
 			$appw = $picw + 150;//NEOの幅
 			$apph = $pich + 172;//NEOの高さ
 			$appw = max($appw,450);//最低幅

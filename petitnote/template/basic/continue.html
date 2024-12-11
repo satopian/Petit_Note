@@ -154,18 +154,21 @@ document.getElementById('select_post').addEventListener('change', (e) => {
 const paint_select = document.getElementById('paint_select');
 const hideAnimation = document.getElementById('span_hide_animation');
 
-function toggleHideAnimation(isNeo) {
+const toggleHideAnimation = (isNeo) => {
 	if (hideAnimation) {
 		hideAnimation.style.display = isNeo ? "inline-block" : "none";
 	}
 }
-// セレクトメニューの変更イベント
-paint_select.addEventListener('change', (e) => {
-	toggleHideAnimation(e.target.value==='neo');
+<?php if($select_app):?>
+document.addEventListener('DOMContentLoaded', () => {
+	// セレクトメニューの変更イベント
+	paint_select.addEventListener('change', (e) => {
+		toggleHideAnimation(e.target.value==='neo');
+	});
+	// 初期値の設定を反映
+	toggleHideAnimation(paint_select.value==='neo');
 });
-
-// 初期値の設定を反映
-toggleHideAnimation(paint_select.value==='neo');
+<?php endif;?>
 </script>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
