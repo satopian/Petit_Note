@@ -17,7 +17,6 @@ tmp/
 cache/
 errorlog/
 
-
 # Composer
 /vendor
 /composer.lock
