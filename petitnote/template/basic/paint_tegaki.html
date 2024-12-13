@@ -23,14 +23,14 @@
 <body>
 <script>
 function showAlert(text) {
-  if (Tegaki.saveReplay) {
-    Tegaki.replayRecorder.start();
-  }
-  alert(text);
+	if (Tegaki.saveReplay) {
+		Tegaki.replayRecorder.start();
+	}
+	alert(text);
 }
 Tegaki.open({
 // when the user clicks on Finish
-  onDone: function() {
+	onDone: function() {
 	
 	//Petit Note 2021-2024 (c)satopian MIT Licence
 	//この箇所はさとぴあが作成したMIT Licenceのコードです。
@@ -83,26 +83,26 @@ Tegaki.open({
 const repData = () => {
 
 	// 画像差し換えに必要なフォームデータをセット
-    const formData = new FormData();
-    formData.append("mode", "picrep"); 
-    formData.append("no", "<?= h($no)?>"); 
-    formData.append("id", "<?= h($id)?>"); 
-    formData.append("enc_pwd", "<?= h($pwd)?>"); 
+	const formData = new FormData();
+	formData.append("mode", "picrep"); 
+	formData.append("no", "<?= h($no)?>"); 
+	formData.append("id", "<?= h($id)?>"); 
+	formData.append("enc_pwd", "<?= h($pwd)?>"); 
 	formData.append("repcode", "<?= h($repcode)?>");
 	formData.append("paint_picrep", true);
 
-    // 画像差し換え
-    fetch("./", {
-        method: 'POST',
+	// 画像差し換え
+	fetch("./", {
+		method: 'POST',
 		mode: 'same-origin',
 		headers: {
 			'X-Requested-With': 'tegaki'
 			,
 		},
-       body: formData
-    })
-    .then(response => {
-        if (response.ok) {
+		 body: formData
+	})
+	.then(response => {
+		if (response.ok) {
 			if (response.redirected) {
 				Tegaki.hide();//｢このサイトを離れますか?｣を解除
 				return window.location.href = response.url;
@@ -114,19 +114,19 @@ const repData = () => {
 					return window.location.href="./?mode=paintcom";
 				}
 			})
-        }
-    })
-    .catch(error => {
+		}
+	})
+	.catch(error => {
 		console.error('There was a problem with the fetch operation:', error);
 		Tegaki.hide();//｢このサイトを離れますか?｣を解除
 		return window.location.href="./?mode=paintcom";
-    });
+	});
 }
 <?php endif;?>
 
-    Tegaki.flatten().toBlob(
-      function(blob) {
-        // console.log(blob);
+	Tegaki.flatten().toBlob(
+		function(blob) {
+		// console.log(blob);
 		const tgkr = Tegaki.replayRecorder ? Tegaki.replayRecorder.toBlob() : null;
 		const formData = new FormData();
 		let DataSize = 1000;
@@ -144,31 +144,31 @@ const repData = () => {
 		formData.append("stime", <?=time();?>);
 		formData.append("resto", "<?=h($resto)?>");
 		postData("./?mode=saveimage&tool=tegaki", formData);
-      },
-      'image/png'
-    );
-  },
-  // (c)satopian MIT Licence ここまで
+		},
+		'image/png'
+	);
+	},
+	// (c)satopian MIT Licence ここまで
 
-  // when the user clicks on Cancel
-  onCancel: function() {
-    console.log('Closing...')
-  },
-  // initial canvas size
-  width: <?=h($picw)?>,
-  height: <?=h($pich)?>,
-  saveReplay: <?php if($imgfile):?>false<?php else:?>true<?php endif;?>,
+	// when the user clicks on Cancel
+	onCancel: function() {
+	console.log('Closing...')
+	},
+	// initial canvas size
+	width: <?=h($picw)?>,
+	height: <?=h($pich)?>,
+	saveReplay: <?php if($imgfile):?>false<?php else:?>true<?php endif;?>,
 
 });
 
 <?php if($imgfile):?>
 	var self = Tegaki;
-    var image = new Image();
-    image.onload = function() {
+	var image = new Image();
+	image.onload = function() {
 		self.activeLayer.ctx.drawImage(image, 0, 0);
 		TegakiLayers.syncLayerImageData(self.activeLayer);
-    };
-    image.src = "<?=h($imgfile)?>"; // image URL
+	};
+	image.src = "<?=h($imgfile)?>"; // image URL
 <?php endif;?>
 
 </script>

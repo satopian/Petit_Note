@@ -140,27 +140,27 @@
 //この箇所はさとぴあが作成したMIT Licenceのコードです。
 <?php if($rep):?>
 const repData = () => {
-    // 画像差し換えに必要なフォームデータをセット
-    const formData = new FormData();
-    formData.append("mode", "picrep"); 
-    formData.append("no", "<?= h($no)?>"); 
-    formData.append("id", "<?= h($id)?>"); 
-    formData.append("enc_pwd", "<?= h($pwd)?>"); 
+	// 画像差し換えに必要なフォームデータをセット
+	const formData = new FormData();
+	formData.append("mode", "picrep"); 
+	formData.append("no", "<?= h($no)?>"); 
+	formData.append("id", "<?= h($id)?>"); 
+	formData.append("enc_pwd", "<?= h($pwd)?>"); 
 	formData.append("repcode", "<?= h($repcode)?>");
 	formData.append("paint_picrep", true);
 
-    // 画像差し換え
-    fetch("./", {
-        method: 'POST',
+	// 画像差し換え
+	fetch("./", {
+		method: 'POST',
 		mode: 'same-origin',
 		headers: {
 			'X-Requested-With': 'klecks'
 			,
 		},
-       body: formData
-    })
-    .then(response => {
-        if (response.ok) {
+	   body: formData
+	})
+	.then(response => {
+		if (response.ok) {
 			if (response.redirected) {
 					return window.location.href = response.url;
 				}
@@ -170,12 +170,12 @@ const repData = () => {
 						return window.location.href="./?mode=paintcom";
 				}
 			})
-        }
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
+		}
+	})
+	.catch(error => {
+		console.error('There was a problem with the fetch operation:', error);
 		return window.location.href="./?mode=paintcom";
-    });
+	});
 }
 <?php endif;?>
 // (c)satopian MIT Licence ここまで

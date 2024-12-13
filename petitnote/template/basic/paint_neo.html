@@ -64,46 +64,46 @@ return;
 	});
 	//NEOの画像受信後の処理と画面移動
 	Neo.handleExit = ()=>{
-		<?php if($rep):?>
-    // 画像差し換えに必要なフォームデータをセット
-    const formData = new FormData();
-    formData.append("mode", "picrep"); 
-    formData.append("no", "<?= h($no)?>"); 
-    formData.append("id", "<?= h($id)?>"); 
-    formData.append("enc_pwd", "<?= h($pwd)?>"); 
-	formData.append("repcode", "<?= h($repcode)?>");
-	formData.append("paint_picrep", true);
+	<?php if($rep):?>
+		// 画像差し換えに必要なフォームデータをセット
+		const formData = new FormData();
+		formData.append("mode", "picrep"); 
+		formData.append("no", "<?= h($no)?>"); 
+		formData.append("id", "<?= h($id)?>"); 
+		formData.append("enc_pwd", "<?= h($pwd)?>"); 
+		formData.append("repcode", "<?= h($repcode)?>");
+		formData.append("paint_picrep", true);
 
-    // 画像差し換え
-    fetch("./", {
-        method: 'POST',
-		mode: 'same-origin',
-		headers: {
-			'X-Requested-With': 'PaintBBS'
-			,
-		},
-       body: formData
-    })
-    .then(response => {
-        if (response.ok) {
+		// 画像差し換え
+		fetch("./", {
+			method: 'POST',
+			mode: 'same-origin',
+			headers: {
+				'X-Requested-With': 'PaintBBS'
+				,
+			},
+			body: formData
+		})
+		.then(response => {
+			if (response.ok) {
 
-			if (response.redirected) {
-				return window.location.href = response.url;
-			}
-			response.text().then((text) => {
-				if (text.startsWith("error\n")) {
-						console.log(text);
-						return window.location.href = "./?mode=paintcom";
+				if (response.redirected) {
+					return window.location.href = response.url;
 				}
-			})
-        }
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-		return window.location.href = "./?mode=paintcom";
-    });
+				response.text().then((text) => {
+					if (text.startsWith("error\n")) {
+							console.log(text);
+							return window.location.href = "./?mode=paintcom";
+					}
+				})
+			}
+		})
+		.catch(error => {
+			console.error('There was a problem with the fetch operation:', error);
+			return window.location.href = "./?mode=paintcom";
+		});
 	<?php else:?>
-	return window.location.href = "./?mode=paintcom";
+		return window.location.href = "./?mode=paintcom";
 	<?php endif;?>
 	}
 
@@ -116,7 +116,7 @@ return;
 	<span class="nts_radiowrap"><?php if($en):?>Tool<?php else:?>ツールを<?php endif;?>
 		<input type="radio" name="1" id="1" onclick="Neo.setToolSide(true)" class="nts_radio"><label class="ntslabel" for="1"><?php if($en):?>Left<?php else:?>左へ<?php endif;?></label>
 		<input type="radio" name="1" id="2" onclick="Neo.setToolSide(false)" checked="checked" class="nts_radio"><label class="ntslabel" for="2"><?php if($en):?>Right<?php else:?>右へ<?php endif;?></label>
-			</span>
+	</span>
 </div>
 </nav>
 </header>
