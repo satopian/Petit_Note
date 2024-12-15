@@ -229,6 +229,7 @@ function set_darkmode(){
 function branch_destination_of_location(){
 	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	$resno=(int)filter_input(INPUT_POST,'resno',FILTER_VALIDATE_INT);
+	$resno= $resno ? $resno : (int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 	$catalog=(bool)filter_input(INPUT_POST,'catalog',FILTER_VALIDATE_BOOLEAN);
 	$search=(bool)filter_input(INPUT_POST,'search',FILTER_VALIDATE_BOOLEAN);
 	$paintcom=(bool)filter_input(INPUT_POST,'paintcom',FILTER_VALIDATE_BOOLEAN);
@@ -238,6 +239,9 @@ function branch_destination_of_location(){
 		return header('Location: ./?mode=paintcom');
 	}
 	if($resno){
+		if(!is_file(LOG_DIR.$resno.'.log')){
+			return header('Location: ./');
+		}
 		$res_catalog = $res_catalog ? '&res_catalog=on' : ''; 
 		return header('Location: ./?resno='.h($resno).$res_catalog);
 	}

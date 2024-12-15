@@ -2064,15 +2064,8 @@ function del(){
 	closeFile($fp);
 
 	unset($_SESSION['userdel']);
-	$resno=(string)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 	//多重送信防止
-	if((bool)filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN)){
-		if(!is_file(LOG_DIR.$resno.'.log')){
-			return header('Location: ./');
-		}
-		return header('Location: ./?resno='.$resno);
-	}
-	return header('Location: ./?page='.(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT));
+	branch_destination_of_location();
 }
 
 //シェアするserverの選択画面
