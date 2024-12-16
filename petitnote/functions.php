@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241209;
+$functions_ver=20241216;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1390,18 +1390,22 @@ function post_share_server(){
 	setcookie("sns_server_radio_cookie",$sns_server_radio_for_cookie, time()+(86400*30),"","",false,true);
 	setcookie("sns_server_direct_input_cookie",$sns_server_direct_input, time()+(86400*30),"","",false,true);
 	$share_url='';
-	if(in_array($sns_server_radio,["https://x.com","https://twitter.com"])){
-		$share_url="https://x.com/intent/post?text=";
-	}elseif($sns_server_radio){
+	if($sns_server_radio){
 		$share_url=$sns_server_radio."/share?text=";
 	}elseif($sns_server_direct_input){
 		$share_url=$sns_server_direct_input."/share?text=";
 	}
-	$share_url.=$encoded_t.'&url='.$encoded_u;
+	if(in_array($sns_server_radio,["https://x.com","https://twitter.com"])){
+		// $share_url="https://x.com/intent/post?text=";
+		$share_url="https://twitter.com/intent/tweet?text=";
+	}
 	if($sns_server_radio === "https://bsky.app"||!$sns_server_radio && ($sns_server_direct_input === "https://bsky.app")){
 		$share_url="https://bsky.app/intent/compose?text=";
-		$share_url.=$encoded_t.'%20'.$encoded_u;
 	}
+	if($sns_server_radio === "https://www.threads.net"||!$sns_server_radio && ($sns_server_direct_input === "https://www.threads.net")){
+		$share_url="https://www.threads.net/intent/post?text=";
+	}
+	$share_url.=$encoded_t.'%20'.$encoded_u;
 	$share_url = filter_var($share_url, FILTER_VALIDATE_URL) ? $share_url : ''; 
 	if(!$share_url){
 		error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");

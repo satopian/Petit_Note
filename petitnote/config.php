@@ -498,6 +498,7 @@ $servers =
 		
 	["X","https://x.com"],
 	["Bluesky","https://bsky.app"],
+	["Threads","https://www.threads.net"],
 	["pawoo.net","https://pawoo.net"],
 	["fedibird.com","https://fedibird.com"],
 	["misskey.io","https://misskey.io"],
@@ -508,11 +509,11 @@ $servers =
 ];
 // SNS共有の時に開くWindowsの幅と高さ
 
-//windowの幅 初期値 350
-$sns_window_width = 350;
+//windowの幅 初期値 600
+$sns_window_width = 600;
 
-//windowの高さ 初期値 490
-$sns_window_height = 490;
+//windowの高さ 初期値 600
+$sns_window_height = 600;
 
 //Misskey投稿機能設定
 
