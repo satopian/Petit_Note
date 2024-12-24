@@ -261,6 +261,7 @@ function branch_destination_of_location(){
 //非同期通信の時にpaintcom()を呼び出すためのリダイレクト
 function location_paintcom(){
 	header('Location: ./?mode=paintcom');
+	exit();
 }
 // コンティニュー認証
 function check_cont_pass(){
