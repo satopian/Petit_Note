@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241216;
+$functions_ver=20241225;
 //編集モードログアウト
 function logout(){
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -7,12 +7,12 @@ function logout(){
 	unset($_SESSION['admindel']);
 	unset($_SESSION['userdel']);
 	if($resno){
-		return header('Location: ./?resno='.$resno);
+		return redirect('./?resno='.$resno);
 	}
 	$page=(int)filter_input(INPUT_POST,'page',FILTER_VALIDATE_INT);
 	$page= $page ? $page : (int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 
-	return header('Location: ./?page='.$page);
+	return redirect('./?page='.$page);
 }
 //管理者モードログアウト
 function logout_admin(){
@@ -165,9 +165,9 @@ function userdel_mode(){
 	$_SESSION['userdel']='userdel_mode';
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	if($resno){
-		return header('Location: ./?resno='.$resno);
+		return redirect('./?resno='.$resno);
 	}
-	return header('Location: ./?page='.$page);
+	return redirect('./?page='.$page);
 }
 
 //sessionの確認
@@ -236,17 +236,17 @@ function branch_destination_of_location(){
 	$res_catalog=(bool)filter_input(INPUT_POST,'res_catalog',FILTER_VALIDATE_BOOLEAN);
 
 	if($paintcom){
-		return header('Location: ./?mode=paintcom');
+		return location_paintcom();
 	}
 	if($resno){
 		if(!is_file(LOG_DIR.$resno.'.log')){
-			return header('Location: ./');
+			return redirect('./');
 		}
 		$res_catalog = $res_catalog ? '&res_catalog=on' : ''; 
-		return header('Location: ./?resno='.h($resno).$res_catalog);
+		return redirect('./?resno='.h($resno).$res_catalog);
 	}
 	if($catalog){
-		return header('Location: ./?mode=catalog&page='.h($page));
+		return redirect('./?mode=catalog&page='.h($page));
 	}
 	if($search){
 		$radio=(int)filter_input(INPUT_POST,'radio',FILTER_VALIDATE_INT);
@@ -254,13 +254,17 @@ function branch_destination_of_location(){
 		$imgsearch=$imgsearch ? 'on' : 'off';
 		$q=(string)filter_input(INPUT_POST,'q');
 		
-		return header('Location: ./?mode=search&page='.h($page).'&imgsearch='.h($imgsearch).'&q='.h($q).'&radio='.h($radio));
+		return redirect('./?mode=search&page='.h($page).'&imgsearch='.h($imgsearch).'&q='.h($q).'&radio='.h($radio));
 	}
-	return header('Location: ./?page='.h($page));
+	return redirect('./?page='.h($page));
 }
 //非同期通信の時にpaintcom()を呼び出すためのリダイレクト
 function location_paintcom(){
-	header('Location: ./?mode=paintcom');
+	redirect('./?mode=paintcom');
+}
+//非同期通信の時にpaintcom()を呼び出すためのリダイレクト
+function redirect($url){
+	header("Location: {$url}");
 	exit();
 }
 // コンティニュー認証

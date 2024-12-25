@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.65.0';
-$petit_lot='lot.20241221';
+$petit_ver='v1.65.1';
+$petit_lot='lot.20241225';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -721,7 +721,7 @@ function post(){
 	}
 
 	//多重送信防止
-	return header("Location: ./?resno={$resno}&resid={$time}#{$time}");
+	return redirect("./?resno={$resno}&resid={$time}#{$time}");
 
 }
 //お絵かき画面
@@ -1518,7 +1518,7 @@ function img_replace(){
 	if($is_upload_img){
 		return edit_form($time,$no);//編集画面にもどる
 	}
-	return header("Location: ./?resno={$no}&resid={$time}#{$time}");
+	return redirect("./?resno={$no}&resid={$time}#{$time}");
 
 }
 
@@ -1924,7 +1924,7 @@ function edit(){
 	unset($_SESSION['userdel']);
 	delete_res_cache();
 
-	return header("Location: ./?resno={$no}&resid={$_time}#{$_time}");
+	return redirect("./?resno={$no}&resid={$_time}#{$_time}");
 
 }
 
