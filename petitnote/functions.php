@@ -1107,8 +1107,8 @@ function image_reduction_display($w,$h,$max_w,$max_h){
 }
 /**
  * 描画時間を計算
- * @param $starttime
- * @return string
+ * @param $psec
+ * @return array
  */
 function calcPtime ($psec) {
 
@@ -1140,7 +1140,7 @@ function calcPtime ($psec) {
 }
 /**
  * 残り時間を計算
- * @param $starttime
+ * @param $sec
  * @return string
  */
 function calc_remaining_time_to_close_thread ($sec) {
