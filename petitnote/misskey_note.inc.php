@@ -2,12 +2,12 @@
 //Petit Note 2021-2023 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20241002;
+$misskey_note_ver=20241225;
 
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
-	public static function before_misskey_note (){
+	public static function before_misskey_note (): void {
 
 		global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en,$deny_all_posts;
 		//管理者判定処理
@@ -31,7 +31,7 @@ class misskey_note{
 	
 		check_open_no($no);
 		if(!is_file(LOG_DIR."{$no}.log")){
-			return error($en? 'The article does not exist.':'記事がありません。');
+			error($en? 'The article does not exist.':'記事がありません。');
 		}
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
@@ -40,7 +40,7 @@ class misskey_note{
 
 		if(empty($r_arr)){
 			closeFile($rp);
-			return error($en?'This operation has failed.':'失敗しました。');
+			error($en?'This operation has failed.':'失敗しました。');
 		}
 		$find=false;
 		foreach($r_arr as $i =>$val){
@@ -57,7 +57,7 @@ class misskey_note{
 		}
 		if(!$find){
 			closeFile ($rp);
-			return error($en?'The article was not found.':'記事が見つかりません。');
+			error($en?'The article was not found.':'記事が見つかりません。');
 		}
 
 		closeFile ($rp);
@@ -74,10 +74,11 @@ class misskey_note{
 		$admin_pass= null;
 
 		$templete='before_misskey_note.html';
-		return include __DIR__.'/'.$skindir.$templete;
+		include __DIR__.'/'.$skindir.$templete;
+		exit();
 	}
 	//投稿済みの画像をMisskeyにNoteするための投稿フォーム
-	public static function misskey_note_edit_form(){
+	public static function misskey_note_edit_form(): void {
 
 		global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload;
 
@@ -99,7 +100,7 @@ class misskey_note{
 
 		check_open_no($no);
 		if(!is_file(LOG_DIR."{$no}.log")){
-			return error($en? 'The article does not exist.':'記事がありません。');
+			error($en? 'The article does not exist.':'記事がありません。');
 		}
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		flock($rp, LOCK_EX);
@@ -108,7 +109,7 @@ class misskey_note{
 
 		if(empty($r_arr)){
 			closeFile($rp);
-			return error($en?'This operation has failed.':'失敗しました。');
+			error($en?'This operation has failed.':'失敗しました。');
 		}
 
 		$flag=false;
@@ -120,7 +121,7 @@ class misskey_note{
 			if($id===$time && $no===$_no){
 			
 				if((!$admin || $verified!=='adminpost')&&(!$pwd||!password_verify($pwd,$hash))){
-					return error($en?'Password is incorrect.':'パスワードが違います。');
+					error($en?'Password is incorrect.':'パスワードが違います。');
 				}
 				if($admin||check_elapsed_days($time)){
 					$flag=true;
@@ -131,7 +132,7 @@ class misskey_note{
 
 		if(!$flag){
 			closeFile($rp);
-			return error($en?'This operation has failed.':'失敗しました。');
+			error($en?'This operation has failed.':'失敗しました。');
 		}
 		closeFile($rp);
 
@@ -149,11 +150,12 @@ class misskey_note{
 		$admin_pass= null;
 		// HTML出力
 		$templete='misskey_note_edit_form.html';
-		return include __DIR__.'/'.$skindir.$templete;
+		include __DIR__.'/'.$skindir.$templete;
+		exit();
 	}
 
 	//Misskeyに投稿するSESSIONデータを作成
-	public static function create_misskey_note_sessiondata(){
+	public static function create_misskey_note_sessiondata(): void {
 		global $en,$usercode,$root_url,$skindir,$petit_lot,$misskey_servers,$boardname;
 		
 		check_csrf_token();
@@ -171,7 +173,7 @@ class misskey_note{
 		$hide_content = (bool)filter_input(INPUT_POST,'hide_content',FILTER_VALIDATE_BOOLEAN);
 		$cw = t(filter_input(INPUT_POST,'cw'));
 		if($hide_content && !$cw){
-			return error($en?"Content warning field is empty.":"注釈がありません。");
+			error($en?"Content warning field is empty.":"注釈がありません。");
 		}
 		check_AsyncRequest();//Asyncリクエストの時は処理を中断
 
@@ -216,10 +218,11 @@ class misskey_note{
 		$admin_pass= null;
 		// HTML出力
 		$templete='misskey_server_selection.html';
-		return include __DIR__.'/'.$skindir.$templete;
+		include __DIR__.'/'.$skindir.$templete;
+		exit();
 	}
 
-	public static function create_misskey_authrequesturl(){
+	public static function create_misskey_authrequesturl(): void {
 		global $root_url;
 		global $en;
 
@@ -291,11 +294,11 @@ class misskey_note{
 			$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
 	
 		}
-		return header('Location:'.$Location);
+		redirect($Location);
 		
 	}
 	// Misskeyへの投稿が成功した事を知らせる画面
-	public static function misskey_success(){
+	public static function misskey_success(): void {
 		global $en,$skindir,$boardname,$petit_lot;
 		$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 		
@@ -303,11 +306,12 @@ class misskey_note{
 		
 		$misskey_server_url = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "";
 		if(!$misskey_server_url || !filter_var($misskey_server_url,FILTER_VALIDATE_URL) || !$no){
-			return header('Location: ./');
+			redirect('./');
 		}
 		$admin_pass= null;
 		$templete='misskey_success.html';
-		return include __DIR__.'/'.$skindir.$templete;
+		include __DIR__.'/'.$skindir.$templete;
+		exit();
 	}
 }
 

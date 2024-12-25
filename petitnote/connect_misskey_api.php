@@ -1,5 +1,5 @@
 <?php
-//Petit Note 2021-2023 (c)satopian MIT Licence
+//Petit Note 2021-2024 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 
 //Misskey APIに接続
@@ -7,12 +7,9 @@
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/functions.php');
 
-$petit_lot='20231031';
-
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
 ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
-$skindir='template/'.$skindir;
 
 session_sta();
 
@@ -22,14 +19,14 @@ if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))
 
 $baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "";
 if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
-	return error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
+	error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 }
 
 $noauth = (bool)filter_input(INPUT_GET,'noauth',FILTER_VALIDATE_BOOLEAN);
 if($noauth){
 	if((string)filter_input(INPUT_GET,'s_id') !== $_SESSION['sns_api_session_id']){
 
-		return error($en ? "Operation failed." :"失敗しました。" ,false);	
+		error($en ? "Operation failed." :"失敗しました。" ,false);	
 	}
 	return connect_misskey_api::create_misskey_note();
 }
@@ -39,8 +36,8 @@ connect_misskey_api::miauth_check();
 // 認証チェック
 class connect_misskey_api{
 
-	public static function miauth_check(){
-		global $en,$baseUrl,$skindir,$petit_lot;
+	public static function miauth_check(): void {
+		global $en,$baseUrl;
 		$sns_api_session_id = $_SESSION['sns_api_session_id'];
 		$checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
 
@@ -55,22 +52,22 @@ class connect_misskey_api{
 		curl_close($checkCurl);
 
 		if (!$checkResponse) {
-			return error($en ? "Authentication failed." :"認証に失敗しました。" ,false);	
+			error($en ? "Authentication failed." :"認証に失敗しました。" ,false);	
 		}
 
 		$responseData = json_decode($checkResponse, true);
 		if(!isset($responseData['token'])){
-			return error($en ? "Authentication failed." :"認証に失敗しました。");
+			error($en ? "Authentication failed." :"認証に失敗しました。");
 		}
 		$accessToken = $responseData['token'];
 		$_SESSION['accessToken']=$accessToken;
 		$user = $responseData['user'];
-		return	self::create_misskey_note();
+		self::create_misskey_note();
 	}
 
-	public static function create_misskey_note(){
+	public static function create_misskey_note(): void {
 		
-		global $en,$baseUrl,$root_url,$skindir,$petit_lot;
+		global $en,$baseUrl,$root_url;
 		
 		$accessToken = isset($_SESSION['accessToken']) ? $_SESSION['accessToken'] : "";
 
@@ -83,10 +80,10 @@ class connect_misskey_api{
 		$imagePath = __DIR__.'/src/'.$src_image;
 
 		if(!is_file($imagePath)){
-			return error($en ? "Image does not exist." : "画像がありません。" ,false);
+			error($en ? "Image does not exist." : "画像がありません。" ,false);
 		};
 		if (!get_image_type($imagePath)) {
-			return error($en? "This file is an unsupported format.":"対応していないファイル形式です。" ,false);
+			error($en? "This file is an unsupported format.":"対応していないファイル形式です。" ,false);
 		}
 
 		$uploadUrl = $baseUrl . "/api/drive/files/create";
@@ -111,7 +108,7 @@ class connect_misskey_api{
 		// var_dump($uploadResponse);
 		if (!$uploadResponse) {
 			// var_dump($uploadResponse);
-			return error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" ,false);
+			error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" ,false);
 		}
 
 		// アップロードしたファイルのIDを取得
@@ -121,7 +118,7 @@ class connect_misskey_api{
 
 		if(!$fileId){
 			// var_dump($responseData);
-			return error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" ,false);
+			error($en ? "Failed to upload the image." : "画像のアップロードに失敗しました。" ,false);
 		}
 
 		// ファイルの更新
@@ -148,14 +145,14 @@ class connect_misskey_api{
 		curl_close($updateCurl);
 
 		if (!$updateResponse) {
-			return error($en ? "Failed to update the file." : "ファイルの更新に失敗しました。" ,false);
+			error($en ? "Failed to update the file." : "ファイルの更新に失敗しました。" ,false);
 		}
 		// var_dump($updateResponse);
 
 		$uploadResult = json_decode($uploadResponse, true);
 
 		if (!$fileId) {
-			return error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
+			error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
 		}
 			
 		sleep(10);
@@ -205,17 +202,14 @@ class connect_misskey_api{
 				unset($_SESSION['sns_api_val']);
 				unset($_SESSION['userdel']);
 
-				// $templete='misskey_success.html';
-				// return include $skindir.$templete;
-									
 				// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult);
-				return header('Location: '.$root_url.'?mode=misskey_success&no='.$no);
+				redirect($root_url.'?mode=misskey_success&no='.$no);
 			} 
 			else {
-				return error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
+				error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
 				}
 		} else {
-			return error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
+			error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
 		}
 				// var_dump($uploadResponse);
 						// unset($_SESSION['sns_api_val']);

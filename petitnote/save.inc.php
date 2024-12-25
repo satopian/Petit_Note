@@ -2,7 +2,7 @@
 //Petit Note 2021-2024 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20240217;
+$save_inc_ver=20241225;
 class image_save{
 
 	private $security_timer,$imgfile,$en,$count,$errtext,$session_usercode; // プロパティとして宣言
@@ -24,7 +24,7 @@ class image_save{
 
 
 	if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
-		return header( "Location: ./ ") ;
+		redirect("./ ");
 	}
 
 	$lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -39,7 +39,7 @@ class image_save{
 	
 	}
 
-	public function save_klecks(){
+	public function save_klecks(): void { 
 
 		$this->error_type="klecks";
 
@@ -57,7 +57,7 @@ class image_save{
 		die("ok");
 
 	}
-	public function save_neo(){
+	public function save_neo(): void {
 
 		$this->error_type="neo";
 
@@ -83,7 +83,7 @@ class image_save{
 		die("ok");
 	}
 
-	public function save_chickenpaint(){
+	public function save_chickenpaint(): void {
 
 		$this->error_type="chi";
 		$this->tool = 'chi';
@@ -99,13 +99,13 @@ class image_save{
 		die("CHIBIOK\n");
 	}
 
-	private function check_async_request(){
+	private function check_async_request(): void {
 		if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
 			$this->error_msg($this->en ? "The post has been rejected." : "拒絶されました。");
 		}
 	}
 
-	private function check_security(){
+	private function check_security(): void {
 
 		$this->check_async_request();
 
@@ -136,7 +136,7 @@ class image_save{
 		}
 	}
 
-	private function put_user_dat(){
+	private function put_user_dat(): void {
 
 		$time=time();
 		$u_ip = get_uip();
@@ -167,7 +167,7 @@ class image_save{
 
 	}
 					
-	private function move_uploaded_image(){
+	private function move_uploaded_image(): void {
 
 		if(!isset ($_FILES["picture"]) || $_FILES['picture']['error'] != UPLOAD_ERR_OK) {
 			$this->error_msg($this->en ? "Your picture upload failed!\nPlease try again!" : "投稿に失敗。\n時間を置いて再度投稿してみてください。");
@@ -205,7 +205,7 @@ class image_save{
 		chmod(TEMP_DIR.$this->imgfile.'.png',PERMISSION_FOR_DEST);
 	}
 
-	private function move_uploaded_chi(){
+	private function move_uploaded_chi(): void {
 		if(isset($_FILES['chibifile']) && ($_FILES['chibifile']['error'] == UPLOAD_ERR_OK)){
 			if(mime_content_type($_FILES['chibifile']['tmp_name'])==="application/octet-stream"){
 				if(!SIZE_CHECK || ($_FILES['chibifile']['size'] < (PSD_MAX_KB * 1024))){
@@ -218,7 +218,7 @@ class image_save{
 			}
 		}
 	}
-	private function move_uploaded_psd(){
+	private function move_uploaded_psd(): void {
 		if(isset($_FILES['psd']) && ($_FILES['psd']['error'] == UPLOAD_ERR_OK)){
 			if(mime_content_type($_FILES['psd']['tmp_name'])==="image/vnd.adobe.photoshop"){
 				if(!SIZE_CHECK || ($_FILES['psd']['size'] < (PSD_MAX_KB * 1024))){
@@ -242,7 +242,7 @@ class image_save{
 			}
 		}
 	}
-	private function move_uploaded_pch(){
+	private function move_uploaded_pch(): void {
 		if(isset($_FILES['pch']) && ($_FILES['pch']['error'] == UPLOAD_ERR_OK)){
 			if(mime_content_type($_FILES['pch']['tmp_name'])==="application/octet-stream"){
 				if(!SIZE_CHECK || ($_FILES['pch']['size'] < (PSD_MAX_KB * 1024))){
@@ -256,7 +256,7 @@ class image_save{
 		}
 	}
 
-	private function error_msg($message) {
+	private function error_msg($message): void {
 		switch ($this->error_type){
 			case "neo":
 				$errtext="error\n";
