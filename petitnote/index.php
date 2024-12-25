@@ -1,23 +1,23 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.65.1';
+$petit_ver='v1.65.2';
 $petit_lot='lot.20241225';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
 
-if (version_compare(PHP_VERSION, '7.0.0', '<')) {
-	die($en? "Error. PHP version 7.0.0 or higher is required for this program to work. <br>\n(Current PHP version:".PHP_VERSION.")":
-		"エラー。本プログラムの動作には PHPバージョン 7.0.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
+if (version_compare(PHP_VERSION, '7.1.0', '<')) {
+	die($en? "Error. PHP version 7.1.0 or higher is required for this program to work. <br>\n(Current PHP version:".PHP_VERSION.")":
+		"エラー。本プログラムの動作には PHPバージョン 7.1.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
 	);
 }
 if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20241216){
+if(!isset($functions_ver)||$functions_ver<20241225){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');

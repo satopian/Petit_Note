@@ -28,7 +28,7 @@ class misskey_note{
 		$postpage = (int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 		$postresno = (int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
 		$postresno = $postresno ? $postresno : false; 
-	
+
 		check_open_no($no);
 		if(!is_file(LOG_DIR."{$no}.log")){
 			error($en? 'The article does not exist.':'記事がありません。');
@@ -142,7 +142,7 @@ class misskey_note{
 
 		$resno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
 		$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-	
+
 		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
 		$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
@@ -208,7 +208,7 @@ class misskey_note{
 			["misskey.delmulin.com","https://misskey.delmulin.com"],
 			["side.misskey.productions","https://side.misskey.productions"],
 			["mk.shrimpia.network","https://mk.shrimpia.network"],
-				
+
 		];
 		$misskey_servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
 

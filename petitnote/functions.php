@@ -531,7 +531,7 @@ function t($str): string {
 	if(!$str){
 		return '';
 	}
-	return str_replace("\t","",$str);
+	return str_replace("\t","",(string)$str);
 }
 //タグ除去
 function s($str): string {
@@ -541,7 +541,7 @@ function s($str): string {
 	if(!$str){
 		return '';
 	}
-	return strip_tags($str);
+	return strip_tags((string)$str);
 }
 //エスケープ
 function h($str) :string{

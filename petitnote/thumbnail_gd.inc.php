@@ -77,7 +77,7 @@ class thumbnail_gd {
 			}else{
 				if(!$outfile = self::createThumbnailImage($im_out, $time, $options)){
 					return null;
-				}
+			}
 		}
 		
 		// 作成したイメージを破棄
@@ -132,31 +132,31 @@ class thumbnail_gd {
 		switch ($mime_type) {
 			case "image/gif";
 				if(!function_exists("ImageCreateFromGIF")){//gif
-					return;
+					return null;
 				}
 					$im_in = @ImageCreateFromGIF($fname);
-					if(!$im_in)return;
+					if(!$im_in)return null;
 				break;
 			case "image/jpeg";
 				$im_in = @ImageCreateFromJPEG($fname);//jpg
-					if(!$im_in)return;
+					if(!$im_in)return null;
 				break;
 			case "image/png";
 				if(!function_exists("ImageCreateFromPNG")){//png
-					return;
+					return null;
 				}
 				$im_in = @ImageCreateFromPNG($fname);
-					if(!$im_in)return;
+					if(!$im_in)return null;
 				break;
 			case "image/webp";
 				if(!function_exists("ImageCreateFromWEBP")){//webp
-					return;
+					return null;
 				}
 					$im_in = @ImageCreateFromWEBP($fname);
-					if(!$im_in)return;
+					if(!$im_in)return null;
 				break;
 
-			default : return;
+			default : return null;
 		}
 		return $im_in;
 	}
