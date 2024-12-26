@@ -3,7 +3,7 @@
 // https://paintbbs.sakura.ne.jp/
 // originalscript (C)SakaQ 2005 http://www.punyu.net/php/
 
-$thumbnail_gd_ver=20241225;
+$thumbnail_gd_ver=20241226;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 class thumbnail_gd {
 
@@ -163,7 +163,7 @@ class thumbnail_gd {
 
 	//縮小した画像で上書き
 	private static function overwriteResizedImage($im_out, $fname, $mime_type): ?string {
-		$outfile=$fname;
+		$outfile=(string)$fname;
 		//本体画像を縮小
 		switch ($mime_type) {
 			case "image/gif";
@@ -172,28 +172,27 @@ class thumbnail_gd {
 				}else{
 					ImageJPEG($im_out, $outfile,98);
 				}
-					break;
+				return $outfile;
 			case "image/jpeg";
 				ImageJPEG($im_out, $outfile,98);
-				break;
+				return $outfile;
 			case "image/png";
 				if(function_exists("ImagePNG")){
 					ImagePNG($im_out, $outfile,3);
 				}else{
 					ImageJPEG($im_out, $outfile,98);
 				}
-					break;
+				return $outfile;
 			case "image/webp";
 				if(function_exists("ImageWEBP")){
 					ImageWEBP($im_out, $outfile,98);
 				}else{
 					ImageJPEG($im_out, $outfile,98);
 				}
-					break;
+				return $outfile;
 
 				default : return null;
 
-			return $outfile;
 		}
 	}
 	//サムネイル作成
