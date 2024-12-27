@@ -262,7 +262,7 @@ function branch_destination_of_location(): void {
 function location_paintcom(): void {
 	redirect('./?mode=paintcom');
 }
-//非同期通信の時にpaintcom()を呼び出すためのリダイレクト
+//リダイレクト
 function redirect($url): void {
 	header("Location: {$url}");
 	exit();
