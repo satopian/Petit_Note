@@ -228,9 +228,9 @@ $only_admin_can_reply = false;
 $set_nsfw = false;
 
 // 年齢確認を必須にする
-// する: true しない: false
-// する: trueで掲示板のすべてのコンテンツの閲覧に年齢確認確認が必要になります。
+// する: trueで掲示板のすべてのコンテンツの閲覧に年齢確認が必要になります。
 // 年齢確認ページ以外のコンテンツは検索エンジンから認識されなくなります。
+// する: true しない: false
 
 // $age_check_required_to_view = true;
 $age_check_required_to_view = false;
@@ -258,8 +258,8 @@ $nsfw_checked = true;
 // 投稿時の｢閲覧注意に設定する｣のチェックボックスは表示されません。
 // する: true しない: false
 
-$set_all_images_to_nsfw = true;
-// $set_all_images_to_nsfw = false;
+// $set_all_images_to_nsfw = true;
+$set_all_images_to_nsfw = false;
 
 // 描画時間非表示の設定
 // する: trueで投稿時にペイント時間の表示/非表示を切り替える事ができるようになります。

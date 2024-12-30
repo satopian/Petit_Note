@@ -12,7 +12,7 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($out[0][0]['no'])?>">
 <!-- 閲覧注意 またはNSFWが設定されている時は ogp imageを表示しない -->
-<?php if(!((isset($set_nsfw)&&$set_nsfw)||$out[0][0]['hide_thumbnail'])):?>
+<?php if(!((isset($set_nsfw)&&$set_nsfw)||$out[0][0]['hide_thumbnail']||$set_all_images_to_nsfw)):?>
 <!-- thumbnail -->
 <?php if($out[0][0]['thumbnail']):?>
 <meta property="og:image" content="<?=h($root_url)?>thumbnail/<?=h($out[0][0]['thumbnail'])?>">

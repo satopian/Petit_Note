@@ -80,7 +80,7 @@ function age_check(): void {
 
 	$agecheck_passed = (bool)filter_input(INPUT_POST,'agecheck_passed',FILTER_VALIDATE_BOOLEAN);
 	if($agecheck_passed){
-		setcookie("agecheck_passed",$aikotoba, time()+(86400*30),"","",false,true);//1ヶ月
+		setcookie("agecheck_passed","1", time()+(86400*30),"","",false,true);//1ヶ月
 	}
 	// 処理が終了したらJavaScriptでリロード
 }
@@ -92,6 +92,7 @@ function age_check_required_to_view(): void {
 	$underage_submit_url = $underage_submit_url ?? 'https://www.google.com/';
 
 	if(!$age_check_required_to_view){
+		setcookie("agecheck_passed","0", time()+(86400*30),"","",false,true);//1ヶ月
 	return;
 	}
 

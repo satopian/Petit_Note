@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.66.1';
+$petit_ver='v1.66.2';
 $petit_lot='lot.20241230';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -88,8 +88,8 @@ $password_require_to_continue = isset($password_require_to_continue) ? (bool)$pa
 $subject_input_required = isset($subject_input_required) ? $subject_input_required : false;
 $display_search_nav = isset($display_search_nav) ? $display_search_nav : false;
 $switch_sns = isset($switch_sns) ? $switch_sns : true;
-$sns_window_width = isset($sns_window_width) ? (int)$sns_window_width : 800;
-$sns_window_height = isset($sns_window_height) ? (int)$sns_window_height : 800;
+$sns_window_width = isset($sns_window_width) ? (int)$sns_window_width : 600;
+$sns_window_height = isset($sns_window_height) ? (int)$sns_window_height : 600;
 $use_misskey_note = isset($use_misskey_note) ? $use_misskey_note : true;
 $sort_comments_by_newest = isset($sort_comments_by_newest) ? $sort_comments_by_newest : false;
 $pmin_w = isset($pmin_w) ? $pmin_w : 300;//幅
@@ -2521,7 +2521,7 @@ function view(): void {
 function res (): void {
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
 	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary,$nsfw_checked;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw;
 
 	aikotoba_required_to_view();
 
