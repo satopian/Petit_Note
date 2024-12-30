@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<?php include __DIR__.'/parts/html.html';?>
+<head>
+	<meta charset="UTF-8">
+	<meta name="robots" content="noindex,nofollow">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<?php include __DIR__.'/parts/head_preload_css_js.html';?>
+<link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
+<title><?=h($boardname)?></title> 
+</head>
+<body>
+<div class="container" id="top">
+	<div class="mainform">
+	<h2 class="article_title"><?php if($en):?>Age Verification<?php else:?>年齢確認<?php endif;?></h2>
+	<p><?php if($en):?>Are you 18 or older?<?php else:?>あなたは18才以上ですか？<?php endif;?></p>
+
+<form action="./" method="post" class="aikotoba" id="age_check" onsubmit="return age_check(event)">
+<input type="submit" value="<?php if($en):?>Yes, 18 or older<?php else:?>はい18才以上です。<?php endif;?>">
+</form>
+<form action="<?=h($underage_submit_url)?>" class="aikotoba">
+<input type="submit" value="<?php if($en):?>No, under 18<?php else:?>いいえ18才未満です。<?php endif;?>">
+</form>
+</div>
+</div>
+<?php include __DIR__.'/parts/footer_js.html';?>
+</body>
+</html>

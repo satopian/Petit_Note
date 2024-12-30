@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2024
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.65.3';
-$petit_lot='lot.20241229';
+$petit_ver='v1.66.0';
+$petit_lot='lot.20241230';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -169,6 +169,8 @@ switch($mode){
 		return adminpost();
 	case 'aikotoba':
 		return aikotoba();
+	case 'age_check':
+		return age_check();
 	case 'view_nsfw':
 		return view_nsfw();
 	case 'set_nsfw_show_hide':

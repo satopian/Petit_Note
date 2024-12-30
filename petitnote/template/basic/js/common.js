@@ -153,6 +153,18 @@ const view_nsfw = (event) => {
 	}
 }
 
+//年齢確認ボタンを押下するまで表示しない
+const age_check = (event) => {
+	const form = document.getElementById("age_check");
+	if (form) {
+		event.preventDefault(); // 通常フォームの送信を中断
+		const formData = new FormData();
+		formData.append('mode', 'age_check');
+		formData.append('agecheck_passed', 'on');
+		postFormAndReload(formData);
+	}
+}
+
 //閲覧注意画像を隠す/隠さない
 const set_nsfw_show_hide = document.getElementById("set_nsfw_show_hide");
 if(set_nsfw_show_hide){

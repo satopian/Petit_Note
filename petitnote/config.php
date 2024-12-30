@@ -227,6 +227,17 @@ $only_admin_can_reply = false;
 // $set_nsfw = true;
 $set_nsfw = false;
 
+//年齢確認を必須にする
+// する: true しない: false
+//する: trueで掲示板のすべてのコンテンツの閲覧に年齢確認確認が必要になります。
+//検索エンジンからも認識されなくなります。
+
+// $age_check_required_to_view = true;
+$age_check_required_to_view = false;
+
+//｢18才未満です。｣を押した時のリンク先
+$underage_submit_url="https://www.google.com/";
+
 // 閲覧注意を設定する
 //する: trueに設定すると閲覧注意の設定ができるようになります。閲覧注意画像にぼかしが入ります。
 // する: true しない: false
@@ -395,6 +406,7 @@ $use_aikotoba=false;
 // 掲示板の閲覧に合言葉を必須にする
 // する: true しない: false
 // する: trueで掲示板のすべてのコンテンツの閲覧に合言葉が必要になります。
+// 検索エンジンからも認識されなくなります。
 
 // $aikotoba_required_to_view=true;
 $aikotoba_required_to_view=false;
