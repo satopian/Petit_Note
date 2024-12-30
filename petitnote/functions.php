@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20241229;
+$functions_ver=20241230;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -342,7 +342,7 @@ function is_paint_tool_name($tool): string {
 
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line,$options=[]): array {
-	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image;
+	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 
 	$time = basename($time);
@@ -362,6 +362,7 @@ function create_res($line,$options=[]): array {
 
 	$anime = in_array($pchext,['.pch','.tgkr']); 
 	$hide_thumbnail = $mark_sensitive_image ? (strpos($thumbnail,'hide_')!==false) :'';
+	$hide_thumbnail = $set_all_images_to_nsfw ? $set_all_images_to_nsfw : $hide_thumbnail;
 
 	$_w=$w;
 	$_h=$h;

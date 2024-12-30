@@ -221,7 +221,7 @@ $use_diary = false;
 $only_admin_can_reply = false;
 
 //年齢制限付きの掲示板として設定する
-//する: trueに設定すると確認ボタンを押すまで画像にぼかしが入ります。
+//する: trueに設定すると確認ボタンを押すまですべての画像にぼかしが入ります。
 // する: true しない: false
 
 // $set_nsfw = true;
@@ -238,8 +238,9 @@ $age_check_required_to_view = false;
 //｢18才未満です。｣を押した時のリンク先
 $underage_submit_url="https://www.google.com/";
 
-// 閲覧注意を設定する
-//する: trueに設定すると閲覧注意の設定ができるようになります。閲覧注意画像にぼかしが入ります。
+// 個別画像の閲覧注意の設定をする
+//する: trueに設定すると投稿した個別画像の閲覧注意の設定ができるようになります。
+//投稿時に｢閲覧注意にする｣を選択すると画像にぼかしが入ります。
 // する: true しない: false
 
 // $mark_sensitive_image = true;
@@ -251,6 +252,14 @@ $mark_sensitive_image = false;
 
 $nsfw_checked = true;
 // $nsfw_checked = false;
+
+//すべての画像を閲覧注意に設定する
+//する: trueに設定するとすべての投稿が閲覧注意になります。
+//投稿時の｢閲覧注意に設定する｣のチェックボックスは表示されなくなります。
+// する: true しない: false
+
+// $set_all_images_to_nsfw = true;
+$set_all_images_to_nsfw = false;
 
 // 描画時間非表示の設定
 // する: trueで投稿時にペイント時間の表示/非表示を切り替える事ができるようになります。

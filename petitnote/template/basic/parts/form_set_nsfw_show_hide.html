@@ -1,6 +1,6 @@
 <div>
-<?php global $mark_sensitive_image,$darkmode_by_default,$use_darkmode;?>
-<?php if(isset($mark_sensitive_image) && $mark_sensitive_image):?>
+<?php global $mark_sensitive_image,$darkmode_by_default,$use_darkmode,$set_all_images_to_nsfw;?>
+<?php if(isset($mark_sensitive_image) && $mark_sensitive_image||isset($set_all_images_to_nsfw) && $set_all_images_to_nsfw):?>
 <?php if($en):?>NSFW:<?php else:?>閲覧注意画像:<?php endif;?>
 <form action="./" method="post" id="set_nsfw_show_hide" class="aikotoba">
 <input type="radio" name="set_nsfw_show_hide" value="" id="nsfw_hide" <?php if(!$set_nsfw_show_hide):?>checked="checked"<?php endif;?>><label for="nsfw_hide"><?php if($en):?>Hide<?php else:?>隠す<?php endif;?></label>
