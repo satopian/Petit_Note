@@ -61,8 +61,10 @@ function aikotoba_required_to_view($required_flag=false): void {
 	return;
 	}
 
+	//古いテンプレート用
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
+
 	$admin_pass= null;
 
 	if(!aikotoba_valid()){
@@ -72,9 +74,8 @@ function aikotoba_required_to_view($required_flag=false): void {
 	}
 }
 
-// 年齢確認
+// 年齢確認ボタン押下でCookieを発行
 function age_check(): void {
-	global $aikotoba,$en,$keep_aikotoba_login_status;
 
 	check_same_origin();
 
@@ -92,12 +93,12 @@ function age_check_required_to_view(): void {
 	$underage_submit_url = $underage_submit_url ?? 'https://www.google.com/';
 
 	if(!$age_check_required_to_view){
-		setcookie("agecheck_passed","0", time()+(86400*30),"","",false,true);//1ヶ月
+		setcookie("p_n_agecheck_passed","0", time()+(86400*30),"","",false,true);//1ヶ月
 	return;
 	}
 
 	$admin_pass= null;
-	$agecheck_passed = (bool)filter_input(INPUT_COOKIE,'agecheck_passed');
+	$agecheck_passed = (bool)filter_input(INPUT_COOKIE,'p_n_agecheck_passed');
 	if(!$agecheck_passed){
 		$templete='age_check.html';
 		include __DIR__.'/'.$skindir.$templete;
