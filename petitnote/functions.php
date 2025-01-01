@@ -1265,10 +1265,10 @@ function time_left_to_close_the_thread ($postedtime): string {
 	calc_remaining_time_to_close_thread($timeleft) : '';
 }	
 // マイクロ秒を秒に戻す
-function microtime2time($microtime): string {
+function microtime2time($microtime): int {
 	$microtime=(string)$microtime;
 	$time=(strlen($microtime)>15) ? substr($microtime,0,-6) : substr($microtime,0,-3);
-	return $time;
+	return (int)$time;
 }
 
 //POSTされた値をログファイルに格納する書式にフォーマット
