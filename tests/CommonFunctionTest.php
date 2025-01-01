@@ -225,6 +225,25 @@ final class CommonFunctionTest extends TestCase
         ];
     }
     /**
+     * @dataProvider microtime2TimeProvider
+     * @covers       microtime2time
+     */
+    public function testMicrotime2time($microtime, int $expected): void
+    {
+
+        $actual = microtime2time($microtime);
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function microtime2TimeProvider(): array
+    {
+        return [
+            ["1620000000000000", 1620000000],
+            ["1620000000000", 1620000000],
+        ];
+    }
+    /**
      * @dataProvider calc_remaining_time_to_close_thread_Provider
      * @covers       calc_remaining_time_to_close_thread
      */
