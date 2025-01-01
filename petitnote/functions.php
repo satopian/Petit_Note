@@ -81,7 +81,7 @@ function age_check(): void {
 
 	$agecheck_passed = (bool)filter_input(INPUT_POST,'agecheck_passed',FILTER_VALIDATE_BOOLEAN);
 	if($agecheck_passed){
-		setcookie("agecheck_passed","1", time()+(86400*30),"","",false,true);//1ヶ月
+		setcookie("p_n_agecheck_passed","1", time()+(86400*30),"","",false,true);//1ヶ月
 	}
 	// 処理が終了したらJavaScriptでリロード
 }
