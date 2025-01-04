@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250101;
+$functions_ver=20250103;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -1094,6 +1094,9 @@ function check_dir ($path): void {
 
 	if (!is_dir($path)) {
 			mkdir($path, 0707);
+			chmod($path, 0707);
+	}
+	if (!is_readable($path) || !is_writable($path)) {
 			chmod($path, 0707);
 	}
 	if (!is_dir($path)){

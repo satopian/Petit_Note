@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.66.3';
-$petit_lot='lot.20250101';
+$petit_ver='v1.66.6';
+$petit_lot='lot.20250103';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -17,7 +17,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250101){
+if(!isset($functions_ver)||$functions_ver<20250103){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -322,6 +322,7 @@ function post(): void {
 	$chk_resto='';
 	if($resto){//レスの時はファイルロックしてレスファイルを開く
 		check_open_no($resto);
+		chmod(LOG_DIR."{$resto}.log",0600);
 		$rp=fopen(LOG_DIR."{$resto}.log","r+");
 		flock($rp, LOCK_EX);
 		$r_arr = create_array_from_fp($rp);
@@ -443,6 +444,7 @@ function post(): void {
 	$verified = $adminpost ? 'adminpost' : ''; 
 
 	//全体ログを開く
+	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	if(!$fp){
 		safe_unlink($upfile);
@@ -1295,6 +1297,7 @@ function img_replace(): void {
 		location_paintcom();//該当記事が無い時は新規投稿。
 	}
 
+	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
@@ -1308,6 +1311,7 @@ function img_replace(): void {
 		location_paintcom();//該当記事が無い時は新規投稿。
 	}
 	check_open_no($no);
+	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 
@@ -1809,10 +1813,12 @@ function edit(): void {
 	if(!is_file(LOG_DIR."{$no}.log")){
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
+	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
 	check_open_no($no);
+	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 
@@ -1970,6 +1976,7 @@ function del(): void {
 		list($id,$no)=explode(",",trim($id_and_no));
 	}
 	$delete_thread=(bool)filter_input(INPUT_POST,'delete_thread',FILTER_VALIDATE_BOOLEAN);
+	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
 	flock($fp, LOCK_EX);
 
@@ -1977,6 +1984,7 @@ function del(): void {
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
 	check_open_no($no);
+	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	flock($rp, LOCK_EX);
 
