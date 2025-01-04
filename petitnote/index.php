@@ -616,7 +616,7 @@ function post(): void {
 		writeFile($rp,$new_rline);
 		closeFile($rp);
 
-		chmod(LOG_DIR.$resto.'.log',0600);
+		chmod(LOG_DIR."{$resto}.log",0600);
 		if(!$sage){
 			foreach($alllog_arr as $i =>$val){
 				if (strpos(trim($val), $resto . "\t") === 0) {//全体ログで$noが一致したら
@@ -639,7 +639,7 @@ function post(): void {
 		$new_r_line = "$no\t$sub\t$name\t$verified\t$com\t$url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$up_img_hash\t$tool\t$pchext\t$time\t$time\t$host\t$userid\t$hash\toya\n";
 		check_open_no($no);
 		file_put_contents(LOG_DIR.$no.'.log',$new_r_line,LOCK_EX);//新規投稿の時は、記事ナンバーのファイルを作成して書き込む
-		chmod(LOG_DIR.$no.'.log',0600);
+		chmod(LOG_DIR."{$no}.log",0600);
 	}
 
 	//保存件数超過処理
@@ -676,7 +676,7 @@ function post(): void {
 	writeFile ($fp, $newline);
 	closeFile($fp);
 
-	chmod(LOG_DIR.'alllog.log',0600);
+	chmod(LOG_DIR."alllog.log",0600);
 
 	//ワークファイル削除
 	safe_unlink($src);
