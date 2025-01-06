@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250103;
+$functions_ver=20250106;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -310,6 +310,8 @@ function check_cont_pass(): bool {
 
 	check_same_origin();
 
+	$adminmode = adminpost_valid() || admindel_valid(); 
+
 	$no = (string)filter_input(INPUT_POST, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_POST, 'time');//intの範囲外
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
@@ -326,7 +328,7 @@ function check_cont_pass(): bool {
 				continue;
 			}
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-			if($id===$time && $no===$_no && $pwd && password_verify($pwd,$hash)){
+			if($id===$time && $no===$_no && ($adminmode && $verified ==='adminpost' || $pwd && password_verify($pwd,$hash))){
 				closeFile ($rp);
 				return true;
 			}
@@ -1096,8 +1098,8 @@ function check_dir ($path): void {
 			mkdir($path, 0707);
 			chmod($path, 0707);
 	}
-	if (!is_readable($path) || !is_writable($path)) {
-			chmod($path, 0707);
+	if (!is_readable($path) || !is_writable($path)){
+		chmod($path, 0707);
 	}
 	if (!is_dir($path)){
 		die(h($path) . $msg['001']);

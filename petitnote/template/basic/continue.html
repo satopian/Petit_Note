@@ -108,7 +108,9 @@
 <?php endif;?>
 
 <span class="non"><input type="text" value="" autocomplete="username"></span>
+<?php if(!$adminmode || $verified!=='adminpost'):?>
 <span class="continue_menu" id="span_cont_pass"><?php if($en):?>Password<?php else:?>パスワード<?php endif;?>:<input type="password" name="pwd" size="8" value="<?=h($pwdc)?>" class="paint_password" autocomplete="current-password"></span>
+<?php endif;?>
 <input type="submit" value="<?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?>">
 </form>
 </div>

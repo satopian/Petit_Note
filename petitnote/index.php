@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.66.6';
-$petit_lot='lot.20250103';
+$petit_ver='v1.67.1';
+$petit_lot='lot.20250106';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -17,7 +17,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250103){
+if(!isset($functions_ver)||$functions_ver<20250106){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -1327,6 +1327,7 @@ function img_replace(): void {
 	}
 
 	$flag=false;
+
 	foreach($r_arr as $i => $line){
 		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 		if($id===$_time && $no===$_no){
@@ -1337,8 +1338,7 @@ function img_replace(): void {
 				closeFile($fp);
 				error($en?'This operation has failed.':'失敗しました。');
 			}
-
-			if(($is_upload_img && $admindel) || ($pwd && password_verify($pwd,$_hash))){
+			if(($is_upload_img && $admindel) || (($adminpost||$admindel) && $_verified === 'adminpost') || ($pwd && password_verify($pwd,$_hash))){
 				$flag=true;
 				break;
 			}
@@ -1499,6 +1499,7 @@ function img_replace(): void {
 		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 		if(($id===$time_ && $no===$no_) &&
 		((($is_upload_img && $admindel) ||
+		(($adminpost||$admindel) && $verified_ === 'adminpost') ||
 		($pwd && password_verify($pwd,$hash_))))){
 			$alllog_arr[$i] = $newline;
 			$flag=true;
