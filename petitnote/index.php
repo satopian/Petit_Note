@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.67.2';
+$petit_ver='v1.67.3';
 $petit_lot='lot.20250107';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
@@ -616,7 +616,6 @@ function post(): void {
 		writeFile($rp,$new_rline);
 		closeFile($rp);
 
-		chmod(LOG_DIR."{$resto}.log",0600);
 		if(!$sage){
 			foreach($alllog_arr as $i =>$val){
 				if (strpos(trim($val), $resto . "\t") === 0) {//全体ログで$noが一致したら
@@ -675,8 +674,6 @@ function post(): void {
 
 	writeFile ($fp, $newline);
 	closeFile($fp);
-
-	chmod(LOG_DIR."alllog.log",0600);
 
 	//ワークファイル削除
 	safe_unlink($src);
