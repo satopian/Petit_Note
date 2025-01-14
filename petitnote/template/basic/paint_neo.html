@@ -25,43 +25,6 @@ return;
 <link rel="stylesheet" href="./app/neo/neo.css?<?=h($parameter_day)?><?=h($petit_lot)?>">
 <script src="./app/neo/neo.js?<?=h($parameter_day)?><?=h($petit_lot)?>"></script>
 <script>
-	// https://qiita.com/tsmd/items/cfb5dcbec8433b87dc36
-	const isPinchZooming = () => {//ピンチズームを検知
-		if ('visualViewport' in window) {
-			return window.visualViewport.scale > 1
-		} else {
-			return document.documentElement.clientWidth > window.innerWidth
-		}
-	}
-
-	const neo_disable_touch_move = (e) => {//NEOの網目でスワイプしない
-		let screenwidth = Number(screen.width);
-		let appw = Number(<?=h($appw)?>);
-		if((screenwidth-appw)>100){
-			if (typeof e.cancelable !== 'boolean' || e.cancelable) {
-			e.preventDefault();
-			e.stopPropagation();
-			}
-		}
-	}
-
-	const neo_add_disable_touch_move = () => {
-		document.getElementById('NEO').addEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
-	}
-	document.addEventListener('touchmove', (e)=> {
-		neo_add_disable_touch_move();
-		if(isPinchZooming ()){//ピンチズーム使用時はNEOの網目でスワイプする
-			document.getElementById('NEO').removeEventListener('touchmove', neo_disable_touch_move ,{ passive: false });
-		}
-	});
-	document.addEventListener('DOMContentLoaded',neo_add_disable_touch_move,false);
-	//Firefoxでメニューバーが開閉するのため、Altキーのデフォルトの処理をキャンセル
-	document.addEventListener('keyup', (e)=> {
-		// e.key を利用して特定のキーのアップイベントを検知する
-		if (e.key.toLowerCase() === 'alt') {
-			e.preventDefault(); // Alt キーのデフォルトの動作をキャンセル
-		}
-	});
 	//NEOの画像受信後の処理と画面移動
 	Neo.handleExit = ()=>{
 	<?php if($rep):?>
@@ -186,6 +149,7 @@ pe[n]}}function GradView(a,f){d=document}function showHideLayer(){d=document;var
 <param name="neo_confirm_unload" value="true">
 <param name="neo_show_right_button" value="true">
 <param name="neo_animation_skip" value="true">
+<param name="neo_disable_grid_touch_move" value="true">
 <param name="send_header_count" value="true">
 <param name="send_header_timer" value="true">
 <param name="image_width" value="<?=h($picw)?>">
