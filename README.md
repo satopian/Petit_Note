@@ -44,10 +44,8 @@ PHPのバージョンが切り替え可能な場合はPHP7.1以上への変更�
 
 
 ## Petit Noteを使った交流サイト
-- [イラスト投稿サイト Petit Note](https://paintbbs.sakura.ne.jp/petit/)  
-お絵かきとアップロード。
+
 - [お絵かき掲示板交流サイトPetit Note](https://paintbbs.sakura.ne.jp/)  
-お絵かきのみ。
 
 ## DEMO
 - [Petit Note サンプル掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
