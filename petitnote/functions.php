@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250106;
+$functions_ver=20250125;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -52,6 +52,14 @@ function aikotoba(): void {
 function aikotoba_required_to_view($required_flag=false): void {
 
 	global $use_aikotoba,$aikotoba_required_to_view,$skindir,$en,$petit_lot,$boardname;
+
+	//不正な値チェック
+	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
+	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+	if($page<0||$resno<0){//負の値の時はトップページにリダイレクト
+		redirect("./");
+	}
+
 	//先に年齢確認を行う
 	age_check_required_to_view();
 
@@ -121,6 +129,9 @@ function admin_in(): void {
 
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
+	if($page<0||$resno<0){//負の値の時はトップページにリダイレクト
+		redirect('./');
+	}
 	$catalog=(bool)filter_input(INPUT_GET,'catalog',FILTER_VALIDATE_BOOLEAN);
 	$res_catalog=(bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
 	$search=(bool)filter_input(INPUT_GET,'search',FILTER_VALIDATE_BOOLEAN);
@@ -1278,7 +1289,7 @@ function microtime2time($microtime): int {
 
 //POSTされた値をログファイルに格納する書式にフォーマット
 function create_formatted_text_from_post($name,$sub,$url,$com): array {
-	global $en,$name_input_required,$subject_input_required;
+	global $en,$name_input_required,$subject_input_required,$comment_input_required;
 
 	if(!$name||preg_match("/\A\s*\z/u",$name)) $name="";
 	if(!$sub||preg_match("/\A\s*\z/u",$sub))   $sub="";
@@ -1300,6 +1311,9 @@ function create_formatted_text_from_post($name,$sub,$url,$com): array {
 		}else{
 			$sub= $en ? 'No subject':'無題';
 		}
+	}
+	if(!$com && $comment_input_required){
+		error($en?'Please enter your comment.':'何か書いてください。');
 	}
 	$formatted_post=[
 		'name'=>$name,

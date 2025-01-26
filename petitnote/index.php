@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.67.8';
-$petit_lot='lot.2025015';
+$petit_ver='v1.68.3';
+$petit_lot='lot.2025025';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -17,7 +17,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250106){
+if(!isset($functions_ver)||$functions_ver<20250125){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -86,6 +86,7 @@ $use_axnos=isset($use_axnos) ? $use_axnos : true;
 $display_link_back_to_home = isset($display_link_back_to_home) ? $display_link_back_to_home : true;
 $password_require_to_continue = isset($password_require_to_continue) ? (bool)$password_require_to_continue : false;
 $subject_input_required = isset($subject_input_required) ? $subject_input_required : false;
+$comment_input_required = isset($comment_input_required) ? $comment_input_required : false;
 $display_search_nav = isset($display_search_nav) ? $display_search_nav : false;
 $switch_sns = isset($switch_sns) ? $switch_sns : true;
 $sns_window_width = isset($sns_window_width) ? (int)$sns_window_width : 600;
@@ -2534,9 +2535,7 @@ function res (): void {
 	$max_byte = $max_kb * 1024*2;
 
 	$denny_all_posts=$deny_all_posts;
-	$page='';
 	$resno=(string)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
-
 	$misskey_note = $use_misskey_note ? (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN) : false;
 	$res_catalog = $misskey_note ? true : (bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
 

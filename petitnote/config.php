@@ -39,6 +39,12 @@ $name_input_required = true;
 // $subject_input_required = true;
 $subject_input_required = false;
 
+// 本文を必須にする
+// する: true しない: false
+
+// $comment_input_required = true;
+$comment_input_required = false;
+
 // 本文の制限文字数。半角で
 $max_com=1000;
 
