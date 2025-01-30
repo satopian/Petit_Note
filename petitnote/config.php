@@ -15,6 +15,10 @@ $second_pass = "mGeL5dhpQ8e9ugd";
 // この掲示板の名前
 $boardname = "Petit Note";
 
+// 掲示板からの戻り先のホームページの名前
+// 空欄なら｢ホーム｣と表示されます。
+$siteneme = "";
+
 // ホームページ(掲示板からの戻り先)
 $home = "./"; //相対パス、絶対パス、URLどれでもOK 
 

@@ -20,7 +20,11 @@
 <!-- ナビゲーション -->
 <nav class="menu_wrap">
 	<?php if($display_link_back_to_home):?>
+		<?php if(isset($sitename) && $sitename):?>
+		<span>[<a href="<?=h($home)?>"><?h($sitename)?></a>]</span>
+		<?php else:?>
 		<span>[<a href="<?=h($home)?>"><?php if($en):?>Home<?php else:?>ホーム<?php endif;?></a>]</span>
+		<?php endif;?>
 	<?php endif;?>
 		<span>[<a href="./?mode=catalog"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
 	<?php if($display_search_nav):?>
