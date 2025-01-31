@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.68.5';
-$petit_lot='lot.20250130';
+$petit_ver='v1.68.7';
+$petit_lot='lot.20250131';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2167,6 +2167,7 @@ function search(): void {
 
 	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$page=$page<0 ? 0 : $page;
 	$q=(string)filter_input(INPUT_GET,'q');
 	$q=urldecode($q);
 	$q_len=strlen((string)$q);
@@ -2325,6 +2326,7 @@ function search(): void {
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page<=0) ? false : ($page-$pagedef) ;//ページ番号が0の時はprevのリンクを出さない
+	$prev=($prev<0) ? 0 : $prev;
 
 	//最終更新日時を取得
 	$postedtime='';
@@ -2356,6 +2358,7 @@ function catalog(): void {
 	aikotoba_required_to_view();
 
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
+	$page=$page<0 ? 0 : $page;
 	$pagedef=$catalog_pagedef;
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
@@ -2400,8 +2403,8 @@ function catalog(): void {
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
-	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
-
+	$prev=((int)$page<=0) ? false : ($page-$pagedef);//ページ番号が0の時はprevのリンクを出さない
+	$prev=($prev<0) ? 0 : $prev;
 	$admin_pass= null;
 	// HTML出力
 	$templete='catalog.html';
@@ -2418,7 +2421,7 @@ function view(): void {
 
 	aikotoba_required_to_view();
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-
+	$page=$page<0 ? 0 : $page;
 	//管理者判定処理
 	$adminpost=adminpost_valid();
 	$admindel=admindel_valid();
@@ -2508,7 +2511,8 @@ function view(): void {
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
 	//prev next 
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
-	$prev=((int)$page!==0) ? ($page-$pagedef) : false;//ページ番号が0の時はprevのリンクを出さない
+	$prev=((int)$page<=0) ? false : ($page-$pagedef);//ページ番号が0の時はprevのリンクを出さない
+	$prev=($prev<0) ? 0 : $prev;
 	if($page===0 && !$admindel && !$adminpost){
 		if(!is_file(__DIR__.'/template/cache/index_cache.json')){
 			file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
