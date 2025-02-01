@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250125;
+$functions_ver=20250201;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -54,8 +54,8 @@ function aikotoba_required_to_view($required_flag=false): void {
 	global $use_aikotoba,$aikotoba_required_to_view,$skindir,$en,$petit_lot,$boardname;
 
 	//不正な値チェック
+	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
-	$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
 	if($page<0||$resno<0){//負の値の時はトップページにリダイレクト
 		redirect("./");
 	}
@@ -68,10 +68,6 @@ function aikotoba_required_to_view($required_flag=false): void {
 	if(!$aikotoba_required_to_view && !$required_flag){
 	return;
 	}
-
-	//古いテンプレート用
-	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
-	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 
 	$admin_pass= null;
 
