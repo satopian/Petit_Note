@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.68.8';
-$petit_lot='lot.20250131';
+$petit_ver='v1.68.9';
+$petit_lot='lot.20250201';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -300,7 +300,6 @@ function post(): void {
 			error($en? 'Only administrator can post.':'投稿できるのは管理者だけです。');
 		}
 		$is_painted_img=true;//お絵かきでエラーがなかった時にtrue;
-
 	}
 
 	if(!$resto && $use_diary && !$adminpost){
@@ -407,6 +406,7 @@ function post(): void {
 
 		$tool = 'upload'; 
 		$is_upload_img=true;	
+		$is_painted_img=false;
 	}
 	//お絵かきアップロード
 	if($is_painted_img && is_file($tempfile)){
@@ -530,8 +530,7 @@ function post(): void {
 		//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 		$up_img_hash=substr(hash_file('sha256', $upfile), 0, 32);
 		
-		if(!$is_painted_img){
-
+		if($is_upload_img){
 			foreach($chk_images as $line){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
 				if(!adminpost_valid() && ($log_img_hash && ($log_img_hash === $up_img_hash))){
