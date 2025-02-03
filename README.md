@@ -10,6 +10,13 @@
 PHP7.4,PHP8.3,PHP8.4で動作確認しています。  
 PHP8.1-PHP8.4での使用を推奨します。
 
+## Petit Noteを使った交流サイト
+
+- [お絵かき掲示板交流サイトPetit Note](https://paintbbs.sakura.ne.jp/)  
+
+## DEMO
+- [Petit Note サンプル掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
+
 # ダウンロードと設置
 
 ## ダウンロード
@@ -42,13 +49,6 @@ PHPのバージョンが切り替え可能な場合はPHP7.1以上への変更�
 
 [設置サポート掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/support/)をご利用ください。
 
-
-## Petit Noteを使った交流サイト
-
-- [お絵かき掲示板交流サイトPetit Note](https://paintbbs.sakura.ne.jp/)  
-
-## DEMO
-- [Petit Note サンプル掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
   
 ![image](https://user-images.githubusercontent.com/44894014/134553433-d50e05be-a483-4b94-a575-3cead96b6720.png)
 
