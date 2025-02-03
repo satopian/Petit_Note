@@ -116,8 +116,7 @@
 						return alert(<?php if($en):?>'Server or line is unstable.\nPlease try again!'<?php else:?>'サーバまたは回線が不安定です。\n時間を置いて再度投稿してみてください。'<?php endif;?>);	
 					})
 				}
-				klecks.getPSD().then((psd)=>{
-					const png = klecks.getPNG();
+				Promise.all([klecks.getPNG(), klecks.getPSD()]).then(([png, psd]) => {
 					const TotalSiz=((png.size+psd.size)/1024/1024).toFixed(3);
 					if(TotalSiz><?=h($max_pch)?>){
 						return alert(`<?php if($en):?>File size is too large.<?php else:?>ファイルサイズが大きすぎます。<?php endif;?>\n<?php if($en):?>limit size<?php else:?>制限値<?php endif;?>:<?=h($max_pch)?>MB\n<?php if($en):?>Current size<?php else:?>現在値<?php endif;?>:${TotalSiz}MB`)
