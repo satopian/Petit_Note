@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.68.9';
-$petit_lot='lot.20250201';
+$petit_ver='v1.68.10';
+$petit_lot='lot.20250203';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2522,7 +2522,7 @@ function view(): void {
 	$lightbox_gallery=false;
 	$resmode=false;
 	$resno=0;
-	$sitename= preg_replace("/\s/u","",$sitename);//連続する空行を削除
+	$sitename= preg_replace("/\A\s*\z/u","",$sitename);//連続する空行を削除
 	$admin_pass= null;
 	// HTML出力
 	$templete='main.html';
