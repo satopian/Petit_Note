@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250201;
+$functions_ver=20250205;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -934,7 +934,7 @@ function deltemp(): void {
 	global $check_password_input_error_count;
 	$handle = opendir(TEMP_DIR);
 	while ($file = readdir($handle)) {
-		if(!is_dir($file)) {
+		if(!is_dir(TEMP_DIR.$file) && is_file(TEMP_DIR.$file)){
 			$file=basename($file);
 			//pchアップロードペイントファイル削除
 			//仮差し換えアップロードファイル削除
