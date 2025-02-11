@@ -564,7 +564,7 @@ function calc_pagination_range($page,$pagedef): array {
 
 //ユーザーip
 function get_uip(): string {
-	$ip = $_SERVER["HTTP_CLIENT_IP"] ??'';
+	$ip = $_SERVER["HTTP_CLIENT_IP"] ?? '';
 	$ip = $ip ? $ip : ($_SERVER["HTTP_INCAP_CLIENT_IP"] ?? '');
 	$ip = $ip ? $ip : ($_SERVER["HTTP_X_FORWARDED_FOR"] ?? '');
 	$ip = $ip ? $ip : ($_SERVER["REMOTE_ADDR"] ?? '');
