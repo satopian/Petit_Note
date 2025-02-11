@@ -13,7 +13,7 @@ class image_save{
 		global $security_timer,$pmax_w,$pmax_h;
 
 	// $security_timer=60;	
-	$this->security_timer = isset($security_timer) ? $security_timer : 0;
+	$this->security_timer = $security_timer ?? 0;
 	//容量違反チェックをする する:1 しない:0
 	defined('SIZE_CHECK') or define('SIZE_CHECK', '1');
 	//PNG画像データ投稿容量制限KB(chiは含まない)
@@ -26,15 +26,15 @@ class image_save{
 		redirect("./");
 	}
 
-	$lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
+	$lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
 	? explode( ',', $http_langs )[0] : '';
 	$this->en= (stripos($lang,'ja')!==0);
 
 	$this->imgfile = time().substr(microtime(),2,6);	//画像ファイル名
 	$this->imgfile = is_file(TEMP_DIR.$this->imgfile.'.png') ? ((time()+1).substr(microtime(),2,6)) : $this->imgfile;
 	
-	$this->pmax_w=isset($pmax_w) ? $pmax_w :'';
-	$this->pmax_h=isset($pmax_h) ? $pmax_h :'';
+	$this->pmax_w= $pmax_w ?? '';
+	$this->pmax_h= $pmax_h ?? '';
 	
 	}
 
@@ -109,7 +109,7 @@ class image_save{
 		$this->check_async_request();
 
 		session_sta();
-		$this->session_usercode = isset($_SESSION['usercode']) ? $_SESSION['usercode'] : "";
+		$this->session_usercode = $_SESSION['usercode'] ?? "";
 		$cookie_usercode = t(filter_input(INPUT_COOKIE, 'usercode'));
 		if(!$this->session_usercode || !$cookie_usercode || ($this->session_usercode !== $cookie_usercode)){
 			$this->error_msg($this->en ? "User code has been reissued.\nPlease try again." : "ユーザーコードを再発行しました。\n再度投稿してみてください。");

@@ -193,7 +193,7 @@ class misskey_note{
 		//SESSIONに投稿内容を格納
 		$_SESSION['sns_api_val']=[$com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw];
 
-		$misskey_servers=isset($misskey_servers)?$misskey_servers:
+		$misskey_servers= $misskey_servers ?? 
 		[
 		
 			["misskey.io","https://misskey.io"],
@@ -304,7 +304,7 @@ class misskey_note{
 		
 		session_sta();
 		
-		$misskey_server_url = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "";
+		$misskey_server_url = $_SESSION['misskey_server_radio'] ?? "";
 		if(!$misskey_server_url || !filter_var($misskey_server_url,FILTER_VALIDATE_URL) || !$no){
 			redirect('./');
 		}

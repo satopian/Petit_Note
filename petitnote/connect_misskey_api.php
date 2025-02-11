@@ -7,7 +7,7 @@
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/functions.php');
 
-$lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
+$lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
 ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
 
@@ -17,7 +17,7 @@ if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))
 	return header( "Location: ./ ") ;
 };
 
-$baseUrl = isset($_SESSION['misskey_server_radio']) ? $_SESSION['misskey_server_radio'] : "";
+$baseUrl = $_SESSION['misskey_server_radio'] ?? "";
 if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
 	error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 }
@@ -69,7 +69,7 @@ class connect_misskey_api{
 		
 		global $en,$baseUrl,$root_url;
 		
-		$accessToken = isset($_SESSION['accessToken']) ? $_SESSION['accessToken'] : "";
+		$accessToken = $_SESSION['accessToken'] ?? "";
 
 		list($com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw) = $_SESSION['sns_api_val'];
 
@@ -114,7 +114,7 @@ class connect_misskey_api{
 		// アップロードしたファイルのIDを取得
 
 		$responseData = json_decode($uploadResponse, true);
-		$fileId = isset($responseData['id']) ? $responseData['id']:'';
+		$fileId = $responseData['id'] ?? '';
 
 		if(!$fileId){
 			// var_dump($responseData);
