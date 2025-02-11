@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250205;
+$functions_ver=20250210;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -344,6 +344,12 @@ function check_cont_pass(): bool {
 	}
 
 	error($en?'password is wrong.':'パスワードが違います。');
+}
+
+//コンティニュー前画面のペイントツールを選択可能に
+function set_app_select_enabled_session() : void {
+	session_sta();
+	$_SESSION['enableappselect'] = true;
 }
 
 //設定済みのペイントツール名かどうか調べる

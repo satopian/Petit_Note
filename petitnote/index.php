@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.68.11';
-$petit_lot='lot.20250205';
+$petit_ver='v1.69.0';
+$petit_lot='lot.20250210';
 
 $lang = ($http_langs = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? $_SERVER['HTTP_ACCEPT_LANGUAGE'] : '')
   ? explode( ',', $http_langs )[0] : '';
@@ -17,7 +17,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250201){
+if(!isset($functions_ver)||$functions_ver<20250210){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -153,6 +153,8 @@ switch($mode){
 			check_cont_pass();
 		} 
 		return paint();
+	case 'set_app_select_enabled_session':
+		return set_app_select_enabled_session();
 	case 'picrep':
 		return img_replace();
 	case 'before_del':
@@ -829,6 +831,9 @@ function paint(): void {
 		$time = basename((string)filter_input(INPUT_POST, 'time'));
 		$cont_paint_same_thread=(bool)filter_input(INPUT_POST, 'cont_paint_same_thread',FILTER_VALIDATE_BOOLEAN);
 
+		session_sta();
+		unset ($_SESSION['enableappselect']);
+
 		if(is_file(LOG_DIR."{$no}.log")){
 			if($type!=='rep'){
 				$resto = $cont_paint_same_thread ? $no : '';
@@ -1046,8 +1051,10 @@ function to_continue(): void {
 
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_GET, 'id');//intの範囲外
-	$enableappselect = (string)filter_input(INPUT_GET, 'enableappselect');
+	
 	$adminpost = adminpost_valid();
+	session_sta();
+	$enableappselect= $_SESSION['enableappselect'] ?? false;
 
 	$flag = false;
 
@@ -2232,7 +2239,7 @@ function search(): void {
 			}
 		}
 		fclose($rp);
-		if($j>=5000){break;}//1掲示板あたりの最大行数
+		if($j>=10000){break;}//1掲示板あたりの最大行数
 		++$j;
 	}
 	fclose($fp);
@@ -2430,6 +2437,9 @@ function view(): void {
 	$denny_all_posts=$deny_all_posts;//互換性
 	$allow_coments_only=$allow_comments_only;//互換性
 
+	session_sta();
+	unset ($_SESSION['enableappselect']);
+
 	$fp=fopen(LOG_DIR."alllog.log","r");
 	$article_nos=[];
 	$count_alllog=0;
@@ -2543,6 +2553,9 @@ function res (): void {
 	$resno=(string)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
 	$misskey_note = $use_misskey_note ? (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN) : false;
 	$res_catalog = $misskey_note ? true : (bool)filter_input(INPUT_GET,'res_catalog',FILTER_VALIDATE_BOOLEAN);
+
+	session_sta();
+	unset ($_SESSION['enableappselect']);
 
 	if(!is_file(LOG_DIR."{$resno}.log")){
 		error($en?'Thread does not exist.':'スレッドがありません');	

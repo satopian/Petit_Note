@@ -181,6 +181,15 @@ if(set_darkmode){
 		postFormAndReload(formData);
 	});
 }
+//ペイントツールを選択可能にする
+const set_app_select_submit = (event)=>{
+	const set_app_select_enabled = document.getElementById("set_app_select_enabled");
+	event.preventDefault(); // 通常フォームの送信を中断
+	if(set_app_select_enabled){
+	const formData = new FormData(set_app_select_enabled);
+	postFormAndReload(formData);
+	}
+};
 
 //ファイルが添付されていない時は｢閲覧注意にする｣のチェックボックスを表示しない
 const elem_attach_image = document.getElementById("attach_image");

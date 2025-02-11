@@ -51,12 +51,9 @@
 <?php endif;?>
 
 <?php if(!$select_app && $count_arr_apps>1):?>
-	<form action="./" method="get">
+	<form action="./" method="POST" id="set_app_select_enabled" onsubmit="return set_app_select_submit(event)">
 		<span class="continue_menu">	<?php if($en):?>Current tool<?php else:?>現在のツール<?php endif;?>:<?=h($current_app)?></span>
-		<input type="hidden" name="mode" value="to_continue">
-		<input type="hidden" name="id" value="<?=h($time)?>">
-		<input type="hidden" name="no" value="<?=h($no)?>">
-		<input type="hidden" name="enableappselect" value="on">
+		<input type="hidden" name="mode" value="set_app_select_enabled_session">
 		<input type="submit" value="<?php if($en):?>Select another tool<?php else:?>別のツールを選択する<?php endif;?>">
 	</form>	
 <?php endif;?>
