@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.69.1';
-$petit_lot='lot.20250211';
+$petit_ver='v1.69.2';
+$petit_lot='lot.20250212';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -89,8 +89,8 @@ $subject_input_required = $subject_input_required ?? false;
 $comment_input_required = $comment_input_required ?? false;
 $display_search_nav = $display_search_nav ?? false;
 $switch_sns = $switch_sns ?? true;
-$sns_window_width = isset($sns_window_width) ? (int)$sns_window_width : 600;
-$sns_window_height = isset($sns_window_height) ? (int)$sns_window_height : 600;
+$sns_window_width = $sns_window_width ?? 600;
+$sns_window_height = $sns_window_height ?? 600;
 $use_misskey_note = $use_misskey_note ?? true;
 $sort_comments_by_newest = $sort_comments_by_newest ?? false;
 $pmin_w = $pmin_w ?? 300;//幅
@@ -113,7 +113,9 @@ $userip = get_uip();
 $usercode = t(filter_input(INPUT_COOKIE, 'usercode'));//user-codeを取得
 
 session_sta();
-$session_usercode = isset($_SESSION['usercode']) ? t($_SESSION['usercode']) : "";
+$session_usercode = $_SESSION['usercode'] ?? "";
+$session_usercode = t($session_usercode);
+
 $usercode = $usercode ? $usercode : $session_usercode;
 if(!$usercode){//user-codeがなければ発行
 	$usercode = hash('sha256', $userip.random_bytes(16));
@@ -770,7 +772,8 @@ function paint(): void {
 	//pchファイルアップロードペイント
 	if($adminpost){
 
-		$pchfilename = isset($_FILES['pchup']['name']) ? basename($_FILES['pchup']['name']) : '';
+		$pchfilename = $_FILES['pchup']['name'] ?? '';
+		$pchfilename = basename($pchfilename);
 		
 		$pchtmp= $_FILES['pchup']['tmp_name'] ?? '';
 

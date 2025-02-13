@@ -239,14 +239,14 @@ if (elem_form_submit && (elem_attach_image||paint_com)) {
 //shareするSNSのserver一覧を開く
 var snsWindow = null; // グローバル変数としてウィンドウオブジェクトを保存する
 
-const open_sns_server_window = (event,width=350,height=490)=> {
+const open_sns_server_window = (event,width=600,height=600)=> {
 	event.preventDefault(); // デフォルトのリンクの挙動を中断
 
 	// 幅と高さが数値であることを確認
 	// 幅と高さが正の値であることを確認
-	if (isNaN(width) || width <= 0 || isNaN(height) || height <= 0) {
-		width = 350; // デフォルト値
-		height = 490; // デフォルト値
+	if (isNaN(width) || width < 300 || isNaN(height) || height < 300) {
+		width = 600; // デフォルト値
+		height = 600; // デフォルト値
 	}		
 	let url = event.currentTarget.href;
 	let windowFeatures = "width="+width+",height="+height; // ウィンドウのサイズを指定
