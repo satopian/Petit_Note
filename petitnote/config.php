@@ -8,7 +8,7 @@ $admin_pass = "kanripass";
 
 // 第2パスワード 必ず変更してください。
 // 管理者投稿や管理者削除の時に管理者である事を再確認する為に使うパスワード。
-// 内部で処理するため覚えておく必要はありません。
+//システムの内部で使用するため覚えておく必要はありません。
 // 管理パスと同じパスワードは使えません。
 $second_pass = "mGeL5dhpQ8e9ugd";
 
@@ -573,6 +573,13 @@ $misskey_servers=
 	["mk.shrimpia.network","https://mk.shrimpia.network"],
 	
 ];
+
+//SESSION名を独自性のあるものに変更する事で、セキュリティを向上させる事ができます。
+//システムの内部で使用するため覚えておく必要はありません。
+$session_name = "session_petit";
+
+//セッション名は数字だけで構成することはできません。 少なくとも文字がひとつ以上現れる必要があります。そうでない場合、 新規セッション ID が毎回生成されます。
+//https://www.php.net/manual/ja/function.session-name.php
 
 // 通常は変更しません
 // ペイント画面の$pwdの暗号化

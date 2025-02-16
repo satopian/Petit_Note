@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250211;
+$functions_ver=20250216;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -873,11 +873,14 @@ function check_csrf_token(): void {
 }
 //session開始
 function session_sta(): void {
+	global $session_name;
+
 	if(!isset($_SESSION)){
 		ini_set('session.use_strict_mode', 1);
 		session_set_cookie_params(
 			0,"","",false,true
 		);
+		session_name($session_name);
 		session_start();
 		header('Expires:');
 		header('Cache-Control:');
