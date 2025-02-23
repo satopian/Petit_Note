@@ -18,7 +18,7 @@
 </nav>
 	<!-- 閲覧注意画像を隠す/隠さない -->
 	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
-<h2 class="article_title"><?php if($en):?>You are trying to delete an article. Do you really want to delete this?<?php else:?>記事を削除しようとしています。本当に削除しますか?<?php endif;?></h2>
+<h2 class="article_title"><?php if($en):?>You are trying to delete an article. Are you sure you want to delete this?<?php else:?>記事を削除しようとしています。本当に削除しますか?<?php endif;?></h2>
 
 <div id="error_message_beforedelete"></div>
 <?php if( $admindel || $userdel):?>

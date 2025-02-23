@@ -1474,23 +1474,20 @@ function post_share_server(): void {
 	$share_url='';
 	if($sns_server_radio){
 		$share_url=$sns_server_radio."/share?text=";
-	}elseif($sns_server_direct_input){//直接入力時
+	} elseif($sns_server_direct_input){//直接入力時
 		$share_url=$sns_server_direct_input."/share?text=";
 		if($sns_server_direct_input==="https://bsky.app"){
 			$share_url="https://bsky.app/intent/compose?text=";
-		}
-		elseif($sns_server_direct_input==="https://www.threads.net"){
+		} elseif($sns_server_direct_input==="https://www.threads.net"){
 			$share_url="https://www.threads.net/intent/post?text=";
 		}
 	}
 	if(in_array($sns_server_radio,["https://x.com","https://twitter.com"])){
 		// $share_url="https://x.com/intent/post?text=";
 		$share_url="https://twitter.com/intent/tweet?text=";
-	}
-	elseif($sns_server_radio === "https://bsky.app"){
+	} elseif($sns_server_radio === "https://bsky.app"){
 		$share_url="https://bsky.app/intent/compose?text=";
-	}
-	elseif($sns_server_radio === "https://www.threads.net"){
+	}	elseif($sns_server_radio === "https://www.threads.net"){
 		$share_url="https://www.threads.net/intent/post?text=";
 	}
 	$share_url.=$encoded_t.'%20'.$encoded_u;
