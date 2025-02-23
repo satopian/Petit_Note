@@ -410,7 +410,7 @@ function post(): void {
 		}
 
 		$tool = 'upload'; 
-		$is_upload_img=true;	
+		$is_upload_img=true;
 		$is_painted_img=false;
 	}
 	//お絵かきアップロード
@@ -534,7 +534,7 @@ function post(): void {
 
 		//同じ画像チェック アップロード画像のみチェックしてお絵かきはチェックしない
 		$up_img_hash=substr(hash_file('sha256', $upfile), 0, 32);
-		
+
 		if($is_upload_img){
 			foreach($chk_images as $line){
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$line;
@@ -1068,7 +1068,7 @@ function to_continue(): void {
 
 	$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input(INPUT_GET, 'id');//intの範囲外
-	
+
 	$adminpost = adminpost_valid();
 	session_sta();
 	$enableappselect= $_SESSION['enableappselect'] ?? false;
@@ -1108,7 +1108,7 @@ function to_continue(): void {
 		error($en? "Article older than {$elapsed_days} days cannot be edited.":"{$elapsed_days}日以上前の記事は編集できません。");
 	}
 	$hidethumbnail = (strpos($thumbnail,'hide_')!==false);
-	
+
 	$thumbnail_webp = ((strpos($thumbnail,'thumbnail_webp')!==false)) ? $time.'s.webp' : false; 
 	$thumbnail_jpg = (!$thumbnail_webp && strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
 
