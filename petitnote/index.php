@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.69.6';
-$petit_lot='lot.20250222';
+$petit_ver='v1.70.1';
+$petit_lot='lot.20250223';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -846,6 +846,19 @@ function paint(): void {
 		if(!is_file(IMG_DIR.$imgfile)){
 			error($en? 'The article does not exist.':'記事がありません。');
 		}
+
+		$rp=fopen(LOG_DIR."{$no}.log","r");
+		while($_line=fgets($rp)){
+			if(strpos($_line,$time)!==false){
+				list($_no,,,,,,$_imgfile,,,,,,$_tool,,$_time,$_first_posted_time,,,,)=explode("\t",trim($_line));
+				if($imgfile === $_imgfile && $_tool === 'upload'){
+					error($en?'This operation has failed.':'失敗しました。');
+					break;
+				}
+			}
+		}
+		closeFile($rp);
+
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
 
 		$_pch_ext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
@@ -1079,11 +1092,12 @@ function to_continue(): void {
 		$res_max_over=(!$adminpost && ($i>=$max_res||!check_elapsed_days($oya_time)));
 
 		foreach ($lines as $line) {
-
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-			if($id===$time && $no===$_no){
-				$flag=true;
-				break;
+			if(strpos($line,$id)!==false){
+				list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+				if($id===$time && $no===$_no && $tool!=='upload'){
+					$flag=true;
+					break;
+				}
 			}
 		}
 	}
@@ -1180,15 +1194,17 @@ function download_app_dat(): void {
 		if(!trim($line)){
 			continue;
 		}
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-		if($id===$time && $no===$_no){
-			if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
-				error($en?'Password is incorrect.':'パスワードが違います。');
-			}
-			$flag=true;
-			break;
+		if(strpos($line,$id)!==false){
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+			if($id===$time && $no===$_no){
+				if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
+					error($en?'Password is incorrect.':'パスワードが違います。');
+				}
+				$flag=true;
+				break;
 
-		} 
+			} 
+		}
 	}
 	closeFile ($rp);
 	$time=basename($time);
@@ -1338,18 +1354,20 @@ function img_replace(): void {
 	$flag=false;
 
 	foreach($r_arr as $i => $line){
-		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
-		if($id===$_time && $no===$_no){
+		if(strpos($line,$id)!==false){
+			list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
+			if($id===$_time && $no===$_no){
 
-			if(($is_upload_img) && ($_tool!=='upload')) {
+				if(($is_upload_img) && ($_tool!=='upload')) {
 
-				closeFile($rp);
-				closeFile($fp);
-				error($en?'This operation has failed.':'失敗しました。');
-			}
-			if(($is_upload_img && $admindel) || (($adminpost||$admindel) && $_verified === 'adminpost') || ($pwd && password_verify($pwd,$_hash))){
-				$flag=true;
-				break;
+					closeFile($rp);
+					closeFile($fp);
+					error($en?'This operation has failed.':'失敗しました。');
+				}
+				if(($is_upload_img && $admindel) || (($adminpost||$admindel) && $_verified === 'adminpost') || ($pwd && password_verify($pwd,$_hash))){
+					$flag=true;
+					break;
+				}
 			}
 		}
 	}
@@ -1567,10 +1585,12 @@ function pchview(): void {
 		if(!trim($line)){
 			continue;
 		}
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-		if($id===$time && $no===$_no){
-			$flag=true;
-			break;
+		if(strpos($line,$id)!==false){
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+			if($id===$time && $no===$_no){
+				$flag=true;
+				break;
+			} 
 		} 
 	}
 	closeFile ($rp);
@@ -1644,16 +1664,17 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	}
 	$find=false;
 	foreach($r_arr as $i =>$val){
-		$_line=explode("\t",trim($val));
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
-		if($id===$time && $no===$_no){
+		if(strpos($val,$id)!==false){
+			$_line=explode("\t",trim($val));
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
+			if($id===$time && $no===$_no){
 
-			$out[0][]=create_res($_line);
-			$find=true;
-			break;
-			
+				$out[0][]=create_res($_line);
+				$find=true;
+				break;
+				
+			}
 		}
-
 	}
 	if(!$find){
 		closeFile ($rp);
@@ -1730,18 +1751,18 @@ function edit_form($id='',$no=''): void {
 
 	$flag=false;
 	foreach($r_arr as $val){
-
-		$line=explode("\t",trim($val));
-
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
-		if($id===$time && $no===$_no){
-		
-			if(!$admindel&&(!$pwd||!password_verify($pwd,$hash))){
-				error($en?'Password is incorrect.':'パスワードが違います。');
-			}
-			if($admindel||check_elapsed_days($time)){
-				$flag=true;
-				break;
+		if(strpos($val,$id)!==false){
+			$line=explode("\t",trim($val));
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+			if($id===$time && $no===$_no){
+			
+				if(!$admindel&&(!$pwd||!password_verify($pwd,$hash))){
+					error($en?'Password is incorrect.':'パスワードが違います。');
+				}
+				if($admindel||check_elapsed_days($time)){
+					$flag=true;
+					break;
+				}
 			}
 		}
 	}
@@ -1842,18 +1863,19 @@ function edit(): void {
 
 	$flag=false;
 	foreach($r_arr as $i => $line){
+		if(strpos($line,$id)!==false){
 
-		list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
+			list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 
-		if($id===$_time && $no===$_no){
+			if($id===$_time && $no===$_no){
+				if(!$_name && !$_com && !$_url && !$_imgfile && !$_userid && ($_oya==='oya')){//削除ずみのoyaの時
+					error($en?'This operation has failed.':'失敗しました。');
+				}
 
-			if(!$_name && !$_com && !$_url && !$_imgfile && !$_userid && ($_oya==='oya')){//削除ずみのoyaの時
-				error($en?'This operation has failed.':'失敗しました。');
-			}
-
-			if($admindel||(check_elapsed_days($_time)&&$pwd&&password_verify($pwd,$_hash))){
-				$flag=true;
-				break;
+				if($admindel||(check_elapsed_days($_time)&&$pwd&&password_verify($pwd,$_hash))){
+					$flag=true;
+					break;
+				}
 			}
 		}
 	}
@@ -2008,17 +2030,19 @@ function del(): void {
 
 	$find=false;
 	foreach($r_arr as $i =>$val){
-		list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
-		if($id===$time && $no===$_no){
-			if(!$admindel){
-				if(!$pwd||!password_verify($pwd,$hash)){
-					closeFile ($rp);
-					closeFile($fp);
-					error($en?'Password is incorrect.':'パスワードが違います。');
+		if(strpos($val,$id)!==false){
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
+			if($id===$time && $no===$_no){
+				if(!$admindel){
+					if(!$pwd||!password_verify($pwd,$hash)){
+						closeFile ($rp);
+						closeFile($fp);
+						error($en?'Password is incorrect.':'パスワードが違います。');
+					}
 				}
+				$find=true;
+				break;
 			}
-			$find=true;
-			break;
 		}
 	}
 	if(!$find){
