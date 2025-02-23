@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.70.5';
-$petit_lot='lot.20250223';
+$petit_ver='v1.70.6';
+$petit_lot='lot.20250224';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -846,18 +846,21 @@ function paint(): void {
 		if(!is_file(IMG_DIR.$imgfile)){
 			error($en? 'The article does not exist.':'記事がありません。');
 		}
-
+		$find=false;
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		while($_line=fgets($rp)){
 			if(strpos($_line,$imgfile)!==false){
 				list($_no,,,,,,$_imgfile,,,,,,$_tool,,$_time,$_first_posted_time,)=explode("\t",trim($_line));
-				if($imgfile === $_imgfile && $_tool === 'upload'){
-					error($en?'This operation has failed.':'失敗しました。');
+				if($no===$_no && $time===$_time && $imgfile === $_imgfile && $_tool !== 'upload'){
+					$find=true;
 					break;
 				}
 			}
 		}
 		closeFile($rp);
+		if(!$find){
+			error($en?'This operation has failed.':'失敗しました。');
+		}
 
 		list($picw,$pich)=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
 
@@ -1282,6 +1285,7 @@ function img_replace(): void {
 	$starttime='';
 	$postedtime='';
 	$repfind=false;
+	$is_painted_img=false;
 	$hide_animation=false;
 	if(!$is_upload_img){
 		/*--- テンポラリ捜査 ---*/
@@ -1300,6 +1304,7 @@ function img_replace(): void {
 				//画像があり、認識コードがhitすれば抜ける
 				if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $valid_poster_found && $urepcode && ($urepcode === $repcode)){
 					$repfind=true;
+					$is_painted_img=true;
 					break;
 				}
 			}
@@ -1358,7 +1363,7 @@ function img_replace(): void {
 			list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
 			if($id===$_time && $no===$_no){
 
-				if(($is_upload_img) && ($_tool!=='upload')) {
+				if($is_upload_img && ($_tool !== 'upload') || $is_painted_img && ($_tool === 'upload')) {
 
 					closeFile($rp);
 					closeFile($fp);
