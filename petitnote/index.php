@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.70.1';
+$petit_ver='v1.70.2';
 $petit_lot='lot.20250223';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -849,8 +849,8 @@ function paint(): void {
 
 		$rp=fopen(LOG_DIR."{$no}.log","r");
 		while($_line=fgets($rp)){
-			if(strpos($_line,$time)!==false){
-				list($_no,,,,,,$_imgfile,,,,,,$_tool,,$_time,$_first_posted_time,,,,)=explode("\t",trim($_line));
+			if(strpos($_line,$imgfile)!==false){
+				list($_no,,,,,,$_imgfile,,,,,,$_tool,,$_time,$_first_posted_time,)=explode("\t",trim($_line));
 				if($imgfile === $_imgfile && $_tool === 'upload'){
 					error($en?'This operation has failed.':'失敗しました。');
 					break;
@@ -1443,22 +1443,24 @@ function img_replace(): void {
 	$chk_images=array_merge($chk_lines,$r_arr);
 	$m2time=microtime2time($time);
 	foreach($chk_images as $chk_line){
-		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_img_hash,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
+		if(strpos($chk_line,$up_img_hash)!==false){
+			list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_img_hash,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
 
-		if($is_upload_img && ($m2time === microtime2time($chk_time))){//投稿時刻の重複回避
-			safe_unlink($upfile);
-			closeFile($fp);
-			closeFile($rp);
-			error($en? 'Please wait a little.':'少し待ってください。');
-		}
-		if(!$is_upload_img && ((string)$time === (string)$chk_time)){
-			$time=(string)($m2time+1).(string)substr($time,-6);
-		}
-		if(!$admindel && $is_upload_img && ($chk_log_img_hash && ($chk_log_img_hash === $up_img_hash))){
-			safe_unlink($upfile);
-			closeFile($fp);
-			closeFile($rp);
-			error($en?'Image already exists.':'同じ画像がありました。');
+			if($is_upload_img && ($m2time === microtime2time($chk_time))){//投稿時刻の重複回避
+				safe_unlink($upfile);
+				closeFile($fp);
+				closeFile($rp);
+				error($en? 'Please wait a little.':'少し待ってください。');
+			}
+			if(!$is_upload_img && ((string)$time === (string)$chk_time)){
+				$time=(string)($m2time+1).(string)substr($time,-6);
+			}
+			if(!$admindel && $is_upload_img && ($chk_log_img_hash && ($chk_log_img_hash === $up_img_hash))){
+				safe_unlink($upfile);
+				closeFile($fp);
+				closeFile($rp);
+				error($en?'Image already exists.':'同じ画像がありました。');
+			}
 		}
 	}
 
@@ -1907,12 +1909,14 @@ function edit(): void {
 	$_chk_lines = create_chk_lins($chk_log_arr,$no);//取得済みの$chk_restoの配列を除外
 	$chk_lines=array_merge($_chk_lines,$r_arr);
 	foreach($chk_lines as $line){
-		list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_img_hash_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",trim($line));
+		if(strpos($userid,$line)!==false){
+			list($_no_,$_sub_,$_name_,$_verified_,$_com_,$_url_,$_imgfile_,$_w_,$_h_,$_thumbnail_,$_painttime_,$_log_img_hash_,$_tool_,$_pchext_,$_time_,$_first_posted_time_,$_host_,$_userid_,$_hash_,$_oya_)=explode("\t",trim($line));
 
-		if(!$admindel && ($userid===$_userid_) && ($id!==$_time_) && ($com && ($com!==$_com) && ($com === $_com_))){
-			closeFile($fp);
-			closeFile($rp);
-			error($en?'Post once by this comment.':'同じコメントがありました。');
+			if(!$admindel && ($userid===$_userid_) && ($id!==$_time_) && ($com && ($com!==$_com) && ($com === $_com_))){
+				closeFile($fp);
+				closeFile($rp);
+				error($en?'Post once by this comment.':'同じコメントがありました。');
+			}
 		}
 	}
 
