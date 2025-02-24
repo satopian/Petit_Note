@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250222;
+$functions_ver=20250224;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -377,7 +377,7 @@ function create_res($line,$options=[]): array {
 		$upload_image = true;
 	}
 
-	$anime = in_array($pchext,['.pch','.tgkr']); 
+	$anime = $pchext ? in_array($pchext,['.pch','.tgkr']) : false; 
 	$hide_thumbnail = $mark_sensitive_image ? (strpos($thumbnail,'hide_')!==false) :'';
 	$hide_thumbnail = $set_all_images_to_nsfw ? $set_all_images_to_nsfw : $hide_thumbnail;
 
@@ -400,8 +400,9 @@ function create_res($line,$options=[]): array {
 	$check_elapsed_days = !$isset_catalog ? check_elapsed_days($time) : true;//念のためtrueに
 	$verified = ($verified==='adminpost');
 	$three_point_sub = ($isset_catalog && (mb_strlen($sub)>15)) ? '…' :'';
-	$webpimg = is_file('webp/'.$time.'t.webp');
+	$webpimg = $imgfile ? is_file('webp/'.$time.'t.webp') : false;
 	$com = (!$isset_catalog || $isset_search) ? $com : '';
+	$com = $com ? (!$isset_search ? str_replace('"\n"',"\n",$com) : str_replace('"\n"'," ",$com)) : '';
 
 	$res=[
 		'no' => $no,
@@ -444,8 +445,6 @@ function create_res($line,$options=[]): array {
 		'link_thumbnail' => $link_thumbnail, //サムネイルにリンクがある時
 		'not_deleted' => !(!$name && !$com && !$url&& !$imgfile && !$userid), //表示する記事がある親
 	];
-
-	$res['com']= $com ? (!$isset_search ? str_replace('"\n"',"\n",$res['com']) : str_replace('"\n"'," ",$res['com'])) : '';
 
 	foreach($res as $key=>$val){
 		$res[$key]=h($val);
