@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.70.6';
+$petit_ver='v1.70.7';
 $petit_lot='lot.20250224';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -1364,7 +1364,7 @@ function img_replace(): void {
 			if($id===$_time && $no===$_no){
 
 				if($is_upload_img && ($_tool !== 'upload') || $is_painted_img && ($_tool === 'upload')) {
-
+					safe_unlink($tempfile);
 					closeFile($rp);
 					closeFile($fp);
 					error($en?'This operation has failed.':'失敗しました。');
