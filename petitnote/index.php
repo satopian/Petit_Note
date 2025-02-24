@@ -806,7 +806,7 @@ function paint(): void {
 				if($get_pch_size = get_pch_size($pchup)){
 					list($picw,$pich)=$get_pch_size;//pchの幅と高さを取得
 				}
-			$pchfile = $pchup;
+				$pchfile = $pchup;
 			} elseif(($pchext==="chi") && ($mime_type === "application/octet-stream")){
 					$app='chi';
 				$img_chi = $pchup;
