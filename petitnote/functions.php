@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250224;
+$functions_ver=20250225;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -909,7 +909,8 @@ function check_same_origin(): void {
 
 function check_open_no($no): void {
 	global $en;
-	if(!is_numeric($no)){
+	$no=(string)$no;
+	if(!ctype_digit($no)||$no !== basename($no)){
 		error($en?'This operation has failed.':'失敗しました。');
 	}
 }

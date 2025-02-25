@@ -58,6 +58,9 @@ const res_form_submit = (event, formId = 'res_form') => {//第二引数が未指
 					if (formId !== "res_form") {
 						//ヘッダX-Requested-Withをチェックしてfetchでの投稿をPHP側で中断し、
 						//エラーメッセージが返ってこなければ
+						if(formId === "download_forme"){
+							submitBtn.disabled = false;
+						}
 						return form.submit(); // 通常のフォームの送信を実行
 					}
 				})

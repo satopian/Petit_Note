@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.70.9';
-$petit_lot='lot.20250224';
+$petit_ver='v1.70.11';
+$petit_lot='lot.20250225';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -298,7 +298,7 @@ function post(): void {
 		$resto=(string)$resto;//(string)厳密な型
 		//描画時間を$userdataをもとに計算
 		$hide_painttime=(bool)filter_input(INPUT_POST,'hide_painttime',FILTER_VALIDATE_BOOLEAN);
-		if(!$hide_painttime && $starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
+		if(!$hide_painttime && $starttime && ctype_digit($starttime) && $postedtime && ctype_digit($postedtime)){
 			$painttime=(int)$postedtime-(int)$starttime;
 		}
 		if($resto && !$use_res_upload && !$adminpost){
@@ -1508,7 +1508,7 @@ function img_replace(): void {
 	//描画時間追加
 
 	$painttime = '';
-	if(is_numeric($_painttime) && $starttime && is_numeric($starttime) && $postedtime && is_numeric($postedtime)){
+	if(ctype_digit($_painttime) && $starttime && ctype_digit($starttime) && $postedtime && ctype_digit($postedtime)){
 		$psec=(int)$postedtime-(int)$starttime;
 		$painttime=(int)$_painttime+(int)$psec;
 	}
