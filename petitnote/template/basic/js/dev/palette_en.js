@@ -25,7 +25,7 @@ function PaletteNew(){
 	s = d.Palette.select
 	Palettes[s.length] = p
 	cutomP++
-	const str = prompt("パレット名","パレット " + cutomP)
+	const str = prompt("Palette name","Palette " + cutomP)
 	if(str == null || str == ""){cutomP--;return}
 	s.options[s.length] = new Option(str)
 	if(30 > s.length) s.size = s.length
@@ -41,7 +41,7 @@ function PaletteDel(){
 	s = document.Palette.select
 	i = s.selectedIndex
 	if(i == -1)return
-	const flag = confirm("「"+s.options[i].text + "」を削除してよろしいですか？")
+	const flag = confirm("Are you sure you want to delete ["+s.options[i].text + "]?")
 	if(!flag) return
 	s.options[i] = null
 	while(p>i){
@@ -87,24 +87,24 @@ function PaletteMatrixGet(){
 			if(s.options[n] != null){ t.value = t.value + "\n!"+ s.options[n].text +"\n" + Palettes[n];c++}
 			n++
 		}
-		alert ("パレット数："+c+"\nパレットマトリクスを取得しました");break
+		alert ("Number of pallets "+c+"\ngot the palette matrix.");break
 	case 1:
 	t.value = "!Palette\n"+String(document.paintbbs.getColors())
-		alert("現在使用されているパレット情報を取得しました");break
+		alert("got the palette information currently used.");break
 	}
 		t.value = t.value.trim() + "\n!Matrix"
 }
 function PalleteMatrixSet(){
 	m = document.Palette.m_m.selectedIndex
-	const str = "パレットマトリクスをセットします。"
+	const str = "Set the palette matrix."
 	let flag;
 	switch(m){
 	case 0:default:
-		flag = confirm(str+"\n現在の全パレット情報は失われますがよろしいですか？");break
+		flag = confirm(str+"\nAll current palette information will be lost, is that okay ?");break
 	case 1:
-		flag = confirm(str+"\n現在使用しているパレットと置き換えますがよろしいですか？");break;
+		flag = confirm(str+"\nAre you sure you want to replace it with the palette you are currently using?");break;
 	case 2:
-		flag = confirm(str+"\n現在のパレット情報に追加しますがよろしいですか？");break
+		flag = confirm(str+"\nAre you sure you want to replace it with the palette you are currently using ?");break
 	}
 		if (!flag) return
 	PaletteSet()
@@ -112,7 +112,7 @@ function PalleteMatrixSet(){
 	if(DynamicColor) PaletteListSetColor()
 }
 function PalleteMatrixHelp(){
-	alert("★PALETTE MATRIX\nパレットマトリクスとはパレット情報を列挙したテキストを用いる事により\n自由なパレット設定を使用する事が出来ます。\n\n□マトリクスの取得\n1)「取得」ボタンよりパレットマトリクスを取得します。\n2)取得された情報が下のテキストエリアに出ます、これを全てコピーします。\n3)このマトリクス情報をテキストとしてファイルに保存しておくなりしましょう。\n\n□マトリクスのセット\n1）コピーしたマトリクスを下のテキストエリアに貼り付け(ペースト)します。\n2)ファイルに保存してある場合は、それをコピーし貼り付けます。\n3)「セット」ボタンを押せば保存されたパレットが使用できます。\n\n余分な情報があるとパレットが正しくセットされませんのでご注意下さい。");
+	alert("**ABOUT PALETTE MATRIX**\nThe palette matrix allows you to use free palette settings \nby using text that lists palette information.\n\nGet the matrix\n1)Get the palette matrix from the [Get] button.\n2)The retrieved information will appear in the text area below, copy it all.\n3)Let's save this matrix information as text in a file.\n\nto set matrix\n1)Paste the copied matrix into the text area below.\n2)If you have saved it in a file, copy and paste it.\n3)You can use the saved palette by pressing the set button.\n\nPlease note that the palette will not be set correctly if there is unnecessary information.");
 }
 function PaletteSet(){
 	d = document.Palette
@@ -122,7 +122,7 @@ function PaletteSet(){
 	l = se.length
 	let pa;
 	if(l<1){
-		alert("マトリクス情報がありません。");return
+		alert("There is no matrix information.");return
 	}
 		n = 0;o = 0;e = 0
 	switch(m){
