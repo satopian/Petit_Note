@@ -222,14 +222,14 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
     const updateFormStyle = () => {
         if (
             paint_com ||
-            (elem_attach_image instanceof HTMLFormElement &&
+            (elem_attach_image instanceof HTMLInputElement &&
                 elem_attach_image.files.length > 0)
         ) {
             if (elem_check_nsfw) {
                 elem_check_nsfw.style.display = "inline-block"; // チェックボックスを表示
             }
             if (
-                elem_hide_thumbnail instanceof HTMLFormElement &&
+                elem_hide_thumbnail instanceof HTMLInputElement &&
                 elem_hide_thumbnail.checked
             ) {
                 elem_form_submit.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
