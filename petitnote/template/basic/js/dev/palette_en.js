@@ -269,9 +269,9 @@ function PaletteListSetColor() {
     }
 }
 function GetBright(c) {
-    let r = Number("0x" + c.substring(1, 3));
-    let g = Number("0x" + c.substring(3, 5));
-    let b = Number("0x" + c.substring(5, 7));
+    let r = parseInt("0x" + c.substring(1, 3));
+    let g = parseInt("0x" + c.substring(3, 5));
+    let b = parseInt("0x" + c.substring(5, 7));
     c = r >= g ? (r >= b ? r : b) : g >= b ? g : b;
     return 128 > c ? "#FFFFFF" : "#000000";
 }
@@ -280,8 +280,8 @@ function Chenge_() {
     var st = grad.pst.value;
     var ed = grad.ped.value;
 
-    if (isNaN(Number("0x" + st))) return;
-    if (isNaN(Number("0x" + ed))) return;
+    if (isNaN(parseInt("0x" + st))) return;
+    if (isNaN(parseInt("0x" + ed))) return;
     GradView("#" + st, "#" + ed);
 }
 function ChengeGrad() {
@@ -289,12 +289,12 @@ function ChengeGrad() {
     var st = grad.pst.value;
     var ed = grad.ped.value;
     Chenge_();
-    var degi_R = Number("0x" + st.substring(0, 2));
-    var degi_G = Number("0x" + st.substring(2, 4));
-    var degi_B = Number("0x" + st.substring(4, 6));
-    var R = Math.trunc((degi_R - Number("0x" + ed.substring(0, 2))) / 15);
-    var G = Math.trunc((degi_G - Number("0x" + ed.substring(2, 4))) / 15);
-    var B = Math.trunc((degi_B - Number("0x" + ed.substring(4, 6))) / 15);
+    var degi_R = parseInt("0x" + st.substring(0, 2));
+    var degi_G = parseInt("0x" + st.substring(2, 4));
+    var degi_B = parseInt("0x" + st.substring(4, 6));
+    var R = Math.trunc((degi_R - parseInt("0x" + ed.substring(0, 2))) / 15);
+    var G = Math.trunc((degi_G - parseInt("0x" + ed.substring(2, 4))) / 15);
+    var B = Math.trunc((degi_B - parseInt("0x" + ed.substring(4, 6))) / 15);
     if (isNaN(R)) R = 1;
     if (isNaN(G)) G = 1;
     if (isNaN(B)) B = 1;
