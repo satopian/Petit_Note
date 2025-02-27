@@ -172,7 +172,7 @@ function PalleteMatrixSet() {
         case 1:
             flag = confirm(
                 str +
-                    "\nAre you sure you want to replace it with the current palette?"
+					"\nAre you sure you want to replace the current palette?"
             );
             break;
         case 2:
