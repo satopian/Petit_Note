@@ -1,6 +1,7 @@
 //	BBS Note 動的パレット＆マトリクス 2003/06/22
 //	(C) のらネコ WonderCatStudio http://wondercatstudio.com/
 //substr()→substring()対策版 by satopian
+"use strict";
 var DynamicColor = 1;	// パレットリストに色表示
 var Palettes = new Array();
 // ========== パレット配列作成 ==========
@@ -13,13 +14,13 @@ function setPalette(){
 	if(! d.grad.view.checked){return}
 	GetPalette();
 }
-function PaletteSave(){
-	Palettes[0] = String(document.paintbbs.getColors())
+async function PaletteSave(){
+	Palettes[0] = String(await document.paintbbs.getColors())
 }
 var cutomP = 0;
-function PaletteNew(){
+async function PaletteNew(){
 	d = document
-	p = String(d.paintbbs.getColors())
+	p = String(await d.paintbbs.getColors())
 	s = d.Palette.select
 	Palettes[s.length] = p
 	cutomP++
@@ -29,9 +30,9 @@ function PaletteNew(){
 	if(30 > s.length) s.size = s.length
 	PaletteListSetColor()
 }
-function PaletteRenew(){
+async function PaletteRenew(){
 	d = document
-	Palettes[d.Palette.select.selectedIndex] = String(d.paintbbs.getColors())
+	Palettes[d.Palette.select.selectedIndex] = String(await d.paintbbs.getColors())
 	PaletteListSetColor()
 }
 function PaletteDel(){
@@ -48,12 +49,12 @@ function PaletteDel(){
 	}
 	if(30 > s.length) s.size = s.length
 }
-function P_Effect(v){
+async function P_Effect(v){
 	v=parseInt(v)
 	let x = 1
 	if(v==255)x=-1
 	d = document.paintbbs
-	p=String(d.getColors()).split("\n")
+	p=String(await d.getColors()).split("\n")
 	l = p.length
 	var s = ""
 	for(n=0;l>n;n++){
@@ -71,7 +72,7 @@ function P_Effect(v){
 	d.setColors(s)
 	PaletteListSetColor()
 }
-function PaletteMatrixGet(){
+async function PaletteMatrixGet(){
 	d = document.Palette
 	p = Palettes.length
 	s = d.select
@@ -87,7 +88,7 @@ function PaletteMatrixGet(){
 		}
 		alert ("Number of pallets "+c+"\ngot the palette matrix.");break
 	case 1:
-	t.value = "!Palette\n"+String(document.paintbbs.getColors())
+	t.value = "!Palette\n"+String(await document.paintbbs.getColors())
 		alert("got the palette information currently used.");break
 	}
 		t.value = t.value.trim() + "\n!Matrix"
@@ -243,9 +244,9 @@ function Hex_(n){
 	}else{n=""}
 	return n
 }
-function GetPalette(){
+async function GetPalette(){
 	d = document;
-	p = String(d.paintbbs.getColors());
+	p = String(await d.paintbbs.getColors());
 	 if(p == "null" || p == ""){return};
 	ps = p.split("\n");
 	let st = d.grad.p_st.selectedIndex
