@@ -4,7 +4,6 @@
 "use strict";
 var DynamicColor = 1; // パレットリストに色表示
 var Palettes = [];
-var ps = [];
 // ========== パレット配列作成 ==========
 // {$palettes}
 Palettes[0] =
@@ -171,8 +170,7 @@ function PalleteMatrixSet() {
             break;
         case 1:
             flag = confirm(
-                str +
-					"\nAre you sure you want to replace the current palette?"
+                str + "\nAre you sure you want to replace the current palette?"
             );
             break;
         case 2:
@@ -282,7 +280,7 @@ function Chenge_() {
 
     if (isNaN(parseInt("0x" + st))) return;
     if (isNaN(parseInt("0x" + ed))) return;
-    GradView("#" + st, "#" + ed);
+    GradView();
 }
 function ChengeGrad() {
     const grad = document.forms["grad"];
@@ -369,17 +367,22 @@ async function GetPalette() {
     if (p == "null" || p == "") {
         return;
     }
-    ps = p.split("\n");
+    const ps = p.split("\n");
     const grad = document.forms["grad"];
     let st = grad.p_st.selectedIndex;
     let ed = grad.p_ed.selectedIndex;
     grad.pst.value = ps[st].substring(1, 7);
     grad.ped.value = ps[ed].substring(1, 7);
     GradSelC();
-    GradView(ps[st], ps[ed]);
     PaletteListSetColor();
 }
-function GradSelC() {
+async function GradSelC() {
+    const d = document;
+    let p = String(await d.paintbbs.getColors());
+    if (p == "null" || p == "") {
+        return;
+    }
+    const ps = p.split("\n");
     const grad = document.forms["grad"];
     let n;
     if (!grad.view.checked) return;
@@ -414,7 +417,7 @@ function GradSelC() {
         grad.p_ed.options[n].style.color = pes[n];
     }
 }
-function GradView(st, ed) {
+function GradView() {
     const grad = document.forms["grad"];
     if (!grad.view.checked) return;
 }
