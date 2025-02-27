@@ -89,6 +89,7 @@ return;
 //	BBS Note 動的パレット＆マトリクス 2003/06/22
 //	(C) のらネコ WonderCatStudio http://wondercatstudio.com/
 var DynamicColor=1,Palettes=[],ps=[];
+<?=htmlspecialchars($palettes,ENT_NOQUOTES)?>
 function setPalette(){document.paintbbs.setColors(Palettes[document.forms.Palette.select.selectedIndex]);document.forms.grad.view.checked&&GetPalette()}async function PaletteSave(){Palettes[0]=String(await document.paintbbs.getColors())}var cutomP=0;
 async function PaletteNew(){var a=String(await document.paintbbs.getColors());const b=document.forms.Palette.select;Palettes[b.length]=a;cutomP++;a=prompt("Palette name","Palette "+cutomP);null==a||""==a?cutomP--:(b.options[b.length]=new Option(a),30>b.length&&(b.size=b.length),PaletteListSetColor())}async function PaletteRenew(){Palettes[document.forms.Palette.select.selectedIndex]=String(await document.paintbbs.getColors());PaletteListSetColor()}
 function PaletteDel(){const a=Palettes.length,b=document.forms.Palette.select;let c=b.selectedIndex;if(-1!=c&&confirm("Are you sure you want to delete ["+b.options[c].text+"]?")){for(b.options[c]=null;a>c;)Palettes[c]=Palettes[c+1],c++;30>b.length&&(b.size=b.length)}}
