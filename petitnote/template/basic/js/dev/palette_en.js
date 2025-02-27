@@ -166,19 +166,19 @@ function PalleteMatrixSet() {
         default:
             flag = confirm(
                 str +
-                    "\nAll current palette information will be lost, is that okay ?"
+                    "\nAll current palette information will be lost. Are you sure you want to proceed?"
             );
             break;
         case 1:
             flag = confirm(
                 str +
-                    "\nAre you sure you want to replace it with the palette you are currently using?"
+                    "\nAre you sure you want to replace it with the current palette?"
             );
             break;
         case 2:
             flag = confirm(
                 str +
-                    "\nAre you sure you want to replace it with the palette you are currently using ?"
+                    "\nAre you sure you want to add this to the current palette?"
             );
             break;
     }
