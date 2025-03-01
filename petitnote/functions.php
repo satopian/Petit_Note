@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250225;
+$functions_ver=20250301;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -311,7 +311,7 @@ function redirect($url): void {
 	exit();
 }
 // コンティニュー認証
-function check_cont_pass(): bool {
+function check_cont_pass(): void {
 
 	global $en;
 
@@ -323,7 +323,7 @@ function check_cont_pass(): bool {
 	$id = (string)filter_input(INPUT_POST, 'time');//intの範囲外
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
-
+	$flag = false;
 	if(is_file(LOG_DIR."$no.log")){
 		check_open_no($no);
 		$rp=fopen(LOG_DIR."$no.log","r");
@@ -337,13 +337,14 @@ function check_cont_pass(): bool {
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id===$time && $no===$_no && ($adminmode && $verified ==='adminpost' || $pwd && password_verify($pwd,$hash))){
 				closeFile ($rp);
-				return true;
+				$flag = true;
 			}
 		}
 		closeFile ($rp);
 	}
-
-	error($en?'password is wrong.':'パスワードが違います。');
+	if(!$flag){
+		error($en?'password is wrong.':'パスワードが違います。');
+	}
 }
 
 //コンティニュー前画面のペイントツールを選択可能に
@@ -1012,7 +1013,7 @@ function Reject_if_NGword_exists_in_the_post(): void {
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
 		mb_regex_encoding("UTF-8");
-		if ($com_len && !preg_match("/[ぁ-んァ-ヶー一-龠]+/u",$chk_com)) error($en?'Comment should have at least some Japanese characters.':'日本語で何か書いてください。');
+		if ($com_len && !preg_match("/[ぁ-んァ-ヶｧ-ﾝー一-龠]+/u",$chk_com)) error($en?'Comment should have at least some Japanese characters.':'日本語で何か書いてください。');
 	}
 
 	//本文へのURLの書き込みを禁止
