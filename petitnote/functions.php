@@ -324,24 +324,28 @@ function check_cont_pass(): void {
 	$pwd=t(filter_input(INPUT_POST, 'pwd'));//パスワードを取得
 	$pwd=$pwd ? $pwd : t(filter_input(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
 	$flag = false;
-	if(is_file(LOG_DIR."$no.log")){
-		check_open_no($no);
-		$rp=fopen(LOG_DIR."$no.log","r");
-		if(!$rp){
-			error($en?'This operation has failed.':'失敗しました。');
+	if(!is_file(LOG_DIR."$no.log")){
+		error($en? 'The article does not exist.':'記事がありません。');
+	}
+	check_open_no($no);
+	$rp=fopen(LOG_DIR."$no.log","r");
+	if(!$rp){
+		error($en?'This operation has failed.':'失敗しました。');
+	}
+	while ($line = fgets($rp)) {
+		if(!trim($line)){
+			continue;
 		}
-		while ($line = fgets($rp)) {
-			if(!trim($line)){
-				continue;
-			}
+		if(strpos($line,"\t".$id."\t")!==false){
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id===$time && $no===$_no && ($adminmode && $verified ==='adminpost' || $pwd && password_verify($pwd,$hash))){
-				closeFile ($rp);
 				$flag = true;
+				break;
 			}
+			break;
 		}
-		closeFile ($rp);
 	}
+	closeFile ($rp);
 	if(!$flag){
 		error($en?'password is wrong.':'パスワードが違います。');
 	}

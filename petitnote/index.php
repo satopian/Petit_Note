@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.72.2';
+$petit_ver='v1.72.5';
 $petit_lot='lot.20250301';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -1101,6 +1101,7 @@ function to_continue(): void {
 					$flag=true;
 					break;
 				}
+				break;
 			}
 		}
 	}
@@ -1192,7 +1193,6 @@ function download_app_dat(): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
-	$flag=false;
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
@@ -1203,9 +1203,7 @@ function download_app_dat(): void {
 				if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
 					error($en?'Password is incorrect.':'パスワードが違います。');
 				}
-				$flag=true;
 				break;
-
 			} 
 		}
 	}
@@ -1374,6 +1372,7 @@ function img_replace(): void {
 					break;
 				}
 			}
+			break;
 		}
 	}
 	if(!check_elapsed_days($_time)&&(!$adminpost && !$admindel)){//指定日数より古い画像差し換えは新規投稿にする
@@ -1882,6 +1881,7 @@ function edit(): void {
 					break;
 				}
 			}
+			break;
 		}
 	}
 	if(!$flag){
