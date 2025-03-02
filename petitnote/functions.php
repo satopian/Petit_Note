@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250301;
+$functions_ver=20250302;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
