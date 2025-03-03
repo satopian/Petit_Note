@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.72.6';
-$petit_lot='lot.20250302';
+$petit_ver='v1.73.3';
+$petit_lot='lot.20250303';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -105,6 +105,7 @@ $use_darkmode = $use_darkmode ?? true;
 $darkmode_by_default = $darkmode_by_default ?? false;
 $sitename = $sitename ?? '';
 $session_name = $session_name ?? 'session_petit';
+$fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
 $mode = (string)filter_input(INPUT_POST,'mode');
 $mode = $mode ? $mode :(string)filter_input(INPUT_GET,'mode');
 $resno=(int)filter_input(INPUT_GET,'resno',FILTER_VALIDATE_INT);
@@ -806,7 +807,7 @@ function paint(): void {
 				if($get_pch_size = get_pch_size($pchup)){
 					list($picw,$pich)=$get_pch_size;//pchの幅と高さを取得
 				}
-				$pchfile = $pchup;
+			$pchfile = $pchup;
 			} elseif(($pchext==="chi") && ($mime_type === "application/octet-stream")){
 					$app='chi';
 				$img_chi = $pchup;
@@ -1598,13 +1599,14 @@ function pchview(): void {
 		} 
 	}
 	closeFile ($rp);
+	if(!$flag){
+		error($en?'This operation has failed.':'失敗しました。');
+	}
 
 	$pchext=basename($pchext);
-
 	$view_replay = in_array($pchext,['.pch','.tgkr']);
-	$pch=$time;
 	$pchfile = IMG_DIR.$time.$pchext;
-	if(!$flag||!$view_replay||!is_file($pchfile)){
+	if(!$view_replay||!is_file($pchfile)){
 		error($en?'This operation has failed.':'失敗しました。');
 	}
 	list($picw, $pich) = getimagesize(IMG_DIR.$imagefile);
@@ -2458,7 +2460,7 @@ function view(): void {
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
-	global $disp_image_res,$nsfw_checked,$sitename; 
+	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip; 
 
 	aikotoba_required_to_view();
 	$page=(int)filter_input(INPUT_GET,'page',FILTER_VALIDATE_INT);
@@ -2507,26 +2509,41 @@ function view(): void {
 			$find_hide_thumbnail=false;
 			check_open_no($no);
 			$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
-				while ($line = fgets($rp)) {
-					if(!trim($line)){
-						continue;
-					}
-					$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
-					if($_res['img']){
-						if($_res['hide_thumbnail']){
-							$find_hide_thumbnail=true;
-						}
-					}
-					$out[$oya][]=$_res;
-				}	
+			$lines=[];
+			while ($line = fgets($rp)) {
+				if(!trim($line)){
+					continue;
+				}
+				$lines[]=$line;
+			}
 			fclose($rp);
+			$countres=count($lines);
+			$com_skipres= $dispres ? ($countres-($dispres+1)) : 0;
+
+			if($userdel || $admindel){
+				$com_skipres = 0;	//削除モードの時はレスを省略しない
+			}
+
+			foreach($lines as $i => $line){
+
+				$_res=[];
+
+				if($fetch_articles_to_skip ||($i===0 || $i>$com_skipres)){//省略するレスは処理しない
+					$_res = create_res(explode("\t",trim($line)));//$lineから、情報を取り出す
+				}
+				if(isset($_res['img']) && $_res['img']){
+					if($_res['hide_thumbnail']){
+						$find_hide_thumbnail=true;
+					}
+				}
+				$out[$oya][]=$_res;
+			}	
 			$out[$oya][0]['find_hide_thumbnail']=$find_hide_thumbnail;
 			if(empty($out[$oya])||$out[$oya][0]['oya']!=='oya'){
 				unset($out[$oya]);
 			}
 		}
 	}
-
 	// 禁止ホスト
 	$is_badhost=is_badhost();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
@@ -2601,9 +2618,12 @@ function res (): void {
 	$_res['time_left_to_close_the_thread']=false;
 	$_res['descriptioncom']='';
 	$find_hide_thumbnail=false;	
+
 	check_open_no($resno);
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
+
 	$out[0]=[];
+
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
