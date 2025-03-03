@@ -1,4 +1,4 @@
-<files ~ "(^config\.php$|\.(ini|log|dat|json|inc)$)">
+<files ~ "(?i)(^config\.php$|\.(ini|log|dat|json|inc)$)">
 	Require all denied
 </files>
 <Files "manifest.json">
