@@ -354,6 +354,16 @@ $dispres= 10;
 
 $disp_image_res= 5;
 
+// スキップして表示しないレスの配列も取得する
+// する: true しない: false
+
+// しない: false に設定すると表示しないレスの配列を取得しないため、表示を高速化できます。
+// しない: false に設定する時はv1.73.0以後のテンプレートへの更新が必要になります。
+// 該当ファイル:petitnote/template/basic/parts/threads_loop.html
+
+$fetch_articles_to_skip = false;
+// $fetch_articles_to_skip = true;
+
 // カタログモード時の1ページあたりの表示件数
 // 20の倍数で設定すると画面にきれいにおさまります。
 

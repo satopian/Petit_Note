@@ -2,14 +2,12 @@
 	<?php if($sort_comments_by_newest){
 		krsort($ress);
 	}
-	$findimage=false;
-
 	if(!$resmode){//レス画面では必要がない
 		$revd_count_images=0;
 		$ress_revd = $ress;
 		krsort($ress_revd);//キーを逆順でソート
 		foreach($ress_revd as $img_skipres =>$res){
-			if($res['img']){//配列の後ろからの画像の出現回数を数える
+			if(!empty($res) && $res['img']){//配列の後ろからの画像の出現回数を数える
 				++$revd_count_images;
 			}
 			if($disp_image_res < $revd_count_images){
@@ -36,14 +34,6 @@
 
 	<!-- 個別threadのループ -->
 	<?php foreach($ress as $i => $res) : ?>
-	<?php
-	 if($res['img']){
-		$findimage=true;
-	}
-	$res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));
-	?>
-	<!-- 縮小のかかったNSFW画像を元のサイズへ -->
-	<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
 	<?php if($skipres && $i===$skipres):?>
 	<hr>
 	<?php if($en):?>
@@ -52,6 +42,14 @@
 	<?php else:?>レス<?=h($skipres)?>件省略中。<?php endif;?>
 	<?php endif;?>	
 	<?php if($i===0 || $i>$skipres):?>
+	<?php
+	$res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));
+	if(empty($res)){
+		continue;
+	}
+	?>
+	<!-- 縮小のかかったNSFW画像を元のサイズへ -->
+	<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
 		<hr>
 		<?php if($i!==0):?>
 			<div class="res_wrap" <?php if($resmode):?>id="<?=h($res['time'])?>"<?php endif;?>>
@@ -218,7 +216,7 @@
 			<?php endif; ?>
 
 			<?php if($aikotoba && (!$userdel && !$admindel)):?>
-				<?php if($use_misskey_note && $findimage && ($resform && $ress[0]['check_elapsed_days'] || $adminpost)):?>
+				<?php if($use_misskey_note && ($resform && $ress[0]['check_elapsed_days'] || $adminpost)):?>
 					<span class="share_button">
 						<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="noopener">
 						<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
