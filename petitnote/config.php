@@ -354,16 +354,6 @@ $dispres= 10;
 
 $disp_image_res= 5;
 
-// スキップして表示しないレスの配列も取得する
-// する: true しない: false
-
-// しない: false に設定すると表示しないレスの配列を取得しないため、表示を高速化できます。
-// しない: false に設定する時はv1.73.0以後のテンプレートへの更新が必要になります。
-// 該当ファイル: template/basic/parts/threads_loop.html
-
-$fetch_articles_to_skip = false;
-// $fetch_articles_to_skip = true;
-
 // カタログモード時の1ページあたりの表示件数
 // 20の倍数で設定すると画面にきれいにおさまります。
 
@@ -591,7 +581,19 @@ $session_name = "session_petit";
 //セッション名は数字だけで構成することはできません。 少なくとも文字がひとつ以上現れる必要があります。そうでない場合、 新規セッション ID が毎回生成されます。
 //https://www.php.net/manual/ja/function.session-name.php
 
-// 通常は変更しません
+/* 通常は変更しません*/
+
+// スキップして表示しないレスの配列も取得する
+// する: true しない: false
+
+// しない: false に設定すると表示しないレスの配列を取得しないため、表示を高速化できます。
+// しない: false に設定する時はv1.73.0以後のテンプレートへの更新が必要になります。
+// 該当ファイル: template/basic/parts/threads_loop.html
+// この設定項目が最初から存在している場合はすでに対応テンプレートになっているため、設定を変更する必要はありません。
+
+$fetch_articles_to_skip = false;
+// $fetch_articles_to_skip = true;
+
 // ペイント画面の$pwdの暗号化
 
 define("CRYPT_PASS","v25Xc9nZ82a5JPT");//暗号鍵初期値
