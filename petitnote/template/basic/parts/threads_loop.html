@@ -7,14 +7,14 @@
 		$ress_revd = $ress;
 		krsort($ress_revd);//キーを逆順でソート
 		foreach($ress_revd as $img_skipres =>$res){
-			if(!empty($res) && $res['img']){//配列の後ろからの画像の出現回数を数える
+			if(isset($res['img']) && $res['img']){//配列の後ろからの画像の出現回数を数える
 				++$revd_count_images;
 			}
 			if($disp_image_res < $revd_count_images){
 				break;//breakしてのキーの値を取得する
 			}
 		}
-		$countres=count($ress);
+		$countres= $ress[0]['countres'] ?? count($ress);
 		// $dispresを設定しない場合の処理の振り分け
 		$com_skipres= $dispres ? ($countres-($dispres+1)) : 0;
 		// $disp_image_resを設定しない場合の処理の振り分け
@@ -27,9 +27,9 @@
 	}
 ?>
 	<article>
-		<!-- タイトル -->
+	<!-- タイトル -->
 	<h2 class="article_title">
-			<a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a>
+		<a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a>
 	</h2>
 
 	<!-- 個別threadのループ -->

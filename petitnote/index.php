@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.73.3';
+$petit_ver='v1.73.6';
 $petit_lot='lot.20250303';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -2539,6 +2539,7 @@ function view(): void {
 				$out[$oya][]=$_res;
 			}	
 			$out[$oya][0]['find_hide_thumbnail']=$find_hide_thumbnail;
+			$out[$oya][0]['countres']=$countres;
 			if(empty($out[$oya])||$out[$oya][0]['oya']!=='oya'){
 				unset($out[$oya]);
 			}
