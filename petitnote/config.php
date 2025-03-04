@@ -359,7 +359,7 @@ $disp_image_res= 5;
 
 // しない: false に設定すると表示しないレスの配列を取得しないため、表示を高速化できます。
 // しない: false に設定する時はv1.73.0以後のテンプレートへの更新が必要になります。
-// 該当ファイル:petitnote/template/basic/parts/threads_loop.html
+// 該当ファイル: template/basic/parts/threads_loop.html
 
 $fetch_articles_to_skip = false;
 // $fetch_articles_to_skip = true;
