@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.73.6';
-$petit_lot='lot.20250303';
+$petit_ver='v1.73.8';
+$petit_lot='lot.20250305';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1609,7 +1609,7 @@ function pchview(): void {
 	if(!$view_replay||!is_file($pchfile)){
 		error($en?'This operation has failed.':'失敗しました。');
 	}
-	list($picw, $pich) = getimagesize(IMG_DIR.$imagefile);
+	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
 	$appw = $picw < 200 ? 200 : $picw;
 	$apph = $pich < 200 ? 200 : $pich + 26;
 	$parameter_day = date("Ymd");
