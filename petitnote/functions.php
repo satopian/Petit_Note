@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250302;
+$functions_ver=20250307;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
@@ -1503,7 +1503,7 @@ function post_share_server(): void {
 	redirect($share_url);
 }
 //filter_inputのラッパー関数
-function filter_input_data(string $input, string $key, int $filter=0) {
+function filter_input_data(string $input, string $key, int $filter=0): ?string {
 	// $_GETまたは$_POSTからデータを取得
 	$value = null;
 	if ($input === 'GET') {
