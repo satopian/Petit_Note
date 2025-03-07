@@ -879,6 +879,8 @@ function check_csrf_token(): void {
 function session_sta(): void {
 	global $session_name;
 
+	$session_name = $session_name ?? 'session_petit';
+
 	if(!isset($_SESSION)){
 		ini_set('session.use_strict_mode', 1);
 		session_set_cookie_params(

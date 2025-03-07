@@ -1,5 +1,5 @@
 <?php global $use_darkmode,$darkmode_by_default;?>
-<?php $darkmode = (bool)filter_input(INPUT_COOKIE,'p_n_set_darkmode');?>
+<?php $darkmode = (bool)filter_input_data('COOKIE','p_n_set_darkmode');?>
 <html
 <?php if(isset($use_darkmode) && $use_darkmode && ($darkmode||!isset($_COOKIE["p_n_set_darkmode"])&&isset($darkmode_by_default) && $darkmode_by_default)):?>
 class="darkmode"

@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.75.0';
+$petit_ver='v1.75.2';
 $petit_lot='lot.20250307';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -104,7 +104,6 @@ $nsfw_checked = $nsfw_checked ?? true;
 $use_darkmode = $use_darkmode ?? true;
 $darkmode_by_default = $darkmode_by_default ?? false;
 $sitename = $sitename ?? '';
-$session_name = $session_name ?? 'session_petit';
 $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
 $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ? $mode :(string)filter_input_data('GET','mode');
@@ -939,7 +938,6 @@ function paint(): void {
 			$templete='paint_tegaki.html';
 			include __DIR__.'/'.$skindir.$templete;
 			exit();
-
 		case 'axnos':
 
 			$tool ='axnos';

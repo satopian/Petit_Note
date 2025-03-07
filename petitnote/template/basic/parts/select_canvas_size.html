@@ -1,8 +1,8 @@
 <?php
 global $pdef_w,$pdef_h,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$step_of_canvas_size;
 //Cookie
-$picwc=h((string)filter_input(INPUT_COOKIE,'picwc'));
-$pichc=h((string)filter_input(INPUT_COOKIE,'pichc'));
+$picwc=h((string)filter_input_data('COOKIE','picwc'));
+$pichc=h((string)filter_input_data('COOKIE','pichc'));
 //Cookieが存在しない時はデフォルトのキャンバスサイズ
 $picwc= $picwc ? $picwc : $pdef_w;
 $pichc= $pichc ? $pichc : $pdef_h;
