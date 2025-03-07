@@ -1,9 +1,9 @@
 <?php
-	$mode=(string)filter_input(INPUT_GET,'mode');
+	$mode=(string)filter_input_data('GET','mode');
 	$mode=in_array($mode,["catalog","search"]) ? $mode : "";
 	$search=($mode==="search");
-	$imgsearch=(bool)filter_input(INPUT_GET,'imgsearch',FILTER_VALIDATE_BOOLEAN);
-	$radio =(int)filter_input(INPUT_GET,'radio',FILTER_VALIDATE_INT);
+	$imgsearch=(bool)filter_input_data('GET','imgsearch',FILTER_VALIDATE_BOOLEAN);
+	$radio =(int)filter_input_data('GET','radio',FILTER_VALIDATE_INT);
 	$en_q=isset($en_q) ? $en_q :"";
 ?>
 <div class="pagination">

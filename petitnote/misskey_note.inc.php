@@ -17,16 +17,16 @@ class misskey_note{
 		$adminpost=adminpost_valid();
 		$admindel=admindel_valid();
 
-		$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
-		$id = t(filter_input(INPUT_POST,'id'));//intの範囲外
-		$id = $id ? $id : t(filter_input(INPUT_GET,'id'));//intの範囲外
-		$no = t(filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
-		$no = $no ? $no : t(filter_input(INPUT_GET,'no',FILTER_VALIDATE_INT));
-		$misskey_note = (bool)filter_input(INPUT_GET,'misskey_note',FILTER_VALIDATE_BOOLEAN);
+		$pwdc=(string)filter_input_data(INPUT_COOKIE,'pwdc');
+		$id = t(filter_input_data('POST','id'));//intの範囲外
+		$id = $id ? $id : t(filter_input_data('GET','id'));//intの範囲外
+		$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
+		$no = $no ? $no : t(filter_input_data('GET','no',FILTER_VALIDATE_INT));
+		$misskey_note = (bool)filter_input_data('GET','misskey_note',FILTER_VALIDATE_BOOLEAN);
 		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-		$resmode = (bool)filter_input(INPUT_POST,'resmode',FILTER_VALIDATE_BOOLEAN);
-		$postpage = (int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
-		$postresno = (int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);
+		$resmode = (bool)filter_input_data('POST','resmode',FILTER_VALIDATE_BOOLEAN);
+		$postpage = (int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
+		$postresno = (int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);
 		$postresno = $postresno ? $postresno : false; 
 
 		check_open_no($no);
@@ -65,8 +65,8 @@ class misskey_note{
 		$token=get_csrf_token();
 
 		// nsfw
-		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
-		$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+		$nsfwc=(bool)filter_input_data(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+		$set_nsfw_show_hide=(bool)filter_input_data(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
 		$count_r_arr=count($r_arr);
 		$edit_mode = 'editmode';
@@ -90,11 +90,11 @@ class misskey_note{
 		$adminpost=adminpost_valid();
 		$admin = ($admindel||$adminpost);
 
-		$pwd=(string)filter_input(INPUT_POST,'pwd');
-		$pwdc=(string)filter_input(INPUT_COOKIE,'pwdc');
+		$pwd=(string)filter_input_data('POST','pwd');
+		$pwdc=(string)filter_input_data(INPUT_COOKIE,'pwdc');
 		$pwd = $pwd ? $pwd : $pwdc;
 		
-		$id_and_no=(string)filter_input(INPUT_POST,'id_and_no');
+		$id_and_no=(string)filter_input_data('POST','id_and_no');
 
 		list($id,$no)=explode(",",trim($id_and_no));
 
@@ -140,11 +140,11 @@ class misskey_note{
 
 		$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
-		$resno=(int)filter_input(INPUT_POST,'postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
-		$page=(int)filter_input(INPUT_POST,'postpage',FILTER_VALIDATE_INT);
+		$resno=(int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
+		$page=(int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
 
-		$nsfwc=(bool)filter_input(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
-		$set_nsfw_show_hide=(bool)filter_input(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+		$nsfwc=(bool)filter_input_data(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
+		$set_nsfw_show_hide=(bool)filter_input_data(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
 		$image_rep=false;
 		$admin_pass= null;
@@ -162,16 +162,16 @@ class misskey_note{
 
 		$userip =t(get_uip());
 
-		$no = t(filter_input(INPUT_POST,'no',FILTER_VALIDATE_INT));
-		$src_image = t(filter_input(INPUT_POST,'src_image'));
-		$com = t(filter_input(INPUT_POST,'com'));
-		$abbr_toolname = t(filter_input(INPUT_POST,'abbr_toolname'));
-		$paintsec = filter_input(INPUT_POST,'paintsec',FILTER_VALIDATE_INT);
-		$hide_thumbnail = (bool)filter_input(INPUT_POST,'hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
-		$show_painttime = (bool)filter_input(INPUT_POST,'show_painttime',FILTER_VALIDATE_BOOLEAN);
-		$article_url_link = (bool)filter_input(INPUT_POST,'article_url_link',FILTER_VALIDATE_BOOLEAN);
-		$hide_content = (bool)filter_input(INPUT_POST,'hide_content',FILTER_VALIDATE_BOOLEAN);
-		$cw = t(filter_input(INPUT_POST,'cw'));
+		$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
+		$src_image = t(filter_input_data('POST','src_image'));
+		$com = t(filter_input_data('POST','com'));
+		$abbr_toolname = t(filter_input_data('POST','abbr_toolname'));
+		$paintsec = filter_input_data('POST','paintsec',FILTER_VALIDATE_INT);
+		$hide_thumbnail = (bool)filter_input_data('POST','hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
+		$show_painttime = (bool)filter_input_data('POST','show_painttime',FILTER_VALIDATE_BOOLEAN);
+		$article_url_link = (bool)filter_input_data('POST','article_url_link',FILTER_VALIDATE_BOOLEAN);
+		$hide_content = (bool)filter_input_data('POST','hide_content',FILTER_VALIDATE_BOOLEAN);
+		$cw = t(filter_input_data('POST','cw'));
 		if($hide_content && !$cw){
 			error($en?"Content warning field is empty.":"注釈がありません。");
 		}
@@ -212,8 +212,8 @@ class misskey_note{
 		];
 		$misskey_servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
 
-		$misskey_server_radio_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_radio_cookie");
-		$misskey_server_direct_input_cookie=(string)filter_input(INPUT_COOKIE,"misskey_server_direct_input_cookie");
+		$misskey_server_radio_cookie=(string)filter_input_data(INPUT_COOKIE,"misskey_server_radio_cookie");
+		$misskey_server_direct_input_cookie=(string)filter_input_data(INPUT_COOKIE,"misskey_server_direct_input_cookie");
 
 		$admin_pass= null;
 		// HTML出力
@@ -228,10 +228,10 @@ class misskey_note{
 
 		check_same_origin();
 
-		$misskey_server_radio=(string)filter_input(INPUT_POST,"misskey_server_radio",FILTER_VALIDATE_URL);
-		$misskey_server_radio_for_cookie=(string)filter_input(INPUT_POST,"misskey_server_radio");//directを判定するためurlでバリデーションしていない
+		$misskey_server_radio=(string)filter_input_data('POST',"misskey_server_radio",FILTER_VALIDATE_URL);
+		$misskey_server_radio_for_cookie=(string)filter_input_data('POST',"misskey_server_radio");//directを判定するためurlでバリデーションしていない
 		$misskey_server_radio_for_cookie=($misskey_server_radio_for_cookie === 'direct') ? 'direct' : $misskey_server_radio;
-		$misskey_server_direct_input=(string)filter_input(INPUT_POST,"misskey_server_direct_input",FILTER_VALIDATE_URL);
+		$misskey_server_direct_input=(string)filter_input_data('POST',"misskey_server_direct_input",FILTER_VALIDATE_URL);
 		setcookie("misskey_server_radio_cookie",$misskey_server_radio_for_cookie, time()+(86400*30),"","",false,true);
 		setcookie("misskey_server_direct_input_cookie",$misskey_server_direct_input, time()+(86400*30),"","",false,true);
 		$share_url='';
@@ -300,7 +300,7 @@ class misskey_note{
 	// Misskeyへの投稿が成功した事を知らせる画面
 	public static function misskey_success(): void {
 		global $en,$skindir,$boardname,$petit_lot;
-		$no = (string)filter_input(INPUT_GET, 'no',FILTER_VALIDATE_INT);
+		$no = (string)filter_input_data('GET', 'no',FILTER_VALIDATE_INT);
 		
 		session_sta();
 		

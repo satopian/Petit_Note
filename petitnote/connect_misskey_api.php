@@ -22,9 +22,9 @@ if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
 	error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 }
 
-$noauth = (bool)filter_input(INPUT_GET,'noauth',FILTER_VALIDATE_BOOLEAN);
+$noauth = (bool)filter_input_data('GET','noauth',FILTER_VALIDATE_BOOLEAN);
 if($noauth){
-	if((string)filter_input(INPUT_GET,'s_id') !== $_SESSION['sns_api_session_id']){
+	if((string)filter_input_data('GET','s_id') !== $_SESSION['sns_api_session_id']){
 
 		error($en ? "Operation failed." :"失敗しました。" ,false);	
 	}
