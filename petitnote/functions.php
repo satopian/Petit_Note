@@ -34,7 +34,7 @@ function aikotoba(): void {
 		if(isset($_SESSION['aikotoba'])){
 			unset($_SESSION['aikotoba']);
 		}
-		if((string)filter_input_data(INPUT_COOKIE,'aikotoba')){
+		if((string)filter_input_data('COOKIE','aikotoba')){
 			setcookie('aikotoba', '', time() - 3600);
 		} 
 		error($en?'The secret word is wrong':'合言葉が違います。');
@@ -102,7 +102,7 @@ function age_check_required_to_view(): void {
 	}
 
 	$admin_pass= null;
-	$agecheck_passed = (bool)filter_input_data(INPUT_COOKIE,'p_n_agecheck_passed');
+	$agecheck_passed = (bool)filter_input_data('COOKIE','p_n_agecheck_passed');
 	if(!$agecheck_passed){
 		$templete='age_check.html';
 		include __DIR__.'/'.$skindir.$templete;
@@ -232,7 +232,7 @@ function userdel_valid(): bool {
 function aikotoba_valid(): bool {
 	global $keep_aikotoba_login_status,$aikotoba;
 	session_sta();
-	$keep=$keep_aikotoba_login_status ? ($aikotoba && ($aikotoba===(string)filter_input_data(INPUT_COOKIE,'aikotoba'))
+	$keep=$keep_aikotoba_login_status ? ($aikotoba && ($aikotoba===(string)filter_input_data('COOKIE','aikotoba'))
 	) : false;
 	return ($keep||isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba'));
 }
@@ -322,7 +322,7 @@ function check_cont_pass(): void {
 	$no = (string)filter_input_data('POST', 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input_data('POST', 'time');//intの範囲外
 	$pwd=t(filter_input_data('POST', 'pwd'));//パスワードを取得
-	$pwd=$pwd ? $pwd : t(filter_input_data(INPUT_COOKIE,'pwdc'));//未入力ならCookieのパスワード
+	$pwd=$pwd ? $pwd : t(filter_input_data('COOKIE','pwdc'));//未入力ならCookieのパスワード
 	$flag = false;
 	if(!is_file(LOG_DIR."$no.log")){
 		error($en? 'The article does not exist.':'記事がありません。');
@@ -896,7 +896,7 @@ function check_same_origin(): void {
 	global $en,$usercode;
 
 	session_sta();
-	$c_usercode = t(filter_input_data(INPUT_COOKIE, 'usercode'));//user-codeを取得
+	$c_usercode = t(filter_input_data('COOKIE', 'usercode'));//user-codeを取得
 	$session_usercode = isset($_SESSION['usercode']) ? t($_SESSION['usercode']) : "";
 	if(!$c_usercode){
 		error($en?'Cookie check failed.':'Cookieが確認できません。');
