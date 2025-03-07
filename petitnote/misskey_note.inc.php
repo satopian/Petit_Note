@@ -17,7 +17,7 @@ class misskey_note{
 		$adminpost=adminpost_valid();
 		$admindel=admindel_valid();
 
-		$pwdc=(string)filter_input_data(INPUT_COOKIE,'pwdc');
+		$pwdc=(string)filter_input_data('COOKIE','pwdc');
 		$id = t(filter_input_data('POST','id'));//intの範囲外
 		$id = $id ? $id : t(filter_input_data('GET','id'));//intの範囲外
 		$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
@@ -65,8 +65,8 @@ class misskey_note{
 		$token=get_csrf_token();
 
 		// nsfw
-		$nsfwc=(bool)filter_input_data(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
-		$set_nsfw_show_hide=(bool)filter_input_data(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+		$nsfwc=(bool)filter_input_data('COOKIE','nsfwc',FILTER_VALIDATE_BOOLEAN);
+		$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
 		$count_r_arr=count($r_arr);
 		$edit_mode = 'editmode';
@@ -91,7 +91,7 @@ class misskey_note{
 		$admin = ($admindel||$adminpost);
 
 		$pwd=(string)filter_input_data('POST','pwd');
-		$pwdc=(string)filter_input_data(INPUT_COOKIE,'pwdc');
+		$pwdc=(string)filter_input_data('COOKIE','pwdc');
 		$pwd = $pwd ? $pwd : $pwdc;
 		
 		$id_and_no=(string)filter_input_data('POST','id_and_no');
@@ -143,8 +143,8 @@ class misskey_note{
 		$resno=(int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
 		$page=(int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
 
-		$nsfwc=(bool)filter_input_data(INPUT_COOKIE,'nsfwc',FILTER_VALIDATE_BOOLEAN);
-		$set_nsfw_show_hide=(bool)filter_input_data(INPUT_COOKIE,'p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+		$nsfwc=(bool)filter_input_data('COOKIE','nsfwc',FILTER_VALIDATE_BOOLEAN);
+		$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
 		$image_rep=false;
 		$admin_pass= null;
@@ -212,8 +212,8 @@ class misskey_note{
 		];
 		$misskey_servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
 
-		$misskey_server_radio_cookie=(string)filter_input_data(INPUT_COOKIE,"misskey_server_radio_cookie");
-		$misskey_server_direct_input_cookie=(string)filter_input_data(INPUT_COOKIE,"misskey_server_direct_input_cookie");
+		$misskey_server_radio_cookie=(string)filter_input_data('COOKIE',"misskey_server_radio_cookie");
+		$misskey_server_direct_input_cookie=(string)filter_input_data('COOKIE',"misskey_server_direct_input_cookie");
 
 		$admin_pass= null;
 		// HTML出力
