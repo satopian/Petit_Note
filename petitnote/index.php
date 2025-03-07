@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.73.8';
-$petit_lot='lot.20250305';
+$petit_ver='v1.73.10';
+$petit_lot='lot.20250306';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1592,21 +1592,22 @@ function pchview(): void {
 		}
 		if(strpos($line,"\t".$id."\t")!==false){
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-			if($id===$time && $no===$_no){
+			if($id===$time && $no===$_no && $pchext){
 				$flag=true;
 				break;
 			} 
+			break;
 		} 
 	}
 	closeFile ($rp);
 	if(!$flag){
-		error($en?'This operation has failed.':'失敗しました。');
+		error($en? 'The article does not exist.':'記事がありません。');
 	}
 
 	$pchext=basename($pchext);
 	$view_replay = in_array($pchext,['.pch','.tgkr']);
 	$pchfile = IMG_DIR.$time.$pchext;
-	if(!$view_replay||!is_file($pchfile)){
+	if(!$view_replay){
 		error($en?'This operation has failed.':'失敗しました。');
 	}
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
