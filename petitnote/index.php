@@ -292,7 +292,7 @@ function post(): void {
 			error($en? 'Posting failed.':'投稿に失敗しました。');
 		}
 		$tool= is_paint_tool_name($tool);
-		$uresto=(string)filter_var($uresto,FILTER_VALIDATE_INT);
+		$ures	to=(string)filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
 		$resto=(string)$resto;//(string)厳密な型
