@@ -2,7 +2,7 @@
 //Petit Note 2021-2025 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20241225;
+$misskey_note_ver=20250308;
 
 class misskey_note{
 
@@ -166,7 +166,7 @@ class misskey_note{
 		$src_image = t(filter_input_data('POST','src_image'));
 		$com = t(filter_input_data('POST','com'));
 		$abbr_toolname = t(filter_input_data('POST','abbr_toolname'));
-		$paintsec = filter_input_data('POST','paintsec',FILTER_VALIDATE_INT);
+		$paintsec = (int)filter_input_data('POST','paintsec',FILTER_VALIDATE_INT);
 		$hide_thumbnail = (bool)filter_input_data('POST','hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
 		$show_painttime = (bool)filter_input_data('POST','show_painttime',FILTER_VALIDATE_BOOLEAN);
 		$article_url_link = (bool)filter_input_data('POST','article_url_link',FILTER_VALIDATE_BOOLEAN);

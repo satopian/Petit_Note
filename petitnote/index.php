@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.75.2';
-$petit_lot='lot.20250307';
+$petit_ver='v1.75.3';
+$petit_lot='lot.20250308';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -22,12 +22,12 @@ if(!isset($functions_ver)||$functions_ver<20250307){
 }
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20240510){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20250308){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/save.inc.php');
 require_once(__DIR__.'/save.inc.php');
-if(!isset($save_inc_ver)||$save_inc_ver<20240127){
+if(!isset($save_inc_ver)||$save_inc_ver<20250308){
 	die($en?'Please update save.inc.php to the latest version.':'save.inc.phpを最新版に更新してください。');
 }
 
@@ -292,7 +292,7 @@ function post(): void {
 			error($en? 'Posting failed.':'投稿に失敗しました。');
 		}
 		$tool= is_paint_tool_name($tool);
-		$uresto=filter_var($uresto,FILTER_VALIDATE_INT);
+		$uresto=(string)filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
 		$resto=(string)$resto;//(string)厳密な型

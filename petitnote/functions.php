@@ -1504,8 +1504,8 @@ function post_share_server(): void {
 	}
 	redirect($share_url);
 }
-//filter_inputのラッパー関数
-function filter_input_data(string $input, string $key, int $filter=0): ?string {
+//filter_input のラッパー関数
+function filter_input_data(string $input, string $key, int $filter=0) {
 	// $_GETまたは$_POSTからデータを取得
 	$value = null;
 	if ($input === 'GET') {
@@ -1528,7 +1528,7 @@ function filter_input_data(string $input, string $key, int $filter=0): ?string {
 					return ($result === null || $result === false) ? null : $result;
 			case FILTER_VALIDATE_INT:
 					$result = filter_var($value, FILTER_VALIDATE_INT);
-					return ($result === false) ? null : $result;
+					return ($result === false) ? null : (int)$result;
 			case FILTER_VALIDATE_URL:
 					$result = filter_var($value, FILTER_VALIDATE_URL);
 					return ($result === false) ? null : $result;

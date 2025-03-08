@@ -4,7 +4,7 @@
 	$search=($mode==="search");
 	$imgsearch=(bool)filter_input_data('GET','imgsearch',FILTER_VALIDATE_BOOLEAN);
 	$radio =(int)filter_input_data('GET','radio',FILTER_VALIDATE_INT);
-	$en_q=isset($en_q) ? $en_q :"";
+	$en_q= $en_q ?? "";
 ?>
 <div class="pagination">
 <?php if($page >= ($pagedef*17)):?>

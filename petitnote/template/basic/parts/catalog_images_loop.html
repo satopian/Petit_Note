@@ -1,5 +1,5 @@
-<?php $misskey_note = isset($misskey_note) ? $misskey_note : false;?>
-<?php $res_catalog = isset($res_catalog) ? $res_catalog : false;?>
+<?php $misskey_note = $misskey_note ?? false;?>
+<?php $res_catalog = $res_catalog ?? false;?>
 <?php if(isset($out)):?>
 <?php foreach($out as $t => $ress):?><?php if(($misskey_note||$res_catalog)&&$sort_comments_by_newest){
 		krsort($ress);
