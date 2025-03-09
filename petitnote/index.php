@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.75.5';
+$petit_ver='v1.75.6';
 $petit_lot='lot.20250309';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -13,11 +13,14 @@ if (version_compare(PHP_VERSION, '7.1.0', '<')) {
 		"エラー。本プログラムの動作には PHPバージョン 7.1.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
 	);
 }
+
 if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250307){
+
+
+if(!isset($functions_ver)||$functions_ver<20250308){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/misskey_note.inc.php');
@@ -30,6 +33,16 @@ require_once(__DIR__.'/save.inc.php');
 if(!isset($save_inc_ver)||$save_inc_ver<20250308){
 	die($en?'Please update save.inc.php to the latest version.':'save.inc.phpを最新版に更新してください。');
 }
+check_file(__DIR__.'/thumbnail_gd.inc.php');
+require_once(__DIR__.'/thumbnail_gd.inc.php');
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241102){
+	error($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
+}
+check_file(__DIR__.'/config.php');
+require_once(__DIR__.'/config.php');
+
+check_file(__DIR__.'/noticemail.inc.php');
+require_once(__DIR__.'/noticemail.inc.php');
 
 // jQueryバージョン
 const JQUERY='jquery-3.7.0.min.js';
@@ -38,20 +51,8 @@ check_file(__DIR__.'/lib/'.JQUERY);
 check_file(__DIR__.'/lib/lightbox/js/lightbox.min.js');
 check_file(__DIR__.'/lib/lightbox/css/lightbox.min.css');
 
-check_file(__DIR__.'/config.php');
-check_file(__DIR__.'/thumbnail_gd.inc.php');
-check_file(__DIR__.'/noticemail.inc.php');
-
-require_once(__DIR__.'/config.php');
-require_once(__DIR__.'/thumbnail_gd.inc.php');
-require_once(__DIR__.'/noticemail.inc.php');
-
 //テンプレート
 $skindir='template/'.$skindir;
-
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241102){
-	error($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
-}
 
 if(!$max_log){
 	error($en?'The maximum number of threads has not been set.':'最大スレッド数が設定されていません。');
