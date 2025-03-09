@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250307;
+$functions_ver=20250309;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
@@ -1524,14 +1524,11 @@ function filter_input_data(string $input, string $key, int $filter=0) {
 	// フィルタリング処理
 	switch ($filter) {
 			case FILTER_VALIDATE_BOOLEAN:
-					$result = filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-					return ($result === null || $result === false) ? null : $result;
+				return  filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
 			case FILTER_VALIDATE_INT:
-					$result = filter_var($value, FILTER_VALIDATE_INT);
-					return ($result === false) ? null : (int)$result;
+				return filter_var($value, FILTER_VALIDATE_INT);
 			case FILTER_VALIDATE_URL:
-					$result = filter_var($value, FILTER_VALIDATE_URL);
-					return ($result === false) ? null : $result;
+				return filter_var($value, FILTER_VALIDATE_URL);
 			default:
 					return $value;  // 他のフィルタはそのまま返す
 	}
