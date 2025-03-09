@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.75.3';
-$petit_lot='lot.20250308';
+$petit_ver='v1.75.5';
+$petit_lot='lot.20250309';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -292,7 +292,7 @@ function post(): void {
 			error($en? 'Posting failed.':'投稿に失敗しました。');
 		}
 		$tool= is_paint_tool_name($tool);
-		$uresto=(string)filter_var($uresto,FILTER_VALIDATE_INT);
+		$uresto = (string)filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
 		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
 		$resto=(string)$resto;//(string)厳密な型

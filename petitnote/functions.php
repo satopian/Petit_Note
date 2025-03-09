@@ -1523,13 +1523,13 @@ function filter_input_data(string $input, string $key, int $filter=0) {
 
 	// フィルタリング処理
 	switch ($filter) {
-			case FILTER_VALIDATE_BOOLEAN:
-				return  filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-			case FILTER_VALIDATE_INT:
-				return filter_var($value, FILTER_VALIDATE_INT);
-			case FILTER_VALIDATE_URL:
-				return filter_var($value, FILTER_VALIDATE_URL);
-			default:
-					return $value;  // 他のフィルタはそのまま返す
+		case FILTER_VALIDATE_BOOLEAN:
+			return  filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+		case FILTER_VALIDATE_INT:
+			return filter_var($value, FILTER_VALIDATE_INT);
+		case FILTER_VALIDATE_URL:
+			return filter_var($value, FILTER_VALIDATE_URL);
+		default:
+			return $value;  // 他のフィルタはそのまま返す
 	}
 }
