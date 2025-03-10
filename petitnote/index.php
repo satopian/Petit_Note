@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.79.0';
+$petit_ver='v1.79.2';
 $petit_lot='lot.20250310';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -36,7 +36,7 @@ if(!isset($save_inc_ver)||$save_inc_ver<20250308){
 check_file(__DIR__.'/search.inc.php');
 require_once(__DIR__.'/search.inc.php');
 if(!isset($search_inc_ver)||$search_inc_ver<20250310){
-	die($en?'Please update save.inc.php to the latest version.':'save.inc.phpを最新版に更新してください。');
+	die($en?'Please update search.inc.php to the latest version.':'search.inc.phpを最新版に更新してください。');
 }
 check_file(__DIR__.'/thumbnail_gd.inc.php');
 require_once(__DIR__.'/thumbnail_gd.inc.php');
