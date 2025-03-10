@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250309;
+$functions_ver=20250310;
 //編集モードログアウト
 function logout(): void {
 	$resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
@@ -1338,17 +1338,6 @@ function create_formatted_text_from_post($name,$sub,$url,$com): array {
 	}
 	return $formatted_post;
 
-}
-
-//検索文字列をフォーマット
-function create_formatted_text_for_search($str): string {
-
-	$s_str=mb_convert_kana($str, 'rn', 'UTF-8');//全角英数を半角に
-	$s_str=str_replace([" ", "　"], "", $s_str);
-	$s_str=str_replace("〜","～", $s_str);//波ダッシュを全角チルダに
-	$s_str=strtolower($s_str);//小文字に
-
-	return $s_str; 
 }
 
 //PaintBBS NEOのpchかどうか調べる
