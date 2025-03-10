@@ -26,6 +26,8 @@ class processsearch
 		global $boardname, $petit_ver, $petit_lot, $set_nsfw, $en, $mark_sensitive_image;
 		global $search_images_pagedef, $search_comments_pagedef;
 
+		aikotoba_required_to_view();
+
 		self::init();
 		$imgsearch = self::$imgsearch;
 		$page = self::$page;
@@ -157,8 +159,6 @@ class processsearch
 	private static function create_search_array(): array
 	{
 		global $max_search, $search_images_pagedef, $search_comments_pagedef;
-
-		aikotoba_required_to_view();
 
 		self::init();
 		$imgsearch = self::$imgsearch;
