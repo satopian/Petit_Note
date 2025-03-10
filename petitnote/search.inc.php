@@ -1,5 +1,5 @@
 <?php
-//search.inc.php(C)2020-2025 さとぴあ(@satopian)
+//Petit Note (C)2021-2025 さとぴあ(@satopian)
 //MIT License
 $search_inc_ver = 20250310;
 class processsearch
@@ -205,7 +205,7 @@ class processsearch
 		$_SESSION['search_start_time'] = time();
 
 		if ($arr) {
-			return $arr; //SESSIONの検索結果の配列を返す
+			return $arr; //SESSIONにキャッシュした配列を返す
 		}
 		$i = 0;
 		$j = 0;
