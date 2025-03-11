@@ -1,7 +1,7 @@
 <?php
 //Petit Note (C)2021-2025 さとぴあ(@satopian)
 //MIT License
-$search_inc_ver = 20250310;
+$search_inc_ver = 20250311;
 class processsearch
 {
 
@@ -93,14 +93,20 @@ class processsearch
 		$radio_chk1 = false; //作者名
 		$radio_chk2 = false; //完全一致
 		$radio_chk3 = false; //本文題名	
-		if ($radio === 3) { //本文題名
-			$radio_chk3 = true;
-		} elseif ($radio === 2) { //完全一致
-			$radio_chk2 = true;
-		} elseif ($radio === 0 || $radio === 1) { //作者名
-			$radio_chk1 = true;
-		} else { //作者名	
-			$radio_chk1 = true;
+
+		switch ($radio) {
+			case 0:
+				$radio_chk1 = true;
+				break;
+			case 1:
+				$radio_chk1 = true;
+				break;
+			case 2:
+				$radio_chk2 = true;
+				break;
+			case 3:
+				$radio_chk3 = true;
+				break;
 		}
 
 		$page = (int)$page;
