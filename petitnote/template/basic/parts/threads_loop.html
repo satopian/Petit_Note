@@ -33,8 +33,9 @@
 	</h2>
 
 	<!-- 個別threadのループ -->
-	<?php foreach($ress as $i => $res) : ?>
-	<?php if($skipres && $i===$skipres):?>
+	<?php foreach($ress as $i => $res) : ?>	
+	<?php	$res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));?>
+		<?php if($skipres && $i===$skipres):?>
 	<hr>
 	<?php if($en):?>
 		<?=h($skipres)?>
@@ -43,13 +44,13 @@
 	<?php endif;?>	
 	<?php if($i===0 || $i>$skipres):?>
 	<?php
-	$res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));
 	if(empty($res)){
 		continue;
 	}
-	?>
-	<!-- 縮小のかかったNSFW画像を元のサイズへ -->
-	<?php if($set_nsfw_show_hide):?><?php $res['w']=$res['_w'];$res['h']=$res['_h'];?><?php endif;?>
+	// 縮小のかかったNSFW画像を元のサイズへ
+	if($set_nsfw_show_hide){
+	$res['w']=$res['_w'];$res['h']=$res['_h'];
+	}?>
 		<hr>
 		<?php if($i!==0):?>
 			<div class="res_wrap" <?php if($resmode):?>id="<?=h($res['time'])?>"<?php endif;?>>
