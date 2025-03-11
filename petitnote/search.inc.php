@@ -210,7 +210,7 @@ class processsearch
 		$_SESSION['search_radio'] = $radio;
 		$_SESSION['search_start_time'] = time();
 
-		if ($arr) {
+		if ($arr && is_array($arr)) {
 			return $arr; //SESSIONにキャッシュした配列を返す
 		}
 		$i = 0;
