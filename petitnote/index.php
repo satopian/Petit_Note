@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.79.2';
-$petit_lot='lot.20250310';
+$petit_ver='v1.79.3';
+$petit_lot='lot.20250312';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2296,9 +2296,11 @@ function view(): void {
 	}
 	fclose($fp);
 
+	$index_cache_json = __DIR__.'/template/cache/index_cache.json';
+
 	$out=[];
 	if($page===0 && !$admindel && !$userdel && !$adminpost){
-		$out = is_file(__DIR__.'/template/cache/index_cache.json') ? json_decode(file_get_contents(__DIR__.'/template/cache/index_cache.json'),true) : [];
+		$out = is_file($index_cache_json) ? json_decode(file_get_contents($index_cache_json),true) : [];
 	}
 	if(empty($out)){
 		//oyaのループ
@@ -2380,9 +2382,9 @@ function view(): void {
 	$prev=((int)$page<=0) ? false : ($page-$pagedef);//ページ番号が0の時はprevのリンクを出さない
 	$prev=($prev<0) ? 0 : $prev;
 	if($page===0 && !$admindel && !$adminpost){
-		if(!is_file(__DIR__.'/template/cache/index_cache.json')){
-			file_put_contents(__DIR__.'/template/cache/index_cache.json',json_encode($out),LOCK_EX);
-			chmod(__DIR__.'/template/cache/index_cache.json',0600);
+		if(!is_file($index_cache_json)){
+			file_put_contents($index_cache_json,json_encode($out),LOCK_EX);
+			chmod($index_cache_json,0600);
 		}
 	}
 	$use_misskey_note = $use_diary  ? ($adminpost||$admindel) : $use_misskey_note;
