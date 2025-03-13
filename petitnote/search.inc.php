@@ -5,10 +5,10 @@ $search_inc_ver = 20250311;
 class processsearch
 {
 
-	public static bool $imgsearch; // `true` か `false` を保持する
-	public static int $page;       // `ページ番号 (整数)` を保持する
-	public static string $q;       // `検索キーワード (文字列)` を保持する
-	public static int $radio;      // `検索オプション (整数)` を保持する
+	private static bool $imgsearch; // `true` か `false` を保持する
+	private static int $page;       // `ページ番号 (整数)` を保持する
+	private static string $q;       // `検索キーワード (文字列)` を保持する
+	private static int $radio;      // `検索オプション (整数)` を保持する
 
 	private static function init(): void
 	{
