@@ -24,7 +24,7 @@ if(!isset($functions_ver)||$functions_ver<20250308){
 
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20250308){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20250316){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
@@ -1648,7 +1648,7 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	aikotoba_required_to_view(true);
 
 	$userdel=userdel_valid();
-	$resmode = (bool)filter_input_data('POST','resmode',FILTER_VALIDATE_BOOLEAN);
+	$resmode = false;//使っていない
 	$postpage = (int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
 	$postresno = (int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);
 	$postresno = $postresno ? $postresno : false; 
@@ -1738,7 +1738,6 @@ function edit_form($id='',$no=''): void {
 	$pwd=(string)filter_input_data('POST','pwd');
 	$pwdc=(string)filter_input_data('COOKIE','pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
-
 
 	if(!($admindel||$userdel)){
 		error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
