@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.79.3';
-$petit_lot='lot.20250312';
+$petit_ver='v1.80.0';
+$petit_lot='lot.20250316';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,36 +18,42 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-
-
 if(!isset($functions_ver)||$functions_ver<20250308){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
+
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
 if(!isset($misskey_note_ver)||$misskey_note_ver<20250308){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
+
 check_file(__DIR__.'/save.inc.php');
 require_once(__DIR__.'/save.inc.php');
 if(!isset($save_inc_ver)||$save_inc_ver<20250308){
 	die($en?'Please update save.inc.php to the latest version.':'save.inc.phpを最新版に更新してください。');
 }
+
 check_file(__DIR__.'/search.inc.php');
 require_once(__DIR__.'/search.inc.php');
 if(!isset($search_inc_ver)||$search_inc_ver<20250310){
 	die($en?'Please update search.inc.php to the latest version.':'search.inc.phpを最新版に更新してください。');
 }
+
 check_file(__DIR__.'/thumbnail_gd.inc.php');
 require_once(__DIR__.'/thumbnail_gd.inc.php');
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241102){
 	error($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
 }
-check_file(__DIR__.'/config.php');
-require_once(__DIR__.'/config.php');
 
 check_file(__DIR__.'/noticemail.inc.php');
 require_once(__DIR__.'/noticemail.inc.php');
+if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20250315){
+	error($en?'Please update noticemail.inc.php to the latest version.':'noticemail.inc.phpを最新版に更新してください。');
+}
+
+check_file(__DIR__.'/config.php');
+require_once(__DIR__.'/config.php');
 
 // jQueryバージョン
 const JQUERY='jquery-3.7.0.min.js';
@@ -1732,7 +1738,8 @@ function edit_form($id='',$no=''): void {
 	$pwd=(string)filter_input_data('POST','pwd');
 	$pwdc=(string)filter_input_data('COOKIE','pwdc');
 	$pwd = $pwd ? $pwd : $pwdc;
-	
+
+
 	if(!($admindel||$userdel)){
 		error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
 	}
@@ -1788,8 +1795,10 @@ function edit_form($id='',$no=''): void {
 
 	$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
-	$resno=(int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);
-	$page=(int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
+	$postpage=(int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
+	$postresno=(int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);
+	$page = $postpage;
+	$resno = $postresno;
 
 	foreach($line as $i => $val){//エスケープ処理
 		$line[$i]=h($val);

@@ -2,7 +2,7 @@
 //Petit Note 2021-2025 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20250308;
+$misskey_note_ver=20250316;
 
 class misskey_note{
 
@@ -22,7 +22,6 @@ class misskey_note{
 		$id = $id ? $id : t(filter_input_data('GET','id'));//intの範囲外
 		$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
 		$no = $no ? $no : t(filter_input_data('GET','no',FILTER_VALIDATE_INT));
-		$misskey_note = (bool)filter_input_data('GET','misskey_note',FILTER_VALIDATE_BOOLEAN);
 		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 		$resmode = (bool)filter_input_data('POST','resmode',FILTER_VALIDATE_BOOLEAN);
 		$postpage = (int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
@@ -140,11 +139,18 @@ class misskey_note{
 
 		$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
-		$resno=(int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
-		$page=(int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
 
 		$nsfwc=(bool)filter_input_data('COOKIE','nsfwc',FILTER_VALIDATE_BOOLEAN);
 		$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+
+		$resno=(int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
+		$page=(int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
+
+		$postresno = $resno;//共通partsのメニューで使用
+		$postpage = $page;//共通partsのメニューで使用
+
+		$userdel = false;
+		$admindel = false;	
 
 		$image_rep=false;
 		$admin_pass= null;

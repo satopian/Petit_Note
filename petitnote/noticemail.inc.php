@@ -1,4 +1,5 @@
 <?php
+$noticemail_inc_ver = 20250315;
 /*
 ** メール通知クラス(UTF-8) lot.20250314 for PetitNote
 ** https://paintbbs.sakura.ne.jp/
@@ -107,6 +108,10 @@ class noticemail
 		$comment = $data['comment'] ?? '';
 		$subject = $data['subject'] ?? '';
 		$option = $data['option'] ?? [];
+		$to = filter_var(($data['to'] ?? ""),FILTER_VALIDATE_EMAIL);
+		if(!$to){
+			return;
+		}
 
 		$line = "---------------------------------------------------------------------\n";
 
@@ -148,13 +153,17 @@ class noticemail
 
 		// メールアドレスの入力欄が無いので代替え
 		$from = 'nomail@' . $_SERVER["HTTP_HOST"];
+		$from = filter_var($from, FILTER_VALIDATE_EMAIL);
+		$name = str_replace(["\r", "\n"], '', $name); // 改行コードを除去
 		$name = mb_encode_mimeheader($name);
+
+		$subject = str_replace(["\r", "\n"], '', $subject); // 改行コードを除去
+
 		// ヘッダにFrom追加
 		$MailHeaders .= 'From: ' . $name . ' <' . $from . '>' . "\n";
-		$subject = str_replace('"', '\"', $subject); //ダブルクオートをエスケープ
 		// メール送信
 		mb_send_mail(
-			$data['to'],
+			$to,
 			$subject,
 			$Message,
 			$MailHeaders

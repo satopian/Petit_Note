@@ -15,7 +15,7 @@
 
 <h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <nav class="menu_wrap">
-<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]</span>
+<?php include __DIR__.'/parts/before_edit_nav_menu.html';?>
  <a href="#bottom">▽</a>
 	</nav>
 	<!-- 閲覧注意画像を隠す/隠さない -->
@@ -75,7 +75,13 @@ document.addEventListener("DOMContentLoaded", ()=> {
 <hr>
 	<div class="copy">
 		<div class="left_wrap">
-		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&page=<?=h($page)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+		[<a href="<?=h($home)?>">HOME</a> /
+		<?php if($postresno):?>
+			<a href="./?mode=adminin&resno=<?=h($postresno)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+	<?php endif;?>
+	<?php if(!$postresno && ($postpage||$postpage===0)):?>
+		<a href="./?mode=adminin&page=<?=h($postpage)?>"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+	<?php endif;?>
 	</div>
 <div class="righit_wrap">
 <?php include __DIR__.'/parts/copyright.html';?>
