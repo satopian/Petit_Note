@@ -1,0 +1,5 @@
+<?php if ($postresno): ?>
+	<a href="./?mode=adminin&resno=<?= h($postresno) ?>"><?php if ($en): ?>Admin<?php else: ?>管理<?php endif; ?></a>]
+<?php elseif (!$postresno && ($postpage || $postpage === 0)): ?>
+	<a href="./?mode=adminin&page=<?= h($postpage) ?>"><?php if ($en): ?>Admin<?php else: ?>管理<?php endif; ?></a>]
+<?php endif; ?>
