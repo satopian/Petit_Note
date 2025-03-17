@@ -23,7 +23,7 @@ class misskey_note{
 		$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
 		$no = $no ? $no : t(filter_input_data('GET','no',FILTER_VALIDATE_INT));
 		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-		$resmode = (bool)filter_input_data('POST','resmode',FILTER_VALIDATE_BOOLEAN);
+		$resmode = false;//使っていない
 		$postpage = (int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
 		$postresno = filter_input_data('POST','postresno',FILTER_VALIDATE_INT);//intでキャストしない
 		$postresno = $postresno ?? $no;//レスカタログからのMisskeyノート時  

@@ -11,6 +11,9 @@ $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
 ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
 
+//テンプレート
+$skindir='template/'.$skindir;
+
 session_sta();
 
 if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))){
