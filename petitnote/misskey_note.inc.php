@@ -267,7 +267,10 @@ class misskey_note{
 		//投稿完了画面に表示するサーバのURl
 		$_SESSION['misskey_server_radio']=$misskey_server_radio;
 
-		if(isset($_SESSION['accessToken'])){
+		//アプリを認証するためのURL
+		$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
+
+		if(isset($_SESSION['accessToken'])){//SESSIONのトークンが有効か確認
 
 			// ダミーの投稿を試みる（textフィールドを空にする）
 			$postUrl = "{$misskey_server_radio}/api/notes/create";
@@ -288,18 +291,15 @@ class misskey_note{
 	
 			// HTTPステータスコードが403の時は、トークン不一致と判断しアプリを認証
 			if ($postStatusCode === 403) {
-				$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
 				unset($_SESSION['accessToken']);//トークンをクリア
 			} else {
-				$Location = "{$root_url}connect_misskey_api.php?noauth=on&s_id={$sns_api_session_id}";
+				//アプリの認証をスキップするURL
+				$Location = "{$root_url}connect_misskey_api.php?skip_auth_check=on&s_id={$sns_api_session_id}";
 			}
-	
-		}else{//SESSIONにトークンがセットされていない時はアプリを認証
-			$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
-	
 		}
+
 		redirect($Location);
-		
+
 	}
 	// Misskeyへの投稿が成功した事を知らせる画面
 	public static function misskey_success(): void {

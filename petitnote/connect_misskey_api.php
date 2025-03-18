@@ -17,7 +17,7 @@ $skindir='template/'.$skindir;
 session_sta();
 
 if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))){
-	return header( "Location: ./ ") ;
+	redirect("./") ;
 };
 
 $baseUrl = $_SESSION['misskey_server_radio'] ?? "";
@@ -25,8 +25,8 @@ if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
 	error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 }
 
-$noauth = (bool)filter_input_data('GET','noauth',FILTER_VALIDATE_BOOLEAN);
-if($noauth){
+$skip_auth_check = (bool)filter_input_data('GET','skip_auth_check',FILTER_VALIDATE_BOOLEAN);
+if($skip_auth_check){
 	if((string)filter_input_data('GET','s_id') !== $_SESSION['sns_api_session_id']){
 
 		error($en ? "Operation failed." :"失敗しました。" ,false);	
@@ -73,6 +73,9 @@ class connect_misskey_api{
 		global $en,$baseUrl,$root_url;
 		
 		$accessToken = $_SESSION['accessToken'] ?? "";
+		if(!$accessToken){
+			error($en ? "Authentication failed." :"認証に失敗しました。" ,false);
+		}
 
 		list($com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw) = $_SESSION['sns_api_val'];
 
