@@ -838,6 +838,8 @@ function error($str,$historyback=true): void {
 
 	global $boardname,$skindir,$en,$aikotoba_required_to_view,$petit_lot;
 
+	$petit_lot = $petit_lot ?? time();
+
 	$asyncflag = (bool)filter_input_data('POST','asyncflag',FILTER_VALIDATE_BOOLEAN);
 	$http_x_requested_with= (bool)(isset($_SERVER['HTTP_X_REQUESTED_WITH']));
 	if($http_x_requested_with||$asyncflag){
@@ -847,7 +849,6 @@ function error($str,$historyback=true): void {
 	$boardname = ($aikotoba_required_to_view && !aikotoba_valid()) ? '' : $boardname; 
 
 	$admin_pass= null;
-
 	$templete='error.html';
 	include __DIR__.'/'.$skindir.$templete;
 	exit();
