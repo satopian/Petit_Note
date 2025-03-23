@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.80.5';
-$petit_lot='lot.20250322';
+$petit_ver='v1.80.6';
+$petit_lot='lot.20250323';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -36,7 +36,7 @@ if(!isset($save_inc_ver)||$save_inc_ver<20250308){
 
 check_file(__DIR__.'/search.inc.php');
 require_once(__DIR__.'/search.inc.php');
-if(!isset($search_inc_ver)||$search_inc_ver<20250310){
+if(!isset($search_inc_ver)||$search_inc_ver<20250320){
 	die($en?'Please update search.inc.php to the latest version.':'search.inc.phpを最新版に更新してください。');
 }
 
@@ -2297,7 +2297,7 @@ function view(): void {
 			continue;
 		}
 		if($page <= $count_alllog && $count_alllog < $page+$pagedef){
-			list($_no)=explode("\t",trim($_line));
+			list($_no)=explode("\t",trim($_line),2);
 			$article_nos[]=$_no;	
 		}
 		++$count_alllog;//処理の後半で記事数のカウントとして使用

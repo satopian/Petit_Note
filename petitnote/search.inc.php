@@ -1,7 +1,7 @@
 <?php
 //Petit Note (C)2021-2025 さとぴあ(@satopian)
 //MIT License
-$search_inc_ver = 20250311;
+$search_inc_ver = 20250320;
 class processsearch
 {
 
@@ -220,7 +220,7 @@ class processsearch
 			if (!trim($log)) {
 				continue;
 			}
-			list($resno) = explode("\t", $log);
+			list($resno) = explode("\t", $log, 2);
 			$resno = basename($resno);
 			//個別スレッドのループ
 			if (!is_file(LOG_DIR . "{$resno}.log")) {
