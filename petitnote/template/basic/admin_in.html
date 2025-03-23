@@ -39,14 +39,6 @@
 
 <form action="./" method="post" class="admin">
 <input type="hidden" name="mode" value="logout_admin">
-<input type="hidden" name="postpage" value="<?=h($page)?>">
-<input type="hidden" name="resno" value="<?=h($resno)?>">
-<input type="hidden" name="catalog" value="<?=h($catalog)?>">
-<input type="hidden" name="res_catalog" value="<?=h($res_catalog)?>">
-<input type="hidden" name="search" value="<?=h($search)?>">
-<input type="hidden" name="radio" value="<?=h($radio)?>">
-<input type="hidden" name="imgsearch" value="<?=h($imgsearch)?>">
-<input type="hidden" name="q" value="<?=h($q)?>">
 <input type="submit" value="<?php if($en):?>Admin log out<?php else:?>管理者ログアウト<?php endif;?>">
 	</form>
 	<?php endif;?>
@@ -75,14 +67,6 @@
 		
 		<span class="non"><input type="text" value="" autocomplete="username"></span>
 		<input type="password" name="adminpass">
-		<input type="hidden" name="postpage" value="<?=h($page)?>">
-		<input type="hidden" name="resno" value="<?=h($resno)?>">
-		<input type="hidden" name="catalog" value="<?=h($catalog)?>">
-		<input type="hidden" name="res_catalog" value="<?=h($res_catalog)?>">
-		<input type="hidden" name="search" value="<?=h($search)?>">
-		<input type="hidden" name="radio" value="<?=h($radio)?>">
-		<input type="hidden" name="imgsearch" value="<?=h($imgsearch)?>">
-		<input type="hidden" name="q" value="<?=h($q)?>">
 		<input type="submit" value="<?php if($en):?>Admin login<?php else:?>管理者ログイン<?php endif;?>">
 	</form>
 	<?php endif;?>

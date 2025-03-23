@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.80.6';
+$petit_ver='v1.81.0';
 $petit_lot='lot.20250323';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -1646,8 +1646,8 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	$admindel=admindel_valid();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	aikotoba_required_to_view(true);
-
 	$userdel=userdel_valid();
+
 	$resmode = false;//使っていない
 	$postpage = (int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
 	$postresno = (int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);
@@ -2211,6 +2211,7 @@ function catalog(): void {
 	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en,$mark_sensitive_image; 
 
 	aikotoba_required_to_view();
+	set_page_context_to_session();
 
 	$page=(int)filter_input_data('GET','page',FILTER_VALIDATE_INT);
 	$page=$page<0 ? 0 : $page;
@@ -2275,6 +2276,8 @@ function view(): void {
 	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip; 
 
 	aikotoba_required_to_view();
+	set_page_context_to_session();
+
 	$page=(int)filter_input_data('GET','page',FILTER_VALIDATE_INT);
 	$page=$page<0 ? 0 : $page;
 	//管理者判定処理
@@ -2413,6 +2416,7 @@ function res (): void {
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw;
 
 	aikotoba_required_to_view();
+	set_page_context_to_session();
 
 	$max_byte = $max_kb * 1024*2;
 

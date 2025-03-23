@@ -59,7 +59,6 @@ function aikotoba_required_to_view($required_flag=false): void {
 	if($page<0||$resno<0){//負の値の時はトップページにリダイレクト
 		redirect("./");
 	}
-
 	//先に年齢確認を行う
 	age_check_required_to_view();
 
@@ -70,14 +69,28 @@ function aikotoba_required_to_view($required_flag=false): void {
 	}
 
 	$admin_pass= null;
-
 	if(!aikotoba_valid()){
 		$templete='aikotoba.html';
 		include __DIR__.'/'.$skindir.$templete;
 		exit();//return include では処理が止まらない。 
 	}
+
 }
 
+function set_page_context_to_session(){
+	session_sta();
+	// セッションに保存
+	$_SESSION['current_page_context'] = [
+		'page' => (int)filter_input_data('GET', 'page', FILTER_VALIDATE_INT),
+		'resno' => (int)filter_input_data('GET', 'resno', FILTER_VALIDATE_INT),
+		'catalog' => (bool)filter_input_data('GET', 'catalog', FILTER_VALIDATE_BOOLEAN),
+		'res_catalog' => (bool)filter_input_data('GET', 'res_catalog', FILTER_VALIDATE_BOOLEAN),
+		'search' => (bool)(filter_input_data('GET', 'mode')==='search'),
+		'radio' => (int)filter_input_data('GET', 'radio', FILTER_VALIDATE_INT),
+		'imgsearch' => (bool)filter_input_data('GET', 'imgsearch', FILTER_VALIDATE_BOOLEAN),
+		'q' => (string)filter_input_data('GET', 'q'),
+	];
+}
 // 年齢確認ボタン押下でCookieを発行
 function age_check(): void {
 
@@ -122,20 +135,12 @@ function admin_in(): void {
 	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
 
 	aikotoba_required_to_view();
-
-	$page=(int)filter_input_data('GET','page',FILTER_VALIDATE_INT);
-	$resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
-	if($page<0||$resno<0){//負の値の時はトップページにリダイレクト
-		redirect('./');
-	}
-	$catalog=(bool)filter_input_data('GET','catalog',FILTER_VALIDATE_BOOLEAN);
-	$res_catalog=(bool)filter_input_data('GET','res_catalog',FILTER_VALIDATE_BOOLEAN);
-	$search=(bool)filter_input_data('GET','search',FILTER_VALIDATE_BOOLEAN);
-	$radio=(int)filter_input_data('GET','radio',FILTER_VALIDATE_INT);
-	$imgsearch=(bool)filter_input_data('GET','imgsearch',FILTER_VALIDATE_BOOLEAN);
-	$q=(string)filter_input_data('GET','q');
+	
+	//古いテンプレート用の使用しない変数
+	$catalog= $res_catalog = $search= $radio= $imgsearch= $q =false;	//ここまで
 
 	session_sta();
+
 	$admindel=admindel_valid();
 	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
@@ -147,7 +152,6 @@ function admin_in(): void {
 	// HTML出力
 	$templete='admin_in.html';
 	include __DIR__.'/'.$skindir.$templete;
-	
 }
 //合言葉を再確認	
 function check_aikotoba(): bool {
@@ -270,13 +274,27 @@ function set_darkmode(): void {
 
 //ログイン・ログアウト時のLocationを分岐
 function branch_destination_of_location(): void {
-	$page=(int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
-	$resno=(int)filter_input_data('POST','resno',FILTER_VALIDATE_INT);
-	$resno= $resno ? $resno : (int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);
-	$catalog=(bool)filter_input_data('POST','catalog',FILTER_VALIDATE_BOOLEAN);
-	$search=(bool)filter_input_data('POST','search',FILTER_VALIDATE_BOOLEAN);
-	$paintcom=(bool)filter_input_data('POST','paintcom',FILTER_VALIDATE_BOOLEAN);
-	$res_catalog=(bool)filter_input_data('POST','res_catalog',FILTER_VALIDATE_BOOLEAN);
+
+	session_sta();
+	// セッションの値を変数に展開（安全な方法）
+	$page_contexts = $_SESSION['current_page_context']??[];
+	foreach ($page_contexts as $key => $value) {
+		if (in_array($key, ['page', 'resno', 'catalog', 'res_catalog', 'search', 'radio', 'imgsearch', 'q'])) {
+				$$key = $value; // 変数の動的作成
+		}
+	}
+
+	$page= $page ?? 0;
+	$resno= $resno ?? 0;
+	if($page<0||$resno<0){//負の値の時はトップページにリダイレクト
+		redirect('./');
+	}
+	$catalog= $catalog ?? false;
+	$res_catalog= $res_catalog ?? false;
+	$search= $search ??	false;
+	$radio= $radio ?? 0;
+	$imgsearch= $imgsearch ?? false;
+	$q= $q ?? '';
 
 	if($paintcom){
 		location_paintcom();

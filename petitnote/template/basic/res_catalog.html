@@ -56,7 +56,7 @@
 
 	<div class="copy">
 		<div class="left_wrap">
-		[<a href="<?=h($home)?>">HOME</a> / <a href="./?mode=adminin&resno=<?=h($resno)?>&res_catalog=on"><?php if($en):?>Admin<?php else:?>管理<?php endif;?></a>]
+		<?php include __DIR__.'/parts/admin_login_link.html';?>
 	</div>
 <div class="righit_wrap">
 <?php include __DIR__.'/parts/copyright.html';?>

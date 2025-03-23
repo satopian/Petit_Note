@@ -27,6 +27,7 @@ class processsearch
 		global $search_images_pagedef, $search_comments_pagedef;
 
 		aikotoba_required_to_view();
+		set_page_context_to_session();
 
 		self::init();
 		$imgsearch = self::$imgsearch;
