@@ -1,18 +1,12 @@
 <?php
-$functions_ver=20250318;
+$functions_ver=20250323;
 //編集モードログアウト
 function logout(): void {
-	$resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
 	session_sta();
 	unset($_SESSION['admindel']);
 	unset($_SESSION['userdel']);
-	if($resno){
-		redirect('./?resno='.$resno);
-	}
-	$page=(int)filter_input_data('POST','page',FILTER_VALIDATE_INT);
-	$page= $page ? $page : (int)filter_input_data('GET','page',FILTER_VALIDATE_INT);
 
-	redirect('./?page='.$page);
+	branch_destination_of_location();
 }
 //管理者モードログアウト
 function logout_admin(): void {
@@ -76,14 +70,14 @@ function aikotoba_required_to_view($required_flag=false): void {
 	}
 
 }
-
+//ページのコンテキストをセッションに保存
 function set_page_context_to_session(){
 	session_sta();
 	// セッションに保存
 	$_SESSION['current_page_context'] = [
 		'page' => (int)filter_input_data('GET', 'page', FILTER_VALIDATE_INT),
-		'resno' => (int)filter_input_data('GET', 'resno', FILTER_VALIDATE_INT),
-		'catalog' => (bool)filter_input_data('GET', 'catalog', FILTER_VALIDATE_BOOLEAN),
+		'resno' => filter_input_data('GET', 'resno', FILTER_VALIDATE_INT),//未設定時はnull。intでキャストしない事。
+		'catalog' => (bool)(filter_input_data('GET', 'mode')==='catalog'),
 		'res_catalog' => (bool)filter_input_data('GET', 'res_catalog', FILTER_VALIDATE_BOOLEAN),
 		'search' => (bool)(filter_input_data('GET', 'mode')==='search'),
 		'radio' => (int)filter_input_data('GET', 'radio', FILTER_VALIDATE_INT),
@@ -135,9 +129,9 @@ function admin_in(): void {
 	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
 
 	aikotoba_required_to_view();
-	
+
 	//古いテンプレート用の使用しない変数
-	$catalog= $res_catalog = $search= $radio= $imgsearch= $q =false;	//ここまで
+	$page = $resno = $catalog = $res_catalog = $search= $radio= $imgsearch= $q =false;
 
 	session_sta();
 
@@ -207,14 +201,9 @@ function admin_del(): void {
 function userdel_mode(): void {
 
 	session_sta();
-
-	$page=(int)filter_input_data('GET','page',FILTER_VALIDATE_INT);
 	$_SESSION['userdel']='userdel_mode';
-	$resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
-	if($resno){
-		redirect('./?resno='.$resno);
-	}
-	redirect('./?page='.$page);
+
+	branch_destination_of_location();
 }
 
 //sessionの確認
@@ -274,10 +263,14 @@ function set_darkmode(): void {
 
 //ログイン・ログアウト時のLocationを分岐
 function branch_destination_of_location(): void {
+	$paintcom=(bool)filter_input_data('POST','paintcom',FILTER_VALIDATE_BOOLEAN);
+	if($paintcom){
+		location_paintcom();
+	}
 
 	session_sta();
 	// セッションの値を変数に展開（安全な方法）
-	$page_contexts = $_SESSION['current_page_context']??[];
+	$page_contexts = $_SESSION['current_page_context'] ?? [];
 	foreach ($page_contexts as $key => $value) {
 		if (in_array($key, ['page', 'resno', 'catalog', 'res_catalog', 'search', 'radio', 'imgsearch', 'q'])) {
 				$$key = $value; // 変数の動的作成
@@ -286,9 +279,6 @@ function branch_destination_of_location(): void {
 
 	$page= $page ?? 0;
 	$resno= $resno ?? 0;
-	if($page<0||$resno<0){//負の値の時はトップページにリダイレクト
-		redirect('./');
-	}
 	$catalog= $catalog ?? false;
 	$res_catalog= $res_catalog ?? false;
 	$search= $search ??	false;
@@ -296,9 +286,6 @@ function branch_destination_of_location(): void {
 	$imgsearch= $imgsearch ?? false;
 	$q= $q ?? '';
 
-	if($paintcom){
-		location_paintcom();
-	}
 	if($resno){
 		if(!is_file(LOG_DIR.$resno.'.log')){
 			redirect('./');
@@ -310,12 +297,12 @@ function branch_destination_of_location(): void {
 		redirect('./?mode=catalog&page='.h($page));
 	}
 	if($search){
-		$radio=(int)filter_input_data('POST','radio',FILTER_VALIDATE_INT);
-		$imgsearch=(bool)filter_input_data('POST','imgsearch',FILTER_VALIDATE_BOOLEAN);
-		$imgsearch=$imgsearch ? 'on' : 'off';
-		$q=(string)filter_input_data('POST','q');
 		
 		redirect('./?mode=search&page='.h($page).'&imgsearch='.h($imgsearch).'&q='.h($q).'&radio='.h($radio));
+	}
+	//ここまでに別処理がなければ通常ページ
+	if($page<0){//負の値の時はトップページにリダイレクト
+		redirect('./');
 	}
 	redirect('./?page='.h($page));
 }

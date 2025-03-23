@@ -2,7 +2,7 @@
 //Petit Note 2021-2025 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20250318;
+$misskey_note_ver=20250323;
 
 class misskey_note{
 
@@ -24,9 +24,12 @@ class misskey_note{
 		$no = $no ? $no : t(filter_input_data('GET','no',FILTER_VALIDATE_INT));
 		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 		$resmode = false;//使っていない
-		$postpage = (int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
-		$postresno = filter_input_data('POST','postresno',FILTER_VALIDATE_INT);//intでキャストしない
-		$postresno = $postresno ?? $no;//レスカタログからのMisskeyノート時  
+		$page= $_SESSION['current_page_context']["page"] ?? 0;
+		$resno= $_SESSION['current_page_context']["resno"] ?? null;//下の行でnull判定
+		$resno ?? $no;
+		$postpage = $page;//古いテンプレート互換
+		$postresno = $resno;//古いテンプレート互換
+
 		check_open_no($no);
 		if(!is_file(LOG_DIR."{$no}.log")){
 			error($en? 'The article does not exist.':'記事がありません。');
@@ -142,11 +145,11 @@ class misskey_note{
 		$nsfwc=(bool)filter_input_data('COOKIE','nsfwc',FILTER_VALIDATE_BOOLEAN);
 		$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
-		$resno=(int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);//古いバージョンで使用
-		$page=(int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
-
-		$postresno = $resno;//共通partsのメニューで使用
-		$postpage = $page;//共通partsのメニューで使用
+		$page= $_SESSION['current_page_context']["page"] ?? 0;
+		$resno= $_SESSION['current_page_context']["resno"] ?? null;//下の行でnull判定
+		$resno ?? $no;
+		$postpage = $page;//古いテンプレート互換
+		$postresno = $resno;//古いテンプレート互換
 
 		$userdel = false;
 		$admindel = false;	

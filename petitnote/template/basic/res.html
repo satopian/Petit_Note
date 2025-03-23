@@ -47,9 +47,9 @@
 		<?php endif;?>
 		<span>
 		<?php if($userdel || $admindel):?>
-			[<a href="./?mode=logout&resno=<?=h($resno)?>" rel="nofollow"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
+			[<a href="./?mode=logout" rel="nofollow"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
 		<?php else:?>
-			[<a href="./?mode=userdel&resno=<?=h($resno)?>" rel="nofollow"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]
+			[<a href="./?mode=userdel" rel="nofollow"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]
 		<?php endif;?>
 	<?php endif;?>
 	<a href="#bottom">▽</a>

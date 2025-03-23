@@ -1,17 +1,17 @@
 <!-- 編集画面･Misskeyノートのメニュー -->
 <span>
-	<?php if($postresno):?>
-		[<a href="./?resno=<?=h($postresno)?>#<?=h($id)?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]
+	<?php if($resno):?>
+		[<a href="./?resno=<?=h($resno)?>#<?=h($id)?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]
 	<?php else:?>
-		[<a href="./?page=<?=h($postpage)?>"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]
+		[<a href="./?page=<?=h($page)?>"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]
 	<?php endif;?>
 	</span>
 <?php if($userdel || $admindel):?>
 	<span>
-	<?php if($postresno):?>
-			[<a href="./?mode=logout&resno=<?=h($postresno)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
+	<?php if($resno):?>
+			[<a href="./?mode=logout"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
 		<?php else:?>
-			[<a href="./?mode=logout&page=<?=h($postpage)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
+			[<a href="./?mode=logout"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
 		<?php endif;?>
 	</span>
 <?php endif;?>

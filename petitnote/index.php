@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.81.0';
+$petit_ver='v1.81.2';
 $petit_lot='lot.20250323';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -18,13 +18,13 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250318){
+if(!isset($functions_ver)||$functions_ver<20250323){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20250318){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20250323){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
@@ -1649,9 +1649,11 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	$userdel=userdel_valid();
 
 	$resmode = false;//使っていない
-	$postpage = (int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
-	$postresno = (int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);
-	$postresno = $postresno ? $postresno : false; 
+
+	$page= $_SESSION['current_page_context']["page"] ?? 0;
+	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
+	$postpage = $page;//古いテンプレート互換
+	$postresno = $resno;//古いテンプレート互換
 
 	$pwdc=(string)filter_input_data('COOKIE','pwdc');
 	$edit_mode = (string)filter_input_data('POST','edit_mode');
@@ -1794,10 +1796,10 @@ function edit_form($id='',$no=''): void {
 
 	$out[0][]=create_res($line);//$lineから、情報を取り出す;
 
-	$postpage=(int)filter_input_data('POST','postpage',FILTER_VALIDATE_INT);
-	$postresno=(int)filter_input_data('POST','postresno',FILTER_VALIDATE_INT);
-	$page = $postpage;
-	$resno = $postresno;
+	$page= $_SESSION['current_page_context']["page"] ?? 0;
+	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
+	$postpage = $page;//古いテンプレート互換
+	$postresno = $resno;//古いテンプレート互換
 
 	foreach($line as $i => $val){//エスケープ処理
 		$line[$i]=h($val);
