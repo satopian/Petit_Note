@@ -127,7 +127,6 @@
 					<form action="./" method="POST" class="aikotoba">
 					<input type="hidden" name="mode" value="before_del">
 					<input type="hidden" name="edit_mode" value="editmode">
-					<input type="hidden" name="resmode" value="<?=h($resmode)?>">
 					<input type="hidden" name="id" value="<?=h($res['time'])?>">
 					<input type="hidden" name="no" value="<?=h($res['no'])?>">
 					<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
@@ -136,7 +135,6 @@
 				<form action="./" method="POST" class="aikotoba">
 					<input type="hidden" name="mode" value="before_del">
 					<input type="hidden" name="edit_mode" value="delmode">
-					<input type="hidden" name="resmode" value="<?=h($resmode)?>">
 					<input type="hidden" name="id" value="<?=h($res['time'])?>">
 					<input type="hidden" name="no" value="<?=h($res['no'])?>">
 					<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
@@ -147,7 +145,6 @@
 					<form action="./" method="POST" class="aikotoba" target="_blank">
 					<input type="hidden" name="mode" value="before_misskey_note">
 					<input type="hidden" name="edit_mode" value="editmode">
-					<input type="hidden" name="resmode" value="<?=h($resmode)?>">
 					<input type="hidden" name="id" value="<?=h($res['time'])?>">
 					<input type="hidden" name="no" value="<?=h($res['no'])?>">
 

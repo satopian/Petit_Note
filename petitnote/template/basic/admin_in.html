@@ -13,8 +13,13 @@
 <div class="container">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 <nav class="menu_wrap">
-		
-<span>[<a href="./"><?php if($en):?>Return<?php else:?>掲示板に戻る<?php endif;?></a>]</span>
+	<span>
+	<?php if($resno):?>
+		[<a href="./?resno=<?=h($resno)?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]
+	<?php else:?>
+		[<a href="./?page=<?=h($page)?>"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]
+	<?php endif;?>
+	</span>	
 </nav>
 
 <?php if($adminpost||$admindel):?>

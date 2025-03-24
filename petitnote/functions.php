@@ -63,12 +63,12 @@ function aikotoba_required_to_view($required_flag=false): void {
 	}
 
 	$admin_pass= null;
+
 	if(!aikotoba_valid()){
 		$templete='aikotoba.html';
 		include __DIR__.'/'.$skindir.$templete;
 		exit();//return include では処理が止まらない。 
 	}
-
 }
 //ページのコンテキストをセッションに保存
 function set_page_context_to_session(){
@@ -79,6 +79,7 @@ function set_page_context_to_session(){
 		'resno' => filter_input_data('GET', 'resno', FILTER_VALIDATE_INT),//未設定時はnull。intでキャストしない事。
 		'catalog' => (bool)(filter_input_data('GET', 'mode')==='catalog'),
 		'res_catalog' => (bool)filter_input_data('GET', 'res_catalog', FILTER_VALIDATE_BOOLEAN),
+		'misskey_note' => (bool)filter_input_data('GET', 'misskey_note', FILTER_VALIDATE_BOOLEAN),
 		'search' => (bool)(filter_input_data('GET', 'mode')==='search'),
 		'radio' => (int)filter_input_data('GET', 'radio', FILTER_VALIDATE_INT),
 		'imgsearch' => (bool)filter_input_data('GET', 'imgsearch', FILTER_VALIDATE_BOOLEAN),
@@ -142,6 +143,10 @@ function admin_in(): void {
 	if(!$use_aikotoba){
 		$aikotoba=true;
 	}
+
+	$page= $_SESSION['current_page_context']["page"] ?? 0;
+	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
+
 	$admin_pass= null;
 	// HTML出力
 	$templete='admin_in.html';
@@ -272,26 +277,27 @@ function branch_destination_of_location(): void {
 	// セッションの値を変数に展開（安全な方法）
 	$page_contexts = $_SESSION['current_page_context'] ?? [];
 	foreach ($page_contexts as $key => $value) {
-		if (in_array($key, ['page', 'resno', 'catalog', 'res_catalog', 'search', 'radio', 'imgsearch', 'q'])) {
-				$$key = $value; // 変数の動的作成
+		if (in_array($key, ['page', 'resno', 'catalog', 'res_catalog', 'misskey_note' , 'search', 'radio', 'imgsearch', 'q'])) {
+			$$key = $value; // 変数の動的作成
 		}
 	}
 
-	$page= $page ?? 0;
-	$resno= $resno ?? 0;
-	$catalog= $catalog ?? false;
-	$res_catalog= $res_catalog ?? false;
-	$search= $search ??	false;
-	$radio= $radio ?? 0;
-	$imgsearch= $imgsearch ?? false;
-	$q= $q ?? '';
+	$page = $page ?? 0;
+	$resno = $resno ?? 0;
+	$catalog = $catalog ?? false;
+	$res_catalog = $res_catalog ?? false;
+	$misskey_note = $misskey_note ?? false;
+	$search = $search ??	false;
+	$radio = $radio ?? 0;
+	$imgsearch = $imgsearch ?? false;
+	$q = $q ?? '';
 
 	if($resno){
 		if(!is_file(LOG_DIR.$resno.'.log')){
 			redirect('./');
 		}
-		$res_catalog = $res_catalog ? '&res_catalog=on' : ''; 
-		redirect('./?resno='.h($resno).$res_catalog);
+		$res_param = $res_catalog ? '&res_catalog=on' : ($misskey_note ? '&misskey_note=on' : '');
+		redirect('./?resno='.h($resno).$res_param);
 	}
 	if($catalog){
 		redirect('./?mode=catalog&page='.h($page));
