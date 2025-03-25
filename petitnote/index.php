@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.81.5';
+$petit_ver='v1.81.6';
 $petit_lot='lot.20250325';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -1710,6 +1710,8 @@ function confirmation_before_deletion ($edit_mode=''): void {
 
 	$count_r_arr=count($r_arr);
 
+	$_SESSION['current_id']	= $id;
+
 	$admin_pass= null;
 	if($edit_mode==='delmode'){
 		$templete='before_del.html';
@@ -1818,6 +1820,9 @@ function edit_form($id='',$no=''): void {
 	$admin = ($admindel||$adminpost||is_adminpass($pwd));
 
 	$image_rep=true;
+
+	$_SESSION['current_id']	= $id;
+
 	$admin_pass= null;
 	// HTML出力
 	$templete='edit_form.html';

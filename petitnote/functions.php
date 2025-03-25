@@ -85,6 +85,7 @@ function set_page_context_to_session(){
 		'imgsearch' => (bool)filter_input_data('GET', 'imgsearch', FILTER_VALIDATE_BOOLEAN),
 		'q' => (string)filter_input_data('GET', 'q'),
 	];
+	$_SESSION['current_id'] = null;
 }
 // 年齢確認ボタン押下でCookieを発行
 function age_check(): void {
@@ -146,6 +147,7 @@ function admin_in(): void {
 
 	$page= $_SESSION['current_page_context']["page"] ?? 0;
 	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
+	$id = $_SESSION['current_id']	?? "";
 
 	$admin_pass= null;
 	// HTML出力
@@ -296,7 +298,7 @@ function branch_destination_of_location(): void {
 		if(!is_file(LOG_DIR.$resno.'.log')){
 			redirect('./');
 		}
-		$id = (string)filter_input_data('GET','id');//intの範囲外
+		$id = $_SESSION['current_id'] ?? 0;//intの範囲外
 		$id = ctype_digit($id) ? $id : 0;
 		$res_param = $res_catalog ? '&res_catalog=on' : ($misskey_note ? '&misskey_note=on' : '');
 		$res_param .= $id ? "&resid={$id}#{$id}" : '';
