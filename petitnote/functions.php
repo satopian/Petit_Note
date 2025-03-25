@@ -298,8 +298,8 @@ function branch_destination_of_location(): void {
 		if(!is_file(LOG_DIR.$resno.'.log')){
 			redirect('./');
 		}
-		$id = $_SESSION['current_id'] ?? 0;//intの範囲外
-		$id = ctype_digit($id) ? $id : 0;
+		$id = $_SESSION['current_id'] ?? "";//intの範囲外
+		$id = ctype_digit($id) ? $id : "";
 		$res_param = $res_catalog ? '&res_catalog=on' : ($misskey_note ? '&misskey_note=on' : '');
 		$res_param .= $id ? "&resid={$id}#{$id}" : '';
 		
