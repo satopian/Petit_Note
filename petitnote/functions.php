@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250323;
+$functions_ver=20250325;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -296,7 +296,11 @@ function branch_destination_of_location(): void {
 		if(!is_file(LOG_DIR.$resno.'.log')){
 			redirect('./');
 		}
+		$id = (string)filter_input_data('GET','id');//intの範囲外
+		$id = ctype_digit($id) ? $id : 0;
 		$res_param = $res_catalog ? '&res_catalog=on' : ($misskey_note ? '&misskey_note=on' : '');
+		$res_param .= $id ? "&resid={$id}#{$id}" : '';
+		
 		redirect('./?resno='.h($resno).$res_param);
 	}
 	if($catalog){

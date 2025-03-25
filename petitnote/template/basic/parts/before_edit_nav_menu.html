@@ -8,7 +8,7 @@
 	</span>
 <?php if($userdel || $admindel):?>
 	<span>
-			[<a href="./?mode=logout"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
+			[<a href="./?mode=logout&id=<?=h($id)?>"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
 	</span>
 <?php endif;?>
 
