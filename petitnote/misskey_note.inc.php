@@ -2,7 +2,7 @@
 //Petit Note 2021-2025 (c)satopian MIT LICENCE
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20250325;
+$misskey_note_ver=20250326;
 
 class misskey_note{
 
@@ -35,7 +35,7 @@ class misskey_note{
 			error($en? 'The article does not exist.':'記事がありません。');
 		}
 		$rp=fopen(LOG_DIR."{$no}.log","r");
-		flock($rp, LOCK_EX);
+		file_lock($rp, LOCK_EX);
 
 		$r_arr = create_array_from_fp($rp);
 
@@ -106,7 +106,7 @@ class misskey_note{
 			error($en? 'The article does not exist.':'記事がありません。');
 		}
 		$rp=fopen(LOG_DIR."{$no}.log","r");
-		flock($rp, LOCK_EX);
+		file_lock($rp, LOCK_EX);
 
 		$r_arr = create_array_from_fp($rp);
 

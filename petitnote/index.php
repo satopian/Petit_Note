@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.81.6';
-$petit_lot='lot.20250325';
+$petit_ver='v1.82.0';
+$petit_lot='lot.20250327';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,13 +18,13 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250325){
+if(!isset($functions_ver)||$functions_ver<20250326){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20250323){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20250326){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
@@ -342,7 +342,7 @@ function post(): void {
 		check_open_no($resto);
 		chmod(LOG_DIR."{$resto}.log",0600);
 		$rp=fopen(LOG_DIR."{$resto}.log","r+");
-		flock($rp, LOCK_EX);
+		file_lock($rp, LOCK_EX);
 		$r_arr = create_array_from_fp($rp);
 		if(empty($r_arr)){
 			closeFile($rp);
@@ -469,7 +469,7 @@ function post(): void {
 		safe_unlink($upfile);
 		error($en?'This operation has failed.':'失敗しました。');
 	}
-	flock($fp, LOCK_EX);
+	file_lock($fp, LOCK_EX);
 
 	$alllog_arr = create_array_from_fp($fp);
 
@@ -599,7 +599,10 @@ function post(): void {
 	//ログの番号の最大値
 	$no_arr = [];
 	foreach($alllog_arr as $i => $_alllog){
-		list($log_no,)=explode("\t",$_alllog);
+		list($log_no,)=explode("\t",$_alllog,2);
+		if(!ctype_digit($log_no)){
+			error($en?'This operation has failed.':'失敗しました。');
+		}
 		$no_arr[]=$log_no;
 	}
 
@@ -637,14 +640,14 @@ function post(): void {
 		if(!$sage){
 			foreach($alllog_arr as $i =>$val){
 				if (strpos(trim($val), $resto . "\t") === 0) {//全体ログで$noが一致したら
-					break;
+					list($_no)=explode("\t",$val,2);
+					if($resto==$_no){
+						$newline = $val;//レスが付いたスレッドを$newlineに保存。あとから全体ログの先頭に追加して上げる
+						unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
+						break;
+					}
 				}
 			}	
-			list($_no)=explode("\t",$val);
-			if($resto==$_no){
-				$newline = $val;//レスが付いたスレッドを$newlineに保存。あとから全体ログの先頭に追加して上げる
-				unset($alllog_arr[$i]);//レスが付いたスレッドを全体ログからいったん削除
-			}
 		}
 
 	}else{
@@ -667,11 +670,11 @@ function post(): void {
 		if(!isset($alllog_arr[$i]) || !trim($alllog_arr[$i])){
 			continue;
 		}
-		list($d_no,)=explode("\t",$alllog_arr[$i]);
+		list($d_no,)=explode("\t",$alllog_arr[$i],2);
 		if(is_file(LOG_DIR."{$d_no}.log")){
 			check_open_no($d_no);
 			$dp = fopen(LOG_DIR."{$d_no}.log", "r");//個別スレッドのログを開く
-			flock($dp, LOCK_EX);
+			file_lock($dp, LOCK_EX);
 
 			while ($line = fgets($dp)) {
 				if(!trim($line)){
@@ -1338,7 +1341,7 @@ function img_replace(): void {
 
 	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
-	flock($fp, LOCK_EX);
+	file_lock($fp, LOCK_EX);
 
 	$alllog_arr = create_array_from_fp($fp);
 
@@ -1352,7 +1355,7 @@ function img_replace(): void {
 	check_open_no($no);
 	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
-	flock($rp, LOCK_EX);
+	file_lock($rp, LOCK_EX);
 
 	$r_arr = create_array_from_fp($rp);
 
@@ -1673,7 +1676,7 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
-	flock($rp, LOCK_EX);
+	file_lock($rp, LOCK_EX);
 
 	$r_arr = create_array_from_fp($rp);
 
@@ -1761,7 +1764,7 @@ function edit_form($id='',$no=''): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
-	flock($rp, LOCK_EX);
+	file_lock($rp, LOCK_EX);
 
 	$r_arr = create_array_from_fp($rp);
 
@@ -1872,12 +1875,12 @@ function edit(): void {
 	}
 	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
-	flock($fp, LOCK_EX);
+	file_lock($fp, LOCK_EX);
 
 	check_open_no($no);
 	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
-	flock($rp, LOCK_EX);
+	file_lock($rp, LOCK_EX);
 
 	$r_arr = create_array_from_fp($rp);
 
@@ -2039,7 +2042,7 @@ function del(): void {
 	$delete_thread=(bool)filter_input_data('POST','delete_thread',FILTER_VALIDATE_BOOLEAN);
 	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
-	flock($fp, LOCK_EX);
+	file_lock($fp, LOCK_EX);
 
 	if(!is_file(LOG_DIR."{$no}.log")){
 		error($en? 'The article does not exist.':'記事がありません。');
@@ -2047,7 +2050,7 @@ function del(): void {
 	check_open_no($no);
 	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
-	flock($rp, LOCK_EX);
+	file_lock($rp, LOCK_EX);
 
 	$r_arr = create_array_from_fp($rp);
 

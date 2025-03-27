@@ -3,6 +3,7 @@
 	$mode=in_array($mode,["catalog","search"]) ? $mode : "";
 	$search=($mode==="search");
 	$imgsearch=(bool)filter_input_data('GET','imgsearch',FILTER_VALIDATE_BOOLEAN);
+	$imgsearch= $imgsearch ? "on" : "off";
 	$radio =(int)filter_input_data('GET','radio',FILTER_VALIDATE_INT);
 	$en_q= $en_q ?? "";
 ?>

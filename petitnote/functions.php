@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250325;
+$functions_ver=20250327;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -253,9 +253,9 @@ function set_nsfw_show_hide(): void {
 
 	$view=(bool)filter_input_data('POST','set_nsfw_show_hide');
 	if($view){
-		setcookie("p_n_set_nsfw_show_hide",true,time()+(60*60*24*365),"","",false,true);
+		setcookie("p_n_set_nsfw_show_hide","1",time()+(60*60*24*365),"","",false,true);
 	}else{
-		setcookie("p_n_set_nsfw_show_hide",false,time()+(60*60*24*365),"","",false,true);
+		setcookie("p_n_set_nsfw_show_hide","0",time()+(60*60*24*365),"","",false,true);
 	}
 }
 function set_darkmode(): void {
@@ -514,7 +514,7 @@ function create_chk_lins($chk_log_arr,$resno): array {
 
 	$chk_resnos=[];
 	foreach($chk_log_arr as $chk_log){
-		list($chk_resno)=explode("\t",$chk_log);
+		list($chk_resno)=explode("\t",$chk_log,2);
 		$chk_resnos[]=$chk_resno;
 	}
 	$chk_lines=[];
@@ -1183,7 +1183,7 @@ function writeFile ($fp, $data): void {
 function closeFile ($fp): void {
 	if($fp){
 		fflush($fp);
-		flock($fp, LOCK_UN);
+		file_lock($fp, LOCK_UN);
 		fclose($fp);
 	}
 }
@@ -1510,6 +1510,18 @@ function post_share_server(): void {
 		error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");
 	}
 	redirect($share_url);
+}
+//flockのラッパー関数
+function file_lock($fp, int $lock): void {
+	global $en;
+	if (!flock($fp, $lock)) {
+			switch ($lock) {
+					case LOCK_UN:
+							break;
+					default:
+							error($en ? 'Failed to lock the file.' : 'ファイルのロックに失敗しました。');
+			}
+	}
 }
 //filter_input のラッパー関数
 function filter_input_data(string $input, string $key, int $filter=0) {
