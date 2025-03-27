@@ -133,7 +133,7 @@ function admin_in(): void {
 	aikotoba_required_to_view();
 
 	//古いテンプレート用の使用しない変数
-	$page = $resno = $catalog = $res_catalog = $search= $radio= $imgsearch= $q =false;
+	$page = $resno = $catalog = $res_catalog = $search= $radio= $imgsearch= $q ="";
 
 	session_sta();
 
