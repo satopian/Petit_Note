@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.82.0';
+$petit_ver='v1.82.1';
 $petit_lot='lot.20250327';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -18,7 +18,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250326){
+if(!isset($functions_ver)||$functions_ver<20250327){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -1341,7 +1341,8 @@ function img_replace(): void {
 
 	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
-	file_lock($fp, LOCK_EX);
+	(array)$flock_option = $is_upload_img ? []: ['paintcom'=>true];
+	file_lock($fp, LOCK_EX,$flock_option);
 
 	$alllog_arr = create_array_from_fp($fp);
 
@@ -1355,7 +1356,8 @@ function img_replace(): void {
 	check_open_no($no);
 	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
-	file_lock($rp, LOCK_EX);
+	(array)$flock_option = $is_upload_img ? []: ['paintcom'=>true];
+	file_lock($fp, LOCK_EX,$flock_option);
 
 	$r_arr = create_array_from_fp($rp);
 

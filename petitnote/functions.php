@@ -1512,15 +1512,16 @@ function post_share_server(): void {
 	redirect($share_url);
 }
 //flockのラッパー関数
-function file_lock($fp, int $lock): void {
+function file_lock($fp, int $lock, array $options=[]): void {
 	global $en;
-	if (!flock($fp, $lock)) {
-			switch ($lock) {
-					case LOCK_UN:
-							break;
-					default:
-							error($en ? 'Failed to lock the file.' : 'ファイルのロックに失敗しました。');
-			}
+	$flock=flock($fp, $lock);
+	if (!$flock) {
+			if($lock !== LOCK_UN){
+				if(isset($options['paintcom'])){
+					location_paintcom();//未投稿画像の投稿フォームへ
+				}
+				error($en ? 'Failed to lock the file.' : 'ファイルのロックに失敗しました。');
+		}
 	}
 }
 //filter_input のラッパー関数
