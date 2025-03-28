@@ -210,6 +210,7 @@ class misskey_note{
 		[
 		
 			["misskey.io","https://misskey.io"],
+			["xissmie.xfolio.jp","https://xissmie.xfolio.jp"],
 			["misskey.design","https://misskey.design"],
 			["nijimiss.moe","https://nijimiss.moe"],
 			["misskey.art","https://misskey.art"],
