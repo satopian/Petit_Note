@@ -60,7 +60,7 @@
 			// when the user clicks on Finish
 			onDone: function() {
 
-				//Petit Note 2021-2024 (c)satopian MIT Licence
+				//Petit Note 2021-2025 (c)satopian MIT Licence
 				//この箇所はさとぴあが作成したMIT Licenceのコードです。
 
 				if (Tegaki.saveReplay) {
@@ -92,8 +92,8 @@
 							} else {
 								const HttpStatusMessage = getHttpStatusMessage(response.status);
 
-								return showAlert(<?php if ($en): ?>`Your picture upload failed!\nPlease try again!\nHTTP status code ${response.status} : ${HttpStatusMessage} `
-									<?php else: ?>`投稿に失敗。\n時間を置いて再度投稿してみてください。\nHTTP status code ${response.status} : ${HttpStatusMessage}`
+								return showAlert(<?php if ($en): ?>`Your picture upload failed!\nPlease try again!\n( HTTP status code ${response.status} : ${HttpStatusMessage} )`
+									<?php else: ?>`投稿に失敗。\n時間を置いて再度投稿してみてください。\n( HTTPステータスコード ${response.status} : ${HttpStatusMessage} )`
 									<?php endif; ?>);
 							}
 						})

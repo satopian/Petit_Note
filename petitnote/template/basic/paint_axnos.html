@@ -119,7 +119,7 @@
 
 					const BlobPng = toBlob(postObj.strEncodeImg)
 					// console.log(BlobPng);
-					//2022-2024 (c)satopian MIT Licence
+					//2022-2025 (c)satopian MIT Licence
 					//この箇所はさとぴあが作成したMIT Licenceのコードです。
 					const postData = (path, data) => {
 						fetch(path, {
@@ -145,11 +145,10 @@
 										return alert(text);
 									})
 								} else {
-
-									const HttpStatusMessage = getHttpStatusMessage(response.status);
 									resolve(false);
-									return alert(<?php if ($en): ?>`Your picture upload failed!\nPlease try again!\nHTTP status code ${response.status} : ${HttpStatusMessage} `
-										<?php else: ?>`投稿に失敗。\n時間を置いて再度投稿してみてください。\nHTTP status code ${response.status} : ${HttpStatusMessage}`
+									const HttpStatusMessage = getHttpStatusMessage(response.status);
+									return alert(<?php if ($en): ?>`Your picture upload failed!\nPlease try again!\n( HTTP status code ${response.status} : ${HttpStatusMessage} )`
+										<?php else: ?>`投稿に失敗。\n時間を置いて再度投稿してみてください。\n( HTTPステータスコード ${response.status} : ${HttpStatusMessage} )`
 										<?php endif; ?>);
 								}
 							})
@@ -173,7 +172,7 @@
 				})
 			}
 		});
-		//Petit Note 2021-2024 (c)satopian MIT Licence
+		//Petit Note 2021-2025 (c)satopian MIT Licence
 		//この箇所はさとぴあが作成したMIT Licenceのコードです。
 		<?php if ($rep): ?>
 			const repData = () => {

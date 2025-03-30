@@ -124,7 +124,7 @@
 									})
 								} else {
 
-									let HttpStatusMessage = getHttpStatusMessage(response.status);
+									const HttpStatusMessage = getHttpStatusMessage(response.status);
 
 									return alert(<?php if ($en): ?>`Your picture upload failed!\nPlease try again!\n( HTTP status code ${response.status} : ${HttpStatusMessage} )`
 										<?php else: ?>`投稿に失敗。\n時間を置いて再度投稿してみてください。\n( HTTPステータスコード ${response.status} : ${HttpStatusMessage} )`
@@ -157,7 +157,7 @@
 				}, 500);
 			}
 		});
-		//Petit Note 2021-2024 (c)satopian MIT Licence
+		//Petit Note 2021-2025 (c)satopian MIT Licence
 		//この箇所はさとぴあが作成したMIT Licenceのコードです。
 		<?php if ($rep): ?>
 			const repData = () => {
