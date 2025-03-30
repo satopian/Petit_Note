@@ -1,176 +1,201 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta charset="utf-8">
-<title><?=h($boardname)?></title> 
-<script src="app/tegaki/tegaki.js?<?=h($parameter_day)?><?=h($petit_lot)?>"></script>
-<link rel="stylesheet" href="app/tegaki/tegaki.css?<?=h($parameter_day)?><?=h($petit_lot)?>">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
-<style>
-	:not(input){
-	-moz-user-select: none;
-	-webkit-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	}
-</style>
-<script>
-	document.addEventListener('DOMContentLoaded',()=>{
-	document.addEventListener('dblclick', (e)=>{ e.preventDefault()}, { passive: false });
-	});
-</script>
+	<meta charset="utf-8">
+	<title><?= h($boardname) ?></title>
+	<script src="app/tegaki/tegaki.js?<?= h($parameter_day) ?><?= h($petit_lot) ?>"></script>
+	<link rel="stylesheet" href="app/tegaki/tegaki.css?<?= h($parameter_day) ?><?= h($petit_lot) ?>">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+	<style>
+		:not(input) {
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+		}
+	</style>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			document.addEventListener('dblclick', (e) => {
+				e.preventDefault()
+			}, {
+				passive: false
+			});
+		});
+	</script>
 </head>
+
 <body>
-<script>
-function showAlert(text) {
-	if (Tegaki.saveReplay) {
-		Tegaki.replayRecorder.start();
-	}
-	alert(text);
-}
-Tegaki.open({
-// when the user clicks on Finish
-	onDone: function() {
-	
-	//Petit Note 2021-2024 (c)satopian MIT Licence
-	//この箇所はさとぴあが作成したMIT Licenceのコードです。
+	<script>
+		const getHttpStatusMessage = (response_status) => {
+			// HTTP ステータスコードに基づいてメッセージを返す関数
+			switch (response_status) {
+				case 400:
+					return "Bad Request";
+				case 401:
+					return "Unauthorized";
+				case 403:
+					return "Forbidden";
+				case 404:
+					return "Not Found";
+				case 500:
+					return "Internal Server Error";
+				case 502:
+					return "Bad gateway";
+				case 503:
+					return "Service Unavailable";
+				default:
+					return "Unknown Error";
+			}
+		}
 
-	if (Tegaki.saveReplay) {
-		Tegaki.replayRecorder.stop();
-	}
-	const postData = (path, data) => {
+		const showAlert = (text) => {
+			if (Tegaki.saveReplay) {
+				Tegaki.replayRecorder.start();
+			}
+			alert(text);
+		}
+		Tegaki.open({
+			// when the user clicks on Finish
+			onDone: function() {
 
-		fetch(path, {
-			method: 'post',
-			mode: 'same-origin',
-			headers: {
-				'X-Requested-With': 'tegaki'
-				,
+				//Petit Note 2021-2024 (c)satopian MIT Licence
+				//この箇所はさとぴあが作成したMIT Licenceのコードです。
+
+				if (Tegaki.saveReplay) {
+					Tegaki.replayRecorder.stop();
+				}
+				const postData = (path, data) => {
+
+					fetch(path, {
+							method: 'post',
+							mode: 'same-origin',
+							headers: {
+								'X-Requested-With': 'tegaki',
+							},
+							body: data,
+						})
+						.then((response) => {
+							if (response.ok) {
+								response.text().then((text) => {
+									console.log(text)
+									if (text === 'ok') {
+										<?php if ($rep): ?>
+											return repData();
+										<?php endif; ?>
+										Tegaki.hide(); //｢このサイトを離れますか?｣を解除
+										return window.location.href = "./?mode=paintcom";
+									}
+									return showAlert(text);
+								})
+							} else {
+								const HttpStatusMessage = getHttpStatusMessage(response.status);
+
+								return showAlert(<?php if ($en): ?>`Your picture upload failed!\nPlease try again!\nHTTP status code ${response.status} : ${HttpStatusMessage} `
+									<?php else: ?>`投稿に失敗。\n時間を置いて再度投稿してみてください。\nHTTP status code ${response.status} : ${HttpStatusMessage}`
+									<?php endif; ?>);
+							}
+						})
+						.catch((error) => {
+							return showAlert(<?php if ($en): ?> 'Server or line is unstable.\nPlease try again!'
+								<?php else: ?> 'サーバまたは回線が不安定です。\n時間を置いて再度投稿してみてください。'
+								<?php endif; ?>);
+						})
+				}
+
+				<?php if ($rep): ?>
+					const repData = () => {
+
+						// 画像差し換えに必要なフォームデータをセット
+						const formData = new FormData();
+						formData.append("mode", "picrep");
+						formData.append("no", "<?= h($no) ?>");
+						formData.append("id", "<?= h($id) ?>");
+						formData.append("enc_pwd", "<?= h($pwd) ?>");
+						formData.append("repcode", "<?= h($repcode) ?>");
+						formData.append("paint_picrep", true);
+
+						// 画像差し換え
+						fetch("./", {
+								method: 'POST',
+								mode: 'same-origin',
+								headers: {
+									'X-Requested-With': 'tegaki',
+								},
+								body: formData
+							})
+							.then(response => {
+								if (response.ok) {
+									if (response.redirected) {
+										Tegaki.hide(); //｢このサイトを離れますか?｣を解除
+										return window.location.href = response.url;
+									}
+									response.text().then((text) => {
+										if (text.startsWith("error\n")) {
+											console.log(text);
+											Tegaki.hide(); //｢このサイトを離れますか?｣を解除
+											return window.location.href = "./?mode=paintcom";
+										}
+									})
+								}
+							})
+							.catch(error => {
+								console.error('There was a problem with the fetch operation:', error);
+								Tegaki.hide(); //｢このサイトを離れますか?｣を解除
+								return window.location.href = "./?mode=paintcom";
+							});
+					}
+				<?php endif; ?>
+
+				Tegaki.flatten().toBlob(
+					function(blob) {
+						// console.log(blob);
+						const tgkr = Tegaki.replayRecorder ? Tegaki.replayRecorder.toBlob() : null;
+						const formData = new FormData();
+						let DataSize = 1000;
+						let max_pch = <?= h($max_pch) ?>;
+						max_pch = parseInt(max_pch) * 1024 * 1024;
+						if (tgkr) {
+							DataSize = DataSize + blob.size + tgkr.size;
+							if (!max_pch || isNaN(max_pch) || (DataSize < max_pch)) {
+								formData.append("tgkr", tgkr, 'blob');
+							}
+						}
+						formData.append("picture", blob, 'blob');
+						<?php if ($rep): ?>formData.append("repcode", "<?= h($repcode) ?>");
+					<?php endif; ?>
+					formData.append("tool", "tegaki");
+					formData.append("stime", <?= time(); ?>);
+					formData.append("resto", "<?= h($resto) ?>");
+					postData("./?mode=saveimage&tool=tegaki", formData);
+					},
+					'image/png'
+				);
 			},
-			body: data,
-		})
-		.then((response) => {
-			if (response.ok) {
-				response.text().then((text) => {
-				console.log(text)
-					if(text==='ok'){
-						<?php if($rep):?>
-						return repData();
-						<?php endif;?>
-						Tegaki.hide();//｢このサイトを離れますか?｣を解除
-						return window.location.href="./?mode=paintcom";
-					}
-					return showAlert(text);
-				})
-			}else{
-				let response_status = response.status; 
+			// (c)satopian MIT Licence ここまで
 
-				if(response_status===403){
-					return showAlert(<?php if($en):?>'It may be a WAF false positive.\nTry to draw a little more.'<?php else:?>'投稿に失敗。\nWAFの誤検知かもしれません。\nもう少し描いてみてください。'<?php endif;?>);
-				}
-				if(response_status===404){
-					return showAlert(<?php if($en):?>'404 not found\nThe PHP file to save the image does not exist.'<?php else:?>'エラー404\n画像を保存するPHPファイルがありません。'<?php endif;?>);	
-					}
-				return showAlert(<?php if($en):?>'Your picture upload failed!\nPlease try again!'<?php else:?>'投稿に失敗。\n時間を置いて再度投稿してみてください。'<?php endif;?>);
-			}
-		})
-		.catch((error) => {
-				return showAlert(<?php if($en):?>'Server or line is unstable.\nPlease try again!'<?php else:?>'サーバまたは回線が不安定です。\n時間を置いて再度投稿してみてください。'<?php endif;?>);	
-		})
-	}
+			// when the user clicks on Cancel
+			onCancel: function() {
+				console.log('Closing...')
+			},
+			// initial canvas size
+			width: <?= h($picw) ?>,
+			height: <?= h($pich) ?>,
+			saveReplay: <?php if ($imgfile): ?>false<?php else: ?>true<?php endif; ?>,
 
-<?php if($rep):?>
-const repData = () => {
+		});
 
-	// 画像差し換えに必要なフォームデータをセット
-	const formData = new FormData();
-	formData.append("mode", "picrep"); 
-	formData.append("no", "<?= h($no)?>"); 
-	formData.append("id", "<?= h($id)?>"); 
-	formData.append("enc_pwd", "<?= h($pwd)?>"); 
-	formData.append("repcode", "<?= h($repcode)?>");
-	formData.append("paint_picrep", true);
-
-	// 画像差し換え
-	fetch("./", {
-		method: 'POST',
-		mode: 'same-origin',
-		headers: {
-			'X-Requested-With': 'tegaki'
-			,
-		},
-		 body: formData
-	})
-	.then(response => {
-		if (response.ok) {
-			if (response.redirected) {
-				Tegaki.hide();//｢このサイトを離れますか?｣を解除
-				return window.location.href = response.url;
-			}
-			response.text().then((text) => {
-				if (text.startsWith("error\n")) {
-					console.log(text);
-					Tegaki.hide();//｢このサイトを離れますか?｣を解除
-					return window.location.href="./?mode=paintcom";
-				}
-			})
-		}
-	})
-	.catch(error => {
-		console.error('There was a problem with the fetch operation:', error);
-		Tegaki.hide();//｢このサイトを離れますか?｣を解除
-		return window.location.href="./?mode=paintcom";
-	});
-}
-<?php endif;?>
-
-	Tegaki.flatten().toBlob(
-		function(blob) {
-		// console.log(blob);
-		const tgkr = Tegaki.replayRecorder ? Tegaki.replayRecorder.toBlob() : null;
-		const formData = new FormData();
-		let DataSize = 1000;
-		let max_pch = <?=h($max_pch)?>;
-		max_pch = parseInt(max_pch)*1024*1024;
-		if(tgkr){
-			DataSize = DataSize + blob.size + tgkr.size;
-			if(!max_pch||isNaN(max_pch)||(DataSize<max_pch)){
-				formData.append("tgkr",tgkr,'blob');
-			}
-		}
-		formData.append("picture",blob,'blob');
-		 <?php if($rep):?>formData.append("repcode", "<?=h($repcode)?>");<?php endif;?>
-		formData.append("tool", "tegaki");
-		formData.append("stime", <?=time();?>);
-		formData.append("resto", "<?=h($resto)?>");
-		postData("./?mode=saveimage&tool=tegaki", formData);
-		},
-		'image/png'
-	);
-	},
-	// (c)satopian MIT Licence ここまで
-
-	// when the user clicks on Cancel
-	onCancel: function() {
-	console.log('Closing...')
-	},
-	// initial canvas size
-	width: <?=h($picw)?>,
-	height: <?=h($pich)?>,
-	saveReplay: <?php if($imgfile):?>false<?php else:?>true<?php endif;?>,
-
-});
-
-<?php if($imgfile):?>
-	var self = Tegaki;
-	var image = new Image();
-	image.onload = function() {
-		self.activeLayer.ctx.drawImage(image, 0, 0);
-		TegakiLayers.syncLayerImageData(self.activeLayer);
-	};
-	image.src = "<?=h($imgfile)?>"; // image URL
-<?php endif;?>
-
-</script>
+		<?php if ($imgfile): ?>
+			var self = Tegaki;
+			var image = new Image();
+			image.onload = function() {
+				self.activeLayer.ctx.drawImage(image, 0, 0);
+				TegakiLayers.syncLayerImageData(self.activeLayer);
+			};
+			image.src = "<?= h($imgfile) ?>"; // image URL
+		<?php endif; ?>
+	</script>
 </body>
+
 </html>
