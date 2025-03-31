@@ -94,7 +94,7 @@ const res_form_submit = (event, formId = "res_form") => {
                         resp_error_msg = "Internal Server Error";
                         break;
                     case 502:
-                        resp_error_msg = "Bad gateway";
+                        resp_error_msg = "Bad Gateway";
                         break;
                     case 503:
                         resp_error_msg = "Service Unavailable";
