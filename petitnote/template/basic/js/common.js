@@ -1,5 +1,5 @@
 "use strict";
-//Petit Note 2021-2024 (c)satopian MIT Licence
+//Petit Note 2021-2025 (c)satopian MIT Licence
 //https://paintbbs.sakura.ne.jp/
 // コメント入力中画面からの離脱防止
 let isForm_Submit = false; //ページ離脱処理で使う
@@ -32,6 +32,8 @@ const res_form_submit = (event, formId = "res_form") => {
             return;
         }
         event.preventDefault(); // 通常フォームの送信を中断
+        submitBtn.disabled = true; // 送信ボタンを無効化
+
         const formData = new FormData(form);
         formData.append("asyncflag", "true"); //画像差し換えそのものは非同期通信で行わない。
         fetch("./", {
@@ -157,26 +159,20 @@ const postFormAndReload = (formData) => {
 
 //年齢制限付きの掲示板に設定されている時はボタンを押下するまで表示しない
 const view_nsfw = (event) => {
-    const form = document.getElementById("view_nsfw");
-    if (form) {
-        event.preventDefault(); // 通常フォームの送信を中断
-        const formData = new FormData();
-        formData.append("mode", "view_nsfw");
-        formData.append("view_nsfw", "on");
-        postFormAndReload(formData);
-    }
+    event.preventDefault(); // 通常フォームの送信を中断
+    const formData = new FormData();
+    formData.append("mode", "view_nsfw");
+    formData.append("view_nsfw", "on");
+    postFormAndReload(formData);
 };
 
 //年齢確認ボタンを押下するまで表示しない
 const age_check = (event) => {
-    const form = document.getElementById("age_check");
-    if (form) {
-        event.preventDefault(); // 通常フォームの送信を中断
-        const formData = new FormData();
-        formData.append("mode", "age_check");
-        formData.append("agecheck_passed", "on");
-        postFormAndReload(formData);
-    }
+    event.preventDefault(); // 通常フォームの送信を中断
+    const formData = new FormData();
+    formData.append("mode", "age_check");
+    formData.append("agecheck_passed", "on");
+    postFormAndReload(formData);
 };
 
 //閲覧注意画像を隠す/隠さない
@@ -285,9 +281,8 @@ const open_sns_server_window = (event, width = 600, height = 600) => {
         }
     });
 };
-// (c)satopian MIT Licence ここまで
 
-jQuery(function () {
+addEventListener("DOMContentLoaded", () => {
     //URLクエリからresidを取得して指定idへページ内を移動
     const urlParams = new URLSearchParams(window.location.search);
     const resid = urlParams.get("resid");
@@ -295,25 +290,18 @@ jQuery(function () {
     if (document_resid) {
         document_resid.scrollIntoView();
     }
+});
+window.addEventListener("pageshow", function () {
+    // すべてのsubmitボタンを取得
+    const submitButtons = document.querySelectorAll('[type="submit"]');
+    submitButtons.forEach(function (btn) {
+        // ボタンを有効化
+        btn.disabled = false;
+    });
+});
+// (c)satopian MIT Licence ここまで
 
-    window.onpageshow = function () {
-        $('[type="submit"]').each(function () {
-            const $btn = $(this);
-            const $form = $btn.closest("form");
-            const isTargetBlank = $form.prop("target") === "_blank";
-
-            $btn.prop("disabled", false);
-            // ボタンが target="_blank" の場合は無効化しない
-            if (!isTargetBlank) {
-                $btn.on("click", function () {
-                    //ボタンをクリックすると
-                    $btn.prop("disabled", true); //ボタンを無効化して
-                    $form.trigger("submit"); //送信する
-                });
-            }
-        });
-    };
-
+jQuery(function () {
     // https://cotodama.co/pagetop/
     var pagetop = $("#page_top");
     pagetop.hide();

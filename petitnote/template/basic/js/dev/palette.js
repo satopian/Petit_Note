@@ -321,7 +321,7 @@ function ChengeGrad() {
 function Hex(n) {
     n = Math.trunc(n);
     if (0 > n) n *= -1;
-    var hex = new String();
+    var hex = "";
     var m;
     var k;
     while (n > 16) {
