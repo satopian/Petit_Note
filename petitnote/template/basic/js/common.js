@@ -70,6 +70,7 @@ const res_form_submit = (event, formId = "res_form") => {
                             if (formId === "download_forme") {
                                 submitBtn.disabled = false;
                             }
+                            isForm_Submit = true; //ページ離脱処理で使う
                             //ヘッダX-Requested-Withをチェックしてfetchでの投稿をPHP側で中断し、
                             //エラーメッセージが返ってこなければ
                             return form.submit(); // 通常のフォームの送信を実行
@@ -118,9 +119,8 @@ const res_form_submit = (event, formId = "res_form") => {
 };
 
 // コメント入力中画面からの離脱防止
-let isForm_Changed = false;
 document.addEventListener("DOMContentLoaded", (e) => {
-    isForm_Changed = false;
+    let isForm_Changed = false;
     const resForm = document.getElementById("res_form");
     if (!resForm) {
         return;
