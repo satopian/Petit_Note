@@ -659,6 +659,7 @@ input.input_count_timer {
 	bottom: 50px;
 	background: var(--page-top-background-color);
 	opacity: .6;
+	visibility: hidden;
 	border-radius: 50%
 }
 
