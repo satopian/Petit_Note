@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250327;
+$functions_ver=20250412;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -1174,6 +1174,10 @@ return $msg;
 
 // 一括書き込み（上書き）
 function writeFile ($fp, $data): void {
+	global $en;
+	if($data === ''){
+		error($en ? 'Log write failed.' : 'ログの書き込みに失敗しました。');
+	}
 	ftruncate($fp,0);
 	rewind($fp);
 	stream_set_write_buffer($fp, 0);
