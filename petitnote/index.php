@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.85.0';
-$petit_lot='lot.20250412';
+$petit_ver='v1.85.1';
+$petit_lot='lot.20250413';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -472,6 +472,13 @@ function post(): void {
 	file_lock($fp, LOCK_EX);
 
 	$alllog_arr = create_array_from_fp($fp);
+	if($resto){//投稿数が0の時には空になるため、レス時のみチェック
+		if(empty($alllog_arr)){
+			closeFile($fp);
+			safe_unlink($upfile);
+			error($en?'This operation has failed.':'失敗しました。');
+		}
+	}
 
 	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
 	$n= $is_file_upfile ? 15 : 5;

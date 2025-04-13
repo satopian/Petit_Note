@@ -1176,6 +1176,7 @@ return $msg;
 function writeFile ($fp, $data): void {
 	global $en;
 	if($data === ''){
+		closeFile($fp);
 		error($en ? 'Log write failed.' : 'ログの書き込みに失敗しました。');
 	}
 	ftruncate($fp,0);
