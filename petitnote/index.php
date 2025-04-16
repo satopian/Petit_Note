@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.85.2';
-$petit_lot='lot.20250414';
+$petit_ver='v1.86.0';
+$petit_lot='lot.20250416';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,7 +18,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250412){
+if(!isset($functions_ver)||$functions_ver<20250416){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -121,6 +121,7 @@ $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ? $mode :(string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
 $userip = get_uip();
+$httpsonly = (bool)($_SERVER['HTTPS'] ?? '');
 
 //user-codeの発行
 $usercode = t(filter_input_data('COOKIE', 'usercode'));//user-codeを取得
@@ -133,7 +134,7 @@ $usercode = $usercode ? $usercode : $session_usercode;
 if(!$usercode){//user-codeがなければ発行
 	$usercode = hash('sha256', $userip.random_bytes(16));
 }
-setcookie("usercode", $usercode, time()+(86400*365),"","",false,true);//1年間
+setcookie("usercode", $usercode, time()+(86400*365),"","",$httpsonly,true);//1年間
 $_SESSION['usercode']=$usercode;
 
 $x_frame_options_deny = $x_frame_options_deny ?? true;
@@ -142,7 +143,7 @@ if($x_frame_options_deny){
 }
 //ダークモード
 if(!isset($_COOKIE["p_n_set_darkmode"])&&$darkmode_by_default){
-	setcookie("p_n_set_darkmode","1",time()+(60*60*24*180),"","",false,true);
+	setcookie("p_n_set_darkmode","1",time()+(60*60*24*180),"","",$httpsonly,true);
 }
 
 //初期化
@@ -237,7 +238,7 @@ switch($mode){
 function post(): void {
 	global $max_log,$max_res,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$mark_sensitive_image;
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
-	global $usercode,$use_url_input_field;
+	global $usercode,$use_url_input_field,$httpsonly;
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -450,9 +451,9 @@ function post(): void {
 
 	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
 
-	setcookie("namec",$name,time()+(60*60*24*30),"","",false,true);
-	setcookie("urlc",$url,time()+(60*60*24*30),"","",false,true);
-	setcookie("pwdc",$pwd,time()+(60*60*24*30),"","",false,true);
+	setcookie("namec",$name,time()+(60*60*24*30),"","",$httpsonly,true);
+	setcookie("urlc",$url,time()+(60*60*24*30),"","",$httpsonly,true);
+	setcookie("pwdc",$pwd,time()+(60*60*24*30),"","",$httpsonly,true);
 
 
 	//ユーザーid
@@ -759,7 +760,7 @@ function post(): void {
 function paint(): void {
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$max_px,$en;
-	global $usercode,$petit_lot;
+	global $usercode,$petit_lot,$httpsonly;
 
 	check_same_origin();
 	
@@ -776,9 +777,9 @@ function paint(): void {
 	$picw = min($picw, $pmax_w); // 最大の幅チェック
 	$pich = min($pich, $pmax_h); // 最大の高さチェック
 
-	setcookie("appc", $app , time()+(60*60*24*30),"","",false,true);//アプレット選択
-	setcookie("picwc", $picw , time()+(60*60*24*30),"","",false,true);//幅
-	setcookie("pichc", $pich , time()+(60*60*24*30),"","",false,true);//高さ
+	setcookie("appc", $app , time()+(60*60*24*30),"","",$httpsonly,true);//アプレット選択
+	setcookie("picwc", $picw , time()+(60*60*24*30),"","",$httpsonly,true);//幅
+	setcookie("pichc", $pich , time()+(60*60*24*30),"","",$httpsonly,true);//高さ
 
 	$mode = (string)filter_input_data('POST', 'mode');
 
