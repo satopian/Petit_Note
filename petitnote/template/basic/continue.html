@@ -23,7 +23,7 @@
 <div class="container">
 	<h1 class="title"><a href="./"><?=h($boardname)?></a></h1>
 	<nav class="menu_wrap" >
-		<span>[<a href="./?resno=<?=h($no)?>#<?=h($time)?>"><?php if($en):?>Return<?php else:?>もどる<?php endif;?></a>]</span>
+		<span>[<a href="./?resno=<?=h($no)?>#<?=h($time)?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]</span>
 		<a href="#bottom">▽</a>
 		</nav>
 	<hr>
@@ -171,6 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <div id="bottom"></div>
 <div id="page_top"><a class="icon-angles-up-solid"></a></div>
+
 <?php include __DIR__.'/parts/footer_js.html';?>
 </body>
 </html>
