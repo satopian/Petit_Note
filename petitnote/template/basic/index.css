@@ -3,158 +3,217 @@
 CSS カスタムプロパティ（変数）の使用 - CSS: カスケーディングスタイルシート | MDN
 https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
 */
-:root{/* ライトモードの配色 */
+:root {
+    /* ライトモードの配色 */
 
-	/* 文字色 */--text-color: hsl(0 0% 31% / 1);
-	/* リンクの色 */--a-color:var(--text-color);
-	/* リンクホバー */--a-hover-color:var(--text-color);
-	/* 背景色 */--background-color:#fff;
-	/* 掲示板タイトルの文字色 */--title-a-color: #555;
-	/* 記事タイトルの文字色 */--article-title-color: var(--title-a-color);
-	/* 記事タイトルの背景色 */--accent-background-color:#ffe6e6;
-	/* 記事タイトル背景色のアクセント */--strong-accent-background-color:#ffcfcf;
-	/* チェック済みのフォームのラベルの色 */--checked-color:var(--title-a-color);
-	/* チェック済みのフォームのラベルの背景色 */--checked-background-color:var(--accent-background-color);
-	/* ボーダー */--border-color: var(--strong-accent-background-color);
-	/* 点線 */--border-dashed-color:#888;
-	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
-	/* ダイナミックパレットのボーダー */--border-dynamic-palette-color: #555;
-	/* 名前のリンクの色 */--name-a-color:var(--title-a-color);
-	/* 名前のリンクのホバー */--soft-hover-color:#fff7f7;
-	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
-	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
-	/* 上に戻るボタンの矢印の色 */--page-top-color: #fff;
-	/* 上に戻るボタンの背景色 */--page-top-background-color:var(--strong-accent-background-color);
-	/* エラーメッセージの背景色 */--error-message-background-color:hsl(60 100% 88% / 1);
-	/* 注意が必要な項目の背景色 */--warning-color:#fff;
-	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);}
-	
-	.darkmode{/* ダークモードの配色 */
-	
-	/* 文字色 */--text-color: hsl(211 12% 92% / 1);
-	/* リンクの色 */--a-color: hsl(211 18% 79% / 1);
-	/* リンクホバー */--a-hover-color:var(--a-color);
-	/* 背景色 */--background-color: hsl(211 22% 14% / 1);
-	/* 掲示板タイトルの文字色 */--title-a-color: var(--a-color);
-	/* 記事タイトルの文字色 */--article-title-color: var(--a-color);
-	/* 記事タイトルの背景色 */--accent-background-color: hsl(211 23% 25% / 1);
-	/* 記事タイトル背景色のアクセント */--strong-accent-background-color: hsl(208 28% 37% / 1);
-	/* チェック済みのフォームのラベルの色 */--checked-color:var(--title-a-color);
-	/* チェック済みのフォームの背景色 */--checked-background-color:var(--accent-background-color);
-	/* ボーダー */--border-color: var(--strong-accent-background-color);
-	/* 点線 */--border-dashed-color: var(--border-color);
-	/* ラベルのボーダー */--border-label-color: var(--checked-background-color);
-	/* ダイナミックパレットのボーダー */--border-dynamic-palette-color: hsl(205 30% 38% / 1);
-	/* 名前のリンクの色 */--name-a-color:var(--title-a-color);
-	/* 名前のリンクのホバー */--soft-hover-color: hsl(211 20% 18% / 1);
-	/* 閲覧注意の文字色 */--posted-image-span-color: #fff;
-	/* 閲覧注意の背景色 */--posted-image-span-background-color: #555;
-	/* 上に戻るボタンの矢印の色 */--page-top-color: #fff;
-	/* 上に戻るボタンの背景色 */--page-top-background-color: var(--strong-accent-background-color);
-	/* エラーメッセージの背景色 */--error-message-background-color:var(--accent-background-color);
-	/* 注意が必要な項目のボーダー */--warning-border-color:rgb(255, 170, 192);
-	/* フォーム入力欄の背景色 */--form-input-background-color: #e5eaeb;input[type="text"], input[type="password"], input[type="url"], textarea, select {
-		background-color:var(--form-input-background-color);
-	}}
+    /* 文字色 */
+    --text-color: hsl(0 0% 31% / 1);
+    /* リンクの色 */
+    --a-color: var(--text-color);
+    /* リンクホバー */
+    --a-hover-color: var(--text-color);
+    /* 背景色 */
+    --background-color: #fff;
+    /* 掲示板タイトルの文字色 */
+    --title-a-color: #555;
+    /* 記事タイトルの文字色 */
+    --article-title-color: var(--title-a-color);
+    /* 記事タイトルの背景色 */
+    --accent-background-color: #ffe6e6;
+    /* 記事タイトル背景色のアクセント */
+    --strong-accent-background-color: #ffcfcf;
+    /* チェック済みのフォームのラベルの色 */
+    --checked-color: var(--title-a-color);
+    /* チェック済みのフォームのラベルの背景色 */
+    --checked-background-color: var(--accent-background-color);
+    /* ボーダー */
+    --border-color: var(--strong-accent-background-color);
+    /* 点線 */
+    --border-dashed-color: #888;
+    /* ラベルのボーダー */
+    --border-label-color: var(--checked-background-color);
+    /* ダイナミックパレットのボーダー */
+    --border-dynamic-palette-color: #555;
+    /* 名前のリンクの色 */
+    --name-a-color: var(--title-a-color);
+    /* 名前のリンクのホバー */
+    --soft-hover-color: #fff7f7;
+    /* 閲覧注意の文字色 */
+    --posted-image-span-color: #fff;
+    /* 閲覧注意の背景色 */
+    --posted-image-span-background-color: #555;
+    /* 上に戻るボタンの矢印の色 */
+    --page-top-color: #fff;
+    /* 上に戻るボタンの背景色 */
+    --page-top-background-color: var(--strong-accent-background-color);
+    /* エラーメッセージの背景色 */
+    --error-message-background-color: hsl(60 100% 88% / 1);
+    /* 注意が必要な項目の背景色 */
+    --warning-color: #fff;
+    /* 注意が必要な項目のボーダー */
+    --warning-border-color: rgb(255, 170, 192);
+}
+
+.darkmode {
+    /* ダークモードの配色 */
+
+    /* 文字色 */
+    --text-color: hsl(211 12% 92% / 1);
+    /* リンクの色 */
+    --a-color: hsl(211 18% 79% / 1);
+    /* リンクホバー */
+    --a-hover-color: var(--a-color);
+    /* 背景色 */
+    --background-color: hsl(211 22% 14% / 1);
+    /* 掲示板タイトルの文字色 */
+    --title-a-color: var(--a-color);
+    /* 記事タイトルの文字色 */
+    --article-title-color: var(--a-color);
+    /* 記事タイトルの背景色 */
+    --accent-background-color: hsl(211 23% 25% / 1);
+    /* 記事タイトル背景色のアクセント */
+    --strong-accent-background-color: hsl(208 28% 37% / 1);
+    /* チェック済みのフォームのラベルの色 */
+    --checked-color: var(--title-a-color);
+    /* チェック済みのフォームの背景色 */
+    --checked-background-color: var(--accent-background-color);
+    /* ボーダー */
+    --border-color: var(--strong-accent-background-color);
+    /* 点線 */
+    --border-dashed-color: var(--border-color);
+    /* ラベルのボーダー */
+    --border-label-color: var(--checked-background-color);
+    /* ダイナミックパレットのボーダー */
+    --border-dynamic-palette-color: hsl(205 30% 38% / 1);
+    /* 名前のリンクの色 */
+    --name-a-color: var(--title-a-color);
+    /* 名前のリンクのホバー */
+    --soft-hover-color: hsl(211 20% 18% / 1);
+    /* 閲覧注意の文字色 */
+    --posted-image-span-color: #fff;
+    /* 閲覧注意の背景色 */
+    --posted-image-span-background-color: #555;
+    /* 上に戻るボタンの矢印の色 */
+    --page-top-color: #fff;
+    /* 上に戻るボタンの背景色 */
+    --page-top-background-color: var(--strong-accent-background-color);
+    /* エラーメッセージの背景色 */
+    --error-message-background-color: var(--accent-background-color);
+    /* 注意が必要な項目のボーダー */
+    --warning-border-color: rgb(255, 170, 192);
+    /* フォーム入力欄の背景色 */
+    --form-input-background-color: #e5eaeb;
+    input[type="text"],
+    input[type="password"],
+    input[type="url"],
+    textarea,
+    select {
+        background-color: var(--form-input-background-color);
+    }
+}
 /* 全体 */
 body {
-	margin: 10px;
+    margin: 10px;
 }
-body,td {
-	color: var(--text-color);
-	overflow-wrap: anywhere;
-	font-family: "Hiragino Sans", meiryo, ヒラギノ角ゴシック, メイリオ, sans-serif;
-	background-color: var(--background-color);
+body,
+td {
+    color: var(--text-color);
+    overflow-wrap: anywhere;
+    font-family: sans-serif;
+    background-color: var(--background-color);
 }
 
 .container {
-	max-width: 928px;
-	margin: 0 auto 12px;
+    max-width: 928px;
+    margin: 0 auto 12px;
 }
 hr {
-	border: none;
-	border-bottom: 1px dashed var(--border-dashed-color);
-	}
+    border: none;
+    border-bottom: 1px dashed var(--border-dashed-color);
+}
 
 ul {
-	padding: 0 0 0 10px;
-	list-style-position: inside;
-}	
+    padding: 0 0 0 10px;
+    list-style-position: inside;
+}
 .description {
-	margin: 0 0 1em 0;
+    margin: 0 0 1em 0;
 }
 .description ul {
-	margin: 0;
+    margin: 0;
 }
-	
+
 /* リンク */
 a {
-	color: var(--a-color);
-	}
-	
-a:hover{
-	text-decoration: none;
-	color:var(--a-hover-color);
+    color: var(--a-color);
 }
-	
+
+a:hover {
+    text-decoration: none;
+    color: var(--a-hover-color);
+}
+
 /* 見出し */
 h1 {
-	font-size: 26px;margin: 16px 0 0 0;
-	padding: 0;
+    font-size: 26px;
+    margin: 16px 0 0 0;
+    padding: 0;
 }
 
 h1.title a {
     text-decoration: none;
-	display: block;
-	color: var(--title-a-color);
+    display: block;
+    color: var(--title-a-color);
 }
 
 h2 {
-	font-size: 18px;
-	background-color: var(--accent-background-color);
-	border-left: 8px solid var(--strong-accent-background-color);
-	border-bottom: 1px dashed var(--border-dashed-color);
-	padding: 2px 6px 2px;
-	margin: 8px 0;
+    font-size: 18px;
+    background-color: var(--accent-background-color);
+    border-left: 8px solid var(--strong-accent-background-color);
+    border-bottom: 1px dashed var(--border-dashed-color);
+    padding: 2px 6px 2px;
+    margin: 8px 0;
 }
 h2.article_title a {
-		text-decoration: none;
-		display: block;
-		color: var(--article-title-color);
+    text-decoration: none;
+    display: block;
+    color: var(--article-title-color);
 }
-h2.article_title{
-	color: var(--article-title-color);
+h2.article_title {
+    color: var(--article-title-color);
 }
 /* フォーム入力 */
 textarea.post_com {
-	width: 300px;
-	height: 120px;
-	margin: 8px 0 5px 0;
-	font-family: inherit;
+    width: 300px;
+    height: 120px;
+    margin: 8px 0 5px 0;
+    font-family: inherit;
 }
 textarea.post_cw {
-	width: 300px;
-	height: 60px;
-	margin: 8px 0 5px 0;
-	font-family: inherit;
-	display: inline-block;
+    width: 300px;
+    height: 60px;
+    margin: 8px 0 5px 0;
+    font-family: inherit;
+    display: inline-block;
 }
 
-input.input_txt,textarea {
-	font-size: inherit;
+input.input_txt,
+textarea {
+    font-size: inherit;
 }
-input.input_txt,select {
-	margin: 3px 0;
+input.input_txt,
+select {
+    margin: 3px 0;
 }
 select {
     font-size: inherit;
 }
 textarea.rescom {
-	width: 300px;
-	height: 60px;
-	margin: 10px 0;
+    width: 300px;
+    height: 60px;
+    margin: 10px 0;
 }
-form.postform  span {
+form.postform span {
     margin: 5px 10px 0px 0;
     display: inline-block;
 }
@@ -166,10 +225,11 @@ form.postform .nsfw {
     margin: 15px 10px 0 0;
     display: inline-block;
 }
-form.resform ,form.misskey_form {
-	text-align: right;
+form.resform,
+form.misskey_form {
+    text-align: right;
 }
-form.resform >span {
+form.resform > span {
     margin: 15px 10px 0 0;
     display: inline-block;
 }
@@ -192,9 +252,9 @@ input.paint_button {
     padding: 1px 10px;
 }
 input.delete_button {
-	border: 2px solid var(--warning-border-color);
-	background-color:var(--warning-color);
-	border-radius: 3px;
+    border: 2px solid var(--warning-border-color);
+    background-color: var(--warning-color);
+    border-radius: 3px;
 }
 
 /* 投稿者名から検索文字列にリンク */
@@ -206,21 +266,24 @@ span.info_name {
     line-height: 1;
     margin: 0 2px 2px 0px;
 }
-span.info_name:hover a {background-color: var(--soft-hover-color);}
-span.info_name a ,span.info_name > span {
+span.info_name:hover a {
+    background-color: var(--soft-hover-color);
+}
+span.info_name a,
+span.info_name > span {
     display: block;
     padding: 5px;
     text-decoration: none;
     font-weight: 600;
-	color: var(--name-a-color);
+    color: var(--name-a-color);
 }
 
 /* 記事 */
 
 .imginfo_wrap {
     margin: 3px 0 10px;
-	font-size: 1rem;
-	font-weight: normal;
+    font-size: 1rem;
+    font-weight: normal;
 }
 .imginfo_wrap span {
     display: inline-block;
@@ -238,21 +301,22 @@ span.info_name a ,span.info_name > span {
     height: auto;
 }
 
-.article_info{
-	margin: 5px 0 ;	
+.article_info {
+    margin: 5px 0;
 }
 .posted_image {
-	max-width: 100%;
-	height: auto;
-	margin: 0 10px 10px 0;
-	float: left;
-	overflow: hidden;
-	position: relative;
+    max-width: 100%;
+    height: auto;
+    margin: 0 10px 10px 0;
+    float: left;
+    overflow: hidden;
+    position: relative;
 }
 
-.posted_image span , .catalog_image span {
+.posted_image span,
+.catalog_image span {
     position: absolute;
-	top: 13px;
+    top: 13px;
     left: 13px;
     display: inline-block;
     background-color: var(--posted-image-span-background-color);
@@ -265,15 +329,15 @@ span.info_name a ,span.info_name > span {
 }
 
 .posted_image img {
-	max-width: 100%;
-	height: auto;
+    max-width: 100%;
+    height: auto;
 }
 .comment {
     display: table;
     min-width: 350px;
 }
 .clear {
-	clear: both;
+    clear: both;
 }
 
 .pagetop {
@@ -285,9 +349,9 @@ span.share_button {
     vertical-align: bottom;
     margin: 0 0 0 8px;
 }
-.icon-twitter{
-	display: inline-block;
-	padding: 0 2px;
+.icon-twitter {
+    display: inline-block;
+    padding: 0 2px;
 }
 
 .catalog_pagetop {
@@ -317,7 +381,7 @@ div.edit_button {
     margin: 7px 0 10px;
 }
 
-nav.menu_wrap  {
+nav.menu_wrap {
     margin: 5px 0 10px;
     display: inline-block;
     line-height: 1.8;
@@ -325,8 +389,8 @@ nav.menu_wrap  {
 
 nav.menu_wrap_catalog {
     margin: 0 0 8px;
-	text-align: right;
-	display: block;
+    text-align: right;
+    display: block;
     line-height: 1.8;
 }
 .menu_wrap > span {
@@ -337,26 +401,28 @@ span.canvas_size_wrap {
     display: inline-block;
 }
 label {
-	cursor: pointer;
-	margin: 0 3px;
-	padding: 2px;
-	border-radius: 5px;
+    cursor: pointer;
+    margin: 0 3px;
+    padding: 2px;
+    border-radius: 5px;
 }
-.form_radio_sns_server label:hover{
-	background-color: var(--checked-background-color);
+.form_radio_sns_server label:hover {
+    background-color: var(--checked-background-color);
 }
 
-input[type="checkbox"]:checked + label{
-	color: var(--checked-color);
-	background-color: var(--checked-background-color);font-weight: 600;
+input[type="checkbox"]:checked + label {
+    color: var(--checked-color);
+    background-color: var(--checked-background-color);
+    font-weight: 600;
 }
-input[type="radio"]:checked + label{
-	color: var(--checked-color);
-	background-color: var(--checked-background-color);font-weight: 600;
+input[type="radio"]:checked + label {
+    color: var(--checked-color);
+    background-color: var(--checked-background-color);
+    font-weight: 600;
 }
 /* チェックボックスが選択された場合のスタイル */
 input[type="checkbox"]:checked + label .info_name {
-	border: none;
+    border: none;
 }
 
 select.post_select_image {
@@ -373,15 +439,15 @@ span.txtnon {
 
 .res_button_wrap {
     text-align: right;
-	margin: 16px 0 0;
+    margin: 16px 0 0;
 }
 .res_notice_wrap {
     text-align: right;
 }
 form.res_button {
-	text-align: right;
-	margin: 0;
-	display: inline-block;
+    text-align: right;
+    margin: 0;
+    display: inline-block;
 }
 form.res_button input {
     padding: 1px 12px;
@@ -389,11 +455,11 @@ form.res_button input {
 }
 /* 返信フォーム */
 form.res_form {
-	text-align: right;
-	margin: 16px 0 5px;
+    text-align: right;
+    margin: 16px 0 5px;
 }
 table.resform {
-	margin: 0 0 0 auto;
+    margin: 0 0 0 auto;
 }
 
 /* 改ページ */
@@ -407,7 +473,7 @@ span.next {
 }
 
 span.prev {
-	display: inline-block;
+    display: inline-block;
     text-align: right;
 }
 span.res_next {
@@ -416,24 +482,26 @@ span.res_next {
 }
 
 span.res_prev {
-	display: inline-block;
+    display: inline-block;
     text-align: right;
 }
 
 /* レス画面に前後のスレッドの画像を配置 */
-.view_other_works div{
-	width: 16.1%;
-	height:auto;margin-right: 0.6%;
-	display: inline-block;
-	max-height: 200px;overflow: hidden;
-	vertical-align: top;
+.view_other_works div {
+    width: 16.1%;
+    height: auto;
+    margin-right: 0.6%;
+    display: inline-block;
+    max-height: 200px;
+    overflow: hidden;
+    vertical-align: top;
 }
-.view_other_works img{
-	max-width: 100%;
-	height:auto;
+.view_other_works img {
+    max-width: 100%;
+    height: auto;
 }
 .view_other_works div:nth-of-type(6n) {
-	margin-right: 0;
+    margin-right: 0;
 }
 
 /* アップロード途中の画像 */
@@ -450,20 +518,20 @@ span.res_prev {
     margin: 0 0 15px;
 }
 form.admin {
-	text-align: right;
-	margin: 5px 0 0 0;
+    text-align: right;
+    margin: 5px 0 0 0;
 }
 form.paint_form {
     margin: 3px 0 5px;
 }
-form#download_forme span.pch_kb  {
-	display: inline-block;
-	margin: 0 0 0 8px;
+form#download_forme span.pch_kb {
+    display: inline-block;
+    margin: 0 0 0 8px;
 }
 form.aikotoba {
-	text-align: right;
-	margin: 2px 0;
-	display: inline-block;
+    text-align: right;
+    margin: 2px 0;
+    display: inline-block;
 }
 form#set_nsfw_show_hide {
     display: inline-block;
@@ -484,35 +552,37 @@ span.continue_menu {
     display: none;
 }
 /* エラー画面 */
-.error{font-size: 18px;
-	line-height: 2;
+.error {
+    font-size: 18px;
+    line-height: 2;
 }
 
 /* カタログ */
 .catalog_wrap span:nth-of-type(5n) {
-	margin-right: 0
+    margin-right: 0;
 }
 
 .catalog_image {
-	width: 19.3%;
-	max-height: 300px;
-	margin: 0 0.8% 0.8% 0;
-	overflow: hidden;
-	vertical-align: text-top;
-	display: inline-block;
-	position: relative;
+    width: 19.3%;
+    max-height: 300px;
+    margin: 0 0.8% 0.8% 0;
+    overflow: hidden;
+    vertical-align: text-top;
+    display: inline-block;
+    position: relative;
 }
 
 .catalog_image img {
-	width: 100%;
-	vertical-align: text-top;
-	border: none;
-	height:auto;
+    width: 100%;
+    vertical-align: text-top;
+    border: none;
+    height: auto;
 }
 
 /* お絵かき画面 */
 .appstage {
-	word-break: initial;overflow-wrap: initial;
+    word-break: initial;
+    overflow-wrap: initial;
 }
 .app_toolleft {
     margin: 16px auto;
@@ -556,151 +626,161 @@ input.input_count_timer {
 }
 /* メディアクエリ */
 .pcdisp {
-	display: block;
+    display: block;
 }
 
 .mobiledisp {
-	display: none;
+    display: none;
 }
 
-@media screen and (max-width:767px){
-	textarea.post_com,textarea.post_cw {
-		max-width: 276px;
-	}
-	.posted_image{
-		float:none;
-		margin-right:0;
-	}
-	.comment {
-		min-width: initial;
-	}
-	.mobiledisp {
-			display: block;
-			margin: 10px 0;
-			line-height: 1.8;
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-	}
-	.pcdisp{
-		display: none;
-	}
+@media screen and (max-width: 767px) {
+    textarea.post_com,
+    textarea.post_cw {
+        max-width: 276px;
+    }
+    .posted_image {
+        float: none;
+        margin-right: 0;
+    }
+    .comment {
+        min-width: initial;
+    }
+    .mobiledisp {
+        display: block;
+        margin: 10px 0;
+        line-height: 1.8;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .pcdisp {
+        display: none;
+    }
 
-	.catalog_image {
-		width: 24.2%;
-		max-height: 380px;
-		margin: 0 1.0666% 1.0666% 0;
-	}
-	.catalog_wrap span:nth-of-type(5n) {
-		margin-right: 1.0666%
-	}
+    .catalog_image {
+        width: 24.2%;
+        max-height: 380px;
+        margin: 0 1.0666% 1.0666% 0;
+    }
+    .catalog_wrap span:nth-of-type(5n) {
+        margin-right: 1.0666%;
+    }
 
-	.catalog_wrap span:nth-of-type(4n) {
-		margin-right: 0
-	}
-	body{
-		font-size: 1.1rem;
-	}
-	.imginfo_wrap {
-		font-size: 1.1rem;
-		margin: 3px 0 1rem;
-	}
-
+    .catalog_wrap span:nth-of-type(4n) {
+        margin-right: 0;
+    }
+    body {
+        font-size: 1.1rem;
+    }
+    .imginfo_wrap {
+        font-size: 1.1rem;
+        margin: 3px 0 1rem;
+    }
 }
 
-@media screen and (max-width:700px) {
+@media screen and (max-width: 700px) {
+    .catalog_image p {
+        display: none;
+    }
 
-	.catalog_image p {
-		display: none;
-	}
+    span.txtnon {
+        display: none;
+    }
 
-	span.txtnon {
-		display: none;
-	}
-
-	.menu_pr{
-		display: none;
-	}
-
+    .menu_pr {
+        display: none;
+    }
 }
-@media screen and (max-width:599px) {
-	.catalog_image {
-		width: 32.6%;
-		overflow: hidden;
-		vertical-align: text-top;
-		margin: 0 1.1% 1.1% 0;
-	}
-	.catalog_wrap span:nth-of-type(4n),.catalog_wrap span:nth-of-type(5n){
-		margin-right: 1.1%
-	}
-	.catalog_wrap span:nth-of-type(3n) {
-		margin-right: 0
-	}
+@media screen and (max-width: 599px) {
+    .catalog_image {
+        width: 32.6%;
+        overflow: hidden;
+        vertical-align: text-top;
+        margin: 0 1.1% 1.1% 0;
+    }
+    .catalog_wrap span:nth-of-type(4n),
+    .catalog_wrap span:nth-of-type(5n) {
+        margin-right: 1.1%;
+    }
+    .catalog_wrap span:nth-of-type(3n) {
+        margin-right: 0;
+    }
 }
-@media screen and (max-width:499px) {
-	.catalog_image {
-		max-height: 280px;
-	}
+@media screen and (max-width: 499px) {
+    .catalog_image {
+        max-height: 280px;
+    }
 }
 
-@media screen and (max-width:389px){
-	/* 閲覧注意のlabel */
-	form.resform span {
-		margin: 0 1px;
-	}
+@media screen and (max-width: 389px) {
+    /* 閲覧注意のlabel */
+    form.resform span {
+        margin: 0 1px;
+    }
 }
 /* スクロールすると出てくる「トップへ戻る」ボタン */
 /* https://cotodama.co/pagetop/ */
 #page_top {
-	width: 50px;
-	height: 50px;
-	position: fixed;
-	right: 6px;
-	bottom: 50px;
-	background: var(--page-top-background-color);
-	opacity: .6;
-	visibility: hidden;
-	border-radius: 50%
+    width: 50px;
+    height: 50px;
+    position: fixed;
+    right: 6px;
+    bottom: 50px;
+    background: var(--page-top-background-color);
+    opacity: 0.6;
+    visibility: hidden;
+    border-radius: 50%;
 }
 
 #page_top a {
-	position: relative;
-	display: block;
-	width: 50px;
-	height: 50px;
-	text-decoration: none
+    position: relative;
+    display: block;
+    width: 50px;
+    height: 50px;
+    text-decoration: none;
 }
 
 #page_top a::before {
-	font-weight: 900;
-	font-size: 25px;
-	color: var(--page-top-color);
-	position: absolute;
-	width: 25px;
-	height: 25px;
-	top: -5px;
-	bottom: 0;
-	right: 0;
-	left: 0;
-	margin: auto;
-	text-align: center
+    font-weight: 900;
+    font-size: 25px;
+    color: var(--page-top-color);
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    top: -5px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+    text-align: center;
 }
 /* ページネーション */
-.pagination a,.pagination strong {
+.pagination a,
+.pagination strong {
     margin: 0 2px;
 }
 /* 閲覧注意 */
 .hide_thumbnail img {
-	filter: blur(15px);
+    filter: blur(15px);
 }
 /* エラーメッセージ */
-div#error_message , div#error_message_imgrep , div#error_message_paintform , div#error_message_download , div#error_message_beforedelete , div#error_message_aikotobaform {
-	line-height: initial;
-	background-color: var(--error-message-background-color);
-	font-size: 20px;
-	padding: 1px 4px 1px;
-	margin: 5px 0 5px;
+div#error_message,
+div#error_message_imgrep,
+div#error_message_paintform,
+div#error_message_download,
+div#error_message_beforedelete,
+div#error_message_aikotobaform {
+    line-height: initial;
+    background-color: var(--error-message-background-color);
+    font-size: 20px;
+    padding: 1px 4px 1px;
+    margin: 5px 0 5px;
 }
-div#error_message:empty , div#error_message_imgrep:empty , div#error_message_paintform:empty , div#error_message_download:empty , div#error_message_beforedelete:empty , div#error_message_aikotobaform:empty {
-	display: none;
+div#error_message:empty,
+div#error_message_imgrep:empty,
+div#error_message_paintform:empty,
+div#error_message_download:empty,
+div#error_message_beforedelete:empty,
+div#error_message_aikotobaform:empty {
+    display: none;
 }

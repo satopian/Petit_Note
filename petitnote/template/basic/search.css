@@ -6,19 +6,19 @@ form.searchform {
 
 /* 閲覧注意 */
 .s_posted_image {
-	position: relative;
-	overflow: hidden;
-	display: block;
-	max-width: 160px;
-	max-height: 350px;
-	height: auto;
-	float: none;
-	margin: 12px 0 0;
+    position: relative;
+    overflow: hidden;
+    display: block;
+    max-width: 160px;
+    max-height: 350px;
+    height: auto;
+    float: none;
+    margin: 12px 0 0;
 }
 
-.s_posted_image span  {
+.s_posted_image span {
     position: absolute;
-	top: 13px;
+    top: 13px;
     left: 13px;
     display: inline-block;
     background-color: var(--posted-image-span-background-color);
@@ -32,88 +32,86 @@ form.searchform {
 }
 
 .s_article {
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	padding: 3px 0;
-	border-bottom: 1px dashed var(--border-dashed-color);
-	line-height: 3em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 3px 0;
+    border-bottom: 1px dashed var(--border-dashed-color);
+    line-height: 3em;
 }
 
 .s_posted_image img {
-	max-width: 100%;
-	height: auto;
+    max-width: 100%;
+    height: auto;
 }
 h2.search_h2 {
-	color:var(--article-title-color);
+    color: var(--article-title-color);
 }
 .s_article h3 {
-	font-size: 1em;
-	font-weight: 400;
-	margin: 0 0 3px;
-	display: inline-block;
+    font-size: 1em;
+    font-weight: 400;
+    margin: 0 0 3px;
+    display: inline-block;
 }
 
 .s_comments_title_wrap {
-	display: block;
-	line-height: 2em;
-	margin: 0 0 5px;
+    display: block;
+    line-height: 2em;
+    margin: 0 0 5px;
 }
 .s_comments_title_wrap a {
-	text-decoration: none;
-	color: var(--a-color);
+    text-decoration: none;
+    color: var(--a-color);
 }
 
 .searchform input[type="search"] {
-	height: 1.9em;
-	width: 180px;
-	border: 1px solid #888;
-	vertical-align: middle;
+    height: 1.9em;
+    width: 180px;
+    border: 1px solid #888;
+    vertical-align: middle;
 }
 
 .searchform input[type="submit"] {
     height: 1.9em;
 }
 
-.searchform input[type=radio] {
-	display: none
+.searchform input[type="radio"] {
+    display: none;
 }
 
 .searchform .label {
-	display: inline-block;
-	padding: 0 10px;
-	text-align: center;
-	cursor: pointer;
-	border: 2px solid var(--border-label-color);
-	border-radius: 15px;
-	margin: 0 3px 0 0;
+    display: inline-block;
+    padding: 0 10px;
+    text-align: center;
+    cursor: pointer;
+    border: 2px solid var(--border-label-color);
+    border-radius: 15px;
+    margin: 0 3px 0 0;
 }
 
-.searchform input[type=radio]:checked+label {
-	color: var(--checked-color);
-	background: var(--checked-background-color);
+.searchform input[type="radio"]:checked + label {
+    color: var(--checked-color);
+    background: var(--checked-background-color);
 }
 
 .searchform .label:hover {
-	color: var(--checked-color);
-	background-color: var(--checked-background-color);
+    color: var(--checked-color);
+    background-color: var(--checked-background-color);
 }
 
 .searchform .radio {
-	display: inline-block;
-	margin: 0 0 16px 0
+    display: inline-block;
+    margin: 0 0 16px 0;
 }
 
-@media screen and (max-width:767px) {
-	.s_article h3 {
-	font: 1.1rem;
-	}
+@media screen and (max-width: 767px) {
+    .s_article h3 {
+        font: 1.1rem;
+    }
 }
 
-@media screen and (max-width:610px) {
-
-	.s_posted_image span{
-		display: none;
-	}
-
+@media screen and (max-width: 610px) {
+    .s_posted_image span {
+        display: none;
+    }
 }
