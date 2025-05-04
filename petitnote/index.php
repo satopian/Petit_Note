@@ -116,7 +116,6 @@ $use_darkmode = $use_darkmode ?? true;
 $darkmode_by_default = $darkmode_by_default ?? false;
 $sitename = $sitename ?? '';
 $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
-$display_darkmodesetting_on_toppage = $display_darkmodesetting_on_toppage ?? false;
 $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ? $mode :(string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
@@ -2294,7 +2293,7 @@ function view(): void {
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
-	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip,$display_darkmodesetting_on_toppage; 
+	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip; 
 
 	aikotoba_required_to_view();
 	set_page_context_to_session();

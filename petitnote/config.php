@@ -329,12 +329,6 @@ $password_require_to_continue = false;
 // $sort_comments_by_newest = true;
 $sort_comments_by_newest = false;
 
-//トップページにダークモードと閲覧注意画像の表示/非表示を切り替える設定を表示する
-// する: true しない: false
-
-// $display_darkmodesetting_on_toppage = true;
-$display_darkmodesetting_on_toppage = false;
-
 /*表示件数*/
 
 //1ページに表示するスレッド数
