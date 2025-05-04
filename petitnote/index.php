@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.86.1';
-$petit_lot='lot.20250426';
+$petit_ver='v1.86.2';
+$petit_lot='lot.20250504';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -54,7 +54,6 @@ if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20250315){
 
 check_file(__DIR__.'/config.php');
 require_once(__DIR__.'/config.php');
-
 // jQueryバージョン
 const JQUERY='jquery-3.7.0.min.js';
 check_file(__DIR__.'/lib/'.JQUERY);
@@ -2294,7 +2293,7 @@ function view(): void {
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
-	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip; 
+	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip,$display_darkmodesetting_on_toppage; 
 
 	aikotoba_required_to_view();
 	set_page_context_to_session();

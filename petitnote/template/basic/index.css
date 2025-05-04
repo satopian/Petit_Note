@@ -142,6 +142,9 @@ ul {
 .description ul {
     margin: 0;
 }
+.form_set_nsfw_show_hide {
+    margin: 0 0 1em;
+}
 
 /* リンク */
 a {

@@ -46,8 +46,7 @@
 	</span>
 <?php endif;?>
 </nav>
-
-<?php if($userdel||$admindel):?>
+<?php if($userdel||$admindel||isset($display_darkmodesetting_on_toppage)&&$display_darkmodesetting_on_toppage):?>
 	<!-- 閲覧注意画像を隠す/隠さない -->
 	<?php include __DIR__.'/parts/form_set_nsfw_show_hide.html';?>
 <?php endif;?>
