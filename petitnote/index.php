@@ -116,6 +116,7 @@ $use_darkmode = $use_darkmode ?? true;
 $darkmode_by_default = $darkmode_by_default ?? false;
 $sitename = $sitename ?? '';
 $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
+$display_darkmodesetting_on_toppage = $display_darkmodesetting_on_toppage ?? false;
 $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ? $mode :(string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
