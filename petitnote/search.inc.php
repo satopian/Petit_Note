@@ -1,7 +1,7 @@
 <?php
 //Petit Note (C)2021-2025 さとぴあ(@satopian)
 //MIT License
-$search_inc_ver = 20250320;
+$search_inc_ver = 20250505;
 class processsearch
 {
 
@@ -165,7 +165,7 @@ class processsearch
 	//検索結果の配列を取得
 	private static function create_search_array(): array
 	{
-		global $max_search, $search_images_pagedef, $search_comments_pagedef;
+		global $max_search, $search_images_pagedef, $search_comments_pagedef,$root_url;
 
 		self::init();
 		$imgsearch = self::$imgsearch;
@@ -202,6 +202,7 @@ class processsearch
 			isset($_SESSION['imgsearch']) && $_SESSION['imgsearch'] === $imgsearch
 			&& isset($_SESSION['search_q']) && $_SESSION['search_q'] === $q
 			&& isset($_SESSION['search_radio']) && $_SESSION['search_radio'] === $radio
+			&& isset($_SESSION['root_url']) && $_SESSION['root_url'] === $root_url
 		) {
 			$arr = $_SESSION['search_result'] ?? [];
 		}
@@ -210,8 +211,9 @@ class processsearch
 		$_SESSION['search_q'] = $q;
 		$_SESSION['search_radio'] = $radio;
 		$_SESSION['search_start_time'] = time();
+		$_SESSION['root_url'] = $root_url;
 
-		if ($arr && is_array($arr)) {
+		if (!empty($arr) && is_array($arr)) {
 			return $arr; //SESSIONにキャッシュした配列を返す
 		}
 		$i = 0;
