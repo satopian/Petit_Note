@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.86.7';
+$petit_ver='v1.86.8';
 $petit_lot='lot.20250515';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -1975,14 +1975,15 @@ function edit(): void {
 	$host = $is_admin_set_nsfw ? $_host : $host;//管理者による閲覧注意への変更時は投稿者のホスト名を変更しない
 	$userid = ($admindel && !$res_oya_deleted) ? $_userid : $userid;//管理者による変更時は投稿者のidを変更しない
 	$hash = ($admindel && $res_oya_deleted) ? password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]) : $_hash;//削除ずみのoyaの編集時は管理者パスを設定。
-	$r_line= "$_no\t$sub\t$name\t$_verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_img_hash\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$hash\t$_oya\n";
+	$verified = ($admindel && $res_oya_deleted) ? 'adminpost' : $_verified;//削除ずみのoyaの編集時は管理者パスを設定。
+	$r_line= "$_no\t$sub\t$name\t$verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_img_hash\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$hash\t$_oya\n";
 	
 	$r_arr[$i] = $r_line;
 
 	if($_oya==='oya'){
 		//コメントを120バイトに短縮
 		$strcut_com=mb_strcut($com,0,120);
-		$newline = "$_no\t$sub\t$name\t$_verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_img_hash\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$hash\toya\n";
+		$newline = "$_no\t$sub\t$name\t$verified\t$strcut_com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_img_hash\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$hash\toya\n";
 
 		if(empty($alllog_arr)){
 			closeFile($rp);
