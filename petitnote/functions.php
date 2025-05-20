@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250416;
+$functions_ver=20250520;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -961,6 +961,15 @@ function check_AsyncRequest($upfile=''): void {
 	if(!$paint_picrep && ($http_x_requested_with || $asyncflag)){//非同期通信ならエラーチェックだけすませて処理中断。通常フォームでやりなおし。
 		safe_unlink($upfile);
 		exit();
+	}
+}
+
+//POSTがJavaScript経由かチェック
+function check_post_via_javascript(): void {
+	global $en;
+	//JavaScriptが無効な時はエラー
+		if(!isset($_SERVER['HTTP_X_REQUESTED_WITH'])){//asyncリクエストでなければ
+		error($en?'Please enable JavaScript.':'JavaScriptを有効にしてください。');
 	}
 }
 

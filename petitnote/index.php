@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.86.9';
-$petit_lot='lot.20250518';
+$petit_ver='v1.87.0';
+$petit_lot='lot.20250520';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,7 +18,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250416){
+if(!isset($functions_ver)||$functions_ver<20250520){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -238,6 +238,9 @@ function post(): void {
 	global $max_log,$max_res,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$mark_sensitive_image;
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 	global $usercode,$use_url_input_field,$httpsonly;
+
+	//Fetch API以外からのPOSTを拒否
+	check_post_via_javascript();
 
 	if($use_aikotoba){
 		check_aikotoba();
@@ -1846,6 +1849,8 @@ function edit_form($id='',$no=''): void {
 function edit(): void {
 	global $name_input_required,$max_com,$en,$mark_sensitive_image,$use_url_input_field,$admin_pass;
 
+	//Fetch API以外からのPOSTを拒否
+	check_post_via_javascript();
 	check_csrf_token();
 
 	//POSTされた内容を取得
