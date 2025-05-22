@@ -636,10 +636,6 @@ input.input_count_timer {
 }
 
 @media screen and (max-width: 767px) {
-    textarea.post_com,
-    textarea.post_cw {
-        max-width: 276px;
-    }
     .posted_image {
         float: none;
         margin-right: 0;
