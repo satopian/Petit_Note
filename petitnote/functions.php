@@ -166,6 +166,9 @@ function check_aikotoba(): bool {
 function adminpost(): void {
 	global $second_pass,$en;
 
+	//Fetch API以外からのPOSTを拒否
+	check_post_via_javascript();
+
 	check_same_origin();
 	check_password_input_error_count();
 	session_sta();
@@ -186,6 +189,9 @@ function adminpost(): void {
 //管理者削除モード
 function admin_del(): void {
 	global $second_pass,$en;
+
+	//Fetch API以外からのPOSTを拒否
+	check_post_via_javascript();
 
 	check_same_origin();
 	check_password_input_error_count();
