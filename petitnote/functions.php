@@ -123,7 +123,7 @@ function age_check_required_to_view(): void {
 function is_adminpass($pwd): bool {
 	global $admin_pass,$second_pass;
 	$pwd=(string)$pwd;
-	return ($pwd && $admin_pass && $second_pass && !hash_equals($second_pass,$admin_pass) && hash_equals($pwd,$admin_pass));
+	return ($pwd && $admin_pass && $second_pass && !hash_equals($admin_pass,$second_pass) && hash_equals($admin_pass,$pwd));
 }
 
 function admin_in(): void {
@@ -217,12 +217,12 @@ function userdel_mode(): void {
 function adminpost_valid(): bool {
 	global $second_pass;
 	session_sta();
-	return isset($_SESSION['adminpost']) && ($second_pass && hash_equals($_SESSION['adminpost'],$second_pass));
+	return isset($_SESSION['adminpost']) && ($second_pass && hash_equals($second_pass,$_SESSION['adminpost']));
 }
 function admindel_valid(): bool {
 	global $second_pass;
 	session_sta();
-	return isset($_SESSION['admindel']) && ($second_pass && hash_equals($_SESSION['admindel'],$second_pass));
+	return isset($_SESSION['admindel']) && ($second_pass && hash_equals($second_pass,$_SESSION['admindel']));
 }
 function userdel_valid(): bool {
 	session_sta();
@@ -890,7 +890,7 @@ function check_csrf_token(): void {
 	$token=(string)filter_input_data('POST','token');
 	$session_token=isset($_SESSION['token']) ? (string)$_SESSION['token'] : '';
 
-	if(!$token||!$session_token||!hash_equals($token,$session_token)){//タイミング攻撃対策としてhash_equals()を使用
+	if(!$token||!$session_token||!hash_equals($session_token,$token)){//タイミング攻撃対策としてhash_equals()を使用
 		error($en?"CSRF token mismatch.\nPlease reload.":"CSRFトークンが一致しません。\nリロードしてください。");
 	}
 }
