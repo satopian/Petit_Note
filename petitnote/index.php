@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.88.2';
+$petit_ver='v1.88.5';
 $petit_lot='lot.20250525';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -239,8 +239,6 @@ function post(): void {
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 	global $usercode,$use_url_input_field,$httpsonly;
 
-	//投稿間隔をチェック
-	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 
@@ -248,6 +246,9 @@ function post(): void {
 		check_aikotoba();
 	}
 	check_csrf_token();
+
+	//投稿間隔をチェック
+	check_submission_interval(3);//3秒間隔で投稿を制限
 
 	//POSTされた内容を取得
 	$userip =t(get_uip());
@@ -1077,6 +1078,10 @@ function paintcom(): void {
 	$adminpost = adminpost_valid();
 	$use_hide_painttime = $use_hide_painttime ?? false;
 	$use_hide_painttime = ($adminpost || $use_hide_painttime);
+
+	//フォームの表示時刻をセット
+	set_form_display_time();
+
 	$admin_pass= null;
 	// HTML出力
 	$templete='paint_com.html';
@@ -1855,11 +1860,12 @@ function edit_form($id='',$no=''): void {
 function edit(): void {
 	global $name_input_required,$max_com,$en,$mark_sensitive_image,$use_url_input_field,$admin_pass;
 
-	//投稿間隔をチェック
-	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 	check_csrf_token();
+
+	//投稿間隔をチェック
+	check_submission_interval();
 
 	//POSTされた内容を取得
 	$userip =t(get_uip());
