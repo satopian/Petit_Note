@@ -149,6 +149,9 @@ function admin_in(): void {
 	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
 	$id = $_SESSION['current_id']	?? "";
 
+	//フォームの表示時刻をセット
+	set_form_display_time();
+
 	$admin_pass= null;
 	// HTML出力
 	$templete='admin_in.html';
@@ -166,6 +169,8 @@ function check_aikotoba(): bool {
 function adminpost(): void {
 	global $second_pass,$en;
 
+	//投稿間隔をチェック
+	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 
@@ -190,6 +195,8 @@ function adminpost(): void {
 function admin_del(): void {
 	global $second_pass,$en;
 
+	//投稿間隔をチェック
+	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 
@@ -980,6 +987,29 @@ function check_post_via_javascript(): void {
 	}
 }
 
+//フォームの表示時刻をセット
+function set_form_display_time(): void {
+	session_sta();
+	$_SESSION['form_display_time'] = time();
+}
+//投稿間隔をチェック
+function check_submission_interval(): void {
+global $en;
+	session_sta();
+	if (!isset($_SESSION['form_display_time'])) {
+		error($en?"The post has been rejected.":'拒絶されました。');
+	}
+	$form_display_time = $_SESSION['form_display_time'];
+	$now = time();
+	$min_interval = 3; // 最低3秒は空ける
+
+	if (($now - $form_display_time) < $min_interval) {
+		set_form_display_time();
+		error($en? 'Please wait a little.':'少し待ってください。');
+	}
+	// 判定通過後、再度投稿できないように時刻をクリア
+	unset($_SESSION['form_display_time']);
+}
 // テンポラリ内のゴミ除去 
 function deltemp(): void {
 	global $check_password_input_error_count;

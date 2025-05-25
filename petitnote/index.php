@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.87.2';
-$petit_lot='lot.20250523';
+$petit_ver='v1.88.1';
+$petit_lot='lot.20250525';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -239,6 +239,8 @@ function post(): void {
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 	global $usercode,$use_url_input_field,$httpsonly;
 
+	//投稿間隔をチェック
+	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 
@@ -1656,8 +1658,9 @@ function confirmation_before_deletion ($edit_mode=''): void {
 
 	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en;
 	global $deny_all_posts;
-	//管理者判定処理
+
 	check_same_origin();
+	//管理者判定処理
 	$admindel=admindel_valid();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	aikotoba_required_to_view(true);
@@ -1838,6 +1841,9 @@ function edit_form($id='',$no=''): void {
 
 	$_SESSION['current_id']	= $id;
 
+	//フォームの表示時刻をセット
+	set_form_display_time();
+
 	$admin_pass= null;
 	// HTML出力
 	$templete='edit_form.html';
@@ -1849,6 +1855,8 @@ function edit_form($id='',$no=''): void {
 function edit(): void {
 	global $name_input_required,$max_com,$en,$mark_sensitive_image,$use_url_input_field,$admin_pass;
 
+	//投稿間隔をチェック
+	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 	check_csrf_token();
@@ -2431,6 +2439,10 @@ function view(): void {
 	$resmode=false;
 	$resno=0;
 	$sitename= preg_replace("/\A\s*\z/u","",$sitename);//連続する空行を削除
+
+	//フォームの表示時刻をセット
+	set_form_display_time();
+
 	$admin_pass= null;
 	// HTML出力
 	$templete='main.html';
@@ -2624,6 +2636,9 @@ function res (): void {
 	$resmode=true;
 
 	$page=0;
+
+	//フォームの表示時刻をセット
+	set_form_display_time();
 
 	$admin_pass= null;
 	$templete= $res_catalog ? 'res_catalog.html' : 'res.html';
