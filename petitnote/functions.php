@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250523;
+$functions_ver=20250525;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
