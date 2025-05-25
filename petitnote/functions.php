@@ -1007,8 +1007,6 @@ global $en;
 		set_form_display_time();
 		error($en? 'Please wait a little.':'少し待ってください。');
 	}
-	// 判定通過後、再度投稿できないように時刻をクリア
-	unset($_SESSION['form_display_time']);
 }
 // テンポラリ内のゴミ除去 
 function deltemp(): void {
