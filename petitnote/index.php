@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.88.6';
+$petit_ver='v1.88.7';
 $petit_lot='lot.20250525';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -138,7 +138,7 @@ $_SESSION['usercode']=$usercode;
 
 $x_frame_options_deny = $x_frame_options_deny ?? true;
 if($x_frame_options_deny){
-	header('X-Frame-Options: DENY');
+	header("Content-Security-Policy: frame-ancestors 'none';");
 }
 //ダークモード
 if(!isset($_COOKIE["p_n_set_darkmode"])&&$darkmode_by_default){
