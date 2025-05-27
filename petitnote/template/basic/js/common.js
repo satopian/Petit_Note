@@ -31,6 +31,9 @@ const res_form_submit = (event, formId = "res_form") => {
         if (!elem_error_message || !(submitBtn instanceof HTMLInputElement)) {
             return;
         }
+
+        event.preventDefault(); // 通常フォームの送信を中断
+
         //自動化ツールによる自動送信を拒否する
         const languages_length0 = navigator.languages.length === 0;
         const webdriver = navigator.webdriver;
@@ -39,7 +42,6 @@ const res_form_submit = (event, formId = "res_form") => {
             return;
         }
 
-        event.preventDefault(); // 通常フォームの送信を中断
         submitBtn.disabled = true; // 送信ボタンを無効化
 
         const formData = new FormData(form);
@@ -303,8 +305,10 @@ window.addEventListener("pageshow", function () {
     // すべてのsubmitボタンを取得
     const submitButtons = document.querySelectorAll('[type="submit"]');
     submitButtons.forEach(function (btn) {
-        // ボタンを有効化
-        btn.disabled = false;
+        if (btn instanceof HTMLInputElement) {
+            // ボタンを有効化
+            btn.disabled = false;
+        }
     });
 });
 
