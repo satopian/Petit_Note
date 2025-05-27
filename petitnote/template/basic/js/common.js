@@ -31,6 +31,14 @@ const res_form_submit = (event, formId = "res_form") => {
         if (!elem_error_message || !(submitBtn instanceof HTMLInputElement)) {
             return;
         }
+        //自動化ツールによる自動送信を拒否する
+        const languages_length0 = navigator.languages.length === 0;
+        const webdriver = navigator.webdriver;
+        if (webdriver || languages_length0) {
+            elem_error_message.innerText = "The post has been rejected.";
+            return;
+        }
+
         event.preventDefault(); // 通常フォームの送信を中断
         submitBtn.disabled = true; // 送信ボタンを無効化
 
