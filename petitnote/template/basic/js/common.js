@@ -229,6 +229,7 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
         if (
             paint_com ||
             (elem_attach_image instanceof HTMLInputElement &&
+                elem_attach_image.files &&
                 elem_attach_image.files.length > 0)
         ) {
             if (elem_check_nsfw) {
