@@ -1147,12 +1147,15 @@ function is_ngword ($ngwords, $strs): bool {
 
 /* 禁止ホストチェック */
 function is_badhost(): bool {
-	global $badhost;
+	global $badhost,$reject_if_no_reverse_dns;
 	//ホスト取得
 	$userip = get_uip();
 	$host = $userip ? gethostbyaddr($userip) :'';
 
 	if($host === $userip){//ホスト名がipアドレスになる場合は
+		if($reject_if_no_reverse_dns){
+			return true; //リバースDNSがない場合は拒絶
+		}
 		foreach($badhost as $value){
 			if (preg_match("/\A$value/i",$host)) {//前方一致
 				return true;

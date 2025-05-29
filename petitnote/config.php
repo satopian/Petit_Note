@@ -130,6 +130,14 @@ $badstr_B = ["シャネル","シュプリーム","バレンシアガ","ブラン
 // 禁止ホスト
 $badhost =["example.com","example.org"];
 
+//ホスト名が逆引きできないIPアドレスからの投稿を拒絶する
+// する: true しない: false
+
+// $reject_if_no_reverse_dns = true;
+$reject_if_no_reverse_dns = false;
+
+// ※逆引きできないIPアドレスの利用者も多いため、true にすると一部の正当なユーザーが投稿できなくなる可能性があります。
+
 /*使用目的別設定*/
 
 // ホームページへ戻るリンクを上段のメニューに表示する

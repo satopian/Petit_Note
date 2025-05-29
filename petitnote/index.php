@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.88.9';
-$petit_lot='lot.20250529';
+$petit_ver='v1.88.10';
+$petit_lot='lot.20250530';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,7 +18,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250529){
+if(!isset($functions_ver)||$functions_ver<20250530){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -116,12 +116,12 @@ $use_darkmode = $use_darkmode ?? true;
 $darkmode_by_default = $darkmode_by_default ?? false;
 $sitename = $sitename ?? '';
 $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
+$reject_if_no_reverse_dns = $reject_if_no_reverse_dns ?? false;
 $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ? $mode :(string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
 $userip = get_uip();
 $httpsonly = (bool)($_SERVER['HTTPS'] ?? '');
-
 //user-codeの発行
 $usercode = t(filter_input_data('COOKIE', 'usercode'));//user-codeを取得
 
