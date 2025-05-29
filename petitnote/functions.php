@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250525;
+$functions_ver=20250529;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -997,9 +997,14 @@ function set_form_display_time(): void {
 	$_SESSION['form_display_time'] = time();
 }
 //投稿間隔をチェック
-function check_submission_interval($min_interval=2): void {
-	// デフォルトで最低2秒の間隔を設ける
+function check_submission_interval(): void {
 	global $en;
+
+	$mode = (int)filter_input_data('POST', 'mode',FILTER_VALIDATE_INT);
+	$pictmp = (int)filter_input_data('POST', 'pictmp',FILTER_VALIDATE_INT);//お絵かきコメントなら2になる
+	// デフォルトで最低2秒の間隔を設ける
+	$min_interval = ($mode==='regist' && $pictmp!==2) ? 3 : 2; // お絵かきコメント以外の投稿は3秒待機
+
 	session_sta();
 	if (!isset($_SESSION['form_display_time'])) {
 		error($en?"The post has been rejected.":'拒絶されました。');
