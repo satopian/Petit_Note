@@ -1004,7 +1004,7 @@ function check_submission_interval(): void {
 	$mode = (int)filter_input_data('POST', 'mode',FILTER_VALIDATE_INT);
 	$pictmp = (int)filter_input_data('POST', 'pictmp',FILTER_VALIDATE_INT);//お絵かきコメントなら2になる
 	// デフォルトで最低2秒の間隔を設ける
-	$min_interval = ($mode==='regist' && $pictmp!==2) ? 3 : 2; // お絵かきコメント以外の投稿は3秒待機
+	$min_interval = ($mode==='regist' && $pictmp===2) ? 1 : 2; // お絵かきコメント以外の投稿は2秒待機
 
 	session_sta();
 	if (!isset($_SESSION['form_display_time'])) {
