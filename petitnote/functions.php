@@ -397,13 +397,15 @@ function is_paint_tool_name($tool): string {
 
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line,$options=[]): array {
-	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw,$is_badhost;
+	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 
 	$time = basename($time);
 
 	$isset_catalog = isset($options['catalog']);
 	$isset_search = isset($options['search']);
+	$is_badhost = $options['is_badhost'] ?? false;
+	
 	$res=[];
 
 	$continue = true;
@@ -1052,7 +1054,11 @@ function deltemp(): void {
 
 // NGワードがあれば拒絶
 function Reject_if_NGword_exists_in_the_post(): void {
-	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$max_com,$en,$is_badhost;
+	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$max_com,$en;
+
+	if(is_badhost()){
+		error($en?'Post was rejected.':'拒絶されました。');
+	}
 
 	$admin =(adminpost_valid()||admindel_valid());
 
@@ -1064,9 +1070,6 @@ function Reject_if_NGword_exists_in_the_post(): void {
 
 	if($admin || is_adminpass($pwd)){
 		return;
-	}
-	if($is_badhost){
-		error($en?'Post was rejected.':'拒絶されました。');
 	}
 
 	$com_len=strlen((string)$com);
