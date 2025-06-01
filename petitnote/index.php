@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.88.10';
-$petit_lot='lot.20250530';
+$petit_ver='v1.88.11';
+$petit_lot='lot.20250601';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,7 +18,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250530){
+if(!isset($functions_ver)||$functions_ver<20250601){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -140,6 +140,8 @@ $x_frame_options_deny = $x_frame_options_deny ?? true;
 if($x_frame_options_deny){
 	header("Content-Security-Policy: frame-ancestors 'none';");
 }
+//禁止ホスト
+$is_badhost=is_badhost();//関数の処理が重いので何度も呼ばない
 //ダークモード
 if(!isset($_COOKIE["p_n_set_darkmode"])&&$darkmode_by_default){
 	setcookie("p_n_set_darkmode","1",time()+(60*60*24*180),"","",$httpsonly,true);
@@ -765,7 +767,11 @@ function post(): void {
 function paint(): void {
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$max_px,$en;
-	global $usercode,$petit_lot,$httpsonly;
+	global $usercode,$petit_lot,$httpsonly,$is_badhost;
+
+	if($is_badhost){
+		error($en?'Post was rejected.':'拒絶されました。');
+	}
 
 	check_same_origin();
 	
@@ -1093,7 +1099,11 @@ function paintcom(): void {
 function to_continue(): void {
 
 	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en,$password_require_to_continue;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$petit_lot,$elapsed_days,$max_res;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$petit_lot,$elapsed_days,$max_res,$is_badhost;
+
+	if($is_badhost){
+		error($en?'Post was rejected.':'拒絶されました。');
+	}
 
 	aikotoba_required_to_view(true);
 
@@ -1197,7 +1207,7 @@ function to_continue(): void {
 	$nsfwc=(bool)filter_input_data('COOKIE','nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
-	$is_badhost=is_badhost();
+
 	$admin_pass= null;
 
 	// HTML出力
@@ -2315,7 +2325,7 @@ function view(): void {
 	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
-	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip; 
+	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip,$is_badhost; 
 
 	aikotoba_required_to_view();
 	set_page_context_to_session();
@@ -2353,7 +2363,7 @@ function view(): void {
 
 	$out=[];
 	if($page===0 && !$admindel && !$userdel && !$adminpost){
-		$out = is_file($index_cache_json) ? json_decode(file_get_contents($index_cache_json),true) : [];
+		$out = (!$is_badhost && is_file($index_cache_json)) ? json_decode(file_get_contents($index_cache_json),true) : [];
 	}
 	if(empty($out)){
 		//oyaのループ
@@ -2405,7 +2415,6 @@ function view(): void {
 		}
 	}
 	// 禁止ホスト
-	$is_badhost=is_badhost();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
 	$adminpost=adminpost_valid();
 	$resform = ((!$only_admin_can_reply && !$use_diary && !$is_badhost && $aikotoba)||$adminpost);
@@ -2459,7 +2468,7 @@ function view(): void {
 function res (): void {
 	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
 	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary,$nsfw_checked;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw,$is_badhost;
 
 	aikotoba_required_to_view();
 	set_page_context_to_session();
@@ -2611,8 +2620,6 @@ function res (): void {
 			$view_other_works= array_slice($view_other_works,0,6);
 		}
 	}
-	//禁止ホスト
-	$is_badhost=is_badhost();
 	//管理者判定処理
 	$admindel=admindel_valid();
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;

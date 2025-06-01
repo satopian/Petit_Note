@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250530;
+$functions_ver=20250601;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -397,7 +397,7 @@ function is_paint_tool_name($tool): string {
 
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line,$options=[]): array {
-	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw;
+	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw,$is_badhost;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 
 	$time = basename($time);
@@ -464,7 +464,7 @@ function create_res($line,$options=[]): array {
 		'upload_image' => $upload_image,
 		'pchext' => $pchext,
 		'anime' => $anime,
-		'continue' => $check_elapsed_days ? $continue : (adminpost_valid() ? $continue : false),
+		'continue' => ($check_elapsed_days && !$is_badhost) ? $continue : (adminpost_valid() ? $continue : false),
 		'time' => $time,
 		'date' => $date,
 		'datetime' => $datetime,
@@ -1052,7 +1052,7 @@ function deltemp(): void {
 
 // NGワードがあれば拒絶
 function Reject_if_NGword_exists_in_the_post(): void {
-	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$max_com,$en;
+	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$max_com,$en,$is_badhost;
 
 	$admin =(adminpost_valid()||admindel_valid());
 
@@ -1065,7 +1065,7 @@ function Reject_if_NGword_exists_in_the_post(): void {
 	if($admin || is_adminpass($pwd)){
 		return;
 	}
-	if(is_badhost()){
+	if($is_badhost){
 		error($en?'Post was rejected.':'拒絶されました。');
 	}
 

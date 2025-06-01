@@ -85,7 +85,7 @@
 <span class="continue_menu">
 <?php if($en):?>The image is a<?php else:?>画像は<?php endif;?> <select name="type" class="paint_select" id="select_post">
 <option value="rep"><?php if($en):?>replace<?php else:?>差し換え<?php endif;?></option>
-	<?php if(!$use_diary && !$is_badhost || $adminpost):?>
+	<?php if(!$use_diary && $adminpost):?>
 		<option value="new"><?php if($en):?>new post<?php else:?>新規投稿<?php endif;?></option>
 	<?php endif;?>
 </select>
