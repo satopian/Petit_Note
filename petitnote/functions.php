@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250529;
+$functions_ver=20250530;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -326,7 +326,6 @@ function branch_destination_of_location(): void {
 		redirect('./?mode=catalog&page='.h($page));
 	}
 	if($search){
-		
 		redirect('./?mode=search&page='.h($page).'&imgsearch='.h($imgsearch).'&q='.h($q).'&radio='.h($radio));
 	}
 	//ここまでに別処理がなければ通常ページ
