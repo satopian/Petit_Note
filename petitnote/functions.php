@@ -127,8 +127,11 @@ function is_adminpass($pwd): bool {
 }
 
 function admin_in(): void {
-
 	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
+
+	if(is_badhost()){
+		error($en? 'Rejected.' : '拒絶されました。');
+	}
 
 	aikotoba_required_to_view();
 

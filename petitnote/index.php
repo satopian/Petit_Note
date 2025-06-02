@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.89.0';
+$petit_ver='v1.89.2';
 $petit_lot='lot.20250602';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -766,7 +766,7 @@ function paint(): void {
 	global $usercode,$petit_lot,$httpsonly,$is_badhost;
 
 	if(is_badhost()){
-		error($en?'Post was rejected.':'拒絶されました。');
+		error($en? 'Rejected.' : '拒絶されました。');
 	}
 
 	check_same_origin();
@@ -1099,7 +1099,7 @@ function to_continue(): void {
 
 	$is_badhost=is_badhost();//テンプレートの互換性のため変数名が必要
 	if($is_badhost){
-		error($en?'Post was rejected.':'拒絶されました。');
+		error($en? 'Rejected.' : '拒絶されました。');
 	}
 
 	aikotoba_required_to_view(true);
@@ -2358,8 +2358,8 @@ function view(): void {
 	$index_cache_json = __DIR__.'/template/cache/index_cache.json';
 
 	$out=[];
-	if($page===0 && !$admindel && !$userdel && !$adminpost){
-		$out = (!$is_badhost && is_file($index_cache_json)) ? json_decode(file_get_contents($index_cache_json),true) : [];
+	if($page===0 && !$admindel && !$userdel && !$adminpost && !$is_badhost){
+		$out = is_file($index_cache_json) ? json_decode(file_get_contents($index_cache_json),true) : [];
 	}
 	if(empty($out)){
 		//oyaのループ
@@ -2438,7 +2438,7 @@ function view(): void {
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page<=0) ? false : ($page-$pagedef);//ページ番号が0の時はprevのリンクを出さない
 	$prev=($prev<0) ? 0 : $prev;
-	if($page===0 && !$admindel && !$adminpost){
+	if($page===0 && !$admindel && !$adminpost && !$is_badhost){
 		if(!is_file($index_cache_json)){
 			file_put_contents($index_cache_json,json_encode($out),LOCK_EX);
 			chmod($index_cache_json,0600);
