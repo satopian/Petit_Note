@@ -1162,7 +1162,7 @@ function is_badhost(): bool {
 	
 	session_sta();
 	$session_is_badhost = $_SESSION['is_badhost'] ?? false; //SESSIONに保存された値を取得
-	if($use_badhost_session_cache && $session_is_badhost){//禁止ホストフラグがSESSIONに保存されてたら拒絶
+	if($use_badhost_session_cache && $session_is_badhost){//禁止ホストフラグがSESSIONに保存されていたら拒絶
 		return true;
 	}
 	//ホスト取得
