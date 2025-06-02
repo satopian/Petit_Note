@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.89.2';
+$petit_ver='v1.89.3';
 $petit_lot='lot.20250602';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -116,7 +116,6 @@ $use_darkmode = $use_darkmode ?? true;
 $darkmode_by_default = $darkmode_by_default ?? false;
 $sitename = $sitename ?? '';
 $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
-$reject_if_no_reverse_dns = $reject_if_no_reverse_dns ?? false;
 $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ? $mode :(string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);

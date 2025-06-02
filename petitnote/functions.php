@@ -1152,10 +1152,17 @@ function is_ngword ($ngwords, $strs): bool {
 
 /* 禁止ホストチェック */
 function is_badhost(): bool {
-	global $badhost,$reject_if_no_reverse_dns;
+	global $badhost,$reject_if_no_reverse_dns,$use_badhost_session_cache;
+
+	//ホスト名が逆引きできないIPアドレスからの投稿を拒絶する
+	$reject_if_no_reverse_dns = $reject_if_no_reverse_dns ?? false;
+	
+	//禁止ホストからのアクセスがあった時は、SESSIONにキャッシュする
+	$use_badhost_session_cache = $use_badhost_session_cache ?? false;
+	
 	session_sta();
 	$session_is_badhost = $_SESSION['is_badhost'] ?? false; //SESSIONに保存された値を取得
-	if($session_is_badhost){//セッションに保存されている場合はチェックしない
+	if($use_badhost_session_cache && $session_is_badhost){//禁止ホストフラグがSESSIONに保存されてたら拒絶
 		return true;
 	}
 	//ホスト取得
@@ -1168,7 +1175,7 @@ function is_badhost(): bool {
 			return true; //リバースDNSがない場合は拒絶
 		}
 		foreach($badhost as $value){
-		if (preg_match("/\A$value/i",$host)) {//前方一致
+			if (preg_match("/\A$value/i",$host)) {//前方一致
 				$_SESSION['is_badhost'] = true;
 				return true;
 			}
