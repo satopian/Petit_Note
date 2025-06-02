@@ -1151,8 +1151,8 @@ function is_ngword ($ngwords, $strs): bool {
 function is_badhost(): bool {
 	global $badhost,$reject_if_no_reverse_dns;
 	session_sta();
-	$session_badhost = $_SESSION['is_badhost'] ?? false; //SESSIONに保存された値を取得
-	if($session_badhost){//セッションに保存されている場合はチェックしない
+	$session_is_badhost = $_SESSION['is_badhost'] ?? false; //SESSIONに保存された値を取得
+	if($session_is_badhost){//セッションに保存されている場合はチェックしない
 		return true;
 	}
 	//ホスト取得
