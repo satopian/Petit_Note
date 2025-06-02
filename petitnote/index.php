@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.88.12';
-$petit_lot='lot.20250601';
+$petit_ver='v1.89.0';
+$petit_lot='lot.20250602';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,7 +18,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250601){
+if(!isset($functions_ver)||$functions_ver<20250602){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -249,7 +249,8 @@ function post(): void {
 
 	//投稿間隔をチェック
 	check_submission_interval();
-
+	//NGワードがあれば拒絶
+	Reject_if_NGword_exists_in_the_post();
 	//POSTされた内容を取得
 	$userip =t(get_uip());
 	//ホスト取得
@@ -267,9 +268,6 @@ function post(): void {
 
 	$url = t(filter_input_data('POST','url',FILTER_VALIDATE_URL));
 	$url= (adminpost_valid() || $use_url_input_field) ? $url : '';
-
-	//NGワードがあれば拒絶
-	Reject_if_NGword_exists_in_the_post();
 
 	$pwd=$pwd ? $pwd : t(filter_input_data('COOKIE','pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
@@ -1874,7 +1872,8 @@ function edit(): void {
 
 	//投稿間隔をチェック
 	check_submission_interval();
-
+	//NGワードがあれば拒絶
+	Reject_if_NGword_exists_in_the_post();
 	//POSTされた内容を取得
 	$userip =t(get_uip());
 	//ホスト取得
@@ -1901,9 +1900,6 @@ function edit(): void {
 	if(!($admindel||($userdel&&$pwd))){
 		error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
 	}
-
-	//NGワードがあれば拒絶
-	Reject_if_NGword_exists_in_the_post();
 
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){

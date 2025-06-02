@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250601;
+$functions_ver=20250602;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -1150,16 +1150,23 @@ function is_ngword ($ngwords, $strs): bool {
 /* 禁止ホストチェック */
 function is_badhost(): bool {
 	global $badhost,$reject_if_no_reverse_dns;
+	session_sta();
+	$session_badhost = $_SESSION['is_badhost'] ?? false; //SESSIONに保存された値を取得
+	if($session_badhost){//セッションに保存されている場合はチェックしない
+		return true;
+	}
 	//ホスト取得
 	$userip = get_uip();
 	$host = $userip ? gethostbyaddr($userip) :'';
 
 	if($host === $userip){//ホスト名がipアドレスになる場合は
 		if($reject_if_no_reverse_dns){
+			$_SESSION['is_badhost'] = true;
 			return true; //リバースDNSがない場合は拒絶
 		}
 		foreach($badhost as $value){
-			if (preg_match("/\A$value/i",$host)) {//前方一致
+		if (preg_match("/\A$value/i",$host)) {//前方一致
+				$_SESSION['is_badhost'] = true;
 				return true;
 			}
 		}
@@ -1167,6 +1174,7 @@ function is_badhost(): bool {
 	}else{
 		foreach($badhost as $value){
 			if (preg_match("/$value\z/i",$host)) {
+				$_SESSION['is_badhost'] = true;
 				return true;
 			}
 		}
