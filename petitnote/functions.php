@@ -21,6 +21,13 @@ function logout_admin(): void {
 function aikotoba(): void {
 	global $aikotoba,$en,$keep_aikotoba_login_status;
 
+	//投稿間隔をチェック
+	check_submission_interval();
+	if(is_badhost()){
+		error($en? 'Rejected.' : '拒絶されました。');
+	}
+	//Fetch API以外からのPOSTを拒否
+	check_post_via_javascript();
 	check_same_origin();
 
 	session_sta();
@@ -65,6 +72,7 @@ function aikotoba_required_to_view($required_flag=false): void {
 	$admin_pass= null;
 
 	if(!aikotoba_valid()){
+		set_form_display_time();
 		$templete='aikotoba.html';
 		include __DIR__.'/'.$skindir.$templete;
 		exit();//return include では処理が止まらない。 
@@ -172,16 +180,15 @@ function check_aikotoba(): bool {
 function adminpost(): void {
 	global $second_pass,$en;
 
+	//投稿間隔をチェック
+	check_submission_interval();
+
 	if(is_badhost()){
 		error($en? 'Rejected.' : '拒絶されました。');
 	}
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
-	
 	check_same_origin();
-
-	//投稿間隔をチェック
-	check_submission_interval();
 
 	check_password_input_error_count();
 	session_sta();
@@ -203,17 +210,16 @@ function adminpost(): void {
 function admin_del(): void {
 	global $second_pass,$en;
 
+	//投稿間隔をチェック
+	check_submission_interval();
+
 	if(is_badhost()){
 		error($en? 'Rejected.' : '拒絶されました。');
 	}
 
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
-	
 	check_same_origin();
-
-	//投稿間隔をチェック
-	check_submission_interval();
 
 	check_password_input_error_count();
 

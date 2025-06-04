@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.89.5';
+$petit_ver='v1.89.6';
 $petit_lot='lot.20250604';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -238,6 +238,8 @@ function post(): void {
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 	global $usercode,$use_url_input_field,$httpsonly;
 
+	//投稿間隔をチェック
+	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 
@@ -245,9 +247,6 @@ function post(): void {
 		check_aikotoba();
 	}
 	check_csrf_token();
-
-	//投稿間隔をチェック
-	check_submission_interval();
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
 	//POSTされた内容を取得
@@ -1865,12 +1864,12 @@ function edit_form($id='',$no=''): void {
 function edit(): void {
 	global $name_input_required,$max_com,$en,$mark_sensitive_image,$use_url_input_field,$admin_pass;
 
+	//投稿間隔をチェック
+	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 	check_csrf_token();
 
-	//投稿間隔をチェック
-	check_submission_interval();
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
 	//POSTされた内容を取得
