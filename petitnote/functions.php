@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250602;
+$functions_ver=20250604;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -172,6 +172,9 @@ function check_aikotoba(): bool {
 function adminpost(): void {
 	global $second_pass,$en;
 
+	if(is_badhost()){
+		error($en? 'Rejected.' : '拒絶されました。');
+	}
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 	
@@ -199,6 +202,10 @@ function adminpost(): void {
 //管理者削除モード
 function admin_del(): void {
 	global $second_pass,$en;
+
+	if(is_badhost()){
+		error($en? 'Rejected.' : '拒絶されました。');
+	}
 
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
