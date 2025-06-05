@@ -1739,7 +1739,6 @@ function confirmation_before_deletion ($edit_mode=''): void {
 
 	$_SESSION['current_id']	= $id;
 
-
 	set_form_display_time();
 
 	$admin_pass= null;
