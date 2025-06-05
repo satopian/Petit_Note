@@ -1213,7 +1213,6 @@ function to_continue(): void {
 
 //アプリ固有ファイルのダウンロード
 function download_app_dat(): void {
-
 	global $en;
 	//投稿間隔をチェック
 	check_submission_interval();
