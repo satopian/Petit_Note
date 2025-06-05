@@ -364,6 +364,7 @@ function check_cont_pass(): void {
 
 	global $en;
 
+	check_submission_interval();
 	check_same_origin();
 
 	$adminmode = adminpost_valid() || admindel_valid(); 
@@ -1029,6 +1030,10 @@ function check_submission_interval(): void {
 	$form_display_time = $_SESSION['form_display_time'];
 	$now = time();
 
+	$admin = (admindel_valid() || adminpost_valid());
+	if($admin){
+		return;
+	}
 	if (($now - $form_display_time) < $min_interval) {
 		set_form_display_time();
 		error($en? 'Please wait a little.':'少し待ってください。');

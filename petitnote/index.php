@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.89.7';
+$petit_ver='v1.89.8';
 $petit_lot='lot.20250605';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -24,7 +24,7 @@ if(!isset($functions_ver)||$functions_ver<20250605){
 
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20250326){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20250605){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
@@ -1202,6 +1202,7 @@ function to_continue(): void {
 	$nsfwc=(bool)filter_input_data('COOKIE','nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
+	set_form_display_time();
 	$admin_pass= null;
 
 	// HTML出力
@@ -1214,7 +1215,8 @@ function to_continue(): void {
 function download_app_dat(): void {
 
 	global $en;
-
+	//投稿間隔をチェック
+	check_submission_interval();
 	check_same_origin();
 
 	$pwd=(string)filter_input_data('POST','pwd');
