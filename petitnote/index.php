@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.89.6';
-$petit_lot='lot.20250604';
+$petit_ver='v1.89.7';
+$petit_lot='lot.20250605';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,7 +18,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250604){
+if(!isset($functions_ver)||$functions_ver<20250605){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -1739,6 +1739,9 @@ function confirmation_before_deletion ($edit_mode=''): void {
 
 	$_SESSION['current_id']	= $id;
 
+
+	set_form_display_time();
+
 	$admin_pass= null;
 	if($edit_mode==='delmode'){
 		$templete='before_del.html';
@@ -1757,6 +1760,9 @@ function confirmation_before_deletion ($edit_mode=''): void {
 function edit_form($id='',$no=''): void {
 
 	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image,$use_url_input_field;
+
+	//投稿間隔をチェック
+	check_submission_interval();
 
 	check_same_origin();
 
@@ -2048,6 +2054,9 @@ function edit(): void {
 //記事削除
 function del(): void {
 	global $en;
+
+	//投稿間隔をチェック
+	check_submission_interval();
 
 	if(is_badhost()){
 		error($en? 'Rejected.' : '拒絶されました。');
