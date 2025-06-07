@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.89.8';
-$petit_lot='lot.20250605';
+$petit_ver='v1.89.9';
+$petit_lot='lot.20250607';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1413,7 +1413,7 @@ function img_replace(): void {
 			break;
 		}
 	}
-	if(!check_elapsed_days($_time)&&(!$adminpost && !$admindel)){//指定日数より古い画像差し換えは新規投稿にする
+	if($flag && !check_elapsed_days($_time)&&(!$adminpost && !$admindel)){//指定日数より古い画像差し換えは新規投稿にする
 
 		closeFile($rp);
 		closeFile($fp);
