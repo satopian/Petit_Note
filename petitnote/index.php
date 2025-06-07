@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.89.9';
-$petit_lot='lot.20250607';
+$petit_ver='v1.90.0';
+$petit_lot='lot.20250608';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -398,7 +398,7 @@ function post(): void {
 	//ファイルアップロード
 	$up_tempfile = $_FILES['imgfile']['tmp_name'] ?? ''; // 一時ファイル名
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
-		error($en? "Upload failed.\nThe file size is too large.":"アップロードに失敗しました。\nファイルサイズが大きすぎます。");
+		error($en? "The file is too large." : "ファイルサイズが大きすぎます。");
 	} 
 	$is_upload_img=false;
 	if ($up_tempfile && $_FILES['imgfile']['error'] === UPLOAD_ERR_OK && ($use_upload || $adminpost)){

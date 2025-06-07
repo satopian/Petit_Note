@@ -3,8 +3,18 @@
 //https://paintbbs.sakura.ne.jp/
 // コメント入力中画面からの離脱防止
 let isForm_Submit = false; //ページ離脱処理で使う
+//ブラウザの優先言語が日本語以外の時は英語で表示
+const lang = (
+    navigator.languages?.[0] ||
+    navigator.language ||
+    ""
+).toLowerCase();
+const en = lang.startsWith("ja") ? false : true;
+
 //非同期通信
 const res_form_submit = (event, formId = "res_form") => {
+    event.preventDefault(); // 通常フォームの送信を中断
+
     //第二引数が未指定の時はformId = 'res_form'
     let error_message_Id;
     if (formId === "res_form") {
@@ -31,14 +41,35 @@ const res_form_submit = (event, formId = "res_form") => {
         if (!elem_error_message || !(submitBtn instanceof HTMLInputElement)) {
             return;
         }
+        const max_file_size = form.querySelector('input[name="MAX_FILE_SIZE"]');
+        let maxSize = 0;
+        if (max_file_size instanceof HTMLInputElement) {
+            maxSize = parseInt(max_file_size?.value ?? "0", 10); //10進数に変換
+        }
 
-        event.preventDefault(); // 通常フォームの送信を中断
+        const fileInput = form.querySelector('input[type="file"]');
+        if (
+            fileInput instanceof HTMLInputElement &&
+            fileInput.files &&
+            fileInput.files.length > 0
+        ) {
+            const file = fileInput.files[0];
+            if (maxSize && file.size > maxSize) {
+                elem_error_message.innerText = en
+                    ? "The file is too large."
+                    : "ファイルサイズが大きすぎます。";
+                submitBtn.disabled = false; // 再度有効化しておく
+                return;
+            }
+        }
 
         //自動化ツールによる自動送信を拒否する
         const languages_length0 = navigator.languages.length === 0;
         const webdriver = navigator.webdriver;
         if (webdriver || languages_length0) {
-            elem_error_message.innerText = "The post has been rejected.";
+            elem_error_message.innerText = en
+                ? "The post has been rejected."
+                : "拒絶されました。";
             return;
         }
 
@@ -122,8 +153,9 @@ const res_form_submit = (event, formId = "res_form") => {
             })
             .catch((error) => {
                 submitBtn.disabled = false;
-                return (elem_error_message.innerText =
-                    "There was a problem with the fetch operation.");
+                return (elem_error_message.innerText = en
+                    ? "There was a problem with the fetch operation."
+                    : "通信エラーが発生しました。");
             });
     }
 };
