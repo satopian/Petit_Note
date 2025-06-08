@@ -41,6 +41,9 @@ const res_form_submit = (event, formId = "res_form") => {
         if (!elem_error_message || !(submitBtn instanceof HTMLInputElement)) {
             return;
         }
+
+        submitBtn.disabled = true; // 送信ボタンを無効化
+
         const max_file_size = form.querySelector('input[name="MAX_FILE_SIZE"]');
         let maxSize = 0;
         if (max_file_size instanceof HTMLInputElement) {
@@ -70,10 +73,9 @@ const res_form_submit = (event, formId = "res_form") => {
             elem_error_message.innerText = en
                 ? "The post has been rejected."
                 : "拒絶されました。";
+            submitBtn.disabled = false; // 再度有効化しておく
             return;
         }
-
-        submitBtn.disabled = true; // 送信ボタンを無効化
 
         const formData = new FormData(form);
         formData.append("asyncflag", "true"); //画像差し換えそのものは非同期通信で行わない。
