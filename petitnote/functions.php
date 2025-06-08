@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250605;
+$functions_ver=20250608;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -1491,6 +1491,34 @@ function get_pch_size($src): ?array {
 		return null;
 	}
 	return[(int)$width,(int)$height];
+}
+
+// ini_getで取得したサイズ文字列をMBに変換
+function ini_get_size_mb(string $key): int {
+	if (!function_exists('ini_get')) return 0;
+
+	$val = ini_get($key);
+	$unit = strtoupper(substr($val, -1));
+	$num = (float)$val;
+
+	switch ($unit) {
+			case 'G':
+					return (int)($num * 1024);	// GB → MB
+			case 'M':
+					return (int)$num;						// MB → MB
+			case 'K':
+					return (int)($num / 1024);	// KB → MB
+			case 'B':
+					return (int)($num / 1024 / 1024);	// バイト → MB
+			default:
+					return (int)((float)$val / 1024 / 1024); // 単位なし → バイトとして処理
+	}
+}
+//投稿可能な最大ファイルサイズを取得 単位MB
+function get_upload_max_filesize(): int {
+	$upload_max = ini_get_size_mb('upload_max_filesize');
+	$post_max = ini_get_size_mb('post_max_size');
+	return min($upload_max, $post_max);
 }
 
 //使用するペイントアプリの配列化

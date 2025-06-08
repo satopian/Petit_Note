@@ -155,7 +155,7 @@
 						const formData = new FormData();
 						let DataSize = 1000;
 						let max_pch = <?= h($max_pch) ?>;
-						max_pch = parseInt(max_pch) * 1024 * 1024;
+						max_pch = Number(max_pch) * 1024 * 1024;
 						if (tgkr) {
 							DataSize = DataSize + blob.size + tgkr.size;
 							if (!max_pch || isNaN(max_pch) || (DataSize < max_pch)) {

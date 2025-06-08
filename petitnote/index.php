@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.90.0';
+$petit_ver='v1.91.0';
 $petit_lot='lot.20250608';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -18,7 +18,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250605){
+if(!isset($functions_ver)||$functions_ver<20250608){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -946,10 +946,7 @@ function paint(): void {
 
 	$admin_pass= null;
 
-	$max_pch=0;
-	if (function_exists('ini_get')){
-		$max_pch = min((int)ini_get('post_max_size'),(int)ini_get('upload_max_filesize'));
-	} 
+	$max_pch = get_upload_max_filesize();
 
 	switch($app){
 		case 'chi'://ChickenPaint
