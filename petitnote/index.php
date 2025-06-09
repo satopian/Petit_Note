@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.91.0';
-$petit_lot='lot.20250608';
+$petit_ver='v1.91.2';
+$petit_lot='lot.20250609';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -945,7 +945,7 @@ function paint(): void {
 	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
 
 	$admin_pass= null;
-
+	//投稿可能な最大値
 	$max_pch = get_upload_max_filesize();
 
 	switch($app){
@@ -2457,6 +2457,8 @@ function view(): void {
 	$resno=0;
 	$sitename= preg_replace("/\A\s*\z/u","",$sitename);//連続する空行を削除
 
+	//PCHアップロードの投稿可能な最大値
+	$upload_max_filesize = get_upload_max_filesize() * 1024 * 1024; //byte単位に変換
 	//フォームの表示時刻をセット
 	set_form_display_time();
 
@@ -2654,6 +2656,9 @@ function res (): void {
 
 	$page=0;
 
+	//PCHアップロードの投稿可能な最大値
+	$upload_max_filesize = get_upload_max_filesize() * 1024 * 1024; //byte単位に変換
+	
 	//フォームの表示時刻をセット
 	set_form_display_time();
 

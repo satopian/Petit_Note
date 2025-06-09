@@ -61,6 +61,7 @@ const res_form_submit = (event, formId = "res_form") => {
                 elem_error_message.innerText = en
                     ? "The file is too large."
                     : "ファイルサイズが大きすぎます。";
+                fileInput.value = "";
                 submitBtn.disabled = false; // 再度有効化しておく
                 return;
             }

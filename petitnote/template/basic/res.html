@@ -79,6 +79,7 @@
 	<br>
 	<?php endif;?>
 <input type="hidden" name="mode" value="paint">
+<input type="hidden" name="MAX_FILE_SIZE" value="<?php if(isset($upload_max_filesize)):?><?=h($upload_max_filesize)?><?php endif;?>">
 <input type="hidden" name="resto" value="<?=h($res['no'])?>">
 <input type="submit" value="Paint" class="paint_button">
 <?php if($select_app):?>
