@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250608;
+$functions_ver=20250613;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -628,6 +628,9 @@ function get_uip(): string {
 		$ips = explode(', ', $ip);
 		$ip = $ips[0];
 	}
+	if(filter_var($ip, FILTER_VALIDATE_IP) === false){
+		return $ip = '';
+	}
 	return $ip;
 }
 
@@ -1188,8 +1191,10 @@ function is_badhost(): bool {
 
 	if($host === $userip){//ホスト名がipアドレスになる場合は
 		if($reject_if_no_reverse_dns){
-			$_SESSION['is_badhost'] = true;
-			return true; //リバースDNSがない場合は拒絶
+			if(filter_var($userip, FILTER_VALIDATE_IP,FILTER_FLAG_IPV4)){//IPv4アドレスなら
+				$_SESSION['is_badhost'] = true;
+				return true; //リバースDNSがない場合は拒絶
+			}
 		}
 		foreach($badhost as $value){
 			if (preg_match("/\A$value/i",$host)) {//前方一致
