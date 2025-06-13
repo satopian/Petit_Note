@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.91.3';
-$petit_lot='lot.20250613';
+$petit_ver='v1.92.0';
+$petit_lot='lot.20250614';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -763,10 +763,8 @@ function paint(): void {
 	global $boardname,$skindir,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$max_px,$en;
 	global $usercode,$petit_lot,$httpsonly,$is_badhost;
 
-	if(is_badhost()){
-		error($en? 'Rejected.' : '拒絶されました。');
-	}
-
+	//禁止ホストをチェック
+	check_badhost();
 	check_same_origin();
 	
 	$app = (string)filter_input_data('POST','app');
@@ -1666,6 +1664,8 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en;
 	global $deny_all_posts;
 
+	//禁止ホストをチェック
+	check_badhost();
 	check_same_origin();
 	//管理者判定処理
 	$admindel=admindel_valid();
@@ -2054,10 +2054,9 @@ function del(): void {
 
 	//投稿間隔をチェック
 	check_submission_interval();
+	//禁止ホストをチェック
+	check_badhost();
 
-	if(is_badhost()){
-		error($en? 'Rejected.' : '拒絶されました。');
-	}
 	check_csrf_token();
 
 	$admindel=admindel_valid();
@@ -2429,14 +2428,17 @@ function view(): void {
 	$nsfwc=(bool)filter_input_data('COOKIE','nsfwc',FILTER_VALIDATE_BOOLEAN);
 	$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
-	//token
-	$token=get_csrf_token();
 
 	$arr_apps=app_to_use();
 	$count_arr_apps=count($arr_apps);
 	$use_paint=!empty($count_arr_apps);
 	$select_app=($count_arr_apps>1);
 	$app_to_use=($count_arr_apps===1) ? $arr_apps[0] : ''; 
+
+	$use_paint = $is_badhost ? false : $use_paint; //禁止ホストの時はペイントアプリを使用しない
+
+	//token
+	$token=get_csrf_token();
 
 	$use_top_form = true;//互換性のために常にtrue;
 	//ページング
@@ -2477,7 +2479,7 @@ function res (): void {
 	aikotoba_required_to_view();
 	set_page_context_to_session();
 	//禁止ホスト
-	$is_badhost=is_badhost();
+	$is_badhost = is_badhost();
 
 	$max_byte = $max_kb * 1024*2;
 
@@ -2647,6 +2649,8 @@ function res (): void {
 	$use_paint=!empty($count_arr_apps);
 	$select_app=($count_arr_apps>1);
 	$app_to_use=($count_arr_apps===1) ? $arr_apps[0] : ''; 
+
+	$use_paint = $is_badhost ? false : $use_paint; //禁止ホストの時はペイントアプリを使用しない
 
 	//token
 	$token=get_csrf_token();
