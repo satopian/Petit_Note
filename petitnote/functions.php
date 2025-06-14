@@ -30,14 +30,14 @@ function aikotoba(): void {
 	check_same_origin();
 
 	session_sta();
-	if(!$aikotoba || $aikotoba!==(string)filter_input_data('POST','aikotoba')){
+	if(!$aikotoba || !hash_equals($aikotoba,(string)filter_input_data('POST','aikotoba'))){
 		if(isset($_SESSION['aikotoba'])){
 			unset($_SESSION['aikotoba']);
 		}
 		if((string)filter_input_data('COOKIE','aikotoba')){
 			setcookie('aikotoba', '', time() - 3600);//クッキーを削除
 		} 
-		error($en?'The secret word is wrong':'合言葉が違います。');
+		error($en?'The secret word is wrong.':'合言葉が違います。');
 	}
 	if($keep_aikotoba_login_status){
 		setcookie("aikotoba",$aikotoba, time()+(86400*30),"","",false,true);//1ヶ月
@@ -253,15 +253,15 @@ function admindel_valid(): bool {
 }
 function userdel_valid(): bool {
 	session_sta();
-	return isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
+	return isset($_SESSION['userdel'])&& hash_equals($_SESSION['userdel'],'userdel_mode');
 }
 //合言葉の確認
 function aikotoba_valid(): bool {
 	global $keep_aikotoba_login_status,$aikotoba;
 	session_sta();
-	$keep=$keep_aikotoba_login_status ? ($aikotoba && ($aikotoba===(string)filter_input_data('COOKIE','aikotoba'))
+	$keep=$keep_aikotoba_login_status ? ($aikotoba && hash_equals($aikotoba,(string)filter_input_data('COOKIE','aikotoba'))
 	) : false;
-	return ($keep||isset($_SESSION['aikotoba'])&&($_SESSION['aikotoba']==='aikotoba'));
+	return ($keep||isset($_SESSION['aikotoba'])&& hash_equals($_SESSION['aikotoba'],'aikotoba'));
 }
 
 //センシティブコンテンツ
@@ -970,6 +970,11 @@ function check_same_origin(): void {
 function check_badhost(): void {
 	global $en;
 	if(is_badhost()){
+		//禁止ホストの管理者ログインを解除
+		unset($_SESSION['adminpost']);
+		unset($_SESSION['admindel']);
+		//編集･削除モードを解除
+		unset($_SESSION['userdel']);
 		error($en? 'Rejected.' : '拒絶されました。');
 	}
 }
@@ -1183,6 +1188,7 @@ function is_badhost(): bool {
 	$use_badhost_session_cache = $use_badhost_session_cache ?? false;
 	
 	session_sta();
+
 	$session_is_badhost = $_SESSION['is_badhost'] ?? false; //SESSIONに保存された値を取得
 	if($use_badhost_session_cache && $session_is_badhost){//禁止ホストフラグがSESSIONに保存されていたら拒絶
 		return true;
@@ -1193,7 +1199,7 @@ function is_badhost(): bool {
 
 	if($host === $userip){//ホスト名がipアドレスになる場合は
 		if($reject_if_no_reverse_dns){
-			if(filter_var($userip, FILTER_VALIDATE_IP,FILTER_FLAG_IPV4)){//IPv4アドレスなら
+			if(!$host || filter_var($userip, FILTER_VALIDATE_IP,FILTER_FLAG_IPV4)){//IPv4アドレスなら
 				$_SESSION['is_badhost'] = true;
 				return true; //リバースDNSがない場合は拒絶
 			}

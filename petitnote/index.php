@@ -1,7 +1,7 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.92.0';
+$petit_ver='v1.92.2';
 $petit_lot='lot.20250614';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -1065,6 +1065,8 @@ function paintcom(): void {
 		}
 	}
 	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+	//禁止ホストにはコメント入力欄を表示しない
+	$aikotoba = is_badhost() ? false : $aikotoba;
 
 	$namec=h((string)filter_input_data('COOKIE','namec'));
 	$pwdc=h((string)filter_input_data('COOKIE','pwdc'));
@@ -2052,10 +2054,10 @@ function edit(): void {
 function del(): void {
 	global $en;
 
-	//投稿間隔をチェック
-	check_submission_interval();
 	//禁止ホストをチェック
 	check_badhost();
+	//投稿間隔をチェック
+	check_submission_interval();
 
 	check_csrf_token();
 
@@ -2435,8 +2437,6 @@ function view(): void {
 	$select_app=($count_arr_apps>1);
 	$app_to_use=($count_arr_apps===1) ? $arr_apps[0] : ''; 
 
-	$use_paint = $is_badhost ? false : $use_paint; //禁止ホストの時はペイントアプリを使用しない
-
 	//token
 	$token=get_csrf_token();
 
@@ -2649,8 +2649,6 @@ function res (): void {
 	$use_paint=!empty($count_arr_apps);
 	$select_app=($count_arr_apps>1);
 	$app_to_use=($count_arr_apps===1) ? $arr_apps[0] : ''; 
-
-	$use_paint = $is_badhost ? false : $use_paint; //禁止ホストの時はペイントアプリを使用しない
 
 	//token
 	$token=get_csrf_token();

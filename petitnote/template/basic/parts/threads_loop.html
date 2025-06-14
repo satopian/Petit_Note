@@ -123,7 +123,7 @@
 			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
 			<div class="edit_button">
 					<!-- 編集削除のためのボタン -->
-				<?php if($res['check_elapsed_days']&&!$is_badhost||$admindel):?>
+				<?php if($res['check_elapsed_days']||$admindel):?>
 					<form action="./" method="POST" class="aikotoba">
 					<input type="hidden" name="mode" value="before_del">
 					<input type="hidden" name="edit_mode" value="editmode">
