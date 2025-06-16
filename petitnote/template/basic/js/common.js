@@ -340,7 +340,7 @@ addEventListener("DOMContentLoaded", () => {
 window.addEventListener("pageshow", function () {
     // すべてのsubmitボタンを取得
     const submitButtons = document.querySelectorAll('[type="submit"]');
-    submitButtons.forEach(function (btn) {
+    submitButtons.forEach((btn) => {
         if (btn instanceof HTMLInputElement) {
             // ボタンを有効化
             btn.disabled = false;
