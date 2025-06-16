@@ -364,7 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // フェードイン/フェードアウトを管理する関数
     const fade = (el, to, duration = 500) => {
-        const startOpacity = parseFloat(el.style.opacity);
+        const startOpacity = parseFloat(el.style.opacity || 0);
         let startTime = performance.now();
 
         const fadeStep = (now) => {
