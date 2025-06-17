@@ -1,5 +1,5 @@
 <?php
-$functions_ver=20250613;
+$functions_ver=20250617;
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -166,12 +166,14 @@ function admin_in(): void {
 	include __DIR__.'/'.$skindir.$templete;
 }
 //合言葉を再確認	
-function check_aikotoba(): bool {
-	global $en;
+function check_aikotoba(): void {
+	global $en,$use_aikotoba,$aikotoba_required_to_view;
+	if(!$use_aikotoba && !$aikotoba_required_to_view){
+		return;//合言葉のチェックが必要ない時
+	}
 	if(!aikotoba_valid()){
 		error($en?'The secret word is wrong.':'合言葉が違います。');
 	}
-	return true;
 }
 //管理者投稿モード
 function adminpost(): void {
@@ -257,7 +259,10 @@ function userdel_valid(): bool {
 }
 //合言葉の確認
 function aikotoba_valid(): bool {
-	global $keep_aikotoba_login_status,$aikotoba;
+	global $keep_aikotoba_login_status,$aikotoba,$use_aikotoba,$aikotoba_required_to_view;
+	if(!$use_aikotoba && !$aikotoba_required_to_view){
+		return true;//合言葉のチェックが必要ない時
+	}
 	session_sta();
 	$keep=$keep_aikotoba_login_status ? ($aikotoba && hash_equals($aikotoba,(string)filter_input_data('COOKIE','aikotoba'))
 	) : false;
@@ -885,7 +890,7 @@ function delete_file_if_sizeexceeds($upfile,$fp,$rp): void {
 
 function error($str,$historyback=true): void {
 
-	global $boardname,$skindir,$en,$aikotoba_required_to_view,$petit_lot;
+	global $boardname,$skindir,$en,$petit_lot;
 
 	$petit_lot = $petit_lot ?? time();
 
@@ -895,7 +900,6 @@ function error($str,$historyback=true): void {
 		header('Content-type: text/plain');
 		die(h("error\n{$str}"));
 	}
-	$boardname = ($aikotoba_required_to_view && !aikotoba_valid()) ? '' : $boardname; 
 
 	$admin_pass= null;
 	$templete='error.html';

@@ -1,8 +1,8 @@
 <?php
 //Petit Note (c)さとぴあ @satopian 2021-2025
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.92.2';
-$petit_lot='lot.20250614';
+$petit_ver='v1.92.3';
+$petit_lot='lot.20250617';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,7 +18,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250613){
+if(!isset($functions_ver)||$functions_ver<20250617){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -243,9 +243,7 @@ function post(): void {
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 
-	if($use_aikotoba){
-		check_aikotoba();
-	}
+	check_aikotoba();
 	check_csrf_token();
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
@@ -1064,7 +1062,7 @@ function paintcom(): void {
 			$out['tmp'][] = $tmp_img;
 		}
 	}
-	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+	$aikotoba = aikotoba_valid();
 	//禁止ホストにはコメント入力欄を表示しない
 	$aikotoba = is_badhost() ? false : $aikotoba;
 
@@ -1183,7 +1181,7 @@ function to_continue(): void {
 	//日記判定処理
 	$adminpost=adminpost_valid();
 	$adminmode = ($adminpost||admindel_valid());
-	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+	$aikotoba = aikotoba_valid();
 
 	$arr_apps=app_to_use();
 	$count_arr_apps=count($arr_apps);
@@ -1671,7 +1669,7 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	check_same_origin();
 	//管理者判定処理
 	$admindel=admindel_valid();
-	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+	$aikotoba = aikotoba_valid();
 	aikotoba_required_to_view(true);
 	$userdel=userdel_valid();
 
@@ -1874,6 +1872,7 @@ function edit(): void {
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 	check_csrf_token();
+	check_aikotoba();
 
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
@@ -2294,7 +2293,7 @@ function catalog(): void {
 
 	//管理者判定処理
 	$admindel=admindel_valid();
-	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+	$aikotoba = aikotoba_valid();
 
 	$userdel=userdel_valid();
 	$adminpost=adminpost_valid();
@@ -2418,7 +2417,7 @@ function view(): void {
 			}
 		}
 	}
-	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+	$aikotoba = aikotoba_valid();
 	$adminpost=adminpost_valid();
 	$resform = ((!$only_admin_can_reply && !$use_diary && !$is_badhost && $aikotoba)||$adminpost);
 	$resform = $deny_all_posts ? false :$resform;
@@ -2630,7 +2629,7 @@ function res (): void {
 	}
 	//管理者判定処理
 	$admindel=admindel_valid();
-	$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+	$aikotoba = aikotoba_valid();
 	$userdel=userdel_valid();
 	$adminpost=adminpost_valid();
 	$resform = ((!$only_admin_can_reply && !$is_badhost && $aikotoba)||$adminpost);
