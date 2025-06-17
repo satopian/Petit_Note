@@ -21,10 +21,10 @@ function logout_admin(): void {
 function aikotoba(): void {
 	global $aikotoba,$en,$keep_aikotoba_login_status;
 
-	//禁止ホストをチェック
-	check_badhost();
 	//投稿間隔をチェック
 	check_submission_interval();
+	//禁止ホストをチェック
+	check_badhost();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
 	check_same_origin();
