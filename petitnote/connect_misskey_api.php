@@ -1,5 +1,5 @@
 <?php
-//Petit Note 2021-2025 (c)satopian MIT Licence
+//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
 //Misskey APIに接続
