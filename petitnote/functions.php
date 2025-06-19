@@ -1,5 +1,9 @@
 <?php
-$functions_ver=20250617;
+//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
+//https://paintbbs.sakura.ne.jp/
+
+$functions_ver=20250619;
+
 //編集モードログアウト
 function logout(): void {
 	session_sta();
@@ -134,7 +138,7 @@ function is_adminpass($pwd): bool {
 }
 
 function admin_in(): void {
-	global $boardname,$use_diary,$use_aikotoba,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
+	global $boardname,$use_diary,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
 
 	//禁止ホストをチェック
 	check_badhost();
@@ -149,9 +153,6 @@ function admin_in(): void {
 	$aikotoba=aikotoba_valid();
 	$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 	$adminpost=adminpost_valid();
-	if(!$use_aikotoba){
-		$aikotoba=true;
-	}
 
 	$page= $_SESSION['current_page_context']["page"] ?? 0;
 	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
@@ -606,6 +607,7 @@ function create_array_from_fp($fp): array {
 }
 
 //ページング
+//最初と最後のページ番号を取得
 function calc_pagination_range($page,$pagedef): array {
 
 	$start_page=$page-$pagedef*8;
@@ -616,6 +618,14 @@ function calc_pagination_range($page,$pagedef): array {
 	}
 	return [$start_page,$end_page];	
 }	
+//ページング
+//次のページと前のページの番号を取得
+function get_prev_next_pages($page,$pagedef,$count_alllog): array {
+	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
+	$prev=((int)$page<=0) ? false : ($page-$pagedef);//ページ番号が0の時はprevのリンクを出さない
+	$prev=($prev<0) ? 0 : $prev;
+	return [$next,$prev];
+}
 
 //ユーザーip
 function get_uip(): string {
@@ -628,7 +638,7 @@ function get_uip(): string {
 		$ip = $ips[0];
 	}
 	if(filter_var($ip, FILTER_VALIDATE_IP) === false){
-		return $ip = '';
+		return '';
 	}
 	return $ip;
 }
@@ -997,8 +1007,8 @@ function getId ($userip): string {
 	session_sta();
 	return 
 	(isset($_SESSION['userid'])&&$_SESSION['userid']) ?
-	$_SESSION['userid'] :
-	substr(hash('sha256', $userip, false),-8);
+	t($_SESSION['userid']) :
+	t(substr(hash('sha256', $userip, false),-8));
 
 }
 

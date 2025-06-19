@@ -1,6 +1,7 @@
 "use strict";
-//Petit Note 2021-2025 (c)satopian MIT Licence
+//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
+
 // コメント入力中画面からの離脱防止
 let isForm_Submit = false; //ページ離脱処理で使う
 //ブラウザの優先言語が日本語以外の時は英語で表示

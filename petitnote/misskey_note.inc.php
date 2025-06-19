@@ -1,18 +1,18 @@
 <?php
-//Petit Note 2021-2025 (c)satopian MIT LICENCE
+//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
-$misskey_note_ver=20250605;
 
+$misskey_note_ver=20250618;
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
 	public static function before_misskey_note (): void {
 
-		global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en,$deny_all_posts;
+		global $boardname,$home,$petit_ver,$petit_lot,$skindir,$set_nsfw,$en,$deny_all_posts;
 		//管理者判定処理
 		session_sta();
-		$aikotoba = $use_aikotoba ? aikotoba_valid() : true;
+		$aikotoba = aikotoba_valid();
 		aikotoba_required_to_view(true);
 		$adminpost=adminpost_valid();
 		$admindel=admindel_valid();

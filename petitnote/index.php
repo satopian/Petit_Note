@@ -1,8 +1,10 @@
 <?php
-//Petit Note (c)さとぴあ @satopian 2021-2025
+//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
+//https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
-$petit_ver='v1.92.5';
-$petit_lot='lot.20250617';
+
+$petit_ver='v1.92.9';
+$petit_lot='lot.20250619';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -18,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250617){
+if(!isset($functions_ver)||$functions_ver<20250619){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -36,7 +38,7 @@ if(!isset($save_inc_ver)||$save_inc_ver<20250308){
 
 check_file(__DIR__.'/search.inc.php');
 require_once(__DIR__.'/search.inc.php');
-if(!isset($search_inc_ver)||$search_inc_ver<20250505){
+if(!isset($search_inc_ver)||$search_inc_ver<20250619){
 	die($en?'Please update search.inc.php to the latest version.':'search.inc.phpを最新版に更新してください。');
 }
 
@@ -119,7 +121,6 @@ $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
 $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ? $mode :(string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
-$userip = get_uip();
 $httpsonly = (bool)($_SERVER['HTTPS'] ?? '');
 //user-codeの発行
 $usercode = t(filter_input_data('COOKIE', 'usercode'));//user-codeを取得
@@ -130,6 +131,7 @@ $session_usercode = t($session_usercode);
 
 $usercode = $usercode ? $usercode : $session_usercode;
 if(!$usercode){//user-codeがなければ発行
+	$userip = get_uip();
 	$usercode = hash('sha256', $userip.random_bytes(16));
 }
 setcookie("usercode", $usercode, time()+(86400*365),"","",$httpsonly,true);//1年間
@@ -234,7 +236,7 @@ switch($mode){
 
 //投稿処理
 function post(): void {
-	global $max_log,$max_res,$use_aikotoba,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$mark_sensitive_image;
+	global $max_log,$max_res,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$mark_sensitive_image;
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 	global $usercode,$use_url_input_field,$httpsonly;
 
@@ -454,8 +456,7 @@ function post(): void {
 
 
 	//ユーザーid
-	$userid=getId($userip);//sessionも確認
-	$userid=t($userid);//タブ除去
+	$userid = t(getId($userip));//sessionも確認
 	$_SESSION['userid'] = $userid;
 
 	$verified = $adminpost ? 'adminpost' : ''; 
@@ -757,7 +758,7 @@ function post(): void {
 function paint(): void {
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$max_px,$en;
-	global $usercode,$petit_lot,$httpsonly,$is_badhost;
+	global $usercode,$petit_lot,$httpsonly;
 
 	//禁止ホストをチェック
 	check_badhost();
@@ -989,7 +990,6 @@ function paint(): void {
 			$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
 			foreach ( $lines as $i => $line ) {
 				$line=str_replace(["\r","\n","\t"],"",$line);
-				$line=$line;
 				list($pid,$pname,$pal[0],$pal[2],$pal[4],$pal[6],$pal[8],$pal[10],$pal[1],$pal[3],$pal[5],$pal[7],$pal[9],$pal[11],$pal[12],$pal[13]) = explode(",", $line);
 				$arr_dynp[]=h($pname);
 				$p_cnt=$i+1;
@@ -1011,8 +1011,8 @@ function paint(): void {
 }
 // お絵かきコメント 
 function paintcom(): void {
-	global $use_aikotoba,$boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
-	global $usercode,$petit_lot,$use_hide_painttime,$nsfw_checked; 
+	global $boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
+	global $usercode,$petit_lot,$use_hide_painttime,$nsfw_checked;
 
 	aikotoba_required_to_view(true);
 	$token=get_csrf_token();
@@ -1085,7 +1085,7 @@ function paintcom(): void {
 //コンティニュー前画面
 function to_continue(): void {
 
-	global $boardname,$use_diary,$use_aikotoba,$set_nsfw,$skindir,$en,$password_require_to_continue;
+	global $boardname,$use_diary,$set_nsfw,$skindir,$en,$password_require_to_continue;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$petit_lot,$elapsed_days,$max_res;
 
 	$is_badhost=is_badhost();//テンプレートの互換性のため変数名が必要
@@ -1659,7 +1659,7 @@ function pchview(): void {
 //削除前の確認画面
 function confirmation_before_deletion ($edit_mode=''): void {
 
-	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$use_aikotoba,$set_nsfw,$en;
+	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$set_nsfw,$en;
 	global $deny_all_posts;
 
 	//禁止ホストをチェック
@@ -1754,7 +1754,7 @@ function confirmation_before_deletion ($edit_mode=''): void {
 //編集画面
 function edit_form($id='',$no=''): void {
 
-	global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image,$use_url_input_field;
+	global $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image,$use_url_input_field;
 
 	//投稿間隔をチェック
 	check_submission_interval();
@@ -2256,7 +2256,7 @@ function saveimage(): void {
 }
 //カタログ表示
 function catalog(): void {
-	global $use_aikotoba,$home,$catalog_pagedef,$skindir,$display_link_back_to_home;
+	global $home,$catalog_pagedef,$skindir,$display_link_back_to_home;
 	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en,$mark_sensitive_image; 
 
 	aikotoba_required_to_view();
@@ -2306,10 +2306,10 @@ function catalog(): void {
 
 	//ページング
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
-	//prev next 
-	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
-	$prev=((int)$page<=0) ? false : ($page-$pagedef);//ページ番号が0の時はprevのリンクを出さない
-	$prev=($prev<0) ? 0 : $prev;
+	list($next,$prev)=get_prev_next_pages($page,$pagedef,$count_alllog);
+
+	$is_badhost=is_badhost();//管理者ログインリンクを表示するかどうかの判定
+
 	$admin_pass= null;
 	// HTML出力
 	$templete='catalog.html';
@@ -2319,7 +2319,7 @@ function catalog(): void {
 
 //通常表示
 function view(): void {
-	global $use_aikotoba,$use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
+	global $use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
 	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip;
@@ -2439,9 +2439,8 @@ function view(): void {
 	//ページング
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
 	//prev next 
-	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
-	$prev=((int)$page<=0) ? false : ($page-$pagedef);//ページ番号が0の時はprevのリンクを出さない
-	$prev=($prev<0) ? 0 : $prev;
+	list($next,$prev)=get_prev_next_pages($page,$pagedef,$count_alllog);
+
 	if($page===0 && !$admindel && !$adminpost && !$is_badhost){
 		if(!is_file($index_cache_json)){
 			file_put_contents($index_cache_json,json_encode($out),LOCK_EX);
@@ -2467,7 +2466,7 @@ function view(): void {
 }
 //レス画面
 function res (): void {
-	global $use_aikotoba,$use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
+	global $use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
 	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary,$nsfw_checked;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw;
 
