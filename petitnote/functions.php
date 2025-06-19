@@ -166,16 +166,6 @@ function admin_in(): void {
 	$templete='admin_in.html';
 	include __DIR__.'/'.$skindir.$templete;
 }
-//合言葉を再確認	
-function check_aikotoba(): void {
-	global $en,$use_aikotoba,$aikotoba_required_to_view;
-	if(!$use_aikotoba && !$aikotoba_required_to_view){
-		return;//合言葉のチェックが必要ない時
-	}
-	if(!aikotoba_valid()){
-		error($en?'The secret word is wrong.':'合言葉が違います。');
-	}
-}
 //管理者投稿モード
 function adminpost(): void {
 	global $second_pass,$en;
