@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.92.9';
+$petit_ver='v1.93.0';
 $petit_lot='lot.20250619';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -2306,7 +2306,7 @@ function catalog(): void {
 
 	//ページング
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
-	list($next,$prev)=get_prev_next_pages($page,$pagedef,$count_alllog);
+	list($prev,$next)=get_prev_next_pages($page,$pagedef,$count_alllog);
 
 	$is_badhost=is_badhost();//管理者ログインリンクを表示するかどうかの判定
 
@@ -2439,7 +2439,7 @@ function view(): void {
 	//ページング
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
 	//prev next 
-	list($next,$prev)=get_prev_next_pages($page,$pagedef,$count_alllog);
+	list($prev,$next)=get_prev_next_pages($page,$pagedef,$count_alllog);
 
 	if($page===0 && !$admindel && !$adminpost && !$is_badhost){
 		if(!is_file($index_cache_json)){

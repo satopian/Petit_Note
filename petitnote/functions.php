@@ -619,12 +619,12 @@ function calc_pagination_range($page,$pagedef): array {
 	return [$start_page,$end_page];	
 }	
 //ページング
-//次のページと前のページの番号を取得
+//前のページと次のページのページの番号を取得
 function get_prev_next_pages($page,$pagedef,$count_alllog): array {
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page<=0) ? false : ($page-$pagedef);//ページ番号が0の時はprevのリンクを出さない
 	$prev=($prev<0) ? 0 : $prev;
-	return [$next,$prev];
+	return [$prev,$next];
 }
 
 //ユーザーip

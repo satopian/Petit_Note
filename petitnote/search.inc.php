@@ -135,7 +135,7 @@ class processsearch
 
 		//ページング
 		list($start_page, $end_page) = calc_pagination_range($page, $pagedef);
-		list($next,$prev)=get_prev_next_pages($page,$pagedef,$count_alllog);
+		list($prev,$next)=get_prev_next_pages($page,$pagedef,$count_alllog);
 
 		//最終更新日時を取得
 		$postedtime = '';
