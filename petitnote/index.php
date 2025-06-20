@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.93.2';
+$petit_ver='v1.93.3';
 $petit_lot='lot.20250620';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250619){
+if(!isset($functions_ver)||$functions_ver<20250620){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -1113,11 +1113,13 @@ function to_continue(): void {
 		$lines = create_array_from_fp($rp);
 		closeFile ($rp);
 		//スレッドが閉じてるかどうか
+		$oya_time=0;
 		foreach ($lines as $i => $line) {
 
 			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash,$oya_)=explode("\t",trim($line));
 			if($oya_==="oya"){
 				$oya_time=$time_;
+				break;
 			}
 		}
 		//閉じていたら $res_max_over が true になる

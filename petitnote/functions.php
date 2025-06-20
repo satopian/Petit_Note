@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250619;
+$functions_ver=20250620;
 
 //編集モードログアウト
 function logout(): void {
@@ -1409,6 +1409,9 @@ function check_pch_ext ($filepath,$options = []): string {
 // 古いスレッドへの投稿を許可するかどうか
 function check_elapsed_days ($postedtime): bool {
 	global $elapsed_days;
+	if(!$postedtime || !is_numeric($postedtime)){
+		return true; // 投稿時間が不正な場合は許可
+	}
 	$postedtime=microtime2time($postedtime);//マイクロ秒を秒に戻す
 	return $elapsed_days //古いスレッドのフォームを閉じる日数が設定されていたら
 		? ((time() - (int)$postedtime) <= ((int)$elapsed_days * 86400)) // 指定日数以内なら許可
