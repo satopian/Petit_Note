@@ -12,7 +12,6 @@ class misskey_note{
 		global $boardname,$home,$petit_ver,$petit_lot,$skindir,$set_nsfw,$en,$deny_all_posts;
 		//管理者判定処理
 		session_sta();
-		$aikotoba = aikotoba_valid();
 		aikotoba_required_to_view(true);
 		$adminpost=adminpost_valid();
 		$admindel=admindel_valid();
