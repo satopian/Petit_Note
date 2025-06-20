@@ -1667,8 +1667,8 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	check_same_origin();
 	//管理者判定処理
 	$admindel=admindel_valid();
-	$aikotoba = aikotoba_valid();
 	aikotoba_required_to_view(true);
+	$aikotoba = true;//テンプレートの互換性のため
 	$userdel=userdel_valid();
 
 	$resmode = false;//使っていない

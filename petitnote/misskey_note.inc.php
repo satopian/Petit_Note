@@ -13,6 +13,7 @@ class misskey_note{
 		//管理者判定処理
 		session_sta();
 		aikotoba_required_to_view(true);
+		$aikotoba= true;//テンプレート互換性
 		$adminpost=adminpost_valid();
 		$admindel=admindel_valid();
 
