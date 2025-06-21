@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.93.3';
-$petit_lot='lot.20250620';
+$petit_ver='v1.93.5';
+$petit_lot='lot.20250621';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1115,11 +1115,12 @@ function to_continue(): void {
 		//スレッドが閉じてるかどうか
 		$oya_time=0;
 		foreach ($lines as $i => $line) {
-
-			list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash,$oya_)=explode("\t",trim($line));
-			if($oya_==="oya"){
-				$oya_time=$time_;
-				break;
+			if(strpos($line,"\toya")!==false){
+				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash,$oya_)=explode("\t",trim($line));
+				if($oya_==="oya"){
+					$oya_time=$time_;
+					break;
+				}
 			}
 		}
 		//閉じていたら $res_max_over が true になる
@@ -2493,7 +2494,7 @@ function res (): void {
 	$rresname = [];
 	$resname = '';
 	$oyaname='';
-	$_res['time_left_to_close_the_thread']=false;
+	$_res['time_left_to_close_the_thread']="";
 	$_res['descriptioncom']='';
 	$find_hide_thumbnail=false;	
 

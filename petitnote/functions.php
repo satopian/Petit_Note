@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250620;
+$functions_ver=20250621;
 
 //編集モードログアウト
 function logout(): void {
@@ -1420,7 +1420,7 @@ function check_elapsed_days ($postedtime): bool {
 // スレッドを閉じるまでの残り時間
 function time_left_to_close_the_thread ($postedtime): string {
 	global $elapsed_days;
-	if(!$elapsed_days){
+	if(!$elapsed_days || !$postedtime || !is_numeric($postedtime)){
 		return '';
 	}
 	$postedtime=microtime2time($postedtime);//マイクロ秒を秒に戻す
