@@ -2,8 +2,7 @@
 //	(C) のらネコ WonderCatStudio http://wondercatstudio.com/
 //substr()→substring()対策版 by satopian
 "use strict";
-var DynamicColor = 1; // パレットリストに色表示
-var Palettes = [];
+var DynamicColor=1,Palettes=[];
 // ========== パレット配列作成 ==========
 // {$palettes}
 Palettes[0] =
@@ -261,7 +260,7 @@ function PaletteListSetColor() {
     let i;
     const s = Palette.select;
     for (i = 1; s.options.length > i; i++) {
-        var c = Palettes[i].split("\n");
+        const c = Palettes[i].split("\n");
         s.options[i].style.background = c[4];
         s.options[i].style.color = GetBright(c[4]);
     }
@@ -275,8 +274,8 @@ function GetBright(c) {
 }
 function Chenge_() {
     const grad = document.forms["grad"];
-    var st = grad.pst.value;
-    var ed = grad.ped.value;
+    const st = grad.pst.value;
+    const ed = grad.ped.value;
 
     if (isNaN(parseInt("0x" + st))) return;
     if (isNaN(parseInt("0x" + ed))) return;
@@ -284,19 +283,19 @@ function Chenge_() {
 }
 function ChengeGrad() {
     const grad = document.forms["grad"];
-    var st = grad.pst.value;
-    var ed = grad.ped.value;
+    const st = grad.pst.value;
+    const ed = grad.ped.value;
     Chenge_();
-    var degi_R = parseInt("0x" + st.substring(0, 2));
-    var degi_G = parseInt("0x" + st.substring(2, 4));
-    var degi_B = parseInt("0x" + st.substring(4, 6));
-    var R = Math.trunc((degi_R - parseInt("0x" + ed.substring(0, 2))) / 15);
-    var G = Math.trunc((degi_G - parseInt("0x" + ed.substring(2, 4))) / 15);
-    var B = Math.trunc((degi_B - parseInt("0x" + ed.substring(4, 6))) / 15);
+    const degi_R = parseInt("0x" + st.substring(0, 2));
+    const degi_G = parseInt("0x" + st.substring(2, 4));
+    const degi_B = parseInt("0x" + st.substring(4, 6));
+    let R = Math.trunc((degi_R - parseInt("0x" + ed.substring(0, 2))) / 15);
+    let G = Math.trunc((degi_G - parseInt("0x" + ed.substring(2, 4))) / 15);
+    let B = Math.trunc((degi_B - parseInt("0x" + ed.substring(4, 6))) / 15);
     if (isNaN(R)) R = 1;
     if (isNaN(G)) G = 1;
     if (isNaN(B)) B = 1;
-    var p = "";
+    let p = "";
     let cnt, m1, m2, m3;
     for (
         cnt = 0, m1 = degi_R, m2 = degi_G, m3 = degi_B;
@@ -322,9 +321,9 @@ function ChengeGrad() {
 function Hex(n) {
     n = Math.trunc(n);
     if (0 > n) n *= -1;
-    var hex = "";
-    var m;
-    var k;
+    let hex = "";
+    let m;
+    let k;
     while (n > 16) {
         m = n;
         if (n > 16) {
@@ -424,9 +423,8 @@ function GradView() {
 function showHideLayer() {
     //v3.0
     const grad = document.forms["grad"];
-    var l;
     const psft = document.getElementById("psft");
-    l = psft ? psft.style : null;
+    const l = psft ? psft.style : null;
     if (l && !grad.view.checked) {
         l.visibility = "hidden";
     }
