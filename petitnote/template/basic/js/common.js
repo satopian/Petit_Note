@@ -338,7 +338,7 @@ addEventListener("DOMContentLoaded", () => {
         document_resid.scrollIntoView();
     }
 });
-window.addEventListener("pageshow", function () {
+window.addEventListener("pageshow", () => {
     // すべてのsubmitボタンを取得
     const submitButtons = document.querySelectorAll('[type="submit"]');
     submitButtons.forEach((btn) => {
