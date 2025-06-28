@@ -190,7 +190,7 @@
 
 			<?php if($resmode && $resform && $resname && !$res_max_over):?>
 				<script>
-				function add_to_com() {
+				const add_to_com = ()=> {
 					const textField = document.getElementById("res_com");
 					const postername = "<?=h($resname)?><?php if($en):?>-san<?php else:?>さん<?php endif;?>";
 					// テキストフィールドの現在のカーソル位置を取得
