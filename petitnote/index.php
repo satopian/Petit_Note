@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.93.6';
-$petit_lot='lot.20250628';
+$petit_ver='v1.95.3';
+$petit_lot='lot.20250630';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1105,38 +1105,37 @@ function to_continue(): void {
 	session_sta();
 	$enableappselect= $_SESSION['enableappselect'] ?? false;
 
-	$flag = false;
 
-	if(is_file(LOG_DIR."{$no}.log")){
+	if(!is_file(LOG_DIR."{$no}.log")){
+		error($en? 'The article does not exist.':'記事がありません。');
+	}
 		check_open_no($no);
 		$rp=fopen(LOG_DIR."{$no}.log","r");
-		$lines = create_array_from_fp($rp);
-		closeFile ($rp);
-		//スレッドが閉じてるかどうか
-		$oya_time=0;
-		foreach ($lines as $i => $line) {
-			if(strpos($line,"\toya")!==false){
-				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash,$oya_)=explode("\t",trim($line));
-				if($oya_==="oya"){
-					$oya_time=$time_;
-					break;
-				}
+	$i=0;
+	//スレッドが閉じてるかどうか
+	$oya_time=0;
+	$time=0;
+	//記事は存在するか
+	$flag = false;
+	while ($line = fgets($rp)) {
+		if(strpos($line,"\toya")!==false || strpos($line,"\t".$id."\t")!==false){
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$_time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+			if($oya==="oya"){
+				$oya_time=$_time;
+			}
+			if($id===$_time && $no===$_no && $tool!=='upload'){
+				$time=$_time;
+				$flag=true;
 			}
 		}
-		//閉じていたら $res_max_over が true になる
-		$res_max_over=(!$adminpost && ($i>=$max_res||!check_elapsed_days($oya_time)));
-
-		foreach ($lines as $line) {
-			if(strpos($line,"\t".$id."\t")!==false){
-				list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-				if($id===$time && $no===$_no && $tool!=='upload'){
-					$flag=true;
-					break;
-				}
-				break;
-			}
-		}
+		++$i;
 	}
+
+
+	closeFile ($rp);
+	//閉じていたら $res_max_over が true になる
+	$res_max_over=(!$adminpost && ($i>$max_res||!check_elapsed_days($oya_time)));
+
 	if(!$flag || !$imgfile || !is_file(IMG_DIR.$imgfile)){//画像が無い時は処理しない
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
