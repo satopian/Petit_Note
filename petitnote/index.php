@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.95.3';
+$petit_ver='v1.95.5';
 $petit_lot='lot.20250630';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -1105,12 +1105,11 @@ function to_continue(): void {
 	session_sta();
 	$enableappselect= $_SESSION['enableappselect'] ?? false;
 
-
 	if(!is_file(LOG_DIR."{$no}.log")){
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
-		check_open_no($no);
-		$rp=fopen(LOG_DIR."{$no}.log","r");
+	check_open_no($no);
+	$rp=fopen(LOG_DIR."{$no}.log","r");
 	$i=0;
 	//スレッドが閉じてるかどうか
 	$oya_time=0;
@@ -1119,18 +1118,18 @@ function to_continue(): void {
 	$flag = false;
 	while ($line = fgets($rp)) {
 		if(strpos($line,"\toya")!==false || strpos($line,"\t".$id."\t")!==false){
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$_time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+			list($_no,$sub,$name,$verified,$com,$url,$_imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$_time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($oya==="oya"){
 				$oya_time=$_time;
 			}
 			if($id===$_time && $no===$_no && $tool!=='upload'){
-				$time=$_time;
+				$time=$_time ? basename($_time) : '';
+				$imgfile=$_imgfile ? basename($_imgfile) : '';
 				$flag=true;
 			}
 		}
 		++$i;
 	}
-
 
 	closeFile ($rp);
 	//閉じていたら $res_max_over が true になる
@@ -1150,8 +1149,6 @@ function to_continue(): void {
 	$thumbnail_img = $thumbnail_webp ? $thumbnail_webp : $thumbnail_jpg;
 
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
-	$time = basename($time);
-	$imgfile = basename($imgfile);
 	$picfile = $thumbnail_img ? THUMB_DIR.$thumbnail_img : IMG_DIR.$imgfile;
 	$pch_exists = in_array($_pchext,['hide_animation','.pch']);
 	$hide_animation_checkd = ($_pchext==='hide_animation');
