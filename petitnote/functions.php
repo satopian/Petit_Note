@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250621;
+$functions_ver=20250630;
 
 //編集モードログアウト
 function logout(): void {
@@ -1633,23 +1633,25 @@ function post_share_server(): void {
 	setcookie("sns_server_radio_cookie",$sns_server_radio_for_cookie, time()+(86400*30),"","",false,true);
 	setcookie("sns_server_direct_input_cookie",$sns_server_direct_input, time()+(86400*30),"","",false,true);
 	$share_url='';
+
 	if($sns_server_radio){
-		$share_url=$sns_server_radio."/share?text=";
-	} elseif($sns_server_direct_input){//直接入力時
-		$share_url=$sns_server_direct_input."/share?text=";
+		if(in_array($sns_server_radio,["https://x.com","https://twitter.com"])){
+			$share_url="https://twitter.com/intent/tweet?text=";
+		} elseif($sns_server_radio === "https://bsky.app"){
+			$share_url="https://bsky.app/intent/compose?text=";
+		}	elseif($sns_server_radio === "https://www.threads.net"){
+			$share_url="https://www.threads.net/intent/post?text=";
+		} else {
+			$share_url=$sns_server_radio."/share?text=";
+		}
+	} elseif ($sns_server_direct_input){//直接入力時
 		if($sns_server_direct_input==="https://bsky.app"){
 			$share_url="https://bsky.app/intent/compose?text=";
 		} elseif($sns_server_direct_input==="https://www.threads.net"){
 			$share_url="https://www.threads.net/intent/post?text=";
+		} else {
+			$share_url=$sns_server_direct_input."/share?text=";
 		}
-	}
-	if(in_array($sns_server_radio,["https://x.com","https://twitter.com"])){
-		// $share_url="https://x.com/intent/post?text=";
-		$share_url="https://twitter.com/intent/tweet?text=";
-	} elseif($sns_server_radio === "https://bsky.app"){
-		$share_url="https://bsky.app/intent/compose?text=";
-	}	elseif($sns_server_radio === "https://www.threads.net"){
-		$share_url="https://www.threads.net/intent/post?text=";
 	}
 	$share_url.=$encoded_t.'%20'.$encoded_u;
 	$share_url = filter_var($share_url, FILTER_VALIDATE_URL) ? $share_url : ''; 
