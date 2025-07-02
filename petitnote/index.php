@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.95.6';
-$petit_lot='lot.20250630';
+$petit_ver='v1.95.8';
+$petit_lot='lot.20250702';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250630){
+if(!isset($functions_ver)||$functions_ver<20250702){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -1371,7 +1371,7 @@ function img_replace(): void {
 	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
 	(array)$flock_option = $is_upload_img ? []: ['paintcom'=>true];
-	file_lock($fp, LOCK_EX,$flock_option);
+	file_lock($rp, LOCK_EX,$flock_option);
 
 	$r_arr = create_array_from_fp($rp);
 
@@ -1430,6 +1430,8 @@ function img_replace(): void {
 		$move_uploaded = move_uploaded_file($up_tempfile,$upfile);
 		if(!$move_uploaded){//アップロード成功なら続行
 			safe_unlink($up_tempfile);
+			closeFile($rp);
+			closeFile($fp);
 			error($en?'This operation has failed.':'失敗しました。');
 		}
 		//Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
@@ -1501,6 +1503,8 @@ function img_replace(): void {
 	$imgfile = $time.$imgext;
 	rename($upfile,IMG_DIR.$imgfile);
 	if(!is_file(IMG_DIR.$imgfile)){
+		closeFile($rp);
+		closeFile($fp);
 		error($en?'This operation has failed.':'失敗しました。');
 	}
 	chmod(IMG_DIR.$imgfile,0606);
@@ -1554,10 +1558,10 @@ function img_replace(): void {
 		$flag=false;
 		foreach($alllog_arr as $i => $val){
 			if (strpos(trim($val), $no . "\t") === 0) {//全体ログで$noが一致したら
+				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 				break;
 			}
 		}
-		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
 		if(($id===$time_ && $no===$no_) &&
 		((($is_upload_img && $admindel) ||
 		(($adminpost||$admindel) && $verified_ === 'adminpost') ||
@@ -1695,12 +1699,10 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
-	file_lock($rp, LOCK_EX);
-
 	$r_arr = create_array_from_fp($rp);
+	closeFile ($rp);
 
 	if(empty($r_arr)){
-		closeFile($rp);
 		error($en?'This operation has failed.':'失敗しました。');
 	}
 	$find=false;
@@ -1718,11 +1720,8 @@ function confirmation_before_deletion ($edit_mode=''): void {
 		}
 	}
 	if(!$find){
-		closeFile ($rp);
 		error($en?'The article was not found.':'記事が見つかりません。');
 	}
-
-	closeFile ($rp);
 
 	$token=get_csrf_token();
 
@@ -1788,12 +1787,10 @@ function edit_form($id='',$no=''): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
-	file_lock($rp, LOCK_EX);
-
 	$r_arr = create_array_from_fp($rp);
+	closeFile($rp);
 
 	if(empty($r_arr)){
-		closeFile($rp);
 		error($en?'This operation has failed.':'失敗しました。');
 	}
 
@@ -1816,10 +1813,8 @@ function edit_form($id='',$no=''): void {
 	}
 
 	if(!$flag){
-		closeFile($rp);
 		error($en?'This operation has failed.':'失敗しました。');
 	}
-	closeFile($rp);
 
 	check_AsyncRequest();//Asyncリクエストの時は処理を中断
 
@@ -2115,6 +2110,8 @@ function del(): void {
 		}
 	}
 	if(!$find){
+		closeFile ($rp);
+		closeFile($fp);
 		error($en?'The article was not found.':'記事が見つかりません。');
 	}
 
@@ -2143,6 +2140,8 @@ function del(): void {
 
 		if(($alllog_oya_deleted && ($no===$no_))||($id===$time_ && $no===$no_)){
 			if(!$alllog_oya_deleted && !$admindel && (!$pwd||!password_verify($pwd,$hash_))){
+				closeFile ($rp);
+				closeFile($fp);
 				error($en?'Password is incorrect.':'パスワードが違います。');//親削除ずみ、管理者では無い時はパスワードの一致を確認
 			}
 			$flag=true;

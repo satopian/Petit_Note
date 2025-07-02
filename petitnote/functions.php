@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250630;
+$functions_ver=20250702;
 
 //編集モードログアウト
 function logout(): void {
@@ -802,7 +802,7 @@ function check_jpeg_exif($upfile): void {
 	}
 
 	//画像回転の検出
-	$exif = exif_read_data($upfile);
+	$exif = @exif_read_data($upfile);// サポートされていないタグの時に`E_NOTICE`が発生するので`@`をつける
 	$orientation = $exif["Orientation"] ?? 1;
 	//位置情報はあるか?
 	$gpsdata_exists =(isset($exif['GPSLatitude']) && isset($exif['GPSLongitude'])); 
@@ -1665,11 +1665,11 @@ function file_lock($fp, int $lock, array $options=[]): void {
 	global $en;
 	$flock=flock($fp, $lock);
 	if (!$flock) {
-			if($lock !== LOCK_UN){
-				if(isset($options['paintcom'])){
-					location_paintcom();//未投稿画像の投稿フォームへ
-				}
-				error($en ? 'Failed to lock the file.' : 'ファイルのロックに失敗しました。');
+		if($lock !== LOCK_UN){//ロック解除以外の時
+			if(isset($options['paintcom'])){
+				location_paintcom();//未投稿画像の投稿フォームへ
+			}
+			error($en ? 'Failed to lock the file.' : 'ファイルのロックに失敗しました。');
 		}
 	}
 }
