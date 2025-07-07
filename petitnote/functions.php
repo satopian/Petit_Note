@@ -854,8 +854,8 @@ function check_jpeg_exif($upfile): void {
 	imagejpeg($im_out, $upfile,98);
 	// 画像のメモリを解放
 	if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
-    	imagedestroy($im_in);
-    	imagedestroy($im_out);
+		imagedestroy($im_in);
+		imagedestroy($im_out);
 	}
 }
 
