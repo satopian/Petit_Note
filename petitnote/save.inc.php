@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20250308;
+$save_inc_ver=20250707;
 class image_save{
 
 	private $security_timer,$imgfile,$en,$count,$errtext,$session_usercode; // プロパティとして宣言
@@ -185,7 +185,9 @@ class image_save{
 			if(!$im_in){
 				$this->error_msg($this->en ? "The image appears to be corrupted.\nPlease consider saving a screenshot to preserve your work." : "破損した画像が検出されました。\nスクリーンショットを撮り作品を保存する事を強くおすすめします。");
 			}else{
-				ImageDestroy($im_in);
+				if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+					ImageDestroy($im_in);
+				}
 			}
 		}
 

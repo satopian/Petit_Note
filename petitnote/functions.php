@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250702;
+$functions_ver=20250707;
 
 //編集モードログアウト
 function logout(): void {
@@ -853,8 +853,10 @@ function check_jpeg_exif($upfile): void {
 	// 画像を保存
 	imagejpeg($im_out, $upfile,98);
 	// 画像のメモリを解放
-	imagedestroy($im_in);
-	imagedestroy($im_out);
+	if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+    	imagedestroy($im_in);
+    	imagedestroy($im_out);
+	}
 }
 
 //サムネイル作成

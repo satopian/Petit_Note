@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver=20250618;
+$misskey_note_ver=20250707;
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
@@ -298,8 +298,11 @@ class misskey_note{
 			curl_setopt($postCurl, CURLOPT_RETURNTRANSFER, true);
 			$postResponse = curl_exec($postCurl);
 			$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE); // HTTPステータスコードを取得
-			curl_close($postCurl);
-	
+
+			if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+				curl_close($postCurl);
+			}
+
 			// HTTPステータスコードが403の時は、トークン不一致と判断しアプリを認証
 			if ($postStatusCode === 403) {
 				unset($_SESSION['accessToken']);//トークンをクリア

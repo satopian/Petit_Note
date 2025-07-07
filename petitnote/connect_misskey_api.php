@@ -52,15 +52,16 @@ class connect_misskey_api{
 		curl_setopt($checkCurl, CURLOPT_RETURNTRANSFER, true);
 
 		$checkResponse = curl_exec($checkCurl);
-		curl_close($checkCurl);
-
+		if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+			curl_close($checkCurl);
+		}
 		if (!$checkResponse) {
 			error($en ? "Authentication failed." :"認証に失敗しました。" ,false);	
 		}
 
 		$responseData = json_decode($checkResponse, true);
 		if(!isset($responseData['token'])){
-			error($en ? "Authentication failed." :"認証に失敗しました。");
+			error($en ? "Authentication failed." :"認証に失敗しました。",false);
 		}
 		$accessToken = $responseData['token'];
 		$_SESSION['accessToken']=$accessToken;
@@ -110,7 +111,9 @@ class connect_misskey_api{
 		curl_setopt($uploadCurl, CURLOPT_RETURNTRANSFER, true);
 		$uploadResponse = curl_exec($uploadCurl);
 		$uploadStatusCode = curl_getinfo($uploadCurl, CURLINFO_HTTP_CODE);
-		curl_close($uploadCurl);
+		if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+			curl_close($uploadCurl);
+		}
 		// var_dump($uploadResponse);
 		if (!$uploadResponse) {
 			// var_dump($uploadResponse);
@@ -148,8 +151,9 @@ class connect_misskey_api{
 		curl_setopt($updateCurl, CURLOPT_RETURNTRANSFER, true);
 		$updateResponse = curl_exec($updateCurl);
 		$updateStatusCode = curl_getinfo($updateCurl, CURLINFO_HTTP_CODE);
-		curl_close($updateCurl);
-
+		if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+			curl_close($updateCurl);
+		}
 		if (!$updateResponse) {
 			error($en ? "Failed to update the file." : "ファイルの更新に失敗しました。" ,false);
 		}
@@ -198,7 +202,9 @@ class connect_misskey_api{
 		curl_setopt($postCurl, CURLOPT_RETURNTRANSFER, true);
 		$postResponse = curl_exec($postCurl);
 		$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE);
-		curl_close($postCurl);
+		if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+			curl_close($postCurl);
+		}
 		// var_dump($postResponse);
 		if ($postResponse) {
 			$postResult = json_decode($postResponse, true);
@@ -213,7 +219,7 @@ class connect_misskey_api{
 			} 
 			else {
 				error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
-				}
+			}
 		} else {
 			error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
 		}
