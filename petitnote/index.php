@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.96.0';
-$petit_lot='lot.20250706';
+$petit_ver='v1.97.0';
+$petit_lot='lot.20250707';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,19 +20,19 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250702){
+if(!isset($functions_ver)||$functions_ver<20250707){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20250605){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20250707){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/save.inc.php');
 require_once(__DIR__.'/save.inc.php');
-if(!isset($save_inc_ver)||$save_inc_ver<20250308){
+if(!isset($save_inc_ver)||$save_inc_ver<20250707){
 	die($en?'Please update save.inc.php to the latest version.':'save.inc.phpを最新版に更新してください。');
 }
 
@@ -44,7 +44,7 @@ if(!isset($search_inc_ver)||$search_inc_ver<20250619){
 
 check_file(__DIR__.'/thumbnail_gd.inc.php');
 require_once(__DIR__.'/thumbnail_gd.inc.php');
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20241102){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20250707){
 	error($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
 }
 
