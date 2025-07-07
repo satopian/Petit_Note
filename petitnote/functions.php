@@ -515,13 +515,13 @@ function switch_tool($tool): string {
 		case 'chi':
 			$tool='ChickenPaint';
 			break;
-		case 'klecks';
+		case 'klecks':
 			$tool='Klecks';
 			break;
-		case 'tegaki';
+		case 'tegaki':
 			$tool='Tegaki';
 			break;
-		case 'axnos';
+		case 'axnos':
 			$tool='Axnos Paint';
 			break;
 		case 'upload':
