@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.97.3';
+$petit_ver='v1.97.5';
 $petit_lot='lot.20250709';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -1787,21 +1787,16 @@ function edit_form($id='',$no=''): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
-	$r_arr = create_array_from_fp($rp);
-	closeFile($rp);
-
-	if(empty($r_arr)){
-		error($en?'This operation has failed.':'失敗しました。');
-	}
 
 	$flag=false;
-	foreach($r_arr as $val){
-		if(strpos($val,"\t".$id."\t")!==false){
-			$line=explode("\t",trim($val));
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+	while ($line = fgets($rp)) {
+		if(strpos($line,"\t".$id."\t")!==false){
+			$lines=explode("\t",trim($line));
+			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$lines;
 			if($id===$time && $no===$_no){
 			
 				if(!$admindel&&(!$pwd||!password_verify($pwd,$hash))){
+					closeFile($rp);
 					error($en?'Password is incorrect.':'パスワードが違います。');
 				}
 				if($admindel||check_elapsed_days($time)){
@@ -1811,6 +1806,7 @@ function edit_form($id='',$no=''): void {
 			}
 		}
 	}
+	closeFile($rp);
 
 	if(!$flag){
 		error($en?'This operation has failed.':'失敗しました。');
@@ -1818,17 +1814,17 @@ function edit_form($id='',$no=''): void {
 
 	check_AsyncRequest();//Asyncリクエストの時は処理を中断
 
-	$out[0][]=create_res($line);//$lineから、情報を取り出す;
+	$out[0][]=create_res($lines);//$linesから、情報を取り出す;
 
 	$page= $_SESSION['current_page_context']["page"] ?? 0;
 	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
 	$postpage = $page;//古いテンプレート互換
 	$postresno = $resno;//古いテンプレート互換
 
-	foreach($line as $i => $val){//エスケープ処理
-		$line[$i]=h($val);
+	foreach($lines as $i => $val){//エスケープ処理
+		$lines[$i]=h($val);
 	}
-	list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+	list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$lines;
 
 	$com=h(str_replace('"\n"',"\n",$com));
 
