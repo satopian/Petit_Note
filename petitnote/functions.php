@@ -482,7 +482,7 @@ function create_res($line,$options=[]): array {
 		'host' => admindel_valid() ? $host : '',
 		'userid' => $userid,
 		'check_elapsed_days' => $check_elapsed_days,
-		'encoded_name' => ((!$isset_catalog && $is_oya) || $isset_search) ? urlencode($name) : '',
+		'encoded_name' => (!$isset_catalog || $isset_search) ? urlencode($name) : '',
 		'encoded_no' => (!$isset_catalog && $is_oya) ? urlencode('['.$no.']') : '',
 		'encoded_sub' => (!$isset_catalog && $is_oya) ? urlencode($sub) : '',
 		'encoded_u' => (!$isset_catalog && $is_oya) ? urlencode($root_url.'?resno='.$no) : '',//tweet
