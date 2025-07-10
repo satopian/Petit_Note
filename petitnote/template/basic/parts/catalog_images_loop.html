@@ -7,10 +7,13 @@
 		continue;
 	}?><span class="catalog_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>">	
 		<?php if($res['img']):?>
+
 			<?php if($misskey_note):?>
 				<a href="./?mode=before_misskey_note&no=<?= h($res['no'])?>&id=<?=h($res['time'])?>" target="_blank" rel="nofollow noopener">
-			<?php else:?>	
-				<a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank" rel="noopener">
+			<?php elseif($res_catalog):?>
+				<a href="./?resno=<?=h($res['no'])?>&id=<?=h($res['first_posted_time'])?>#<?=h($res['time'])?>" target="_blank" rel="noopener">
+			<?php else:?>
+				<a href="./?resno=<?=h($res['no'])?>" target="_blank" rel="noopener">
 			<?php endif;?>
 				<?php if($res['webpimg']):?>
 			<picture><source srcset="<?=h($res['webpimg'])?>" type="image/webp">

@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.97.5';
-$petit_lot='lot.20250709';
+$petit_ver='v1.98.0';
+$petit_lot='lot.20250710';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2469,6 +2469,7 @@ function res (): void {
 	$resno=(string)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
 	$misskey_note = $use_misskey_note ? (bool)filter_input_data('GET','misskey_note',FILTER_VALIDATE_BOOLEAN) : false;
 	$res_catalog = $misskey_note ? true : (bool)filter_input_data('GET','res_catalog',FILTER_VALIDATE_BOOLEAN);
+	$id = (string)filter_input_data('GET','id');
 
 	session_sta();
 	unset ($_SESSION['enableappselect']);
@@ -2505,10 +2506,19 @@ function res (): void {
 			$_res['descriptioncom']= $_res['com'] ? h(s(mb_strcut($_res['com'],0,300))) :"";
 
 			$oyaname = $_res['name'];
-		} 
+		}
 		// 投稿者名を配列にいれる
 			if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
 				$rresname[] = $_res['name'];
+		} 
+		if($_res['first_posted_time'] === $id){//最初の投稿時間と一致する時
+			$og_img = $_res['img'];
+			$og_descriptioncom = $_res['com'] ? h(s(mb_strcut($_res['com'],0,300))) :"";
+			$og_hide_thumbnail = $_res['hide_thumbnail'];
+		}elseif($_res['oya']==='oya'){
+			$og_img = $_res['img'];
+			$og_descriptioncom = $_res['com'] ? h(s(mb_strcut($_res['com'],0,300))) :"";
+			$og_hide_thumbnail = $_res['hide_thumbnail'];
 			}
 		$out[0][]=$_res;
 		$out[0][0]['find_hide_thumbnail']=$find_hide_thumbnail;
