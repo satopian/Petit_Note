@@ -3,16 +3,16 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.99.0';
-$petit_lot='lot.20250710';
+$petit_ver='v1.99.1';
+$petit_lot='lot.20250712';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
 
 if (version_compare(PHP_VERSION, '7.3.0', '<')) {
-	die($en? "Error. PHP version 7.1.0 or higher is required for this program to work. <br>\n(Current PHP version:".PHP_VERSION.")":
-		"エラー。本プログラムの動作には PHPバージョン 7.1.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
+	die($en? "Error. PHP version 7.3.0 or higher is required for this program to work. <br>\n(Current PHP version:".PHP_VERSION.")":
+		"エラー。本プログラムの動作には PHPバージョン 7.3.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
 	);
 }
 
@@ -2481,11 +2481,14 @@ function res (): void {
 	$resname = '';
 	$oyaname='';
 	$find_hide_thumbnail=false;	
+	$og_sub = '';
+	$og_name = '';
 
 	check_open_no($resno);
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 
 	$out[0]=[];
+
 	$og_img="";
 	$og_descriptioncom = ""; 
 	$og_hide_thumbnail = "";
@@ -2517,11 +2520,15 @@ function res (): void {
 			$og_img = $_res['img'];
 			$og_descriptioncom = $_res['com'] ? h(s(mb_strcut($_res['com'],0,300))) :"";
 			$og_hide_thumbnail = $_res['hide_thumbnail'];
+			$og_sub = $_res['sub'];
+			$og_name = $_res['name'];
 		}elseif($_res['oya']==='oya'){
 			$og_img = $_res['img'];
 			$og_descriptioncom = $_res['com'] ? h(s(mb_strcut($_res['com'],0,300))) :"";
 			$og_hide_thumbnail = $_res['hide_thumbnail'];
-			}
+			$og_sub = $_res['sub'];
+			$og_name = $_res['name'];
+		}
 		$out[0][]=$_res;
 		$out[0][0]['find_hide_thumbnail']=$find_hide_thumbnail;
 	}	

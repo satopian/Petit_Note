@@ -1,5 +1,3 @@
-<?php $og_descriptioncom = $og_descriptioncom ?? "";?>
-<?php $og_hide_thumbnail = $og_hide_thumbnail ?? "";?>
 <!DOCTYPE html>
 <?php include __DIR__.'/parts/html.html';?>
 <head>
@@ -8,13 +6,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!--SNS-->
 <?php if($use_sns_button):?>
-<meta name="Description" content="<?= h(s($og_descriptioncom))?>">
+<meta name="Description" content="<?= h(s($og_descriptioncom ?? ''))?>">
 <meta name="twitter:card" content="summary_large_image">
-<meta property="og:title" content="[<?= h(s($out[0][0]['no']))?>] <?= h(s($out[0][0]['sub']))?> by <?= h(s($out[0][0]['name']))?> - <?=h(s($boardname))?>">
+<meta property="og:title" content="[<?= h($out[0][0]['no'])?>] <?= h(s($og_sub ?? ""))?> by <?= h($og_name ?? "")?> - <?=h($boardname)?>">
 <meta property="og:type" content="article">
 <meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($out[0][0]['no'])?>">
 <!-- 閲覧注意 またはNSFWが設定されている時は ogp imageを表示しない -->
-<?php if($og_img && !((isset($set_nsfw) && $set_nsfw)||$og_hide_thumbnail||$set_all_images_to_nsfw)):?>
+<?php if(!empty($og_img) && !(!empty($set_nsfw)||!empty($og_hide_thumbnail)||$set_all_images_to_nsfw)):?>
 <meta property="og:image" content="<?=h($root_url)?>src/<?=h($og_img)?>">
 <?php endif;?>
 <meta property="og:site_name"  content="<?=h($boardname)?>">
