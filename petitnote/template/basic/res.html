@@ -1,3 +1,5 @@
+<?php $og_descriptioncom = $og_descriptioncom ?? "";?>
+<?php $og_hide_thumbnail = $og_hide_thumbnail ?? "";?>
 <!DOCTYPE html>
 <?php include __DIR__.'/parts/html.html';?>
 <head>
@@ -12,9 +14,8 @@
 <meta property="og:type" content="article">
 <meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($out[0][0]['no'])?>">
 <!-- 閲覧注意 またはNSFWが設定されている時は ogp imageを表示しない -->
-<?php if(!((isset($set_nsfw)&&$set_nsfw)||$og_hide_thumbnail||$set_all_images_to_nsfw)):?>
-
-<meta property="og:image" content="<?php if($og_img):?><?=h($root_url)?>src/<?=h($og_img)?><?php endif;?>">
+<?php if($og_img && !((isset($set_nsfw) && $set_nsfw)||$og_hide_thumbnail||$set_all_images_to_nsfw)):?>
+<meta property="og:image" content="<?=h($root_url)?>src/<?=h($og_img)?>">
 <?php endif;?>
 <meta property="og:site_name"  content="<?=h($boardname)?>">
 <meta property="og:description" content="<?=h(s($og_descriptioncom))?>">
@@ -23,7 +24,7 @@
 <link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
 <?php include __DIR__.'/parts/head_preload_css_js.html';?>
 <?php include __DIR__.'/parts/nsfw_css_control.html';?>
-<title>[<?= h($out[0][0]['no'])?>] <?= h($out[0][0]['sub'])?> by <?= h($out[0][0]['name'])?> -  <?=h($boardname)?></title>
+<title>[<?= h($out[0][0]['no'])?>] <?= h($out[0][0]['sub'])?> by <?= h($out[0][0]['name'])?> - <?=h($boardname)?></title>
 </head>
 <body>
 <div class="container" id="top">
@@ -142,8 +143,10 @@ Size:
 
 </form>
 <?php endif;?>
-
+<!-- 編集モード時に罫線が二重になるのを防止 -->
+<?php if((!$userdel && !$admindel) && $use_sns_button):?>
 <hr>
+<?php endif;?>
 <nav>
 <!-- PC用 -->
 <div class="pagelink pcdisp">

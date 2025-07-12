@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250709;
+$functions_ver=20250710;
 
 //編集モードログアウト
 function logout(): void {
@@ -452,8 +452,6 @@ function create_res($line,$options=[]): array {
 	$com = (!$isset_catalog || $isset_search) ? $com : '';
 	$com = $com ? (!$isset_search ? str_replace('"\n"',"\n",$com) : str_replace('"\n"'," ",$com)) : '';
 
-	$id = (string)filter_input_data('GET','id');//最初に投稿した時のタイムスタンプ
-
 	$res=[
 		'no' => $no,
 		'sub' => $sub,
@@ -487,14 +485,16 @@ function create_res($line,$options=[]): array {
 		'encoded_name' => (!$isset_catalog || $isset_search) ? urlencode($name) : '',
 		'encoded_no' => (!$isset_catalog && $is_oya) ? urlencode('['.$no.']') : '',
 		'encoded_sub' => (!$isset_catalog && $is_oya) ? urlencode($sub) : '',
-		'encoded_u' => (!$isset_catalog && $is_oya || $id) ? urlencode($root_url.'?resno='.$no.($id ? '&id='.$id :'')) : '',//tweet
-		'encoded_t' => (!$isset_catalog && $is_oya || $id) ? urlencode('['.$no.']'.$sub.($name ? ' by '.$name : '').' - '.$boardname) : '',
+		'encoded_u' => (!$isset_catalog && $is_oya) ? urlencode($root_url.'?resno='.$no) : '',//tweet
+		'encoded_item_u' => (!$isset_catalog) ? urlencode($root_url.'?resno='.$no.'&resid='.$first_posted_time) : '',//tweet
+		'encoded_t' => (!$isset_catalog) ? urlencode('['.$no.']'.$sub.($name ? ' by '.$name : '').' - '.$boardname) : '',
 		'oya' => $oya,
 		'webpimg' => $webpimg ? 'webp/'.$time.'t.webp' :false,
 		'hide_thumbnail' => $hide_thumbnail, //サムネイルにぼかしをかける時
 		'link_thumbnail' => $link_thumbnail, //サムネイルにリンクがある時
 		'not_deleted' => !(!$name && !$com && !$url&& !$imgfile && !$userid), //表示する記事がある親
 	];
+
 	foreach($res as $key=>$val){
 		$res[$key]=h($val);
 	}

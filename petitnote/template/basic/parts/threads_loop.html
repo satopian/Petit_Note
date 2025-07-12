@@ -1,3 +1,4 @@
+<?php $resid = $resid ?? "";?>
 <?php foreach($out as $t => $ress) : ?>
 	<?php if($sort_comments_by_newest){
 		krsort($ress);
@@ -25,15 +26,15 @@
 	if($userdel || $admindel || $resmode){
 		$skipres=0;	//削除モードの時はレスを省略しない
 	}
+	$last_key = array_key_last($ress);//ループの最後のキーを取得
 ?>
 	<article>
 	<!-- タイトル -->
 	<h2 class="article_title">
 		<a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a>
 	</h2>
-
 	<!-- 個別threadのループ -->
-	<?php foreach($ress as $i => $res) : ?>	
+	<?php foreach($ress as $i => $res) : ?>
 	<?php	$res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));?>
 		<?php if($skipres && $i===$skipres):?>
 	<hr>
@@ -53,7 +54,7 @@
 	}?>
 		<hr>
 		<?php if($i!==0):?>
-			<div class="res_wrap" <?php if($resmode):?>id="<?=h($res['time'])?>"<?php endif;?>>
+			<div class="res_wrap" <?php if($resmode):?>id="<?=h($res['first_posted_time'] ?? "")?>"<?php endif;?>>
 		<?php endif;?>
 			<h3 class="imginfo_wrap">
 			<?php if(!isset($res['not_deleted']) || $res['not_deleted']):?>
@@ -157,8 +158,21 @@
 		<?php if($i!==0):?>
 		</div><!-- 子レスのwrap	 -->
 		<?php endif;?>
+	<?php if($use_sns_button):?>
+		<?php if($res['img'] && (isset($res['first_posted_time']) && $res['first_posted_time']===$resid || $userdel || $admindel)) :?>
+		<div class="clear"></div>
+		<div class="res_button_wrap">
+				<a href="?mode=set_share_server&encoded_t=<?=h($res['encoded_t'])?>&amp;encoded_u=<?=h($res['encoded_item_u']??'')?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow"><span class="icon-share-from-square-solid"></span>
+				<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
+			<!-- 最後のループの時にhr -->
+			<?php if(($i === $last_key)):?>
+				<hr>
+			<?php endif;?>
+		</div>
+		<?php endif;?>
+		<?php endif;?>
 	<?php endif;?>
-	<?php endforeach;?>
+<?php endforeach;?>
 	</article>
 	<!-- 返信ボタン -->
 	<div class="clear"></div>
@@ -185,9 +199,7 @@
 			<?php endif;?>
 			</div>
 		<?php endif;?>
-
 			<div class="res_button_wrap">
-
 			<?php if($resmode && $resform && $resname && !$res_max_over):?>
 				<script>
 				const add_to_com = ()=> {

@@ -3,14 +3,14 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.98.0';
+$petit_ver='v1.99.0';
 $petit_lot='lot.20250710';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
 $en= (stripos($lang,'ja')!==0);
 
-if (version_compare(PHP_VERSION, '7.1.0', '<')) {
+if (version_compare(PHP_VERSION, '7.3.0', '<')) {
 	die($en? "Error. PHP version 7.1.0 or higher is required for this program to work. <br>\n(Current PHP version:".PHP_VERSION.")":
 		"エラー。本プログラムの動作には PHPバージョン 7.1.0 以上が必要です。<br>\n(現在のPHPバージョン：".PHP_VERSION.")"
 	);
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250709){
+if(!isset($functions_ver)||$functions_ver<20250710){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -751,7 +751,7 @@ function post(): void {
 	}
 
 	//多重送信防止
-	redirect("./?resno={$resno}&resid={$time}#{$time}");
+	redirect("./?resno={$resno}&resid={$time}");
 
 }
 //お絵かき画面
@@ -1599,7 +1599,7 @@ function img_replace(): void {
 		edit_form($time,$no);//編集画面にもどる
 		exit();
 	}
-	redirect("./?resno={$no}&resid={$time}#{$time}");
+	redirect("./?resno={$no}&resid={$_first_posted_time}");
 
 }
 
@@ -2031,7 +2031,7 @@ function edit(): void {
 	unset($_SESSION['userdel']);
 	delete_res_cache();
 
-	redirect("./?resno={$no}&resid={$_time}#{$_time}");
+	redirect("./?resno={$no}&resid={$_first_posted_time}");
 
 }
 
@@ -2469,7 +2469,7 @@ function res (): void {
 	$resno=(string)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
 	$misskey_note = $use_misskey_note ? (bool)filter_input_data('GET','misskey_note',FILTER_VALIDATE_BOOLEAN) : false;
 	$res_catalog = $misskey_note ? true : (bool)filter_input_data('GET','res_catalog',FILTER_VALIDATE_BOOLEAN);
-	$id = (string)filter_input_data('GET','id');
+	$resid = (string)filter_input_data('GET','resid');
 
 	session_sta();
 	unset ($_SESSION['enableappselect']);
@@ -2486,7 +2486,9 @@ function res (): void {
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 
 	$out[0]=[];
-
+	$og_img="";
+	$og_descriptioncom = ""; 
+	$og_hide_thumbnail = "";
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
@@ -2511,7 +2513,7 @@ function res (): void {
 			if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
 				$rresname[] = $_res['name'];
 		} 
-		if($_res['first_posted_time'] === $id){//最初の投稿時間と一致する時
+		if($_res['first_posted_time'] === $resid){//最初の投稿時間と一致する時
 			$og_img = $_res['img'];
 			$og_descriptioncom = $_res['com'] ? h(s(mb_strcut($_res['com'],0,300))) :"";
 			$og_hide_thumbnail = $_res['hide_thumbnail'];
