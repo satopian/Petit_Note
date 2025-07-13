@@ -166,7 +166,11 @@
 				<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
 			<!-- 最後のループの時にhr -->
 			<?php if(($i === $last_key)):?>
-				<hr>
+				<!-- 投稿可能件数日数の罫線との重複回避 -->
+				<?php $maxres_current=(int)$max_res-(int)$i;?>
+				<?php if((($maxres_current>20) && !$ress[0]['time_left_to_close_the_thread']) || $adminpost || !$resform || $res_max_over):?>
+					<hr>
+				<?php endif;?>
 			<?php endif;?>
 		</div>
 		<?php endif;?>
