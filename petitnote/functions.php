@@ -485,8 +485,8 @@ function create_res($line,$options=[]): array {
 		'encoded_no' => (!$isset_catalog && $is_oya) ? urlencode('['.$no.']') : '',
 		'encoded_sub' => (!$isset_catalog && $is_oya) ? urlencode($sub) : '',
 		'encoded_u' => (!$isset_catalog && $is_oya) ? urlencode($root_url.'?resno='.$no) : '',//tweet
-		'encoded_item_u' => (!$isset_catalog) ? urlencode($root_url.'?resno='.$no.'&resid='.$first_posted_time) : '',//tweet
-		'encoded_t' => (!$isset_catalog) ? urlencode('['.$no.']'.$sub.($name ? ' by '.$name : '').' - '.$boardname) : '',
+		'encoded_item_u' => !$isset_catalog ? urlencode($root_url.'?resno='.$no.'&resid='.$first_posted_time) : '',//tweet
+		'encoded_t' => !$isset_catalog ? urlencode('['.$no.']'.$sub.($name ? ' by '.$name : '').' - '.$boardname) : '',
 		'oya' => $oya,
 		'webpimg' => $webpimg ? 'webp/'.$time.'t.webp' :false,
 		'hide_thumbnail' => $hide_thumbnail, //サムネイルにぼかしをかける時
