@@ -156,7 +156,7 @@ function admin_in(): void {
 
 	$page= $_SESSION['current_page_context']["page"] ?? 0;
 	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
-	$resid = $_SESSION['current_resid']	?? "";
+	$resid = $_SESSION['current_resid'] ?? "";
 	//フォームの表示時刻をセット
 	set_form_display_time();
 
