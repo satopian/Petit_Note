@@ -97,6 +97,7 @@ function set_page_context_to_session(){
 		'q' => (string)filter_input_data('GET', 'q'),
 	];
 	$_SESSION['current_id'] = null;
+	$_SESSION['current_resid'] = null;
 }
 // 年齢確認ボタン押下でCookieを発行
 function age_check(): void {
