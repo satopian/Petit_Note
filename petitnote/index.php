@@ -1730,7 +1730,6 @@ function confirmation_before_deletion ($edit_mode=''): void {
 	}
 
 	$_SESSION['current_resid']	= $first_posted_time;
-	$_SESSION['current_id']	= $id;
 
 	$token=get_csrf_token();
 
@@ -1835,7 +1834,6 @@ function edit_form($id='',$no=''): void {
 	list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$lines;
 
 	$_SESSION['current_resid']	= $first_posted_time;
-	$_SESSION['current_id']	= $id;
 
 	$com=h(str_replace('"\n"',"\n",$com));
 

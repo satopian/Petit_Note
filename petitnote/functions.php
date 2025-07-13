@@ -96,7 +96,6 @@ function set_page_context_to_session(){
 		'imgsearch' => (bool)filter_input_data('GET', 'imgsearch', FILTER_VALIDATE_BOOLEAN),
 		'q' => (string)filter_input_data('GET', 'q'),
 	];
-	$_SESSION['current_id'] = null;
 	$_SESSION['current_resid'] = null;
 }
 // 年齢確認ボタン押下でCookieを発行
@@ -146,7 +145,7 @@ function admin_in(): void {
 	aikotoba_required_to_view();
 
 	//古いテンプレート用の使用しない変数
-	$page = $resno = $catalog = $res_catalog = $search= $radio= $imgsearch= $q ="";
+	$page = $resno = $catalog = $res_catalog = $search = $radio = $imgsearch = $q = $id ="";
 
 	session_sta();
 
@@ -158,7 +157,6 @@ function admin_in(): void {
 	$page= $_SESSION['current_page_context']["page"] ?? 0;
 	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
 	$resid = $_SESSION['current_resid']	?? "";
-
 	//フォームの表示時刻をセット
 	set_form_display_time();
 

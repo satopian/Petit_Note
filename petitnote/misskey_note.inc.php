@@ -72,7 +72,7 @@ class misskey_note{
 		$count_r_arr=count($r_arr);
 		$edit_mode = 'editmode';
 
-		$_SESSION['current_id']	= $id;
+		$_SESSION['current_resid']	= $first_posted_time;
 
 		set_form_display_time();
 		$admin_pass= null;
@@ -160,7 +160,7 @@ class misskey_note{
 
 		$image_rep=false;
 
-		$_SESSION['current_id']	= $id;
+		$_SESSION['current_resid']	= $first_posted_time;
 
 		$admin_pass= null;
 		// HTML出力
