@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.99.1';
-$petit_lot='lot.20250712';
+$petit_ver='v1.99.3';
+$petit_lot='lot.20250713';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250710){
+if(!isset($functions_ver)||$functions_ver<20250713){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -1116,6 +1116,7 @@ function to_continue(): void {
 	$time=0;
 	//記事は存在するか
 	$flag = false;
+	$resid = '';
 	while ($line = fgets($rp)) {
 		if(strpos($line,"\toya")!==false || strpos($line,"\t".$id."\t")!==false){
 			list($_no,$sub,$name,$verified,$com,$url,$_imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$_time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
@@ -1125,6 +1126,7 @@ function to_continue(): void {
 			if($id===$_time && $no===$_no && $tool!=='upload'){
 				$time=$_time ? basename($_time) : '';
 				$imgfile=$_imgfile ? basename($_imgfile) : '';
+				$resid=$first_posted_time;
 				$flag=true;
 			}
 		}
@@ -1619,6 +1621,7 @@ function pchview(): void {
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	$flag=false;
+	$resid = '';
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
@@ -1626,6 +1629,7 @@ function pchview(): void {
 		if(strpos($line,"\t".$id."\t")!==false){
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
 			if($id===$time && $no===$_no && $pchext){
+				$resid=$first_posted_time;
 				$flag=true;
 				break;
 			} 
@@ -1706,6 +1710,7 @@ function confirmation_before_deletion ($edit_mode=''): void {
 		error($en?'This operation has failed.':'失敗しました。');
 	}
 	$find=false;
+	$resid= '';
 	foreach($r_arr as $i =>$val){
 		if(strpos($val,"\t".$id."\t")!==false){
 			$_line=explode("\t",trim($val));
@@ -1713,6 +1718,7 @@ function confirmation_before_deletion ($edit_mode=''): void {
 			if($id===$time && $no===$_no){
 
 				$out[0][]=create_res($_line);
+				$resid=$first_posted_time;
 				$find=true;
 				break;
 				
@@ -1723,6 +1729,8 @@ function confirmation_before_deletion ($edit_mode=''): void {
 		error($en?'The article was not found.':'記事が見つかりません。');
 	}
 
+	$_SESSION['current_resid']	= $first_posted_time;
+
 	$token=get_csrf_token();
 
 	// nsfw
@@ -1731,7 +1739,6 @@ function confirmation_before_deletion ($edit_mode=''): void {
 
 	$count_r_arr=count($r_arr);
 
-	$_SESSION['current_id']	= $id;
 
 	set_form_display_time();
 
@@ -1826,6 +1833,8 @@ function edit_form($id='',$no=''): void {
 	}
 	list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$lines;
 
+	$_SESSION['current_resid']	= $first_posted_time;
+
 	$com=h(str_replace('"\n"',"\n",$com));
 
 	$pch_exists = in_array($pchext,['.pch','.tgkr','hide_animation','hide_tgkr']);
@@ -1838,8 +1847,6 @@ function edit_form($id='',$no=''): void {
 	$admin = ($admindel||$adminpost||is_adminpass($pwd));
 
 	$image_rep=true;
-
-	$_SESSION['current_id']	= $id;
 
 	//フォームの表示時刻をセット
 	set_form_display_time();
@@ -2472,6 +2479,9 @@ function res (): void {
 	$resid = (string)filter_input_data('GET','resid');
 
 	session_sta();
+
+	$_SESSION['current_resid']	= $resid;
+
 	unset ($_SESSION['enableappselect']);
 
 	if(!is_file(LOG_DIR."{$resno}.log")){

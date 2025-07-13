@@ -16,7 +16,7 @@
 	<span>
 	<?php if($resno):?>
 		
-		[<a href="./?resno=<?=h($resno)?><?php if($id):?>#<?=h($id)?><?php endif;?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]
+		[<a href="./?resno=<?=h($resno)?><?php if(!empty($resid)):?>&resid=<?=h($resid)?><?php endif;?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]
 	<?php else:?>
 		[<a href="./?page=<?=h($page)?>"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]
 	<?php endif;?>

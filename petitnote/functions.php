@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250710;
+$functions_ver=20250713;
 
 //編集モードログアウト
 function logout(): void {
@@ -156,7 +156,7 @@ function admin_in(): void {
 
 	$page= $_SESSION['current_page_context']["page"] ?? 0;
 	$resno= $_SESSION['current_page_context']["resno"] ?? 0;
-	$id = $_SESSION['current_id']	?? "";
+	$resid = $_SESSION['current_resid']	?? "";
 
 	//フォームの表示時刻をセット
 	set_form_display_time();
@@ -321,10 +321,10 @@ function branch_destination_of_location(): void {
 		if(!is_file(LOG_DIR.$resno.'.log')){
 			redirect('./');
 		}
-		$id = $_SESSION['current_id'] ?? "";//intの範囲外
-		$id = ctype_digit($id) ? $id : "";
+		$resid = $_SESSION['current_resid'] ?? "";//intの範囲外
+		$resid = ctype_digit($resid) ? $resid : "";
 		$res_param = $res_catalog ? '&res_catalog=on' : ($misskey_note ? '&misskey_note=on' : '');
-		$res_param .= $id ? "&resid={$id}#{$id}" : '';
+		$res_param .= $resid ? "&resid={$resid}" : '';
 		
 		redirect('./?resno='.h($resno).$res_param);
 	}

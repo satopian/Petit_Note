@@ -1,7 +1,7 @@
 <!-- 編集画面･Misskeyノートのメニュー -->
 <span>
 	<?php if($resno):?>
-		[<a href="./?resno=<?=h($resno)?>#<?=h($id)?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]
+		[<a href="./?resno=<?=h($resno)?>&resid=<?=h($resid ?? '')?>"><?php if($en):?>Return to thread<?php else:?>スレッドにもどる<?php endif;?></a>]
 	<?php else:?>
 		[<a href="./?page=<?=h($page)?>"><?php if($en):?>Return<?php else:?>掲示板にもどる<?php endif;?></a>]
 	<?php endif;?>
