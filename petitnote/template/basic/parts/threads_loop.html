@@ -50,7 +50,7 @@
 	}
 	// 縮小のかかったNSFW画像を元のサイズへ
 	if($set_nsfw_show_hide){
-	$res['w']=$res['_w'];$res['h']=$res['_h'];
+		$res['w']=$res['_w'];$res['h']=$res['_h'];
 	}?>
 		<hr>
 		<?php if($i!==0):?>
@@ -58,7 +58,7 @@
 		<?php endif;?>
 			<h3 class="imginfo_wrap">
 			<?php if(!isset($res['not_deleted']) || $res['not_deleted']):?>
-				<span class="info_name"><a href="./?mode=search&radio=2&imgsearch=on&q=<?=h($res['encoded_name'])?>" target="_blank"><?= h($res['name'])?></a></span>
+				<span class="info_name"><a href="./?mode=search&radio=2&imgsearch=on&q=<?=h($res['encoded_name'])?>" target="_blank" rel="noopener"><?= h($res['name'])?></a></span>
 				<?php if($res['verified']):?>
 				<span class="icon-checkmark2"></span>
 				<?php endif?>
@@ -93,12 +93,12 @@
 						<span>☆<a href="?mode=to_continue&id=<?=h($res['time'])?>&no=<?=h($res['no'])?>"><?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?></a></span>
 					<?php endif;?>
 					<?php if($res['anime']):?>
-						<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>&no=<?=h($res['no'])?>" target="_blank"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
+						<span>☆<a href="?mode=pchview&imagefile=<?=h($res['img'])?>&no=<?=h($res['no'])?>" target="_blank" rel="noopener"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
 					<?php endif;?>
 				</div>
 				<?php endif;?>
 				<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
-					<a href="src/<?=h($res['img'])?>" target="_blank" data-lightbox="<?php if(isset($ress[0]['find_hide_thumbnail'])&&!$ress[0]['find_hide_thumbnail']||$set_nsfw_show_hide):?><?=h($res['no'])?><?php else:?><?=h($res['no'])?>_<?=h($res['time'])?><?php endif;?>">
+					<a href="src/<?=h($res['img'])?>" target="_blank" rel="noopener" data-lightbox="<?php if(isset($ress[0]['find_hide_thumbnail'])&&!$ress[0]['find_hide_thumbnail']||$set_nsfw_show_hide):?><?=h($res['no'])?><?php else:?><?=h($res['no'])?>_<?=h($res['time'])?><?php endif;?>">
 				<?php if($res['thumbnail']):?>
 						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4||($resmode && $i>4)):?>loading="lazy"<?php endif;?>>
 				<?php else:?>
@@ -143,7 +143,7 @@
 
 				<?php if($use_misskey_note && $res['img'] && ($res['check_elapsed_days'] && !$is_badhost||($admindel||$adminpost))):?>
 				
-					<form action="./" method="POST" class="aikotoba" target="_blank">
+					<form action="./" method="POST" class="aikotoba" target="_blank" rel="noopener">
 					<input type="hidden" name="mode" value="before_misskey_note">
 					<input type="hidden" name="edit_mode" value="editmode">
 					<input type="hidden" name="id" value="<?=h($res['time'])?>">
@@ -154,7 +154,7 @@
 				<?php endif;?>
 			</div>
 			<?php endif;?>
-			</div>
+		</div>
 		<?php if($i!==0):?>
 		</div><!-- 子レスのwrap	 -->
 		<?php endif;?>
@@ -162,8 +162,8 @@
 		<?php if($res['img'] && (isset($res['first_posted_time']) && $res['first_posted_time']===$resid || $userdel || $admindel)) :?>
 		<div class="clear"></div>
 		<div class="res_button_wrap">
-				<a href="?mode=set_share_server&encoded_t=<?=h($res['encoded_t'])?>&amp;encoded_u=<?=h($res['encoded_item_u']??'')?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow"><span class="icon-share-from-square-solid"></span>
-				<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
+			<a href="?mode=set_share_server&encoded_t=<?=h($res['encoded_t'])?>&amp;encoded_u=<?=h($res['encoded_item_u']??'')?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow"><span class="icon-share-from-square-solid"></span>
+			<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
 			<!-- 最後のループの時にhr -->
 			<?php if(($i === $last_key)):?>
 				<!-- 投稿可能件数日数の罫線との重複回避 -->
@@ -172,9 +172,9 @@
 					<hr>
 				<?php endif;?>
 			<?php endif;?>
-		</div>
+			</div>
 		<?php endif;?>
-		<?php endif;?>
+	<?php endif;?>
 	<?php endif;?>
 <?php endforeach;?>
 	</article>
@@ -203,7 +203,7 @@
 			<?php endif;?>
 			</div>
 		<?php endif;?>
-			<div class="res_button_wrap">
+		<div class="res_button_wrap">
 			<?php if($resmode && $resform && $resname && !$res_max_over):?>
 				<script>
 				const add_to_com = ()=> {
@@ -233,10 +233,10 @@
 				<?php if($use_sns_button):?>
 				<span class="share_button">
 				<?php if($switch_sns):?>
-					<a href="?mode=set_share_server&encoded_t=<?=h($ress[0]['encoded_t'])?>&amp;encoded_u=<?=h($ress[0]['encoded_u'])?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow"><span class="icon-share-from-square-solid"></span>
+					<a href="?mode=set_share_server&encoded_t=<?=h($ress[0]['encoded_t'])?>&amp;encoded_u=<?=h($ress[0]['encoded_u'])?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow noopener"><span class="icon-share-from-square-solid"></span>
 					<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
 				<?php else:?>
-				<a target="_blank" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a>
+				<a target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a>
 				<?php endif;?>
 				</span>
 				<?php endif; ?>

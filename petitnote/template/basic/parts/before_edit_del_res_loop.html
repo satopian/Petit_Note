@@ -1,4 +1,5 @@
 <!-- 編集削除前画面のスレッドのループ処理 -->
+<?php global $use_sns_button, $sns_window_width, $sns_window_height;?>
 <!-- 親のループ -->
 <?php if(isset($out)):?>
 <?php foreach($out as $ress) : ?>
@@ -50,11 +51,11 @@
 </h3>
 		<?php if($res['img']):?>
 			<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
-				<a href="src/<?=h($res['img'])?>" target="_blank" data-lightbox="<?=h($res['no'])?>_<?=h($res['time'])?>">
+				<a href="src/<?=h($res['img'])?>" target="_blank" rel="noopener" data-lightbox="<?=h($res['no'])?>_<?=h($res['time'])?>">
 			<?php if($res['thumbnail']):?>
-					<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
+				<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 			<?php else:?>
-			<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
+				<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>">
 			<?php endif;?>
 			<?php if($res['hide_thumbnail']):?>
 					<span>NSFW</span>
@@ -63,8 +64,18 @@
 			</div>
 			<?php endif;?>
 			<div class="comment"><?= com(h($res['com']))?></div>
-
+	
 	<?php endforeach;?>
-	</article>
+		<?php if($use_sns_button):?>
+			<?php if($res['img']):?>
+			<div class="clear"></div>
+			<div class="res_button_wrap">
+					<a href="?mode=set_share_server&encoded_t=<?=h($res['encoded_t'])?>&amp;encoded_u=<?=h($res['encoded_item_u']??'')?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow noopener"><span class="icon-share-from-square-solid"></span>
+					<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
+				<!-- 最後のループの時にhr -->
+			</div>
+			<?php endif;?>
+		<?php endif;?>
+</article>
 <?php endforeach;?>
 <?php endif;?>
