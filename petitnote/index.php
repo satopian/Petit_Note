@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.99.8';
-$petit_lot='lot.20250715';
+$petit_ver='v1.99.9';
+$petit_lot='lot.20250716';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2526,13 +2526,7 @@ function res (): void {
 			if (($oyaname !== $_res['name']) && !in_array($_res['name'], $rresname)) { // 重複チェックと親投稿者除外
 				$rresname[] = $_res['name'];
 		} 
-		if($_res['first_posted_time'] === $resid){//最初の投稿時間と一致する時
-			$og_img = $_res['img'];
-			$og_descriptioncom = $_res['com'] ? h(s(mb_strcut($_res['com'],0,300))) :"";
-			$og_hide_thumbnail = $_res['hide_thumbnail'];
-			$og_sub = $_res['sub'];
-			$og_name = $_res['name'];
-		}elseif($_res['oya']==='oya'){
+		if($_res['oya']==='oya' || $_res['first_posted_time'] === $resid){//親または最初の投稿時間と一致する時
 			$og_img = $_res['img'];
 			$og_descriptioncom = $_res['com'] ? h(s(mb_strcut($_res['com'],0,300))) :"";
 			$og_hide_thumbnail = $_res['hide_thumbnail'];
