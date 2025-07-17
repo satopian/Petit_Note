@@ -9,16 +9,16 @@
 ?>
 <div class="pagination">
 <?php if($page >= ($pagedef*17)):?>
-	<a href="?page=0<?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>">First</a> |
+	[<a href="?page=0<?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>">0</a>] … 
 <?php endif;?>
 <?php for($i = $start_page; ($i < $count_alllog && $i <= $end_page) ; $i+=$pagedef) :?>
 	<?php if($page==$i):?>
 			[<strong><?=h($i/$pagedef)?></strong>]
 	<?php else: ?>
-			[<a href="?page=<?=h($i)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>"><?php if($i===0):?>0<?php elseif($i === $start_page):?>≪<?php elseif($i === $end_page):?>≫<?php else:?><?=h($i/$pagedef)?><?php endif;?></a>]
+			[<a href="?page=<?=h($i)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>"><?php if($i===0):?>0<?php else:?><?=h($i/$pagedef)?><?php endif;?></a>]
 	<?php endif;?>
 <?php endfor ;?>
 <?php if($end_page < $count_alllog):?>
-	| <a href="?page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>">Last</a>
+	… [<a href="?page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>"><?=h(ceil(($count_alllog/$pagedef)-1))?></a>]
 <?php endif;?>
 </div>
