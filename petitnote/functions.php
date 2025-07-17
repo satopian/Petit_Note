@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250713;
+$functions_ver=20250717;
 
 //編集モードログアウト
 function logout(): void {
@@ -145,7 +145,7 @@ function admin_in(): void {
 	aikotoba_required_to_view();
 
 	//古いテンプレート用の使用しない変数
-	$page = $resno = $catalog = $res_catalog = $search = $radio = $imgsearch = $q = $id ="";
+	$page = $resno = $catalog = $res_catalog = $search = $radio = $imgsearch = $q = $id = "";
 
 	session_sta();
 
@@ -324,7 +324,7 @@ function branch_destination_of_location(): void {
 		$resid = ctype_digit($resid) ? $resid : "";
 		$res_param = $res_catalog ? '&res_catalog=on' : ($misskey_note ? '&misskey_note=on' : '');
 		$res_param .= $resid ? "&resid={$resid}" : '';
-		
+
 		redirect('./?resno='.h($resno).$res_param);
 	}
 	if($catalog){
@@ -405,12 +405,13 @@ function is_paint_tool_name($tool): string {
 function create_res($line,$options=[]): array {
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+
 	$time = basename($time);
 
 	$isset_catalog = isset($options['catalog']);
 	$isset_search = isset($options['search']);
 	$is_badhost = $options['is_badhost'] ?? false;
-	
+
 	$is_oya = ($oya === "oya");
 
 	$res=[];
@@ -428,11 +429,14 @@ function create_res($line,$options=[]): array {
 	$hide_thumbnail = $mark_sensitive_image ? (strpos($thumbnail,'hide_')!==false) :'';
 	$hide_thumbnail = $set_all_images_to_nsfw ? $set_all_images_to_nsfw : $hide_thumbnail;
 
-	$_w=$w;
-	$_h=$h;
+	$_w=(string)$w;
+	$_h=(string)$h;
 	if($hide_thumbnail){
 		list($w,$h)=image_reduction_display($w,$h,300,300);
 	}
+	$w=(string)$w;
+	$h=(string)$h;
+
 	$thumbnail_webp = ((strpos($thumbnail,'thumbnail_webp')!==false)) ? $time.'s.webp' : false; 
 	$thumbnail_jpg = (!$thumbnail_webp && strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
 
@@ -464,10 +468,10 @@ function create_res($line,$options=[]): array {
 		'painttime' => $painttime ? $painttime['ja'] : '',
 		'painttime_en' => $painttime ? $painttime['en'] : '',
 		'paintsec' => $paintsec,
-		'w' => ($w && is_numeric($w)) ? $w :'',
-		'h' => ($h && is_numeric($h)) ? $h :'',
-		'_w' => ($_w && is_numeric($_w)) ? $_w :'',
-		'_h' => ($_h && is_numeric($_h)) ? $_h :'',
+		'w' => ($w && ctype_digit($w)) ? $w :'',
+		'h' => ($h && ctype_digit($h)) ? $h :'',
+		'_w' => ($_w && ctype_digit($_w)) ? $_w :'',
+		'_h' => ($_h && ctype_digit($_h)) ? $_h :'',
 		'tool' => $tool,
 		'abbr_toolname' => $abbr_toolname,
 		'upload_image' => $upload_image,
@@ -1309,7 +1313,7 @@ function closeFile ($fp): void {
 
 //縮小表示
 function image_reduction_display($w,$h,$max_w,$max_h): array {
-	if(!is_numeric($w)||!is_numeric($h)){
+	if(!ctype_digit((string)$w)||!ctype_digit((string)$h)){
 		return ['',''];
 	}
 
@@ -1317,7 +1321,7 @@ function image_reduction_display($w,$h,$max_w,$max_h): array {
 		$w_ratio = $max_w / $w;
 		$h_ratio = $max_h / $h;
 		$ratio = min($w_ratio, $h_ratio);
-		$w = ceil($w * $ratio);
+		$w = ceil($w * $ratio);//端数の切り上げ
 		$h = ceil($h * $ratio);
 	}
 	$reduced_size = [$w,$h];
@@ -1330,7 +1334,7 @@ function image_reduction_display($w,$h,$max_w,$max_h): array {
  */
 function calcPtime ($psec): ?array {
 
-	if(!is_numeric($psec)){
+	if(!ctype_digit((string)$psec)){
 		return null;
 	}
 
