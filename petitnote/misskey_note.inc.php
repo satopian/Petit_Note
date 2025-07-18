@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver=20250707;
+$misskey_note_ver=20250718;
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
@@ -229,6 +229,7 @@ class misskey_note{
 			["mk.shrimpia.network","https://mk.shrimpia.network"],
 
 		];
+
 		$misskey_servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
 
 		$misskey_server_radio_cookie=(string)filter_input_data('COOKIE',"misskey_server_radio_cookie");
@@ -322,7 +323,8 @@ class misskey_note{
 	public static function misskey_success(): void {
 		global $en,$skindir,$boardname,$petit_lot;
 		$no = (string)filter_input_data('GET', 'no',FILTER_VALIDATE_INT);
-		
+		$resid = $_SESSION['current_resid'] ?? '';
+
 		session_sta();
 		
 		$misskey_server_url = $_SESSION['misskey_server_radio'] ?? "";

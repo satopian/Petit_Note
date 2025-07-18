@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.99.10';
-$petit_lot='lot.20250716';
+$petit_ver='v1.100.2';
+$petit_lot='lot.20250718';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -26,7 +26,7 @@ if(!isset($functions_ver)||$functions_ver<20250717){
 
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20250707){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20250718){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
@@ -1739,7 +1739,6 @@ function confirmation_before_deletion ($edit_mode=''): void {
 
 	$count_r_arr=count($r_arr);
 
-
 	set_form_display_time();
 
 	$admin_pass= null;
@@ -2408,6 +2407,7 @@ function view(): void {
 			}
 		}
 	}
+	unset($lines);
 	$aikotoba = aikotoba_valid();
 	$adminpost=adminpost_valid();
 	$resform = ((!$only_admin_can_reply && !$use_diary && !$is_badhost && $aikotoba)||$adminpost);
