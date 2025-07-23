@@ -18,8 +18,8 @@
 	}
 	}
 	</script>
-	<link rel="stylesheet" href="./app/neo/neo.css">
-	<script src="./app/neo/neo.js"></script>
+	<link rel="stylesheet" href="./app/neo/neo.css?<?=h($parameter_day)?><?=h($petit_lot)?>">
+	<script src="./app/neo/neo.js?<?=h($parameter_day)?><?=h($petit_lot)?>"></script>
 
 </head>
 <body>
@@ -38,7 +38,7 @@ name="pch" code="pch.PCHViewer.class" archive="PCHViewer.jar,PaintBBS.jar" width
 <div class="pch_download">
 <A href="<?=h($pchfile)?>" target="_blank" rel="nofollow noopener noreferrer">Download</A><br>
 <?php if($no):?>
-	<a href="./?resno=<?=h($no)?>#<?=h($id)?>"><?=h($boardname)?></a>
+	<a href="./?resno=<?=h($no)?>&resid=<?=h($resid ?? "")?>"><?=h($boardname)?></a>
 <?php else:?>
 <a href="./"><?=h($boardname)?></a>
 <?php endif;?>	
