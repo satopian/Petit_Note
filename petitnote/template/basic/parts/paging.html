@@ -18,7 +18,7 @@
 			[<a href="?page=<?=h($i)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>"><?php if($i===0):?>0<?php else:?><?=h($i/$pagedef)?><?php endif;?></a>]
 	<?php endif;?>
 <?php endfor ;?>
-<?php if($end_page < $count_alllog):?>
+<?php if($end_page+$pagedef < $count_alllog):?>
 	… [<a href="?page=<?=h(ceil(($count_alllog/$pagedef)-1)*$pagedef)?><?php if($mode):?>&mode=<?=h($mode)?><?php endif;?><?php if($search):?>&imgsearch=<?=h($imgsearch)?>&q=<?=h($en_q)?>&radio=<?=h($radio)?><?php endif;?>"><?=h(ceil(($count_alllog/$pagedef)-1))?></a>]
 <?php endif;?>
 </div>
