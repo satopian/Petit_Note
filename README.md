@@ -337,8 +337,8 @@ config.phpのどこでも構いませんので、上記設定項目を追加す�
 ### 非推奨になったX-Frame-OptionsをCSPに
 2024年12月に非推奨になった[X-Frame-Options - HTTP | MDN](https://developer.mozilla.org/ja/docs/Web/HTTP/Reference/Headers/X-Frame-Options)を、[Content-Security-Policy (CSP) - HTTP | MDN](https://developer.mozilla.org/ja/docs/Web/HTTP/Reference/Headers/Content-Security-Policy)に置き換えました。  
 クリックジャッキングを防止するために必要な機能です。    
-しかしながら、フレーム内で表示したい人が一定数存在するため、config.phpでフレーム内表示を拒絶するしないを設定できるようにしています。
-[安全なウェブサイトの作り方 - 1.9 クリックジャッキング | 情報セキュリティ | IPA 独立行政法人 情報処理推進機構](https://www.ipa.go.jp/security/vuln/websecurity/clickjacking.html)  
+しかしながら、フレーム内で表示したい人が一定数存在するため、config.phpでフレーム内表示を拒絶するしないを設定できるようにしています。  
+[安全なウェブサイトの作り方 - 1.9 クリックジャッキング | 情報セキュリティ | IPA 独立行政法人 情報処理推進機構](https://www.ipa.go.jp/security/vuln/websecurity/clickjacking.html)    
 フレーム内への表示を許可すると上記クリックジャッキングの脆弱性が発生するため、デフォルトではフレーム内表示を拒絶します。
 
 ### 2025/05/23 v1.87.2
