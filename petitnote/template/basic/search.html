@@ -108,7 +108,7 @@
 					<?php endif;?>
 					<?=h($res['com'])?>
 					<div class="res_button_wrap">
-						<form action="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" method="post" target="_blank"><input type="submit" value="<?php if($en):?>View thread<?php else:?>スレッドを表示<?php endif;?>"
+						<form action="./?resno=<?=h($res['no'])?>&resid=<?=h($res['first_posted_time'] ?? '')?>" method="post" target="_blank"><input type="submit" value="<?php if($en):?>View thread<?php else:?>スレッドを表示<?php endif;?>"
 							class="form_button"></form>
 					</div>
 				</div>
