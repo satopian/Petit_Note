@@ -30,7 +30,7 @@
 ?>
 	<article>
 	<!-- タイトル -->
-	<h2 class="article_title">
+	<h2 class="article_title" id="<?=h($ress[0]['first_posted_time'] ?? "")?>">
 		<a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a>
 	</h2>
 	<!-- 個別threadのループ -->
