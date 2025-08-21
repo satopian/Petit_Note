@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250717;
+$functions_ver=20250821;
 
 //編集モードログアウト
 function logout(): void {
@@ -810,7 +810,7 @@ function check_jpeg_exif($upfile): void {
 	$exif = @exif_read_data($upfile);// サポートされていないタグの時に`E_NOTICE`が発生するので`@`をつける
 	$orientation = $exif["Orientation"] ?? 1;
 	//位置情報はあるか?
-	$gpsdata_exists =(isset($exif['GPSLatitude']) && isset($exif['GPSLongitude'])); 
+	$gpsdata_exists =(isset($exif['GPSLatitude']) || isset($exif['GPSLongitude'])); 
 
 	if ($orientation === 1 && !$gpsdata_exists) {
 		//画像が回転していない、位置情報も存在しない
