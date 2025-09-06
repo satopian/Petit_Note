@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250821;
+$functions_ver=20250906;
 
 //編集モードログアウト
 function logout(): void {
@@ -1041,7 +1041,7 @@ function check_submission_interval(): void {
 	global $en;
 
 	// 1.2秒の間隔を設ける
-	$min_interval = 1.2;//1.2秒待機
+	$min_interval = 0.8;//0.8秒待機
 
 	session_sta();
 	if (!isset($_SESSION['form_display_time'])) {

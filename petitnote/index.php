@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.111.0';
+$petit_ver='v1.111.1';
 $petit_lot='lot.20250906';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250821){
+if(!isset($functions_ver)||$functions_ver<20250906){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -38,13 +38,13 @@ if(!isset($save_inc_ver)||$save_inc_ver<20250707){
 
 check_file(__DIR__.'/search.inc.php');
 require_once(__DIR__.'/search.inc.php');
-if(!isset($search_inc_ver)||$search_inc_ver<20250619){
+if(!isset($search_inc_ver)||$search_inc_ver<20250906){
 	die($en?'Please update search.inc.php to the latest version.':'search.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/sns_share.inc.php');
 require_once(__DIR__.'/sns_share.inc.php');
-if(!isset($search_inc_ver)||$search_inc_ver<20250906){
+if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20250906){
 	die($en?'Please update search.inc.php to the latest version.':'sns_share.inc.phpを最新版に更新してください。');
 }
 

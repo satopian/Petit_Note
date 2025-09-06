@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$search_inc_ver = 20250619;
+$search_inc_ver = 20250906;
 class processsearch
 {
 
