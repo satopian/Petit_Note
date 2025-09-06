@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.110.7';
-$petit_lot='lot.20250902.2';
+$petit_ver='v1.111.0';
+$petit_lot='lot.20250906';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -40,6 +40,12 @@ check_file(__DIR__.'/search.inc.php');
 require_once(__DIR__.'/search.inc.php');
 if(!isset($search_inc_ver)||$search_inc_ver<20250619){
 	die($en?'Please update search.inc.php to the latest version.':'search.inc.phpを最新版に更新してください。');
+}
+
+check_file(__DIR__.'/sns_share.inc.php');
+require_once(__DIR__.'/sns_share.inc.php');
+if(!isset($search_inc_ver)||$search_inc_ver<20250906){
+	die($en?'Please update search.inc.php to the latest version.':'sns_share.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/thumbnail_gd.inc.php');
@@ -204,9 +210,9 @@ switch($mode){
 	case 'logout':
 		return logout();
 	case 'set_share_server':
-		return set_share_server();
+		return sns_share::set_share_server();
 	case 'post_share_server':
-		return post_share_server();
+		return sns_share::post_share_server();
 	case 'before_misskey_note':
 		return misskey_note::before_misskey_note();
 	case 'misskey_note_edit_form':
@@ -2194,42 +2200,6 @@ function del(): void {
 	branch_destination_of_location();
 }
 
-//シェアするserverの選択画面
-function set_share_server(): void {
-	global $en,$skindir,$servers,$petit_lot,$boardname;
-	
-	//ShareするServerの一覧
-	//｢"ラジオボタンに表示するServer名","snsのserverのurl"｣
-	$servers= $servers ??
-	[
-	
-		["X","https://x.com"],
-		["Bluesky","https://bsky.app"],
-		["Threads","https://www.threads.net"],
-		["pawoo.net","https://pawoo.net"],
-		["fedibird.com","https://fedibird.com"],
-		["misskey.io","https://misskey.io"],
-		["xissmie.xfolio.jp","https://xissmie.xfolio.jp"],
-		["misskey.design","https://misskey.design"],
-		["nijimiss.moe","https://nijimiss.moe"],
-		["sushi.ski","https://sushi.ski"],
-	
-	];
-	//設定項目ここまで
-
-	$servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
-
-	$encoded_t=filter_input_data('GET',"encoded_t");
-	$encoded_u=filter_input_data('GET',"encoded_u");
-	$sns_server_radio_cookie=(string)filter_input_data('COOKIE',"sns_server_radio_cookie");
-	$sns_server_direct_input_cookie=(string)filter_input_data('COOKIE',"sns_server_direct_input_cookie");
-
-	$admin_pass= null;
-	//HTML出力
-	$templete='set_share_server.html';
-	include __DIR__.'/'.$skindir.$templete;
-	exit();
-}
 function saveimage(): void {
 	
 	$tool=filter_input_data('GET',"tool");

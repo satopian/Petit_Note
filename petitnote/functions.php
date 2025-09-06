@@ -485,12 +485,12 @@ function create_res($line,$options=[]): array {
 		'host' => admindel_valid() ? $host : '',
 		'userid' => $userid,
 		'check_elapsed_days' => $check_elapsed_days,
-		'encoded_name' => (!$isset_catalog || $isset_search) ? urlencode($name) : '',
-		'encoded_no' => (!$isset_catalog && $is_oya) ? urlencode('['.$no.']') : '',
-		'encoded_sub' => (!$isset_catalog && $is_oya) ? urlencode($sub) : '',
-		'encoded_u' => (!$isset_catalog && $is_oya) ? urlencode($root_url.'?resno='.$no) : '',//tweet
-		'encoded_item_u' => !$isset_catalog ? urlencode($root_url.'?resno='.$no.'&resid='.$first_posted_time) : '',//tweet
-		'encoded_t' => !$isset_catalog ? urlencode('['.$no.']'.$sub.($name ? ' by '.$name : '').' - '.$boardname) : '',
+		'encoded_name' => (!$isset_catalog || $isset_search) ? rawurlencode($name) : '',
+		'encoded_no' => (!$isset_catalog && $is_oya) ? rawurlencode('['.$no.']') : '',
+		'encoded_sub' => (!$isset_catalog && $is_oya) ? rawurlencode($sub) : '',
+		'encoded_u' => (!$isset_catalog && $is_oya) ? rawurlencode($root_url.'?resno='.$no) : '',//tweet
+		'encoded_item_u' => !$isset_catalog ? rawurlencode($root_url.'?resno='.$no.'&resid='.$first_posted_time) : '',//tweet
+		'encoded_t' => !$isset_catalog ? rawurlencode('['.$no.']'.$sub.($name ? ' by '.$name : '').' - '.$boardname) : '',
 		'oya' => $oya,
 		'webpimg' => $webpimg ? 'webp/'.$time.'t.webp' :false,
 		'hide_thumbnail' => $hide_thumbnail, //サムネイルにぼかしをかける時
@@ -1625,48 +1625,7 @@ function getTranslatedLayerName(): string {
 
 	return "Layer";
 }
-//SNSへ共有リンクを送信
-function post_share_server(): void {
-	global $en;
 
-	$sns_server_radio=(string)filter_input_data('POST',"sns_server_radio",FILTER_VALIDATE_URL);
-	$sns_server_radio_for_cookie=(string)filter_input_data('POST',"sns_server_radio");//directを判定するためurlでバリデーションしていない
-	$sns_server_radio_for_cookie=($sns_server_radio_for_cookie === 'direct') ? 'direct' : $sns_server_radio;
-	$sns_server_direct_input=(string)filter_input_data('POST',"sns_server_direct_input",FILTER_VALIDATE_URL);
-	$encoded_t=(string)filter_input_data('POST',"encoded_t");
-	$encoded_t=urlencode($encoded_t);
-	$encoded_u=(string)filter_input_data('POST',"encoded_u");
-	$encoded_u=urlencode($encoded_u);
-	setcookie("sns_server_radio_cookie",$sns_server_radio_for_cookie, time()+(86400*30),"","",false,true);
-	setcookie("sns_server_direct_input_cookie",$sns_server_direct_input, time()+(86400*30),"","",false,true);
-	$share_url='';
-
-	if($sns_server_radio){
-		if(in_array($sns_server_radio,["https://x.com","https://twitter.com"])){
-			$share_url="https://twitter.com/intent/tweet?text=";
-		} elseif($sns_server_radio === "https://bsky.app"){
-			$share_url="https://bsky.app/intent/compose?text=";
-		}	elseif($sns_server_radio === "https://www.threads.net"){
-			$share_url="https://www.threads.net/intent/post?text=";
-		} else {
-			$share_url=$sns_server_radio."/share?text=";
-		}
-	} elseif ($sns_server_direct_input){//直接入力時
-		if($sns_server_direct_input==="https://bsky.app"){
-			$share_url="https://bsky.app/intent/compose?text=";
-		} elseif($sns_server_direct_input==="https://www.threads.net"){
-			$share_url="https://www.threads.net/intent/post?text=";
-		} else {
-			$share_url=$sns_server_direct_input."/share?text=";
-		}
-	}
-	$share_url.=$encoded_t.'%20'.$encoded_u;
-	$share_url = filter_var($share_url, FILTER_VALIDATE_URL) ? $share_url : ''; 
-	if(!$share_url){
-		error($en ? "Please select an SNS sharing destination.":"SNSの共有先を選択してください。");
-	}
-	redirect($share_url);
-}
 //flockのラッパー関数
 function file_lock($fp, int $lock, array $options=[]): void {
 	global $en;

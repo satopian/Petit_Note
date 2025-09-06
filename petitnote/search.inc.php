@@ -37,7 +37,7 @@ class processsearch
 		$radio = self::$radio;
 
 		$page = $page < 0 ? 0 : $page;
-		$q = urldecode($q);
+		$q = rawurldecode($q);
 		$q_len = strlen((string)$q);
 		$q = 1000 < $q_len ? "" : $q;
 
@@ -112,7 +112,7 @@ class processsearch
 		}
 
 		$page = (int)$page;
-		$en_q = h(urlencode($q));
+		$en_q = h(rawurlencode($q));
 		$q = h($q);
 
 		$pageno = 0;
@@ -172,7 +172,7 @@ class processsearch
 		//検索可能最大数
 		$max_search = $max_search ?? 300;
 
-		$q = urldecode($q);
+		$q = rawurldecode($q);
 		$q_len = strlen((string)$q);
 		$q = 1000 < $q_len ? "" : $q;
 		$check_q = self::create_formatted_text_for_search($q);
