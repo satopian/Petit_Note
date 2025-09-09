@@ -69,6 +69,179 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 その他の機能追加が特に必要ではない方もアップデートをお願いします。    
 
 ## 履歴
+### 2025/09/07 v1.111.1
+### PHP8.5ベータ2でテスト
+- 11月にリリースされるPHP8.5のベータ版でテストを行い正常に動作する事を確認しました。  
+エラーや警告は発生しません。    
+### 待機時間を1.2秒から0.8秒に短縮
+- 画面が表示されてからボタン押下が可能になるまでの時間を1.2秒から0.8秒に短縮しました。  
+この待機時間はbot対策のために導入されましたが、1.2秒では人による操作でも｢少し待ってください｣というエラーメッセージが頻繁に表示される事があり、そのため、0.8秒待機に短縮されました。
+### SNS連携時に空白が`+`のまま投稿される問題を修正
+- スマホでthreadsに｢SNSで共有する｣と、半角スペースが記号の`+`に変換されて投稿される問題を修正しました。   
+スペースを`+`に変換しないURLエンコードに変更し、この問題を解決しました。
+### SNSで共有機能のファイルを分離
+- コードの保守を容易にするため｢SNSで共有する｣機能のファイルを分離しました。
+### Klecks更新
+- Klecksを最新版にアップデートしました。
+
+
+### 2025/09/02 v1.110.7
+### ChickenPaint Be更新
+#### バグ修正
+- テクスチャの輝度/コントラストのスライダーが正しく動作しなくなっていたのを修正しました。
+
+<img width="506" height="224" alt="image" src="https://github.com/user-attachments/assets/4d44ec51-72fc-457f-a06d-8b3c03230de0" />
+
+#### CSSを整理
+- Bootstrap v5.3.0からv5.3.8にCSSを変更。
+- BootstrapのCSSとChickenPaint独自のCSSが混在していていたのを可能な範囲で分離して開発が継続できるようにしました。
+
+[ChickenPaint Beの新機能 表示の左右反転 - YouTube](https://www.youtube.com/watch?v=ATRIBAJKq5c)  
+  
+[ChickenPaint Beの新機能 新しくなったズームと移動 - YouTube](https://www.youtube.com/watch?v=PPjAfSb5IYA)    
+  
+[ChickenPaint Beの新機能 選択範囲パネル･ズームと回転パネル - YouTube](https://www.youtube.com/watch?v=0fipzBPHCRk)
+
+
+### 2025/09/02 v1.110.5
+### ChickenPaint Be更新
+- ツールオプションパレットのボタンにアイコンを追加しました。
+- ライトボタンの色が非アクティブレイヤーのグレーと同じになるように調整しました。
+
+<img width="211" height="258" alt="image" src="https://github.com/user-attachments/assets/95c21cde-1fec-4543-8702-f78fbce9bd4b" />
+<img width="209" height="260" alt="image" src="https://github.com/user-attachments/assets/c3f9c6ff-90a8-426d-b52b-8be2d876d4d1" /><br><br>
+  
+
+
+### 2025/08/29 v1.110.2
+### ChickenPaint Be更新
+
+- 回転角をスライダーで180度にするときに、実際のキャンバスの角度と同期しようとして+180度と-180度が交互に入れ替わりちらつく問題を修正しました。
+
+<img width="212" height="261" alt="image" src="https://github.com/user-attachments/assets/49280046-531a-4bd8-b857-b6091ec613f4" /><br>
+  
+
+### 2025/08/28 v1.110.1
+### ChickenPaint Be更新
+- ボタンのサイズを調整しました。
+  
+<img width="215" height="268" alt="image" src="https://github.com/user-attachments/assets/dfc69293-e710-4c15-a33c-c68d16644961" /><br>
+  
+- 2025年のブラウザ環境には必要がない古いブラウザのための拡大縮小時のスムージング処理のポリフィルを削除しました。
+- Bootstrapを最新版のv5.3.8にアップデートしました。  
+
+### Klecks更新
+ - 選択範囲内にのみブラシで描画する事ができるようになりました。   
+ (ビルドと日本語訳のみさとぴあ)  
+
+
+### 2025/08/26 v1.109.0
+### ChickenPaint Be更新
+- ボタンの色を調整しました。
+
+<img width="462" height="391" alt="image" src="https://github.com/user-attachments/assets/8f7b795d-fd6a-4bcb-965a-26ba79d9249c" /><br>
+   
+### Klecks更新
+
+- 選択範囲でできる事が多くなりました。選択範囲内の画像の色を変更したり、選択範囲内の画像を変形する事ができるようになりました。  
+
+
+### 2025/08/24 v1.108.7
+### ChickenPaint Be更新
+- ボタンの色を調整しました。
+- ｢表示をリセット｣を｢表示を初期化｣に変更しました。
+
+<img width="459" height="387" alt="image" src="https://github.com/user-attachments/assets/f81fc01c-3c72-4b4e-8e2b-23e877640247" />
+
+
+### 2025/08/22 v1.108.3
+### ChickenPaint Beのバグを修正
+- ズームと回転パネルのスライダーが同期しないケースがあったのを修正しました。
+
+
+### 2025/08/20 v1.108.0
+- GPS情報の消去条件を変更しました。
+これまでは｢緯度と経度の両方が存在する｣場合にのみGPSデータを消去していました。
+これからは｢緯度または経度のいずれかが存在する｣場合にGPSデータを消去します。
+経度だけ、緯度だけというGPS情報は基本的に存在しないはずですが、なんらかのデータ破損で片方だけになった時にもGPS情報を削除します。
+
+### 2025/08/20 v1.107.6
+### ChickenPaint Be更新
+#### ツールオプションパレットに｢ズームと回転｣を追加
+- ツールオプションパレットに｢ズームと回転｣を追加しました。
+手のひらツール･回転ツール選択時、スペースキー押下時などに表示されます。  
+ズームの倍率･キャンバスの回転角度をスライダーで操作できます。   
+｢表示をリセット｣ボタン押下で、｢拡大率｣｢回転角度｣｢表示の左右反転｣をすべてリセットします。
+   
+<img width="208" height="258" alt="image" src="https://github.com/user-attachments/assets/edfdb64e-14ea-49de-967c-09e22f88a3a8" /><br>
+
+#### 回転をリセットするショートカットキー
+- ALT+0で、回転をリセットする事ができるようになりました。
+    
+[ChickenPaint Beの新機能 表示の左右反転 - YouTube](https://www.youtube.com/watch?v=ATRIBAJKq5c)  
+  
+[ChickenPaint Beの新機能 新しくなったズームと移動 - YouTube](https://www.youtube.com/watch?v=PPjAfSb5IYA)    
+  
+
+### 2025/08/16 v1.106.6
+### ChickenPaint Be更新
+- 選択ツール使用時に｢縦横比を維持｣するチェックボックが表示されるようになりました。  
+変形ボタンが青色になりました。  
+Enterキー押下で変形します。  
+  
+<img width="209" height="261" alt="image" src="https://github.com/user-attachments/assets/7119cec0-6b04-4aa4-a2a2-3366c63cac50" /><br>
+    
+[ChickenPaint Beの新機能 表示の左右反転 - YouTube](https://www.youtube.com/watch?v=ATRIBAJKq5c)  
+  
+[ChickenPaint Beの新機能 新しくなったズームと移動 - YouTube](https://www.youtube.com/watch?v=PPjAfSb5IYA)    
+  
+
+### 2025/08/16 v1.106.3
+### ChickenPaint Be更新
+- 変形操作時に｢縦横比を維持｣するチェックボックスが表示されるようになりました。  
+  
+<img width="216" height="267" alt="image" src="https://github.com/user-attachments/assets/01ca9563-2c8b-4a75-8e4c-8ebd7e372657" /><br>
+  
+[ChickenPaint Beの新機能 表示の左右反転 - YouTube](https://www.youtube.com/watch?v=ATRIBAJKq5c)  
+  
+[ChickenPaint Beの新機能 新しくなったズームと移動 - YouTube](https://www.youtube.com/watch?v=PPjAfSb5IYA)    
+  
+
+### 2025/08/16 v1.106.2
+### ChickenPaint Be更新
+#### ワークフローを改善
+- ツールオプションパレットに「すべて選択」「選択解除」「変形」ボタンが表示されるようになりました（長方形選択ツール・移動ツール使用時）。
+
+<img width="402" height="318" alt="image" src="https://github.com/user-attachments/assets/26d9cb5f-b567-4fbf-98ce-ca544800df78" />
+
+
+### 2025/08/14 v1.105.1
+### ChickenPaint Be更新
+- 表示の左右反転時に変形操作を行い変形対象を回転する時に、ペンの回転方向と対象の回転方向が逆になるバグを修正しました。
+- 左右反転時に←↓↑→方向キーで対象を移動する時に、左右逆に移動するバグを修正しました。
+  
+[ChickenPaint Beの新機能 表示の左右反転 - YouTube](https://www.youtube.com/watch?v=ATRIBAJKq5c)  
+  
+[ChickenPaint Beの新機能 新しくなったズームと移動 - YouTube](https://www.youtube.com/watch?v=PPjAfSb5IYA)    
+  
+
+### 2025/08/13 v1.105.0
+### ChickenPaint Be更新 
+#### 作業効率を劇的に改善する｢表示の左右反転｣機能を追加
+- ChickenPaint Beを更新しました。  
+- これまでは画像全体を反転するためレイヤーを1枚ずつ左右反転していました。   
+そのため、レイヤーが50枚ある時は、50枚のレイヤーを1枚ずつ反転する必要がありました。
+- 今回追加された｢表示の左右反転｣は、全レイヤーの表示を一括で反転します。  
+- ｢表示の｣左右反転のため、実際の画像には変更が加えられず、アンドゥの履歴にも残りません。  
+- 左右反転ボタンに赤枠が付いている時が反転状態です。
+- 赤枠が付いている時の画像を正しい向きと誤認すると、反転した画像が投稿されてしまいますのでご注意ください。    
+
+- 今回追加した｢表示の左右反転｣機能は、一般的なペイントツールでよく使われている機能です。  
+  
+[ChickenPaint Beの新機能 表示の左右反転 - YouTube](https://www.youtube.com/watch?v=ATRIBAJKq5c)  
+  
+[ChickenPaint Beの新機能 新しくなったズームと移動 - YouTube](https://www.youtube.com/watch?v=PPjAfSb5IYA)    
+ 
 ### 2025/08/10 v1.102.7
 ### ChickenPaint Beのバグを修正
 - 変形操作中にスペースキー押下で一時的なパンモード(キャンバスの移動)に入った時に、ペン･マウスを移動するとカーソルがたびたび入れ替わりちらつく問題を修正しました。
