@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.111.1';
-$petit_lot='lot.20250906';
+$petit_ver='v1.112.5';
+$petit_lot='lot.20250909';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2463,6 +2463,7 @@ function res (): void {
 	$find_hide_thumbnail=false;	
 	$og_sub = '';
 	$og_name = '';
+	$og_resid = '';
 
 	check_open_no($resno);
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
@@ -2502,6 +2503,7 @@ function res (): void {
 			$og_hide_thumbnail = $_res['hide_thumbnail'];
 			$og_sub = $_res['sub'];
 			$og_name = $_res['name'];
+			$og_resid = $_res['oya'] === 'res' ? $resid : ""; //oyaの時はresidを出さない
 		}
 		$out[0][]=$_res;
 		$out[0][0]['find_hide_thumbnail']=$find_hide_thumbnail;
@@ -2510,14 +2512,6 @@ function res (): void {
 	if(empty($out[0])||$out[0][0]['oya']!=='oya'){
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
-	//投稿者名の特殊文字を全角に
-	foreach($rresname as $key => $val){
-		$rep=str_replace('&quot;','”',$val);
-		$rep=str_replace('&#039;','’',$rep);
-		$rep=str_replace('&lt;','＜',$rep);
-		$rep=str_replace('&gt;','＞',$rep);
-		$rresname[$key]=str_replace('&amp;','＆',$rep);
-	}			
 
 	$resname = !empty($rresname) ? implode(($en?'-san':'さん').' ',$rresname) : false; // レス投稿者一覧
 

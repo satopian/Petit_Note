@@ -208,7 +208,7 @@
 				<script>
 				const add_to_com = ()=> {
 					const textField = document.getElementById("res_com");
-					const postername = "<?=h($resname)?><?php if($en):?>-san<?php else:?>さん<?php endif;?>";
+					const postername = <?= json_encode(htmlspecialchars_decode($resname) . ($en ? '-san' : 'さん'),JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 					// テキストフィールドの現在のカーソル位置を取得
 					const startPos = textField.selectionStart;
 					const endPos = textField.selectionEnd;
