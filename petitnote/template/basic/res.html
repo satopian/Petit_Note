@@ -10,7 +10,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta property="og:title" content="[<?= h($out[0][0]['no'])?>] <?= h(s($og_sub ?? ""))?> by <?= h($og_name ?? "")?> - <?=h($boardname)?>">
 <meta property="og:type" content="article">
-<meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($out[0][0]['no'])?>">
+<meta property="og:url" content="<?=h($root_url)?>?resno=<?= h($out[0][0]['no'])?><?= (isset($og_resid) && $og_resid) ? '&resid='.h($og_resid) : '' ?>">
 <!-- 閲覧注意 またはNSFWが設定されている時は ogp imageを表示しない -->
 <?php if(!empty($og_img) && !(!empty($set_nsfw)||!empty($og_hide_thumbnail)||$set_all_images_to_nsfw)):?>
 <meta property="og:image" content="<?=h($root_url)?>src/<?=h($og_img)?>">
@@ -22,7 +22,7 @@
 <link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
 <?php include __DIR__.'/parts/head_preload_css_js.html';?>
 <?php include __DIR__.'/parts/nsfw_css_control.html';?>
-<title>[<?= h($out[0][0]['no'])?>] <?= h($out[0][0]['sub'])?> by <?= h($out[0][0]['name'])?> - <?=h($boardname)?></title>
+<title>[<?= h($out[0][0]['no'])?>] <?= h($og_sub)?> by <?= h($og_name)?> - <?=h($boardname)?></title>
 </head>
 <body>
 <div class="container" id="top">
