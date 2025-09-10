@@ -84,7 +84,7 @@
 				<article>
 				<div class="s_article">
 					<div class="s_comments_title_wrap">
-					<h3><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank"><?=h($res['sub'])?>
+					<h3><a href="./?resno=<?=h($res['no'])?>&resid=<?=h($res['first_posted_time'] ?? '')?>" target="_blank"><?=h($res['sub'])?>
 					<?=h($res['date'])?></a></h3>
 						<br>
 						<h3><span class="info_name"><a
@@ -92,7 +92,7 @@
 								target="_blank"><?=h($res['name'])?></a></span></h3>
 					</div>
 					<?php if($res['img']):?>
-					<div class="s_posted_image<?php if($res['hide_thumbnail']):?> hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>#<?=h($res['time'])?>" target="_blank">
+					<div class="s_posted_image<?php if($res['hide_thumbnail']):?> hide_thumbnail<?php endif;?>"><a href="./?resno=<?=h($res['no'])?>&resid=<?=h($res['first_posted_time'] ?? '')?>" target="_blank">
 						<?php if($res['webpimg']):?>
 						<picture>
 							<source srcset="<?=h($res['webpimg'])?>" type="image/webp">
