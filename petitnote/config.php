@@ -299,8 +299,8 @@ $use_hide_painttime = false;
 // すべての描画時間の非表示設定
 // する: trueですべての投稿のペイント時間を非表示にします。
 
-$all_hide_painttime = true;
-// $all_hide_painttime = false;
+// $all_hide_painttime = true;
+$all_hide_painttime = false;
 
 
 // 編集しても投稿日時を変更しないようにする 
