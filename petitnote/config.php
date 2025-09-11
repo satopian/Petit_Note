@@ -289,12 +289,19 @@ $nsfw_checked = true;
 // $set_all_images_to_nsfw = true;
 $set_all_images_to_nsfw = false;
 
-// 描画時間非表示の設定
+// 描画時間の非表示設定
 // する: trueで投稿時にペイント時間の表示/非表示を切り替える事ができるようになります。
 // する: true しない: false
 
 // $use_hide_painttime = true;
 $use_hide_painttime = false;
+
+// すべての描画時間の非表示設定
+// する: trueですべての投稿のペイント時間を非表示にします。
+
+$all_hide_painttime = true;
+// $all_hide_painttime = false;
+
 
 // 編集しても投稿日時を変更しないようにする 
 // 日記などで日付が変わると困る人のための設定

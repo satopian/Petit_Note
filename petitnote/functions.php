@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250906;
+$functions_ver=20250912;
 
 //編集モードログアウト
 function logout(): void {
@@ -403,7 +403,7 @@ function is_paint_tool_name($tool): string {
 
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line,$options=[]): array {
-	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw;
+	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw,$all_hide_painttime ;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 
 	$time = basename($time);
@@ -465,8 +465,8 @@ function create_res($line,$options=[]): array {
 		'url' => $url ? filter_var($url,FILTER_VALIDATE_URL) : '',
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail_img,//webp or jpegのサムネイルのファイル名
-		'painttime' => $painttime ? $painttime['ja'] : '',
-		'painttime_en' => $painttime ? $painttime['en'] : '',
+		'painttime' => (!$all_hide_painttime && $painttime) ? $painttime['ja'] : '',
+		'painttime_en' => (!$all_hide_painttime && $painttime) ? $painttime['en'] : '',
 		'paintsec' => $paintsec,
 		'w' => ($w && ctype_digit($w)) ? $w :'',
 		'h' => ($h && ctype_digit($h)) ? $h :'',
