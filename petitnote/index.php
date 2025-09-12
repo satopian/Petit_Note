@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.116.0';
-$petit_lot='lot.20250912.1';
+$petit_ver='v1.116.2';
+$petit_lot='lot.20250912.3';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1078,7 +1078,7 @@ function paintcom(): void {
 
 	$adminpost = adminpost_valid();
 	$use_hide_painttime = $use_hide_painttime ?? false;
-	$use_hide_painttime = ($adminpost || $use_hide_painttime);
+	$use_hide_painttime = !$all_hide_painttime && ($adminpost || $use_hide_painttime);
 
 	//フォームの表示時刻をセット
 	set_form_display_time();
