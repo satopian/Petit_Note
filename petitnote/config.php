@@ -296,7 +296,7 @@ $set_all_images_to_nsfw = false;
 // $use_hide_painttime = true;
 $use_hide_painttime = false;
 
-// すべての描画時間の非表示設定
+// すべての描画時間を非表示にする
 // する: trueですべての投稿のペイント時間を非表示にします。
 
 // $all_hide_painttime = true;
