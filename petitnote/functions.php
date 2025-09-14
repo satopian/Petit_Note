@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250912;
+$functions_ver=20250914;
 
 //編集モードログアウト
 function logout(): void {
@@ -403,7 +403,7 @@ function is_paint_tool_name($tool): string {
 
 //ログ出力の前処理 行から情報を取り出す
 function create_res($line,$options=[]): array {
-	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw,$all_hide_painttime ;
+	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw,$all_hide_painttime,$hide_userid;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
 
 	$time = basename($time);
@@ -483,7 +483,7 @@ function create_res($line,$options=[]): array {
 		'date' => $date,
 		'datetime' => $datetime,
 		'host' => admindel_valid() ? $host : '',
-		'userid' => $userid,
+		'userid' => !$hide_userid ? $userid : '',
 		'check_elapsed_days' => $check_elapsed_days,
 		'encoded_name' => (!$isset_catalog || $isset_search) ? rawurlencode($name) : '',
 		'encoded_no' => (!$isset_catalog && $is_oya) ? rawurlencode('['.$no.']') : '',

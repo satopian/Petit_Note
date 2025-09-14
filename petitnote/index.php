@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.116.6';
-$petit_lot='lot.20250914';
+$petit_ver='v1.117.0';
+$petit_lot='lot.20250914.1';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20250912){
+if(!isset($functions_ver)||$functions_ver<20250914){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -125,6 +125,7 @@ $darkmode_by_default = $darkmode_by_default ?? false;
 $sitename = $sitename ?? '';
 $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
 $all_hide_painttime  =  $all_hide_painttime  ?? false;
+$hide_userid  =  $hide_userid  ?? false;
 $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ? $mode :(string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);

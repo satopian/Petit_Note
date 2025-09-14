@@ -302,6 +302,11 @@ $use_hide_painttime = false;
 // $all_hide_painttime = true;
 $all_hide_painttime = false;
 
+// ユーザーIDを非表示にする
+// する: trueですべての投稿のユーザーIDを非表示にします。
+
+// $hide_userid = true;
+$hide_userid = false;
 
 // 編集しても投稿日時を変更しないようにする 
 // 日記などで日付が変わると困る人のための設定
