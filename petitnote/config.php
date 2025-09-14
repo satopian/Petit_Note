@@ -298,12 +298,14 @@ $use_hide_painttime = false;
 
 // すべての描画時間を非表示にする
 // する: trueですべての投稿のペイント時間を非表示にします。
+// 管理者は設定に関わらずペイント時間を表示できます。
 
 // $all_hide_painttime = true;
 $all_hide_painttime = false;
 
 // ユーザーIDを非表示にする
 // する: trueですべての投稿のユーザーIDを非表示にします。
+// 管理者は設定に関わらずユーザーIDを表示できます。
 
 // $hide_userid = true;
 $hide_userid = false;
