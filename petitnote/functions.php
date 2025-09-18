@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250914;
+$functions_ver=20250918;
 
 //編集モードログアウト
 function logout(): void {
