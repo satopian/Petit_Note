@@ -971,10 +971,14 @@ function check_same_origin(): void {
 	if(!$usercode || ($usercode!==$c_usercode)&&($usercode!==$session_usercode)){
 		error($en?"User code mismatch.":"ユーザーコードが一致しません。");
 	}
+
+	$sec_fetch_site = $_SERVER['HTTP_SEC_FETCH_SITE'] ?? '';
+	$same_origin = ($sec_fetch_site === 'same-origin');
+	
 	if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
 		error($en?'Your browser is not supported. ':'お使いのブラウザはサポートされていません。');
 	}
-	if(parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_HOST) !== $_SERVER['HTTP_HOST']){
+	if(!$same_origin && (parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_HOST) !== $_SERVER['HTTP_HOST'])){
 		error($en?"The post has been rejected.":'拒絶されました。');
 	}
 }

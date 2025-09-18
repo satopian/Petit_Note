@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20250707;
+$save_inc_ver=20250918;
 class image_save{
 
 	private $security_timer,$imgfile,$en,$count,$errtext,$session_usercode; // プロパティとして宣言
@@ -114,10 +114,14 @@ class image_save{
 		if(!$this->session_usercode || !$cookie_usercode || ($this->session_usercode !== $cookie_usercode)){
 			$this->error_msg($this->en ? "User code has been reissued.\nPlease try again." : "ユーザーコードを再発行しました。\n再度投稿してみてください。");
 		}
+
+		$sec_fetch_site = $_SERVER['HTTP_SEC_FETCH_SITE'] ?? '';
+		$same_origin = ($sec_fetch_site === 'same-origin');
+		
 		if(!isset($_SERVER['HTTP_ORIGIN']) || !isset($_SERVER['HTTP_HOST'])){
 			$this->error_msg($this->en ? "Your browser is not supported." : "お使いのブラウザはサポートされていません。");
 		}
-		if(parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_HOST) !== $_SERVER['HTTP_HOST']){
+		if(!$same_origin && (parse_url($_SERVER['HTTP_ORIGIN'], PHP_URL_HOST) !== $_SERVER['HTTP_HOST'])){
 			$this->error_msg($this->en ? "The post has been rejected." : "拒絶されました。");
 		}
 
