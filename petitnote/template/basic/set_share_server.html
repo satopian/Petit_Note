@@ -32,6 +32,11 @@
 		-ms-user-select: none;
 		user-select: none;
 	}
+	label.ogp_show_nsfw{
+		font-size: 16px;
+		display: inline-block;
+		margin: 1em 0 0 0;
+	}
 	</style>
 	<title><?=h($boardname)?></title>
 </head>
@@ -51,6 +56,10 @@
 <input type="hidden" name="encoded_u" value="<?=h($encoded_u)?>">
 <input type="hidden" name="mode" value="post_share_server">
 <input type="submit" value="<?php if($en):?>Share<?php else:?>シェア<?php endif;?>" class="post_share_button">
+<?php if(!empty($hide_thumbnail) || !empty($set_nsfw_hide_flag)):?>
+	<input type="checkbox" name="ogp_show_nsfw" id="ogp_show_nsfw">
+	<label for="ogp_show_nsfw" class="ogp_show_nsfw"><?php if($en):?>Check to share NSFW images as well<?php else:?>閲覧注意画像も共有する場合はチェック</label><?php endif;?>
+<?php endif;?>
 </form>
 <?php include __DIR__.'/parts/footer_js.html';?>
 </body>

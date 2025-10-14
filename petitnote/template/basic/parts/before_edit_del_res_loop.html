@@ -70,7 +70,7 @@
 			<?php if($res['img']):?>
 			<div class="clear"></div>
 			<div class="res_button_wrap">
-					<a href="?mode=set_share_server&encoded_t=<?=h($res['encoded_t'])?>&amp;encoded_u=<?=h($res['encoded_item_u']??'')?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow noopener"><span class="icon-share-from-square-solid"></span>
+					<a href="?mode=set_share_server&encoded_t=<?=h($res['encoded_t'])?>&amp;encoded_u=<?=h($res['encoded_item_u']??'')?><?=h($res['hide_thumbnail'] ? "&amp;hide_thumbnail=on" : "")?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow noopener"><span class="icon-share-from-square-solid"></span>
 					<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
 				<!-- 最後のループの時にhr -->
 			</div>

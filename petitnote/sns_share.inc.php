@@ -9,8 +9,7 @@ class sns_share
 	//シェアするserverの選択画面
 	public static function set_share_server(): void
 	{
-		global $en, $skindir, $servers, $petit_lot, $boardname;
-
+		global $en, $skindir, $servers, $petit_lot, $boardname,$set_nsfw_hide_flag;
 		//ShareするServerの一覧
 		//｢"ラジオボタンに表示するServer名","snsのserverのurl"｣
 		$servers = $servers ??
@@ -36,7 +35,7 @@ class sns_share
 		$encoded_u = filter_input_data('GET', "encoded_u");
 		$sns_server_radio_cookie = (string)filter_input_data('COOKIE', "sns_server_radio_cookie");
 		$sns_server_direct_input_cookie = (string)filter_input_data('COOKIE', "sns_server_direct_input_cookie");
-
+		$hide_thumbnail = filter_input_data('GET', "hide_thumbnail", FILTER_VALIDATE_BOOLEAN);
 		$admin_pass = null;
 		//HTML出力
 		$templete = 'set_share_server.html';
@@ -84,6 +83,8 @@ class sns_share
 		if (!$share_url) {
 			error($en ? "Please select an SNS sharing destination." : "SNSの共有先を選択してください。");
 		}
+		$ogp_show_nsfw = filter_input_data("POST", "ogp_show_nsfw", FILTER_VALIDATE_BOOLEAN);
+		$share_url .= $ogp_show_nsfw ? urlencode('&ogp_show=on') : '';
 		redirect($share_url);
 	}
 }
