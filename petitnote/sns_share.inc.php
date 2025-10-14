@@ -2,14 +2,15 @@
 // Mastodon、misskey等の分散型SNSへ記事を共有するクラス
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
-$sns_share_inc_ver = 20250906;
+$sns_share_inc_ver = 20251014;
 class sns_share
 {
 
 	//シェアするserverの選択画面
 	public static function set_share_server(): void
 	{
-		global $en, $skindir, $servers, $petit_lot, $boardname,$set_nsfw_hide_flag;
+		global $en, $skindir, $servers, $petit_lot, $boardname,$set_nsfw_hide_flag,$age_check_required_to_view;
+		
 		//ShareするServerの一覧
 		//｢"ラジオボタンに表示するServer名","snsのserverのurl"｣
 		$servers = $servers ??
@@ -36,6 +37,10 @@ class sns_share
 		$sns_server_radio_cookie = (string)filter_input_data('COOKIE', "sns_server_radio_cookie");
 		$sns_server_direct_input_cookie = (string)filter_input_data('COOKIE', "sns_server_direct_input_cookie");
 		$hide_thumbnail = filter_input_data('GET', "hide_thumbnail", FILTER_VALIDATE_BOOLEAN);
+		//年齢制限が設定されている時は、閲覧注意画像を共有するチェックボックスを表示しない
+		$set_nsfw_hide_flag = $age_check_required_to_view ? false : $set_nsfw_hide_flag;
+		$hide_thumbnail = $age_check_required_to_view ? false : $hide_thumbnail; 
+		
 		$admin_pass = null;
 		//HTML出力
 		$templete = 'set_share_server.html';
@@ -45,7 +50,7 @@ class sns_share
 
 	public static function post_share_server(): void
 	{
-		global $en;
+		global $en,$age_check_required_to_view;
 
 		$sns_server_radio = (string)filter_input_data('POST', "sns_server_radio", FILTER_VALIDATE_URL);
 		$sns_server_radio_for_cookie = (string)filter_input_data('POST', "sns_server_radio"); //directを判定するためurlでバリデーションしていない
@@ -84,6 +89,7 @@ class sns_share
 			error($en ? "Please select an SNS sharing destination." : "SNSの共有先を選択してください。");
 		}
 		$ogp_show_nsfw = filter_input_data("POST", "ogp_show_nsfw", FILTER_VALIDATE_BOOLEAN);
+		$ogp_show_nsfw = $age_check_required_to_view ? false : $ogp_show_nsfw;
 		$share_url .= $ogp_show_nsfw ? urlencode('&ogp_show=on') : '';
 		redirect($share_url);
 	}

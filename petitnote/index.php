@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.128.2';
+$petit_ver='v1.128.3';
 $petit_lot='lot.20251014';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -44,7 +44,7 @@ if(!isset($search_inc_ver)||$search_inc_ver<20250906){
 
 check_file(__DIR__.'/sns_share.inc.php');
 require_once(__DIR__.'/sns_share.inc.php');
-if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20250906){
+if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20251014){
 	die($en?'Please update search.inc.php to the latest version.':'sns_share.inc.phpを最新版に更新してください。');
 }
 
@@ -2436,7 +2436,7 @@ function view(): void {
 //レス画面
 function res (): void {
 	global $use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
-	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$set_nsfw_hide_flag,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary,$nsfw_checked;
+	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$set_nsfw_hide_flag,$age_check_required_to_view,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary,$nsfw_checked;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw;
 
 	aikotoba_required_to_view();
@@ -2452,7 +2452,8 @@ function res (): void {
 	$res_catalog = $misskey_note || (bool)filter_input_data('GET','res_catalog',FILTER_VALIDATE_BOOLEAN);
 	$resid = (string)filter_input_data('GET','resid');
 	$ogp_show_nsfw = (string)filter_input_data('GET','ogp_show');
-
+	//年齢確認が必要な設定の時は表示フラグがonの時にもOGP画像を非表示のままにする
+	$ogp_show_nsfw = $age_check_required_to_view ? false : $ogp_show_nsfw;
 	session_sta();
 
 	$_SESSION['current_resid']	= $resid;
