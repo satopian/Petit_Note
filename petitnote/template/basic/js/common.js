@@ -45,29 +45,6 @@ const res_form_submit = (event, formId = "res_form") => {
 
         submitBtn.disabled = true; // 送信ボタンを無効化
 
-        const max_file_size = form.querySelector('input[name="MAX_FILE_SIZE"]');
-        let maxSize = 0;
-        if (max_file_size instanceof HTMLInputElement) {
-            maxSize = parseInt(max_file_size?.value ?? "0", 10); //10進数に変換
-        }
-
-        const fileInput = form.querySelector('input[type="file"]');
-        if (
-            fileInput instanceof HTMLInputElement &&
-            fileInput.files &&
-            fileInput.files.length > 0
-        ) {
-            const file = fileInput.files[0];
-            if (maxSize && file.size > maxSize) {
-                elem_error_message.innerText = en
-                    ? "The file is too large."
-                    : "ファイルサイズが大きすぎます。";
-                fileInput.value = "";
-                submitBtn.disabled = false; // 再度有効化しておく
-                return;
-            }
-        }
-
         //自動化ツールによる自動送信を拒否する
         const languages_length0 = navigator.languages.length === 0;
         const webdriver = navigator.webdriver;
@@ -261,7 +238,90 @@ if (typeof paintcom !== "undefined") {
 }
 
 if (elem_form_submit && (elem_attach_image || paint_com)) {
-    const updateFormStyle = () => {
+    const updateFormStyle = (e) => {
+        //画像プレビュー表示
+        const preview = document.getElementById("attach_preview");
+        //閲覧注意に設定されている時は枠線を付ける
+        if (preview instanceof HTMLImageElement) {
+            if (
+                elem_attach_image instanceof HTMLInputElement &&
+                elem_attach_image.files &&
+                elem_attach_image.files.length > 0
+            ) {
+                if (
+                    elem_hide_thumbnail instanceof HTMLInputElement &&
+                    elem_hide_thumbnail.checked
+                ) {
+                    preview.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
+                    preview.style.backgroundColor = "white"; // ボーダーを設定
+                    preview.style.borderRadius = "3px"; // ボーダーを設定
+                } else {
+                    preview.style.border = ""; // ボーダーを設定
+                    preview.style.backgroundColor = ""; // ボーダーを設定
+                    preview.style.borderRadius = ""; // ボーダーを設定
+                }
+            } else {
+                preview.style.border = ""; // ボーダーを設定
+                preview.style.backgroundColor = ""; // ボーダーを設定
+                preview.style.borderRadius = ""; // ボーダーを設定
+                preview.src = ""; // メモリ上の画像を表示
+                preview.style.marginTop = "";
+                preview.style.marginBottom = "";
+            }
+        }
+
+        //ファイルサイズチェック
+        const form = document.getElementById("res_form");
+        const max_file_size = form?.querySelector(
+            'input[name="MAX_FILE_SIZE"]'
+        );
+        let maxSize = 0;
+        if (max_file_size instanceof HTMLInputElement) {
+            maxSize = parseInt(max_file_size?.value ?? "0", 10); //10進数に変換
+        }
+        const file =
+            elem_attach_image instanceof HTMLInputElement
+                ? elem_attach_image?.files?.[0]
+                : null;
+        const elem_error_message = document.getElementById("error_message");
+        if (elem_error_message) {
+            if (maxSize && file && file.size > maxSize) {
+                if (elem_attach_image instanceof HTMLInputElement) {
+                    elem_error_message.innerText = en
+                        ? "The file is too large."
+                        : "ファイルサイズが大きすぎます。";
+                    elem_attach_image.value = "";
+                    if (preview instanceof HTMLImageElement) {
+                        preview.style.border = ""; // ボーダーを設定
+                        preview.style.backgroundColor = ""; // ボーダーを設定
+                        preview.style.borderRadius = ""; // ボーダーを設定
+                        preview.src = ""; // メモリ上の画像を表示
+                        preview.style.marginTop = "";
+                        preview.style.marginBottom = "";
+                    }
+                    return;
+                }
+            }
+            elem_error_message.innerText = ""; //エラーメッセージをクリア
+        }
+
+        //画像プレビュー表示
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            if (reader && preview instanceof HTMLImageElement) {
+                const result = e.target && e.target.result;
+                if (typeof result === "string") {
+                    preview.src = result; // メモリ上の画像を表示
+                    preview.style.marginTop = "15px";
+                    preview.style.marginBottom = "6px";
+               }
+            }
+        };
+        if (file instanceof Blob) {
+            reader.readAsDataURL(file);
+        }
+
+        //閲覧注意に設定されている時は枠線を付ける
         if (
             paint_com ||
             (elem_attach_image instanceof HTMLInputElement &&
