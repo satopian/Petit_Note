@@ -121,7 +121,7 @@ Size:
 <?php if(($use_upload && $use_res_upload) || $adminpost):?>
 <input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
 <input type="file" name="imgfile" size="35" accept="image/*" class="form_button" id="attach_image"><button type="button" class="form_button" id="remove_attachment_btn"><?php if($en):?>Remove<?php else:?>削除<?php endif;?></button>
-<img id="attach_preview" style="max-width:100px;max-height:100px; display:block;margin-left:auto">
+<img id="attach_preview" style="max-width:200px;max-height:150px; display:block;margin-left:auto">
 <?php endif;?>
 <?php if(!$sage_all):?>
 	<span>

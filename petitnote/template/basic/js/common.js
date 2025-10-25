@@ -232,6 +232,8 @@ const elem_check_nsfw = document.getElementById("check_nsfw");
 const elem_hide_thumbnail = document.getElementById("hide_thumbnail");
 const elem_form_submit = document.getElementById("form_submit");
 const preview = document.getElementById("attach_preview");
+//添付ファイルを削除するボタン
+const removeAttachmentBtn = document.getElementById("remove_attachment_btn");
 
 //ファイルサイズチェック
 const file_size_check = (form_id, error_messageid, elem_attach_image) => {
@@ -265,14 +267,26 @@ const file_size_check = (form_id, error_messageid, elem_attach_image) => {
     }
 };
 
-const paint_form = document.getElementById("paint_forme");//スペルミスだが変更できない
+const paint_form = document.getElementById("paint_forme"); //スペルミスだが変更できない
 const paint_form_fileInput = paint_form?.querySelector('input[type="file"]');
 
-paint_forme_fileInput?.addEventListener("change", () => {
+paint_form_fileInput?.addEventListener("change", () => {
     file_size_check(
         "paint_forme",
         "error_message_paintform",
         paint_form_fileInput
+    );
+});
+
+const image_rep_form = document.getElementById("image_rep"); //スペルミスだが変更できない
+const image_rep_form_fileInput =
+    image_rep_form?.querySelector('input[type="file"]');
+
+image_rep_form_fileInput?.addEventListener("change", () => {
+    file_size_check(
+        "image_rep",
+        "error_message_imgrep",
+        image_rep_form_fileInput
     );
 });
 
@@ -283,6 +297,14 @@ const clear_css_preview = () => {
         preview.style.borderRadius = ""; // ボーダーを設定
         preview.style.marginTop = "";
         preview.style.marginBottom = "";
+    }
+};
+
+const clear_css_form_submit = () => {
+    if (elem_form_submit instanceof HTMLInputElement) {
+        elem_form_submit.style.border = ""; // ボーダーを設定
+        elem_form_submit.style.backgroundColor = ""; // ボーダーを設定
+        elem_form_submit.style.borderRadius = ""; // ボーダーを設定
     }
 };
 
@@ -340,12 +362,6 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
             reader.readAsDataURL(file);
         }
 
-        const clear_css_form_submit = () => {
-            elem_form_submit.style.border = ""; // ボーダーを設定
-            elem_form_submit.style.backgroundColor = ""; // ボーダーを設定
-            elem_form_submit.style.borderRadius = ""; // ボーダーを設定
-        };
-
         //閲覧注意に設定されている時は枠線を付ける
         if (
             paint_com ||
@@ -355,6 +371,9 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
         ) {
             if (elem_check_nsfw) {
                 elem_check_nsfw.style.display = "inline-block"; // チェックボックスを表示
+            }
+            if (removeAttachmentBtn) {
+                removeAttachmentBtn.style.display = "inline-block"; // 添付ファイル削除ボタンを非表示
             }
             if (
                 elem_hide_thumbnail instanceof HTMLInputElement &&
@@ -371,6 +390,9 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
             if (elem_check_nsfw) {
                 elem_check_nsfw.style.display = "none"; // チェックボックスを非表示
             }
+            if (removeAttachmentBtn) {
+                removeAttachmentBtn.style.display = "none"; // 添付ファイル削除ボタンを非表示
+            }
         }
     };
     if (elem_attach_image) {
@@ -381,21 +403,27 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
     }
     document.addEventListener("DOMContentLoaded", updateFormStyle);
 
-    //添付ファイルを削除するボタン
-    const removeAttachmentBtn = document.getElementById(
-        "remove_attachment_btn"
-    );
     if (
         removeAttachmentBtn &&
         preview instanceof HTMLImageElement &&
         elem_attach_image instanceof HTMLInputElement
     ) {
         removeAttachmentBtn.addEventListener("click", (e) => {
-            clear_css_preview();
             elem_attach_image.value = "";
             preview.src = ""; // メモリ上の画像を表示
+            if (elem_check_nsfw) {
+                elem_check_nsfw.style.display = "none"; // チェックボックスを非表示
+            }
+            removeAttachmentBtn.style.display = "none";
+            clear_css_preview();
+            clear_css_form_submit();
         });
     }
+    window.addEventListener("pageshow", () => {
+        if(elem_attach_image instanceof HTMLInputElement){
+            elem_attach_image.value = "";
+        }
+    });
 }
 
 //shareするSNSのserver一覧を開く
