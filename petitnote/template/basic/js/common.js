@@ -231,6 +231,61 @@ const elem_attach_image = document.getElementById("attach_image");
 const elem_check_nsfw = document.getElementById("check_nsfw");
 const elem_hide_thumbnail = document.getElementById("hide_thumbnail");
 const elem_form_submit = document.getElementById("form_submit");
+const preview = document.getElementById("attach_preview");
+
+//ファイルサイズチェック
+const file_size_check = (form_id, error_messageid, elem_attach_image) => {
+    const form = document.getElementById(form_id);
+    const max_file_size = form?.querySelector('input[name="MAX_FILE_SIZE"]');
+    let maxSize = 0;
+    if (max_file_size instanceof HTMLInputElement) {
+        maxSize = parseInt(max_file_size?.value ?? "0", 10); //10進数に変換
+    }
+    const file =
+        elem_attach_image instanceof HTMLInputElement
+            ? elem_attach_image?.files?.[0]
+            : null;
+    const elem_error_message = document.getElementById(error_messageid);
+    if (elem_error_message) {
+        if (maxSize && file && file.size > maxSize) {
+            if (elem_attach_image instanceof HTMLInputElement) {
+                console.log("File size exceeds the maximum limit.");
+                elem_error_message.innerText = en
+                    ? "The file is too large."
+                    : "ファイルサイズが大きすぎます。";
+                elem_attach_image.value = "";
+                if (preview instanceof HTMLImageElement) {
+                    clear_css_preview();
+                    preview.src = ""; // メモリ上の画像を表示
+                }
+                return;
+            }
+        }
+        elem_error_message.innerText = ""; //エラーメッセージをクリア
+    }
+};
+
+const paint_form = document.getElementById("paint_forme");//スペルミスだが変更できない
+const paint_form_fileInput = paint_form?.querySelector('input[type="file"]');
+
+paint_forme_fileInput?.addEventListener("change", () => {
+    file_size_check(
+        "paint_forme",
+        "error_message_paintform",
+        paint_form_fileInput
+    );
+});
+
+const clear_css_preview = () => {
+    if (preview instanceof HTMLImageElement) {
+        preview.style.border = ""; // ボーダーを設定
+        preview.style.backgroundColor = ""; // ボーダーを設定
+        preview.style.borderRadius = ""; // ボーダーを設定
+        preview.style.marginTop = "";
+        preview.style.marginBottom = "";
+    }
+};
+
 let paint_com = false;
 //お絵かきコメント用処理
 if (typeof paintcom !== "undefined") {
@@ -240,7 +295,6 @@ if (typeof paintcom !== "undefined") {
 if (elem_form_submit && (elem_attach_image || paint_com)) {
     const updateFormStyle = (e) => {
         //画像プレビュー表示
-        const preview = document.getElementById("attach_preview");
         //閲覧注意に設定されている時は枠線を付ける
         if (preview instanceof HTMLImageElement) {
             if (
@@ -256,54 +310,19 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                     preview.style.backgroundColor = "white"; // ボーダーを設定
                     preview.style.borderRadius = "3px"; // ボーダーを設定
                 } else {
-                    preview.style.border = ""; // ボーダーを設定
-                    preview.style.backgroundColor = ""; // ボーダーを設定
-                    preview.style.borderRadius = ""; // ボーダーを設定
+                    clear_css_preview();
                 }
             } else {
-                preview.style.border = ""; // ボーダーを設定
-                preview.style.backgroundColor = ""; // ボーダーを設定
-                preview.style.borderRadius = ""; // ボーダーを設定
+                clear_css_preview();
                 preview.src = ""; // メモリ上の画像を表示
-                preview.style.marginTop = "";
-                preview.style.marginBottom = "";
             }
         }
-
         //ファイルサイズチェック
-        const form = document.getElementById("res_form");
-        const max_file_size = form?.querySelector(
-            'input[name="MAX_FILE_SIZE"]'
-        );
-        let maxSize = 0;
-        if (max_file_size instanceof HTMLInputElement) {
-            maxSize = parseInt(max_file_size?.value ?? "0", 10); //10進数に変換
-        }
+        file_size_check("res_form", "error_message", elem_attach_image);
         const file =
             elem_attach_image instanceof HTMLInputElement
                 ? elem_attach_image?.files?.[0]
                 : null;
-        const elem_error_message = document.getElementById("error_message");
-        if (elem_error_message) {
-            if (maxSize && file && file.size > maxSize) {
-                if (elem_attach_image instanceof HTMLInputElement) {
-                    elem_error_message.innerText = en
-                        ? "The file is too large."
-                        : "ファイルサイズが大きすぎます。";
-                    elem_attach_image.value = "";
-                    if (preview instanceof HTMLImageElement) {
-                        preview.style.border = ""; // ボーダーを設定
-                        preview.style.backgroundColor = ""; // ボーダーを設定
-                        preview.style.borderRadius = ""; // ボーダーを設定
-                        preview.src = ""; // メモリ上の画像を表示
-                        preview.style.marginTop = "";
-                        preview.style.marginBottom = "";
-                    }
-                    return;
-                }
-            }
-            elem_error_message.innerText = ""; //エラーメッセージをクリア
-        }
 
         //画像プレビュー表示
         const reader = new FileReader();
@@ -314,12 +333,18 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                     preview.src = result; // メモリ上の画像を表示
                     preview.style.marginTop = "15px";
                     preview.style.marginBottom = "6px";
-               }
+                }
             }
         };
         if (file instanceof Blob) {
             reader.readAsDataURL(file);
         }
+
+        const clear_css_form_submit = () => {
+            elem_form_submit.style.border = ""; // ボーダーを設定
+            elem_form_submit.style.backgroundColor = ""; // ボーダーを設定
+            elem_form_submit.style.borderRadius = ""; // ボーダーを設定
+        };
 
         //閲覧注意に設定されている時は枠線を付ける
         if (
@@ -339,14 +364,10 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                 elem_form_submit.style.backgroundColor = "white"; // ボーダーを設定
                 elem_form_submit.style.borderRadius = "3px"; // ボーダーを設定
             } else {
-                elem_form_submit.style.border = ""; // ボーダーを設定
-                elem_form_submit.style.backgroundColor = ""; // ボーダーを設定
-                elem_form_submit.style.borderRadius = ""; // ボーダーを設定
+                clear_css_form_submit();
             }
         } else {
-            elem_form_submit.style.border = ""; // ボーダーを設定
-            elem_form_submit.style.backgroundColor = ""; // ボーダーを設定
-            elem_form_submit.style.borderRadius = ""; // ボーダーを設定
+            clear_css_form_submit();
             if (elem_check_nsfw) {
                 elem_check_nsfw.style.display = "none"; // チェックボックスを非表示
             }
@@ -359,6 +380,22 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
         elem_hide_thumbnail.addEventListener("change", updateFormStyle);
     }
     document.addEventListener("DOMContentLoaded", updateFormStyle);
+
+    //添付ファイルを削除するボタン
+    const removeAttachmentBtn = document.getElementById(
+        "remove_attachment_btn"
+    );
+    if (
+        removeAttachmentBtn &&
+        preview instanceof HTMLImageElement &&
+        elem_attach_image instanceof HTMLInputElement
+    ) {
+        removeAttachmentBtn.addEventListener("click", (e) => {
+            clear_css_preview();
+            elem_attach_image.value = "";
+            preview.src = ""; // メモリ上の画像を表示
+        });
+    }
 }
 
 //shareするSNSのserver一覧を開く
