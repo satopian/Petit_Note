@@ -112,17 +112,20 @@ Size:
 		<?php endif;?>
 		</table>
 		<!-- <br> -->
-<textarea name="com" class="post_com" id="res_com"></textarea><br>
-<?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password" minlength="6">
+<?php if(($use_upload && $use_res_upload) || $adminpost):?>
+<input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
+<input type="file" name="imgfile" size="35" accept="image/*" class="form_button" id="attach_image"><button type="button" class="form_button" id="remove_attachment_btn"><?php if($en):?>Deselect<?php else:?>選択解除<?php endif;?></button>
+<br>
+<?php endif;?>
+<div style="display:flex;margin-left:auto;" class="attach_preview_wrap">
+<img id="attach_preview" style="max-width:200px;max-height:125px;height:fit-content;display:none;" alt="preview">
+<textarea name="com" class="post_com" id="res_com"></textarea>
+</div>
+<?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password" minlength="6" class="res_pwd">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="resto" value="<?=h($res['no'])?>">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <br>
-<?php if(($use_upload && $use_res_upload) || $adminpost):?>
-<input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
-<input type="file" name="imgfile" size="35" accept="image/*" class="form_button" id="attach_image"><button type="button" class="form_button" id="remove_attachment_btn"><?php if($en):?>Remove<?php else:?>削除<?php endif;?></button>
-<img id="attach_preview" style="max-width:200px;max-height:150px; display:block;margin-left:auto">
-<?php endif;?>
 <?php if(!$sage_all):?>
 	<span>
 	<input type="checkbox" name="sage" id="sage" value="on"><label for="sage">sage</label>

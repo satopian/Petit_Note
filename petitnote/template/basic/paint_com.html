@@ -92,7 +92,7 @@
 		</table>
 	
 <textarea name="com" class="post_com"></textarea><br>
-<?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
+<?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password" minlength="6" class="res_pwd">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <input type="hidden" name="pictmp" value="<?=h($pictmp)?>">

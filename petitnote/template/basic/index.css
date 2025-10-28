@@ -52,6 +52,10 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
     --warning-color: #fff;
     /* 注意が必要な項目のボーダー */
     --warning-border-color: rgb(255, 170, 192);
+    /* フォーム入力欄の背景色 */
+    --form-input-background-color: #fff;
+    /* ボタン以外のフォーム要素の枠線色 */
+    --form-input-border-color: rgb(118, 118, 118);
 }
 
 .darkmode {
@@ -103,14 +107,29 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
     --warning-border-color: rgb(255, 170, 192);
     /* フォーム入力欄の背景色 */
     --form-input-background-color: #e5eaeb;
-    input[type="text"],
-    input[type="password"],
-    input[type="url"],
-    textarea,
-    select {
-        background-color: var(--form-input-background-color);
-    }
+    /* ボタン以外のフォーム要素の枠線色 */
+    --form-input-border-color: rgb(133, 133, 133);
 }
+
+/* フォーム要素の背景色と枠線 */
+input[type="text"],
+input[type="password"],
+input[type="url"],
+input[type="search"],
+input[type="number"],
+textarea,
+select {
+    border: 1px solid var(--form-input-border-color);
+    border-style: solid;
+    border-width: 1px;
+    padding: 1px;
+    /* フォーム入力欄の背景色 */
+    background-color: var(--form-input-background-color);
+}
+textarea {
+    padding: 2px;
+}
+
 /* 全体 */
 body {
     margin: 10px;
@@ -189,7 +208,7 @@ h2.article_title {
 textarea.post_com {
     width: 300px;
     height: 120px;
-    margin: 8px 0 5px 0;
+    margin: 8px 0 0;
     font-family: inherit;
 }
 textarea.post_cw {
@@ -222,9 +241,8 @@ form.postform span {
 span#check_nsfw {
     display: none;
 }
-
 form.postform .nsfw {
-    margin: 15px 10px 0 0;
+    margin: 0 10px 0 0;
     display: inline-block;
 }
 form.resform,
@@ -232,23 +250,52 @@ form.misskey_form {
     text-align: right;
 }
 form.resform > span {
-    margin: 15px 10px 0 0;
+    margin: 0 10px 0 0;
     display: inline-block;
 }
 form.misskey_form > span {
     display: inline-block;
     margin: 10px 0px 10px;
 }
+input.res_pwd {
+    margin: 8px 0 6px;
+}
+form#image_rep,
+form#res_form {
+    margin-top: 8px;
+}
+
+/* コメント投稿欄のボーダーを消してラップにボーダーをつける */
+.attach_preview_wrap textarea.post_com {
+    /* ボーダー非表示 */
+    border: none;
+    outline: none;
+    box-shadow: none;
+    margin: 0;
+}
+.attach_preview_wrap {
+    display: inline-flex;
+    align-items: stretch; /* 高さをそろえる */
+    /* ラップに枠線をつける */
+    border: 1px solid var(--form-input-border-color);
+    border-radius: 1px;
+    width: fit-content;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 8px 0;
+    background-color: var(--form-input-background-color);
+}
+
 /* Misskeyノートフォームのアイコン位置 */
 span.misskey_form_misskey_icon {
     margin: 0 5px 0 0;
 }
 input.form_button {
-    margin: 10px 0 0 2px;
+    margin: 8px 0 8px 2px;
     padding: 1px 12px;
 }
 input.pchup_button {
-    margin: 0 0 10px;
+    margin: 0 0 16px;
 }
 input.paint_button {
     padding: 1px 10px;
@@ -517,7 +564,7 @@ span.res_prev {
 
 /* フォーム */
 .mainform {
-    margin: 0 0 15px;
+    margin: 0 0 8px;
 }
 form.admin {
     text-align: right;
@@ -534,6 +581,9 @@ form.aikotoba {
     text-align: right;
     margin: 2px 0;
     display: inline-block;
+}
+form#aikotoba_form {
+    margin: 8px 0 0 0;
 }
 form#set_nsfw_show_hide {
     display: inline-block;

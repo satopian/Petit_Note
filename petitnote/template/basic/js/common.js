@@ -232,8 +232,36 @@ const elem_check_nsfw = document.getElementById("check_nsfw");
 const elem_hide_thumbnail = document.getElementById("hide_thumbnail");
 const elem_form_submit = document.getElementById("form_submit");
 const preview = document.getElementById("attach_preview");
+const post_com = document.querySelector("#res_form textarea.post_com");
+
 //添付ファイルを削除するボタン
 const removeAttachmentBtn = document.getElementById("remove_attachment_btn");
+
+const clear_css_preview = () => {
+    if (preview instanceof HTMLImageElement) {
+        preview.style.border = ""; // ボーダーを設定
+        preview.style.backgroundColor = ""; // ボーダーを設定
+        preview.style.borderRadius = ""; // ボーダーを設定
+        preview.style.margin = "";
+        preview.style.backgroundColor = "";
+        preview.style.maxWidth = "";
+        preview.style.maxHeight = "";
+        preview.src = ""; // メモリ上の画像を表示
+        preview.style.display = "none";
+        if (post_com instanceof HTMLTextAreaElement) {
+            post_com.style.height = ""; //テキストエリアの幅を元に戻す
+            post_com.style.minHeight = ""; //テキストエリアの幅を元に戻す
+        }
+    }
+};
+
+const clear_css_form_submit = () => {
+    if (elem_form_submit instanceof HTMLInputElement) {
+        elem_form_submit.style.border = ""; // ボーダーを設定
+        elem_form_submit.style.backgroundColor = ""; // ボーダーを設定
+        elem_form_submit.style.borderRadius = ""; // ボーダーを設定
+    }
+};
 
 //ファイルサイズチェック
 const file_size_check = (form_id, error_messageid, elem_attach_image) => {
@@ -256,9 +284,11 @@ const file_size_check = (form_id, error_messageid, elem_attach_image) => {
                     ? "The file is too large."
                     : "ファイルサイズが大きすぎます。";
                 elem_attach_image.value = "";
-                if (preview instanceof HTMLImageElement) {
+                if (
+                    preview instanceof HTMLImageElement &&
+                    form_id === "res_form"
+                ) {
                     clear_css_preview();
-                    preview.src = ""; // メモリ上の画像を表示
                 }
                 return;
             }
@@ -290,24 +320,6 @@ image_rep_form_fileInput?.addEventListener("change", () => {
     );
 });
 
-const clear_css_preview = () => {
-    if (preview instanceof HTMLImageElement) {
-        preview.style.border = ""; // ボーダーを設定
-        preview.style.backgroundColor = ""; // ボーダーを設定
-        preview.style.borderRadius = ""; // ボーダーを設定
-        preview.style.marginTop = "";
-        preview.style.marginBottom = "";
-    }
-};
-
-const clear_css_form_submit = () => {
-    if (elem_form_submit instanceof HTMLInputElement) {
-        elem_form_submit.style.border = ""; // ボーダーを設定
-        elem_form_submit.style.backgroundColor = ""; // ボーダーを設定
-        elem_form_submit.style.borderRadius = ""; // ボーダーを設定
-    }
-};
-
 let paint_com = false;
 //お絵かきコメント用処理
 if (typeof paintcom !== "undefined") {
@@ -326,17 +338,18 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
             ) {
                 if (
                     elem_hide_thumbnail instanceof HTMLInputElement &&
-                    elem_hide_thumbnail.checked
+                    elem_hide_thumbnail.checked ||
+                    //すべての画像を閲覧注意にする設定が有効な時は
+                    //閲覧注意画像の表示/非表示の設定があり、かつ投稿フォームに閲覧注意にする設定が存在しない。
+                    set_nsfw_show_hide instanceof HTMLFormElement
+                     && !elem_hide_thumbnail 
                 ) {
                     preview.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
-                    preview.style.backgroundColor = "white"; // ボーダーを設定
-                    preview.style.borderRadius = "3px"; // ボーダーを設定
                 } else {
-                    clear_css_preview();
+                    preview.style.border = "2px dashed rgb(229 242 255)"; // ボーダーを設定
                 }
             } else {
                 clear_css_preview();
-                preview.src = ""; // メモリ上の画像を表示
             }
         }
         //ファイルサイズチェック
@@ -353,8 +366,20 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                 const result = e.target && e.target.result;
                 if (typeof result === "string") {
                     preview.src = result; // メモリ上の画像を表示
-                    preview.style.marginTop = "15px";
-                    preview.style.marginBottom = "6px";
+                    preview.style.margin = "5px";
+                    preview.style.backgroundColor = "white";
+                    preview.style.maxWidth = "180px";
+                    preview.style.maxHeight = "200px";
+                    preview.style.borderRadius = "3px";
+                    preview.style.display = "block"; //表示
+                    if (post_com instanceof HTMLTextAreaElement) {
+                        post_com.style.height = "auto"; //テキストエリアの幅を調整
+                        post_com.style.minHeight = "80px"; //テキストエリアの幅を調整
+                        setTimeout(() => {
+                            post_com.style.minHeight = preview.offsetHeight + 5 + "px"; //テキストエリアの幅を調整
+                        }, 10);
+                    }
+                                
                 }
             }
         };
@@ -411,6 +436,11 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
         removeAttachmentBtn.addEventListener("click", (e) => {
             elem_attach_image.value = "";
             preview.src = ""; // メモリ上の画像を表示
+            preview.style.display = "none"; //非表示
+            if (post_com instanceof HTMLTextAreaElement) {
+                post_com.style.height = ""; //テキストエリアの幅を元に戻す
+                post_com.style.minHeight = ""; //テキストエリアの幅を元に戻す
+            }
             if (elem_check_nsfw) {
                 elem_check_nsfw.style.display = "none"; // チェックボックスを非表示
             }
@@ -420,8 +450,11 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
         });
     }
     window.addEventListener("pageshow", () => {
-        if(elem_attach_image instanceof HTMLInputElement){
+        if (elem_attach_image instanceof HTMLInputElement) {
             elem_attach_image.value = "";
+        }
+        if (paint_form_fileInput instanceof HTMLInputElement) {
+            paint_form_fileInput.value = "";
         }
     });
 }

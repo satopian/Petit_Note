@@ -120,20 +120,23 @@ Size:
 	</tr>
 	<?php endif;?>
 	</table>
-<textarea name="com" class="post_com"></textarea><br>
-<?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password">
+<?php if($use_upload || $adminpost):?>
+<input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
+<input type="file" name="imgfile" size="35" accept="image/*" class="form_button" id="attach_image"><button type="button" class="form_button" id="remove_attachment_btn" style="display: none;"><?php if($en):?>Deselect<?php else:?>選択解除<?php endif;?></button>
+<br>
+<?php endif;?>
+<div style="display:flex;" class="attach_preview_wrap">
+<img id="attach_preview" style="max-width:200px;max-height:125px;height:fit-content;display:none;" alt="preview">
+<textarea name="com" class="post_com"></textarea>
+</div>
+<?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password" minlength="6" class="res_pwd">
 <input type="hidden" name="mode" value="regist">
 <input type="hidden" name="token" value="<?=h($token)?>">
 <br>
-<?php if($use_upload || $adminpost):?>
-<input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
-<input type="file" name="imgfile" size="35" accept="image/*" class="form_button" id="attach_image"><button type="button" class="form_button" id="remove_attachment_btn"><?php if($en):?>Deselect<?php else:?>選択解除<?php endif;?></button>
-<img id="attach_preview" style="max-width:200px;max-height:150px; display:block;">
 <?php if($mark_sensitive_image):?>
 <span class="nsfw" id="check_nsfw">
 	<input type="checkbox" name="hide_thumbnail" id="hide_thumbnail" <?php if($nsfw_checked):?>checked="checked"<?php endif;?>><label for="hide_thumbnail"><?php if($en):?>Sensitive content<?php else:?>閲覧注意にする<?php endif;?></label>
 	</span>
-<?php endif;?>
 <?php endif;?>
 <input type="submit" value="<?php if($en):?>Start a new thread<?php else:?>スレッドを立てる<?php endif;?>" class="form_button" id="form_submit">
 </form>
