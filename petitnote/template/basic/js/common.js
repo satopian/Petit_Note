@@ -337,12 +337,12 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                 elem_attach_image.files.length > 0
             ) {
                 if (
-                    elem_hide_thumbnail instanceof HTMLInputElement &&
-                    elem_hide_thumbnail.checked ||
+                    (elem_hide_thumbnail instanceof HTMLInputElement &&
+                        elem_hide_thumbnail.checked) ||
                     //すべての画像を閲覧注意にする設定が有効な時は
                     //閲覧注意画像の表示/非表示の設定があり、かつ投稿フォームに閲覧注意にする設定が存在しない。
-                    set_nsfw_show_hide instanceof HTMLFormElement
-                     && !elem_hide_thumbnail 
+                    (set_nsfw_show_hide instanceof HTMLFormElement &&
+                        !elem_hide_thumbnail)
                 ) {
                     preview.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
                 } else {
@@ -361,25 +361,45 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
 
         //画像プレビュー表示
         const reader = new FileReader();
-        reader.onload = function (e) {
+        reader.onload = (e) => {
             if (reader && preview instanceof HTMLImageElement) {
                 const result = e.target && e.target.result;
                 if (typeof result === "string") {
-                    preview.src = result; // メモリ上の画像を表示
-                    preview.style.margin = "5px";
-                    preview.style.backgroundColor = "white";
-                    preview.style.maxWidth = "180px";
-                    preview.style.maxHeight = "200px";
-                    preview.style.borderRadius = "3px";
-                    preview.style.display = "block"; //表示
-                    if (post_com instanceof HTMLTextAreaElement) {
-                        post_com.style.height = "auto"; //テキストエリアの幅を調整
-                        post_com.style.minHeight = "80px"; //テキストエリアの幅を調整
+                    const testImg = new Image();
+                    testImg.src = result;
+                    testImg.onload = () => {
+                        preview.src = result; // メモリ上の画像を表示
+                        preview.style.margin = "5px";
+                        preview.style.backgroundColor = "white";
+                        preview.style.maxWidth = "180px";
+                        preview.style.maxHeight = "200px";
+                        preview.style.borderRadius = "3px";
+                        preview.style.display = "block"; //表示
                         setTimeout(() => {
-                            post_com.style.minHeight = preview.offsetHeight + 5 + "px"; //テキストエリアの幅を調整
+                            if (post_com instanceof HTMLTextAreaElement) {
+                                post_com.style.height = "auto"; //テキストエリアの幅を調整
+                                post_com.style.minHeight = "80px"; //テキストエリアの幅を調整
+                                post_com.style.minHeight =
+                                    preview.offsetHeight + 5 + "px"; //テキストエリアの幅を調整
+                            }
                         }, 10);
-                    }
-                                
+                    };
+                    testImg.onerror = () => {
+                        preview.style.display = "none";
+                        if (removeAttachmentBtn) {
+                            removeAttachmentBtn.style.display = "none";
+                        }
+                        if (elem_attach_image instanceof HTMLInputElement) {
+                            elem_attach_image.value = "";
+                        }
+                        const elem_error_message =
+                            document.getElementById("error_message");
+                        if (elem_error_message) {
+                            elem_error_message.innerText = en
+                                ? "Failed to load image."
+                                : "画像の読み込みに失敗しました。";
+                        }
+                    };
                 }
             }
         };
