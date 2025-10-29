@@ -399,6 +399,7 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                                 ? "Failed to load image."
                                 : "画像の読み込みに失敗しました。";
                         }
+                        return;
                     };
                 }
             }

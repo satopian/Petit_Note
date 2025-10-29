@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20250918;
+$functions_ver=20250929;
 
 //編集モードログアウト
 function logout(): void {
@@ -1046,12 +1046,15 @@ function set_form_display_time(): void {
 function check_submission_interval(): void {
 	global $en;
 
-	// 1.2秒の間隔を設ける
+	// 0.8秒の間隔を設ける
 	$min_interval = 0.8;//0.8秒待機
 
 	session_sta();
 	if (!isset($_SESSION['form_display_time'])) {
-		error($en?"The post has been rejected.":'拒絶されました。');
+		set_form_display_time();
+		if (!isset($_SESSION['form_display_time'])){
+			error($en?"The post has been rejected.":'拒絶されました。');
+		}
 	}
 	$form_display_time = $_SESSION['form_display_time'];
 
