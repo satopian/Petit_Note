@@ -246,12 +246,17 @@ const clear_css_preview = () => {
         preview.style.backgroundColor = "";
         preview.style.maxWidth = "";
         preview.style.maxHeight = "";
+        preview.style.height = "";
         preview.src = ""; // メモリ上の画像を表示
         preview.style.display = "none";
-        if (post_com instanceof HTMLTextAreaElement) {
-            post_com.style.height = ""; //テキストエリアの幅を元に戻す
-            post_com.style.minHeight = ""; //テキストエリアの幅を元に戻す
-        }
+    }
+    if (elem_attach_image instanceof HTMLInputElement) {
+        elem_attach_image.value = "";
+    }
+};
+const clear_textarea_height = () => {
+    if (post_com instanceof HTMLTextAreaElement) {
+        post_com.style.minHeight = ""; //テキストエリアの幅を元に戻す
     }
 };
 
@@ -283,13 +288,7 @@ const file_size_check = (form_id, error_messageid, elem_attach_image) => {
                 elem_error_message.innerText = en
                     ? "The file is too large."
                     : "ファイルサイズが大きすぎます。";
-                elem_attach_image.value = "";
-                if (
-                    preview instanceof HTMLImageElement &&
-                    form_id === "res_form"
-                ) {
-                    clear_css_preview();
-                }
+                clear_css_preview();
                 return;
             }
         }
@@ -327,15 +326,84 @@ if (typeof paintcom !== "undefined") {
 }
 
 if (elem_form_submit && (elem_attach_image || paint_com)) {
-    const updateFormStyle = (e) => {
-        //画像プレビュー表示
+    const file_attach_image_change = () => {
+        if (
+            elem_attach_image instanceof HTMLInputElement &&
+            elem_attach_image.files &&
+            elem_attach_image.files.length > 0
+        ) {
+            //ファイルサイズチェック
+            file_size_check("res_form", "error_message", elem_attach_image);
+            const file =
+                elem_attach_image instanceof HTMLInputElement
+                    ? elem_attach_image?.files?.[0]
+                    : null;
+
+            //画像プレビュー表示
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                if (reader && preview instanceof HTMLImageElement) {
+                    const result = e.target && e.target.result;
+                    if (typeof result === "string") {
+                        const testImg = new Image();
+                        testImg.src = result;
+                        testImg.onload = () => {
+                            preview.src = result; // メモリ上の画像を表示
+                            preview.style.margin = "5px";
+                            preview.style.backgroundColor = "white";
+                            preview.style.maxWidth = "180px";
+                            preview.style.maxHeight = "200px";
+                            preview.style.borderRadius = "3px";
+                            preview.style.height = "fit-content"; //高さ自動調整
+                            preview.style.display = "block"; //表示
+                            setTimeout(() => {
+                                if (post_com instanceof HTMLTextAreaElement) {
+                                    const previewoffsetHeight =
+                                        preview.offsetHeight;
+                                    post_com.style.minHeight =
+                                        previewoffsetHeight > 75
+                                            ? previewoffsetHeight + 5 + "px"
+                                            : 80 + "px";
+                                }
+                            }, 10);
+                        };
+                        testImg.onerror = () => {
+                            clear_css_preview();
+                            clear_textarea_height();
+                            if (removeAttachmentBtn) {
+                                removeAttachmentBtn.style.display = "none";
+                            }
+                            const elem_error_message =
+                                document.getElementById("error_message");
+                            if (elem_error_message) {
+                                elem_error_message.innerText = en
+                                    ? "This file is an unsupported format."
+                                    : "対応していないファイル形式です。";
+                            }
+                            return;
+                        };
+                    }
+                }
+            };
+            if (file instanceof Blob) {
+                reader.readAsDataURL(file);
+            }
+        } else {
+            clear_css_preview();
+            clear_textarea_height();
+        }
+    };
+
+    const updateFormStyle = () => {
         //閲覧注意に設定されている時は枠線を付ける
-        if (preview instanceof HTMLImageElement) {
-            if (
-                elem_attach_image instanceof HTMLInputElement &&
+        if (
+            paint_com ||
+            (elem_attach_image instanceof HTMLInputElement &&
                 elem_attach_image.files &&
-                elem_attach_image.files.length > 0
-            ) {
+                elem_attach_image.files.length > 0)
+        ) {
+            if (preview instanceof HTMLImageElement) {
                 if (
                     (elem_hide_thumbnail instanceof HTMLInputElement &&
                         elem_hide_thumbnail.checked) ||
@@ -348,73 +416,7 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                 } else {
                     preview.style.border = "2px dashed rgb(229 242 255)"; // ボーダーを設定
                 }
-            } else {
-                clear_css_preview();
             }
-        }
-        //ファイルサイズチェック
-        file_size_check("res_form", "error_message", elem_attach_image);
-        const file =
-            elem_attach_image instanceof HTMLInputElement
-                ? elem_attach_image?.files?.[0]
-                : null;
-
-        //画像プレビュー表示
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            if (reader && preview instanceof HTMLImageElement) {
-                const result = e.target && e.target.result;
-                if (typeof result === "string") {
-                    const testImg = new Image();
-                    testImg.src = result;
-                    testImg.onload = () => {
-                        preview.src = result; // メモリ上の画像を表示
-                        preview.style.margin = "5px";
-                        preview.style.backgroundColor = "white";
-                        preview.style.maxWidth = "180px";
-                        preview.style.maxHeight = "200px";
-                        preview.style.borderRadius = "3px";
-                        preview.style.display = "block"; //表示
-                        setTimeout(() => {
-                            if (post_com instanceof HTMLTextAreaElement) {
-                                post_com.style.height = "auto"; //テキストエリアの幅を調整
-                                post_com.style.minHeight = "80px"; //テキストエリアの幅を調整
-                                post_com.style.minHeight =
-                                    preview.offsetHeight + 5 + "px"; //テキストエリアの幅を調整
-                            }
-                        }, 10);
-                    };
-                    testImg.onerror = () => {
-                        preview.style.display = "none";
-                        if (removeAttachmentBtn) {
-                            removeAttachmentBtn.style.display = "none";
-                        }
-                        if (elem_attach_image instanceof HTMLInputElement) {
-                            elem_attach_image.value = "";
-                        }
-                        const elem_error_message =
-                            document.getElementById("error_message");
-                        if (elem_error_message) {
-                            elem_error_message.innerText = en
-                                ? "Failed to load image."
-                                : "画像の読み込みに失敗しました。";
-                        }
-                        return;
-                    };
-                }
-            }
-        };
-        if (file instanceof Blob) {
-            reader.readAsDataURL(file);
-        }
-
-        //閲覧注意に設定されている時は枠線を付ける
-        if (
-            paint_com ||
-            (elem_attach_image instanceof HTMLInputElement &&
-                elem_attach_image.files &&
-                elem_attach_image.files.length > 0)
-        ) {
             if (elem_check_nsfw) {
                 elem_check_nsfw.style.display = "inline-block"; // チェックボックスを表示
             }
@@ -442,7 +444,10 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
         }
     };
     if (elem_attach_image) {
-        elem_attach_image.addEventListener("change", updateFormStyle);
+        elem_attach_image.addEventListener("change", (e) => {
+            updateFormStyle();
+            file_attach_image_change();
+        });
     }
     if (elem_hide_thumbnail) {
         elem_hide_thumbnail.addEventListener("change", updateFormStyle);
@@ -455,25 +460,17 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
         elem_attach_image instanceof HTMLInputElement
     ) {
         removeAttachmentBtn.addEventListener("click", (e) => {
-            elem_attach_image.value = "";
-            preview.src = ""; // メモリ上の画像を表示
-            preview.style.display = "none"; //非表示
-            if (post_com instanceof HTMLTextAreaElement) {
-                post_com.style.height = ""; //テキストエリアの幅を元に戻す
-                post_com.style.minHeight = ""; //テキストエリアの幅を元に戻す
-            }
             if (elem_check_nsfw) {
                 elem_check_nsfw.style.display = "none"; // チェックボックスを非表示
             }
             removeAttachmentBtn.style.display = "none";
             clear_css_preview();
+            clear_textarea_height();
             clear_css_form_submit();
         });
     }
     window.addEventListener("pageshow", () => {
-        if (elem_attach_image instanceof HTMLInputElement) {
-            elem_attach_image.value = "";
-        }
+        clear_css_preview();
         if (paint_form_fileInput instanceof HTMLInputElement) {
             paint_form_fileInput.value = "";
         }
