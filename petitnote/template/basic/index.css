@@ -208,7 +208,7 @@ h2.article_title {
 textarea.post_com {
     width: 300px;
     height: 120px;
-    margin: 8px 0 0;
+    margin: 8px 0 6px;
     font-family: inherit;
 }
 textarea.post_cw {
@@ -258,7 +258,7 @@ form.misskey_form > span {
     margin: 10px 0px 10px;
 }
 input.res_pwd {
-    margin: 8px 0 6px;
+    margin: 6px 0 6px;
 }
 form#image_rep,
 form#res_form {

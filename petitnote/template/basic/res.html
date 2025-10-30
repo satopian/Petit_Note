@@ -69,7 +69,7 @@
 		<div id="error_message_paintform"></div>
 	<?php if($adminpost):?>
 	<span>
-	<input type="file" name="pchup" size="35" accept="image/*,.pch,.chi,.psd" class="pchup_button">
+	<input type="file" name="pchup" size="35" accept="image/*,.pch,.chi,.psd" class="pchup_button"><button type="button" class="pchup_button" id="remove_pch_attachment_btn" style="display: none;"><?php if($en):?>Remove<?php else:?>選択解除<?php endif;?></button>
 	</span>
 	<br>
 	<?php endif;?>
@@ -114,7 +114,7 @@ Size:
 		<!-- <br> -->
 <?php if(($use_upload && $use_res_upload) || $adminpost):?>
 <input type="hidden" name="MAX_FILE_SIZE" value="<?=h($max_byte)?>">
-<input type="file" name="imgfile" size="35" accept="image/*" class="form_button" id="attach_image"><button type="button" class="form_button" id="remove_attachment_btn"><?php if($en):?>Deselect<?php else:?>選択解除<?php endif;?></button>
+<input type="file" name="imgfile" size="35" accept="image/*" class="form_button" id="attach_image"><button type="button" class="form_button" id="remove_attachment_btn" style="display: none;"><?php if($en):?>Remove<?php else:?>選択解除<?php endif;?></button>
 <br>
 <?php endif;?>
 <div style="display:flex;margin-left:auto;" class="attach_preview_wrap">
