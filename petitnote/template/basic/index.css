@@ -265,7 +265,7 @@ form#res_form {
     margin-top: 8px;
 }
 
-/* コメント投稿欄のボーダーを消してラップにボーダーをつける */
+/* コメント投稿欄のボーダーを消して、ラップにボーダーをつける */
 .attach_preview_wrap textarea.post_com {
     /* ボーダー非表示 */
     border: none;

@@ -358,9 +358,13 @@ image_rep_form_fileInput?.addEventListener("change", () => {
 });
 
 let paint_com = false;
+let setAll_Nsfw = false;
 //お絵かきコメント用処理
 if (typeof paintcom !== "undefined") {
     paint_com = paintcom;
+}
+if (typeof setAllNsfw !== "undefined") {
+    setAll_Nsfw = setAllNsfw;
 }
 
 if (elem_form_submit && (elem_attach_image || paint_com)) {
@@ -383,6 +387,22 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                     : null;
 
             //画像プレビュー表示
+
+            const elem_error_message = document.getElementById("error_message");
+            const error = () => {
+                if (elem_error_message) {
+                    elem_error_message.innerText = en
+                        ? "This file is an unsupported format."
+                        : "対応していないファイル形式です。";
+                    clear_css_preview();
+                    clear_textarea_height();
+                    if (removeAttachmentBtn) {
+                        removeAttachmentBtn.style.display = "none";
+                    }
+                    return;
+                }
+            };
+
             const reader = new FileReader();
 
             reader.onload = (e) => {
@@ -392,6 +412,10 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                         const testImg = new Image();
                         testImg.src = result;
                         testImg.onload = () => {
+                            if (testImg.naturalWidth <= 0) {
+                                error();
+                            }
+
                             preview.src = result; // メモリ上の画像を表示
                             preview.style.margin = "5px";
                             preview.style.backgroundColor = "white";
@@ -412,19 +436,7 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                             }, 10);
                         };
                         testImg.onerror = () => {
-                            clear_css_preview();
-                            clear_textarea_height();
-                            if (removeAttachmentBtn) {
-                                removeAttachmentBtn.style.display = "none";
-                            }
-                            const elem_error_message =
-                                document.getElementById("error_message");
-                            if (elem_error_message) {
-                                elem_error_message.innerText = en
-                                    ? "This file is an unsupported format."
-                                    : "対応していないファイル形式です。";
-                            }
-                            return;
+                            error();
                         };
                     }
                 }
@@ -446,18 +458,33 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                 elem_attach_image.files &&
                 elem_attach_image.files.length > 0)
         ) {
-            if (preview instanceof HTMLImageElement) {
-                if (
-                    (elem_hide_thumbnail instanceof HTMLInputElement &&
-                        elem_hide_thumbnail.checked) ||
-                    //すべての画像を閲覧注意にする設定が有効な時は
-                    //閲覧注意画像の表示/非表示の設定があり、かつ投稿フォームに閲覧注意にする設定が存在しない。
-                    (set_nsfw_show_hide instanceof HTMLFormElement &&
-                        !elem_hide_thumbnail)
-                ) {
+            const paintComPreview = document.getElementById(
+                "paintcom_attach_preview"
+            );
+
+            if (
+                (elem_hide_thumbnail instanceof HTMLInputElement &&
+                    elem_hide_thumbnail.checked) ||
+                //すべての画像を閲覧注意にする設定が有効な時は
+                //閲覧注意画像の表示/非表示の設定があり、かつ投稿フォームに閲覧注意にする設定が存在しない。
+                (set_nsfw_show_hide instanceof HTMLFormElement &&
+                    !elem_hide_thumbnail)||
+                    //すべて閲覧注意
+                    setAll_Nsfw
+            ) {
+                if (preview instanceof HTMLImageElement) {
                     preview.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
-                } else {
+                }
+                if (paintComPreview instanceof HTMLImageElement) {
+                    paintComPreview.style.border = "2px solid rgb(255 170 192)";
+                }
+            } else {
+                if (preview instanceof HTMLImageElement) {
                     preview.style.border = "2px dashed rgb(229 242 255)"; // ボーダーを設定
+                }
+                if (paintComPreview instanceof HTMLImageElement) {
+                    paintComPreview.style.border =
+                        "2px dashed rgb(229 242 255)";
                 }
             }
             if (elem_check_nsfw) {
