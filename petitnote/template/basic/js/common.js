@@ -236,6 +236,9 @@ const post_com = document.querySelector("#res_form textarea.post_com");
 
 //添付ファイルを削除するボタン
 const removeAttachmentBtn = document.getElementById("remove_attachment_btn");
+const removePchAttachmentBtn = document.getElementById(
+    "remove_pch_attachment_btn"
+);
 
 const clear_css_preview = () => {
     if (preview instanceof HTMLImageElement) {
@@ -269,9 +272,15 @@ const clear_css_form_submit = () => {
 };
 
 //ファイルサイズチェック
-const file_size_check = (form_id, error_messageid, elem_attach_image) => {
+const file_size_check = (
+    form_id,
+    error_messageid,
+    elem_attach_image,
+    removeAttachmentBtnId = ""
+) => {
     const form = document.getElementById(form_id);
     const max_file_size = form?.querySelector('input[name="MAX_FILE_SIZE"]');
+    const removeAttachmentBtn = document.getElementById(removeAttachmentBtnId);
     let maxSize = 0;
     if (max_file_size instanceof HTMLInputElement) {
         maxSize = parseInt(max_file_size?.value ?? "0", 10); //10進数に変換
@@ -289,6 +298,15 @@ const file_size_check = (form_id, error_messageid, elem_attach_image) => {
                     ? "The file is too large."
                     : "ファイルサイズが大きすぎます。";
                 clear_css_preview();
+                if (
+                    removeAttachmentBtn &&
+                    removeAttachmentBtn instanceof HTMLElement
+                ) {
+                    removeAttachmentBtn.style.display = "none"; // 添付ファイル削除ボタンを非表示
+                }
+                if (elem_attach_image instanceof HTMLInputElement) {
+                    elem_attach_image.value = "";
+                }
                 return;
             }
         }
@@ -300,11 +318,31 @@ const paint_form = document.getElementById("paint_forme"); //スペルミスだ�
 const paint_form_fileInput = paint_form?.querySelector('input[type="file"]');
 
 paint_form_fileInput?.addEventListener("change", () => {
-    file_size_check(
-        "paint_forme",
-        "error_message_paintform",
-        paint_form_fileInput
-    );
+    if (
+        paint_form_fileInput instanceof HTMLInputElement &&
+        paint_form_fileInput.files &&
+        paint_form_fileInput.files.length > 0
+    ) {
+        if (removePchAttachmentBtn) {
+            removePchAttachmentBtn.style.display = "inline-block";
+        }
+        file_size_check(
+            "paint_forme",
+            "error_message_paintform",
+            paint_form_fileInput,
+            "remove_pch_attachment_btn"
+        );
+    } else {
+        if (removePchAttachmentBtn) {
+            removePchAttachmentBtn.style.display = "none";
+        }
+    }
+});
+removePchAttachmentBtn?.addEventListener("click", (e) => {
+    removePchAttachmentBtn.style.display = "none";
+    if (paint_form_fileInput instanceof HTMLInputElement) {
+        paint_form_fileInput.value = "";
+    }
 });
 
 const image_rep_form = document.getElementById("image_rep"); //スペルミスだが変更できない
@@ -333,7 +371,12 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
             elem_attach_image.files.length > 0
         ) {
             //ファイルサイズチェック
-            file_size_check("res_form", "error_message", elem_attach_image);
+            file_size_check(
+                "res_form",
+                "error_message",
+                elem_attach_image,
+                "remove_attachment_btn"
+            );
             const file =
                 elem_attach_image instanceof HTMLInputElement
                     ? elem_attach_image?.files?.[0]
