@@ -235,14 +235,14 @@ textarea.rescom {
     margin: 10px 0;
 }
 form.postform span {
-    margin: 5px 10px 0px 0;
+    margin: 5px 10px 8px 0;
     display: inline-block;
 }
 span#check_nsfw {
     display: none;
 }
 form.postform .nsfw {
-    margin: 0 10px 0 0;
+    margin: 6px 10px 8px 0;
     display: inline-block;
 }
 form.resform,
@@ -475,7 +475,7 @@ input[type="checkbox"]:checked + label .info_name {
 }
 
 select.post_select_image {
-    margin: 10px 6px 0;
+    margin: 10px 6px 5px;
 }
 span.txtnon {
     display: initial;
@@ -555,7 +555,7 @@ span.res_prev {
 
 /* アップロード途中の画像 */
 .post_table_title {
-    margin: 0px 0 12px;
+    margin: 0 0 5px;
 }
 .posted_img_form img {
     max-width: 100%;

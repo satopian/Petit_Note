@@ -35,6 +35,11 @@
 				const csvArray = csvString.split(',');
 				const paintComSerectedImg = csvArray[0];
 				paintComPreview.style.margin = "5px";
+				paintComPreview.style.backgroundColor = "white";
+				paintComPreview.style.maxWidth = "180px";
+				paintComPreview.style.maxHeight = "200px";
+				paintComPreview.style.borderRadius = "3px";
+				paintComPreview.style.height = "fit-content";
 				paintComPreview.style.display = "block";
 				// 読み込み完了後に高さを取得
 				paintComPreview.onload = () => {
