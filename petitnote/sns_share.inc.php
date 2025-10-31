@@ -2,7 +2,7 @@
 // Mastodon、misskey等の分散型SNSへ記事を共有するクラス
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
-$sns_share_inc_ver = 20251014;
+$sns_share_inc_ver = 20251031;
 class sns_share
 {
 
@@ -66,7 +66,7 @@ class sns_share
 
 		if ($sns_server_radio) {
 			if (in_array($sns_server_radio, ["https://x.com", "https://twitter.com"])) {
-				$share_url = "https://twitter.com/intent/tweet?text=";
+				$share_url = "https://x.com/intent/tweet?text=";
 			} elseif ($sns_server_radio === "https://bsky.app") {
 				$share_url = "https://bsky.app/intent/compose?text=";
 			} elseif ($sns_server_radio === "https://www.threads.net") {
