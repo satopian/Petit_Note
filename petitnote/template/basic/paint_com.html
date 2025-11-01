@@ -34,26 +34,24 @@
 				const csvString = select_picfile.value;
 				const csvArray = csvString.split(',');
 				const paintComSerectedImg = csvArray[0];
-				paintComPreview.style.margin = "5px";
-				paintComPreview.style.backgroundColor = "white";
-				paintComPreview.style.maxWidth = "180px";
-				paintComPreview.style.maxHeight = "200px";
-				paintComPreview.style.borderRadius = "3px";
-				paintComPreview.style.height = "fit-content";
-				paintComPreview.style.display = "block";
 				// 読み込み完了後に高さを取得
 				paintComPreview.onload = () => {
 					if (paintComPreview.naturalWidth <= 0) {
 						error();
 					}
-					previewoffsetHeight = paintComPreview.offsetHeight;
+					paintComPreview.style.margin = "5px";
+					paintComPreview.style.backgroundColor = "white";
+					paintComPreview.style.maxWidth = "180px";
+					paintComPreview.style.maxHeight = "200px";
+					paintComPreview.style.borderRadius = "3px";
+					paintComPreview.style.height = "fit-content";
+					paintComPreview.style.display = "block";
+					const previewoffsetHeight = paintComPreview.offsetHeight;
 
 					paintcomPostCom.style.minHeight =
 						previewoffsetHeight > 75 ?
 						previewoffsetHeight + 5 + "px" :
 						80 + "px";
-
-					paintcomPostCom.style.minHeight = paintComPreview.height + 10 + "px";
 				};
 				paintComPreview.onerror = () => {
 					error();
