@@ -93,7 +93,18 @@ class sns_share
 		$ogp_show_nsfw = filter_input_data("POST", "ogp_show_nsfw", FILTER_VALIDATE_BOOLEAN);
 		$ogp_show_nsfw = $age_check_required_to_view ? false : $ogp_show_nsfw;
 		$share_url .= $ogp_show_nsfw ? urlencode('&ogp_show=on') : '';
-		// redirect($share_url);
+		session_sta();
+		$_SESSION['share_url']=$share_url;
+
+		redirect("./?sns_redirect");
+	}
+	public static function sns_redirect(){
+		global $en;
+		session_sta();
+		if(!$_SESSION['share_url']){
+			error($en ? "Session verification failed." : "セッションが確認できません。");
+		}
+		$share_url = $_SESSION['share_url']; 
 		$templete = 'sns_redirect.html';
 		include __DIR__ . '/' . $skindir . $templete;
 		exit();
