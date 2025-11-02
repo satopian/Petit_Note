@@ -2,7 +2,7 @@
 // Mastodon、misskey等の分散型SNSへ記事を共有するクラス
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
-$sns_share_inc_ver = 20251031;
+$sns_share_inc_ver = 20251102;
 class sns_share
 {
 
@@ -50,7 +50,7 @@ class sns_share
 
 	public static function post_share_server(): void
 	{
-		global $en,$age_check_required_to_view;
+		global $en,$age_check_required_to_view,$skindir;
 
 		$sns_server_radio = (string)filter_input_data('POST', "sns_server_radio", FILTER_VALIDATE_URL);
 		$sns_server_radio_for_cookie = (string)filter_input_data('POST', "sns_server_radio"); //directを判定するためurlでバリデーションしていない
@@ -85,12 +85,17 @@ class sns_share
 		}
 		$share_url .= $encoded_t . '%20' . $encoded_u;
 		$share_url = filter_var($share_url, FILTER_VALIDATE_URL) ? $share_url : '';
+		$share_url = (parse_url($share_url, PHP_URL_SCHEME) === "https") ? $share_url : '';
+
 		if (!$share_url) {
 			error($en ? "Please select an SNS sharing destination." : "SNSの共有先を選択してください。");
 		}
 		$ogp_show_nsfw = filter_input_data("POST", "ogp_show_nsfw", FILTER_VALIDATE_BOOLEAN);
 		$ogp_show_nsfw = $age_check_required_to_view ? false : $ogp_show_nsfw;
 		$share_url .= $ogp_show_nsfw ? urlencode('&ogp_show=on') : '';
-		redirect($share_url);
+		// redirect($share_url);
+		$templete = 'sns_redirect.html';
+		include __DIR__ . '/' . $skindir . $templete;
+		exit();
 	}
 }
