@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.138.0';
-$petit_lot='lot.20251103';
+$petit_ver='v1.139.0';
+$petit_lot='lot.20251107';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2433,10 +2433,100 @@ function view(): void {
 	include __DIR__.'/'.$skindir.$templete;
 	exit();
 }
+
+//レス画面に前後のスレッドの画像一覧と次のスレッド前のスレッドのリンクを出す
+function res_view_other_works($resno): array
+{
+	global $view_other_works;
+
+	$fp = fopen(LOG_DIR . "alllog.log", "r");
+	$count_alllog = 0;
+	$i = 0;
+	$j = 0;
+	$find = false;
+	$articles1 = [];
+	$articles2 = [];
+
+	while ($line = fgets($fp)) {
+		if (!trim($line)) {
+			continue;
+		}
+		if (strpos(trim($line), $resno . "\t") === 0) { //現在のスレッド
+			$find = true;
+			$i = $j;
+		}
+		if ($find && ($i < $j)) {
+			$articles2[$j] = $line; //現在のスレッドより20件後ろの行を取得
+		}
+		if ($find && ($i + 20) <= $j) {
+			break;
+		}
+		++$j;
+	}
+	rewind($fp);
+	$j = 0;
+	while ($line = fgets($fp)) { //メモリ消費量を削減するため二度ループ
+		if (!trim($line)) {
+			continue;
+		}
+		if (($i !== $j) && ($i - 20) <= $j) { //現在のスレッドより20件手前の行を取得
+			$articles1[$j] = $line;
+		}
+		if ($i === $j) {
+			break;
+		}
+		++$j;
+	}
+	fclose($fp);
+
+	$next = $articles2[$i + 1] ?? '';
+	$prev = $articles1[$i - 1] ?? '';
+	$next = $next ? (create_res(explode("\t", trim($next)), ['catalog' => true])) : [];
+	$prev = $prev ? (create_res(explode("\t", trim($prev)), ['catalog' => true])) : [];
+	$next = (!empty($next) && is_file(LOG_DIR . "{$next['no']}.log")) ? $next : [];
+	$prev = (!empty($prev) && is_file(LOG_DIR . "{$prev['no']}.log")) ? $prev : [];
+
+	$rr1 = [];
+	$rr2 = [];
+	if (!$view_other_works) {
+		return [$next, $prev, []];
+	}
+
+	$view_other_works = [];
+	$a = [];
+	foreach ($articles1 as $val) {
+
+		$r1 = create_res(explode("\t", trim($val)), ['catalog' => true]);
+		if (!empty($r1) && $r1['img'] && $r1['no'] !== $resno) {
+			$rr1[] = $r1;
+		}
+	}
+	foreach ($articles2 as $val) {
+
+		$r2 = create_res(explode("\t", trim($val)), ['catalog' => true]);
+		if (!empty($r2) && $r2['img'] && $r2['no'] !== $resno) {
+			$rr2[] = $r2;
+		}
+	}
+	if ((3 <= count($rr1)) && (3 <= count($rr2))) {
+		$rr1 = array_slice($rr1, -3);
+		$rr2 = array_slice($rr2, 0, 3);
+		$view_other_works = array_merge($rr1, $rr2);
+	} elseif ((6 > count($rr2)) && (6 <= count($rr1))) {
+		$view_other_works = array_slice($rr1, -6);
+	} elseif ((6 > count($rr1)) && (6 <= count($rr2))) {
+		$view_other_works = array_slice($rr2, 0, 6);
+	} else {
+		$view_other_works = array_merge($rr1, $rr2);
+		$view_other_works = array_slice($view_other_works, 0, 6);
+	}
+	return 	[$next, $prev, $view_other_works];
+}
+
 //レス画面
 function res (): void {
 	global $use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
-	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$set_nsfw_hide_flag,$age_check_required_to_view,$use_sns_button,$deny_all_posts,$sage_all,$view_other_works,$en,$use_diary,$nsfw_checked;
+	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$set_nsfw_hide_flag,$age_check_required_to_view,$use_sns_button,$deny_all_posts,$sage_all,$en,$use_diary,$nsfw_checked;
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw;
 
 	aikotoba_required_to_view();
@@ -2520,87 +2610,9 @@ function res (): void {
 	}
 
 	$resname = !empty($rresname) ? implode(($en?'-san':'さん').' ',$rresname) : false; // レス投稿者一覧
+	//レス画面に前後のスレッドの画像一覧と次のスレッド前のスレッドのリンクを出す
+	list($next,$prev,$view_other_works) = res_view_other_works($resno);
 
-	$fp=fopen(LOG_DIR."alllog.log","r");
-	$count_alllog=0;
-	$i=0;
-	$j=0;
-	$find=false;
-	$articles1=[];
-	$articles2=[];
-
-	while ($line = fgets($fp)) {
-		if(!trim($line)){
-			continue;
-		}
-		if (strpos(trim($line), $resno . "\t") === 0) {//現在のスレッド
-			$find=true;
-			$i=$j;
-		}
-		if($find && ($i<$j)){
-			$articles2[$j]=$line;//現在のスレッドより20件後ろの行を取得
-		}
-		if($find && ($i+20)<=$j){
-			break;
-		}
-		++$j;
-	}
-	rewind($fp);
-	$j=0;
-	while ($line = fgets($fp)) {//メモリ消費量を削減するため二度ループ
-		if(!trim($line)){
-			continue;
-		}
-		if(($i!==$j) && ($i-20) <= $j){//現在のスレッドより20件手前の行を取得
-			$articles1[$j]=$line;
-		}
-		if($i===$j){
-			break;
-		}
-		++$j;
-	}
-	fclose($fp);
-
-	$next=$articles2[$i+1] ?? '';
-	$prev=$articles1[$i-1] ?? '';
-	$next=$next ? (create_res(explode("\t",trim($next)),['catalog'=>true])):[];
-	$prev=$prev ? (create_res(explode("\t",trim($prev)),['catalog'=>true])):[];
-	$next=(!empty($next) && is_file(LOG_DIR."{$next['no']}.log"))?$next:[];
-	$prev=(!empty($prev) && is_file(LOG_DIR."{$prev['no']}.log"))?$prev:[];
-
-	$rr1=[];
-	$rr2=[];
-	if($view_other_works){
-		$view_other_works=[];
-		$a=[];
-		foreach($articles1 as $val){
-
-			$r1=create_res(explode("\t",trim($val)),['catalog'=>true]);
-			if(!empty($r1)&&$r1['img']&&$r1['no']!==$resno){
-				$rr1[]=$r1;
-			}
-		}
-		foreach($articles2 as $val){
-
-			$r2=create_res(explode("\t",trim($val)),['catalog'=>true]);
-			if(!empty($r2)&&$r2['img']&&$r2['no']!==$resno){
-				$rr2[]=$r2;
-			}
-		}
-		if((3<=count($rr1)) && (3<=count($rr2))  ){
-			$rr1 = array_slice($rr1,-3);
-			$rr2 = array_slice($rr2,0,3);
-			$view_other_works= array_merge($rr1,$rr2);
-		
-		}elseif((6>count($rr2))&&(6<=count($rr1))){
-			$view_other_works= array_slice($rr1,-6);
-		}elseif((6>count($rr1))&&(6<=count($rr2))){
-			$view_other_works= array_slice($rr2,0,6);
-		}else{
-			$view_other_works= array_merge($rr1,$rr2);
-			$view_other_works= array_slice($view_other_works,0,6);
-		}
-	}
 	//管理者判定処理
 	$admindel=admindel_valid();
 	$aikotoba = aikotoba_valid();
