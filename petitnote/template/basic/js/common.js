@@ -410,7 +410,6 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                     const result = e.target && e.target.result;
                     if (typeof result === "string") {
                         const testImg = new Image();
-                        testImg.src = result;
                         testImg.onload = () => {
                             if (testImg.naturalWidth <= 0) {
                                 error();
@@ -438,6 +437,7 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                         testImg.onerror = () => {
                             error();
                         };
+                        testImg.src = result;
                     }
                 }
             };
@@ -468,17 +468,23 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                 //すべての画像を閲覧注意にする設定が有効な時は
                 //閲覧注意画像の表示/非表示の設定があり、かつ投稿フォームに閲覧注意にする設定が存在しない。
                 (set_nsfw_show_hide instanceof HTMLFormElement &&
-                    !elem_hide_thumbnail)||
-                    //すべて閲覧注意
-                    setAll_Nsfw
+                    !elem_hide_thumbnail) ||
+                //すべて閲覧注意
+                setAll_Nsfw
             ) {
+                //画像にボーダー
                 if (preview instanceof HTMLImageElement) {
                     preview.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
                 }
                 if (paintComPreview instanceof HTMLImageElement) {
                     paintComPreview.style.border = "2px solid rgb(255 170 192)";
                 }
+                //ボタンにボーダー
+                elem_form_submit.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
+                elem_form_submit.style.backgroundColor = "white"; // ボーダーを設定
+                elem_form_submit.style.borderRadius = "3px"; // ボーダーを設定
             } else {
+                //画像にボーダー
                 if (preview instanceof HTMLImageElement) {
                     preview.style.border = "2px dashed rgb(229 242 255)"; // ボーダーを設定
                 }
@@ -486,22 +492,14 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                     paintComPreview.style.border =
                         "2px dashed rgb(229 242 255)";
                 }
+                //ボタンのボーダーをクリア
+                clear_css_form_submit();
             }
             if (elem_check_nsfw) {
                 elem_check_nsfw.style.display = "inline-block"; // チェックボックスを表示
             }
             if (removeAttachmentBtn) {
-                removeAttachmentBtn.style.display = "inline-block"; // 添付ファイル削除ボタンを非表示
-            }
-            if (
-                elem_hide_thumbnail instanceof HTMLInputElement &&
-                elem_hide_thumbnail.checked
-            ) {
-                elem_form_submit.style.border = "2px solid rgb(255 170 192)"; // ボーダーを設定
-                elem_form_submit.style.backgroundColor = "white"; // ボーダーを設定
-                elem_form_submit.style.borderRadius = "3px"; // ボーダーを設定
-            } else {
-                clear_css_form_submit();
+                removeAttachmentBtn.style.display = "inline-block"; // 添付ファイル削除ボタンを表示
             }
         } else {
             clear_css_form_submit();
