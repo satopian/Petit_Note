@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.151.0';
-$petit_lot='lot.20251116';
+$petit_ver='v1.153.0';
+$petit_lot='lot.20251118';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -954,7 +954,7 @@ function paint(): void {
 	$max_pch = get_upload_max_filesize();
 
 	switch($app){
-		case 'chi'://ChickenPaint
+		case 'chi'://litaChit
 		
 			$tool='chi';
 			// HTML出力
@@ -1179,7 +1179,7 @@ function to_continue(): void {
 		$current_app = "PaintBBS NEO";
 	}elseif($pchext==='.chi'){
 		$app_to_use = 'chi';
-		$current_app = "ChickenPaint";
+		$current_app = "litaChit";
 	}elseif($pchext==='.psd'){
 		$app_to_use = 'klecks';
 		$current_app = "Klecks";
