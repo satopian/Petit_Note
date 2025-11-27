@@ -520,7 +520,7 @@ function switch_tool($tool): string {
 			$tool='Shi-Painter';
 			break;
 		case 'chi':
-			$tool='litaChit';
+			$tool='litaChix';
 			break;
 		case 'klecks':
 			$tool='Klecks';

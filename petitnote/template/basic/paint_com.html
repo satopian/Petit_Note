@@ -101,8 +101,8 @@
 			<?php foreach ($out as $i => $val): ?>
 				<?php foreach ($val as $tempimg): ?>
 					<div class="posted_img_form">
-						<img src="<?= h($tempimg['src']) ?>"
-							alt="<?= h($tempimg['srcname']) ?>" width="<?= h($tempimg['w']) ?>" height="<?= h($tempimg['h']) ?>">
+						<a href="<?= h($tempimg['src']) ?>" target="_blank" rel="noopener" data-lightbox="<?= h($tempimg['srcname']) ?>"><img src="<?= h($tempimg['src']) ?>"
+							alt="<?= h($tempimg['srcname']) ?>" width="<?= h($tempimg['w']) ?>" height="<?= h($tempimg['h']) ?>"></a>
 					</div>
 					<?= h($tempimg['srcname']) ?><br>
 					<?= h($tempimg['date']) ?>

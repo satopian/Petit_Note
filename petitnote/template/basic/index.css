@@ -558,8 +558,10 @@ span.res_prev {
     margin: 0 0 5px;
 }
 .posted_img_form img {
-    max-width: 100%;
+    max-width: 180px;
+    max-height: 200px;
     height: auto;
+    width: auto;
 }
 
 /* フォーム */

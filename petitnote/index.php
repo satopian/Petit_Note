@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.153.1';
-$petit_lot='lot.20251120';
+$petit_ver='v1.155.5';
+$petit_lot='lot.20251127';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -848,7 +848,7 @@ function paint(): void {
 				$img_klecks = $pchup;
 			} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
 				$file_name=pathinfo($pchup,PATHINFO_FILENAME);
-				thumbnail_gd::thumb(TEMP_DIR,$pchup,$time,$max_px,$max_px,['toolarge'=>true]);
+				thumbnail_gd::thumb(TEMP_DIR,$pchup,$time,$pmax_w,$pmax_h,['toolarge'=>true]);
 				list($picw,$pich) = getimagesize($pchup);
 				$imgfile = $pchup;
 			}else{
@@ -954,7 +954,7 @@ function paint(): void {
 	$max_pch = get_upload_max_filesize();
 
 	switch($app){
-		case 'chi'://litaChit
+		case 'chi'://litaChix
 		
 			$tool='chi';
 			// HTML出力
@@ -1179,7 +1179,7 @@ function to_continue(): void {
 		$current_app = "PaintBBS NEO";
 	}elseif($pchext==='.chi'){
 		$app_to_use = 'chi';
-		$current_app = "litaChit";
+		$current_app = "litaChix";
 	}elseif($pchext==='.psd'){
 		$app_to_use = 'klecks';
 		$current_app = "Klecks";
