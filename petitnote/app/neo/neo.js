@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 var Neo = function () {};
 
-Neo.version = "1.6.20";
+Neo.version = "1.6.21";
 Neo.painter;
 Neo.fullScreen = false;
 Neo.uploaded = false;
@@ -78,7 +78,9 @@ Neo.init = function () {
             Neo.config.width = pch.width;
             Neo.config.height = pch.height;
             Neo.initViewer(pch);
-            Neo.startViewer();
+            // Neo.initViewer()内へ移動
+            // ボタンが表示される前に再生される事があるため
+            // Neo.startViewer();
           }
         });
       }
@@ -7070,14 +7072,20 @@ Neo.initViewer = function (pch) {
 
   var painter = document.getElementById("painter");
 
+  const viewerWrapperOnTop =
+    Neo.config.neo_viewer_buttonswrapper_top &&
+    window.innerHeight < pageHeight + 100;
+
   painter.style.marginTop = "0";
   painter.style.position = "absolute";
   painter.style.padding = "0";
-  painter.style.bottom = dy + 26 + "px";
+  painter.style.bottom = viewerWrapperOnTop ? 0 : dy + 26 + "px";
   painter.style.left = dx + "px";
 
   var viewerButtonsWrapper = document.getElementById("viewerButtonsWrapper");
   viewerButtonsWrapper.style.width = pageWidth - 2 + "px";
+  viewerButtonsWrapper.style.position = viewerWrapperOnTop ? "absolute" : "";
+  viewerButtonsWrapper.style.top = viewerWrapperOnTop ? "0px" : "";
 
   var viewerBar = document.getElementById("viewerBar");
   viewerBar.style.position = "absolute";
@@ -7135,7 +7143,10 @@ Neo.initViewer = function (pch) {
   if (pch) {
     //Neo.config.pch_file) {
     Neo.painter._actionMgr._items = pch.data;
-    Neo.painter.play();
+    Neo.startViewer();
+    setTimeout(() => {
+      Neo.painter.play();
+    }, 50);
   }
 };
 
