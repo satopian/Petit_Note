@@ -1627,12 +1627,12 @@ body.chickenpaint-full-screen {
 .chickenpaint-small-screen canvas.chickenpaint-slider {
     margin-top: 3px;
 }
-/* 選択解除･変形アイコン */
+/* 上部の消去･塗り潰し･変形･選択解除アイコン */
 .chickenpaint .widget-nav span.upperIcon {
     margin-right: 6px;
     cursor: pointer;
 }
-/* 選択解除･変形アイコン */
+/* 上部の消去アイコン */
 .chickenpaint .widget-nav span.clear {
     margin-left: 6px;
 }
