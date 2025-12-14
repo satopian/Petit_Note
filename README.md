@@ -1,6 +1,6 @@
 # お絵かき掲示板PHPスクリプト Petit Note
 - 1スレッド1ログファイル形式のスレッド式の画像掲示板です。  
-- PaintBBS NEO,tegaki.js,ChickenPaint,Klecksが使えるお絵かき掲示板です。
+- PaintBBS NEO,tegaki.js,litaChix,Klecksが使えるお絵かき掲示板です。
 
 ## English version is here
 - [Petit Note EN](https://github.com/satopian/Petit_Note_EN) 
