@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.161.11';
-$petit_lot='lot.20251211';
+$petit_ver='v1.162.1';
+$petit_lot='lot.20251214';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -939,8 +939,8 @@ function paint(): void {
 	//画像の幅と高さが最大値を超えている時は、画像の幅と高さを優先する
 	$pmax_w = max($picw, $pmax_w); // 最大幅を元画像にあわせる
 	$pmax_h = max($pich, $pmax_h); // 最大高を元画像にあわせる
-	$pmax_w = min($pmax_w,1800); // 1800px以上にはならない
-	$pmax_h = min($pmax_h,1800); // 1800px以上にはならない
+	$pmax_w = min($pmax_w,2000); // 2000px以上にはならない
+	$pmax_h = min($pmax_h,2000); // 2000px以上にはならない
 
 	$pmin_w = min($picw, $pmin_w); // 最小幅を元画像にあわせる
 	$pmin_h = min($pich, $pmin_h); // 最小高を元画像にあわせる
