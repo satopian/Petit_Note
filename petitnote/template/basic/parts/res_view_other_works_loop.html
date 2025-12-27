@@ -1,0 +1,17 @@
+<!-- レス画面下段の前後のスレッドのサムネイル -->
+<?php if($other_works):?>
+<div class="view_other_works">
+<?php foreach($other_works as $other_work):?><div <?php if($other_work['hide_thumbnail'] && !$admindel):?>class="hide_thumbnail"<?php endif;?>>
+	<a href="?resno=<?=h($other_work['no'])?>">
+	<?php if($other_work['webpimg']):?>
+	<picture><source srcset="<?=h($other_work['webpimg'])?>" type="image/webp">
+	<?php endif;?>
+	<img src="<?php if($other_work['thumbnail']):?>thumbnail/<?=h($other_work['thumbnail'])?>
+		<?php else:?>
+	src/<?=h($other_work['img'])?><?php endif?>" alt="<?=h($other_work['sub'])?> by <?=h($other_work['name'])?>" title="<?=h($other_work['sub'])?> by <?=h($other_work['name'])?>" width="<?=h($other_work['w'])?>" height="<?=h($other_work['h'])?>" loading="lazy">
+	<?php if($other_work['webpimg']):?>
+	</picture>
+	<?php endif;?>
+	</a></div><?php endforeach;?>
+</div>
+<?php endif;?>

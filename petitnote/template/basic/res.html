@@ -172,22 +172,8 @@ Size:
 	<?php endif;?>
 	<a href="./">Top</a>
 </div>
-<?php if($view_other_works):?>
-<div class="view_other_works">
-<?php foreach($view_other_works as $view_other_work):?><div <?php if($view_other_work['hide_thumbnail'] && !$admindel):?>class="hide_thumbnail"<?php endif;?>>
-	<a href="?resno=<?=h($view_other_work['no'])?>">
-	<?php if($view_other_work['webpimg']):?>
-	<picture><source srcset="<?=h($view_other_work['webpimg'])?>" type="image/webp">
-	<?php endif;?>
-	<img src="<?php if($view_other_work['thumbnail']):?>thumbnail/<?=h($view_other_work['thumbnail'])?>
-		<?php else:?>
-	src/<?=h($view_other_work['img'])?><?php endif?>" alt="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" title="<?=h($view_other_work['sub'])?> by <?=h($view_other_work['name'])?>" width="<?=h($view_other_work['w'])?>" height="<?=h($view_other_work['h'])?>" loading="lazy">
-	<?php if($view_other_work['webpimg']):?>
-	</picture>
-	<?php endif;?>
-	</a></div><?php endforeach;?>
-</div>
-<?php endif;?>
+<!-- 前後のスレッドのサムネイルを表示 -->
+<?php include __DIR__.'/parts/res_view_other_works_loop.html';?>
 </nav>
 <div class="copy">
 <div class="left_wrap">

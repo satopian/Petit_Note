@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.163.1';
-$petit_lot='lot.20251219';
+$petit_ver='v1.165.0';
+$petit_lot='lot.20251224';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2493,7 +2493,7 @@ function res_view_other_works($resno): array
 		return [$next, $prev, []];
 	}
 
-	$view_other_works = [];
+	$other_works = [];
 	$a = [];
 	foreach ($articles1 as $val) {
 
@@ -2512,16 +2512,16 @@ function res_view_other_works($resno): array
 	if ((3 <= count($rr1)) && (3 <= count($rr2))) {
 		$rr1 = array_slice($rr1, -3);
 		$rr2 = array_slice($rr2, 0, 3);
-		$view_other_works = array_merge($rr1, $rr2);
+		$other_works = array_merge($rr1, $rr2);
 	} elseif ((6 > count($rr2)) && (6 <= count($rr1))) {
-		$view_other_works = array_slice($rr1, -6);
+		$other_works = array_slice($rr1, -6);
 	} elseif ((6 > count($rr1)) && (6 <= count($rr2))) {
-		$view_other_works = array_slice($rr2, 0, 6);
+		$other_works = array_slice($rr2, 0, 6);
 	} else {
-		$view_other_works = array_merge($rr1, $rr2);
-		$view_other_works = array_slice($view_other_works, 0, 6);
+		$other_works = array_merge($rr1, $rr2);
+		$other_works = array_slice($other_works, 0, 6);
 	}
-	return 	[$next, $prev, $view_other_works];
+	return 	[$next, $prev, $other_works];
 }
 
 //レス画面
@@ -2612,8 +2612,9 @@ function res (): void {
 
 	$resname = !empty($rresname) ? implode(($en?'-san':'さん').' ',$rresname) : false; // レス投稿者一覧
 	//レス画面に前後のスレッドの画像一覧と次のスレッド前のスレッドのリンクを出す
-	list($next,$prev,$view_other_works) = res_view_other_works($resno);
-
+	list($next,$prev,$other_works) = res_view_other_works($resno);
+	$view_other_works = $other_works;
+	//$view_other_worksはグローバル変数でbool値として使われているため、変数名を$other_worksに変更。ここで代入しているのは互換性のため
 	//管理者判定処理
 	$admindel=admindel_valid();
 	$aikotoba = aikotoba_valid();
