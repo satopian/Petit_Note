@@ -1,9 +1,9 @@
 <?php
-// thumbnail_gd.inc.php for PetitNote (C)さとぴあ @satopian 2021 - 2025
+// thumbnail_gd.inc.php for PetitNote (C)さとぴあ @satopian 2021-2026 MIT License
 // https://paintbbs.sakura.ne.jp/
 // originalscript (C)SakaQ 2005 http://www.punyu.net/php/
 
-$thumbnail_gd_ver=20250707;
+$thumbnail_gd_ver=20260102;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 class thumbnail_gd {
 
@@ -29,10 +29,10 @@ class thumbnail_gd {
 		list($w,$h) = GetImageSize($fname); // 画像の幅と高さを取得
 		$w_h_size_over = $max_w && $max_h && ($w > $max_w || $h > $max_h);
 		$f_size_over = !isset($options['toolarge']) ? ($fsize>1024*1024) : false;
-		if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['png2webp']) && !isset($options['png2jpeg'])){
+		if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['png2webp']) && !isset($options['png2jpeg']) && !isset($options['only_overwrite'])){//リサイズも変換もしない
 			return null;
 		}
-		if(!$w_h_size_over || isset($options['png2jpeg']) || isset($options['png2webp']) || !$max_w || !$max_h){//リサイズしない
+		if(!$w_h_size_over || isset($options['png2jpeg']) || isset($options['png2webp']) || isset($options['only_overwrite']) || !$max_w || !$max_h){//リサイズしない
 			$out_w = $w;
 			$out_h = $h;
 		}else{// リサイズ
@@ -72,7 +72,7 @@ class thumbnail_gd {
 			ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);//"ImageCopyResampled"が無効の時
 		}
 
-		if(isset($options['toolarge'])){
+		if(isset($options['toolarge'])||isset($options['only_overwrite'])){//元画像を縮小して上書き
 			$outfile = self::overwriteResizedImage($im_out, $fname, $mime_type);
 		}else{
 			$outfile = self::createThumbnailImage($im_out, $time, $options);
@@ -201,7 +201,6 @@ class thumbnail_gd {
 				return $outfile;
 
 			default : return null;
-
 		}
 	}
 	//サムネイル作成

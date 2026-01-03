@@ -1,10 +1,10 @@
 <?php
-//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
+//Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.168.3';
-$petit_lot='lot.20251231';
+$petit_ver='v1.169.0';
+$petit_lot='lot.20260102';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20251127){
+if(!isset($functions_ver)||$functions_ver<20260102){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -50,7 +50,7 @@ if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20251031){
 
 check_file(__DIR__.'/thumbnail_gd.inc.php');
 require_once(__DIR__.'/thumbnail_gd.inc.php');
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20250707){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20260102){
 	error($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
 }
 
@@ -544,10 +544,15 @@ function post(): void {
 	if($is_file_upfile){
 
 		if($is_upload_img){//実体データの縮小
-			thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
+			$gd_toolarge =	thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 		}	
 		//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
-		convert_andsave_if_smaller_png2webp($is_upload_img,$time.'.tmp',$time);
+		$gd_webp = convert_andsave_if_smaller_png2webp($is_upload_img,$time.'.tmp',$time);
+
+		if(!$gd_toolarge && !$gd_webp){//GDの処理がまだ行われていない時に
+			exif_overwrite($is_upload_img,$time.'.tmp',$time);//jpeg以外のときはexif情報を消すためGDで再保存
+		}
+
 		if($is_upload_img){//アップロード画像のファイルサイズが大きすぎる時は削除
 			delete_file_if_sizeexceeds($upfile,$fp,$rp);
 		}
@@ -1463,11 +1468,13 @@ function img_replace(): void {
 	} 
 	chmod($upfile,0606);
 	if($is_upload_img){//実体データの縮小
-		thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
+		$gd_toolarge = thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 	}	
 	//サイズオーバの時に変換したwebpのほうがファイル容量が小さくなっていたら元のファイルを上書き
-	convert_andsave_if_smaller_png2webp($is_upload_img,$time.'.tmp',$time);
-
+	$gd_webp = convert_andsave_if_smaller_png2webp($is_upload_img,$time.'.tmp',$time);
+	if(!$gd_toolarge && !$gd_webp){
+		exif_overwrite($is_upload_img,$time.'.tmp',$time);//PNGの時はexif情報を消すためGDで再保存
+	}
 	if($is_upload_img){//アップロード画像のファイルサイズが大きすぎる時は削除
 		delete_file_if_sizeexceeds($upfile,$fp,$rp);
 	}

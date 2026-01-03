@@ -1,8 +1,8 @@
 <?php
-//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
+//Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20251127;
+$functions_ver=20260102;
 
 //編集モードログアウト
 function logout(): void {
@@ -772,7 +772,7 @@ function delete_res_cache (): void {
 }
 
 //pngをwebpに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
-function convert_andsave_if_smaller_png2webp($is_upload_img,$fname,$time): void {
+function convert_andsave_if_smaller_png2webp($is_upload_img,$fname,$time): bool {
 	global $max_kb,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
 	$upfile=TEMP_DIR.basename($fname);
 
@@ -780,11 +780,12 @@ function convert_andsave_if_smaller_png2webp($is_upload_img,$fname,$time): void 
 	$filesize=filesize($upfile);
 	$max_kb_size_over = ($filesize > ($max_kb * 1024));
 	if(mime_content_type($upfile)!=="image/png" && !$max_kb_size_over){
-		return;//ファイルサイズが$max_kbを超えている時は形式にかかわらず処理続行
+		return false;
+//ファイルサイズが$max_kbを超えている時は形式にかかわらず処理続行
 	}
 	if(((!$is_upload_img && $filesize < ($max_file_size_in_png_format_paint * 1024))||	
 	($is_upload_img && $filesize < ($max_file_size_in_png_format_upload * 1024))) && !$max_kb_size_over){
-		return;
+			return false;
 	}
 	//webp作成が可能ならwebpに、でなければjpegに変換する。
 	$im_webp = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['png2webp'=>true]);
@@ -794,10 +795,25 @@ function convert_andsave_if_smaller_png2webp($is_upload_img,$fname,$time): void 
 		if(filesize($im_webp)<$filesize){//webpのほうが小さい時だけ
 			rename($im_webp,$upfile);//webpで保存
 			chmod($upfile,0606);
+			return true;
 		} else{//pngよりファイルサイズが大きくなる時は
 			unlink($im_webp);//作成したwebp画像を削除
+			return false;
 		}
 	}
+	return false;
+}
+//ExifのGPSデータを削除するため上書き保存
+function exif_overwrite($is_upload_img,$fname,$time): void {
+	if(!$is_upload_img){//アップロード画像でない時は処理しない
+		return;
+	}
+	$upfile=TEMP_DIR.basename($fname);
+	//jpegはcheck_jpeg_exif()で処理済み、GIFはExifデータがないので処理しない
+	if((mime_content_type($upfile) === "image/jpeg")||(mime_content_type($upfile) === "image/gif")){//JPEG画像はcheck_jpeg_exif()で処理済み
+		return;
+	}
+	thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['only_overwrite'=>true]);//上書き保存
 }
 
 //Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
