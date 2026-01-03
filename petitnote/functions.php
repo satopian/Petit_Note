@@ -784,16 +784,19 @@ function convert2($is_upload_img,$is_upload_img_png_format,$fname,$time): void {
 	$filesize=filesize($upfile);
 	$max_kb_size_over = ($filesize > ($max_kb * 1024));
 	if(
-		//お絵かきは必ずPNG形式で入ってくる
-		//サイズが小さい時はPNG形式のまま保存
-		(!$is_upload_img && $filesize < ($max_file_size_in_png_format_paint * 1024))
-		//アップロード画像がPNG形式の時で、サイズが小さい時はPNG形式のまま保存
-		 || ($is_upload_img_png_format && $filesize < ($max_file_size_in_png_format_upload * 1024)) && !$max_kb_size_over)
-	{
-		$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2png'=>true]);
-	}else{
-	//webp作成が可能ならwebpに、でなければjpegに変換する。
-		$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2webp'=>true]);
+		//お絵かき画像は必ずPNG形式
+		//ファイルサイズが小さな時はもとのPNGのまま何もしない
+		(!$is_upload_img && $filesize < ($max_file_size_in_png_format_paint * 1024)))
+		//アップロード画像がPNG形式の時で、ファイルサイズがが小さな時はPNG形式のまま保存
+		{//PNG形式のまま何もしない
+			 return;
+		}//アップロード画像がPNG形式で、ファイルサイズが小さな時はPNG形式で上書き保存	
+		elseif($is_upload_img_png_format && $filesize < ($max_file_size_in_png_format_upload * 1024) && !$max_kb_size_over){
+			//PNG形式で保存
+			$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2png'=>true]);
+		}else{
+			//WebP形式で保存
+			$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2webp'=>true]);
 	}
 
 	if(is_file($img)){

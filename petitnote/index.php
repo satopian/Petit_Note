@@ -548,7 +548,7 @@ function post(): void {
 
 		if($is_upload_img){//実体データの縮小 PNG形式で上書き
 			thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
-		}	
+		}
 		//お絵かき画像のサイズオーバ時にはWebPに変換
 		//アップロード画像は必ずWebPまたはPNGで上書き(ここでGPSデータも消える)
 		convert2($is_upload_img,$is_upload_img_png_format,$time.'.tmp',$time);

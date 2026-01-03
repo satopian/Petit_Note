@@ -21,11 +21,11 @@ class thumbnail_gd {
 		if(!self::gd_check()||!function_exists("ImageCreate")||!function_exists("ImageCreateFromJPEG")){
 			return null;
 		}
-		if((isset($options['webp'])||isset($options['2webp'])||isset($options['thumbnail_webp'])) && !function_exists("ImageWEBP")){
-			return null;
-		}
 		if(isset($options['png2webp'])||isset($options['png2jpeg'])){
 			$options['2webp']=true;//互換処理
+		}
+		if((isset($options['webp'])||isset($options['2webp'])||isset($options['thumbnail_webp'])) && !function_exists("ImageWEBP")){
+			return null;
 		}
 
 		$fsize = filesize($fname); // ファイルサイズを取得
@@ -75,10 +75,8 @@ class thumbnail_gd {
 			ImageCopyResized($im_out, $im_in, 0, 0, 0, 0, $out_w, $out_h, $w, $h);//"ImageCopyResampled"が無効の時
 		}
 
-		if(isset($options['toolarge'])||isset($options['2png'])){//元画像を縮小して上書き
+		if(isset($options['toolarge'])){//元画像を縮小してPNGで上書き
 			$outfile = self::overwriteResizedImageWithPNG($im_out, $fname);
-		}	elseif(isset($options['overwrite_with_webp'])){//pngをwebpに変換して一時保存
-			$outfile = self::overwriteResizedImageWithWEBP($im_out, $fname);
 		}else{
 			$outfile = self::createThumbnailImage($im_out, $time, $options);
 		}
@@ -131,7 +129,7 @@ class thumbnail_gd {
 	// 透明度の処理を行う必要があるかを判断
 	private static function isTransparencyEnabled($options, $mime_type): bool {
 		// 透明度を扱うオプションが設定されているか確認
-		$transparencyOptionsSet = isset($options['toolarge']) || isset($options['webp']) || isset($options['thumbnail_webp']) || isset($options['2webp']);
+		$transparencyOptionsSet = isset($options['toolarge']) || isset($options['webp']) || isset($options['thumbnail_webp']) || isset($options['2webp']) || isset($options['2png']);
 		
 		// 対象の画像形式で透明度がサポートされているか確認
 		$transparencySupportedFormats = ["image/png", "image/gif", "image/webp"];
@@ -186,31 +184,18 @@ class thumbnail_gd {
 			}
 		return $outfile;
 	}
-	//縮小してWebPで上書き
-	private static function overwriteResizedImageWithWEBP($im_out, $fname): ?string {
-		$outfile=(string)$fname;
-		//本体画像を縮小
-			if(function_exists("ImageWEBP")){
-				ImageWEBP($im_out, $outfile,98);
-			}else{
-				ImageJPEG($im_out, $outfile,98);
-			}
-		return $outfile;
-	}
 	//サムネイル作成
 	private static function createThumbnailImage($im_out, $time, $options): ?string {
 
-		if(isset($options['2webp'])){
+		if(isset($options['2png'])){
 
-			if(function_exists("ImageWEBP")){
-				$outfile=TEMP_DIR.$time.'.webp.tmp';//一時ファイル
-				ImageWEBP($im_out, $outfile,98);
+			$outfile=TEMP_DIR.$time.'.png.tmp';//一時ファイル
+			ImagePNG($im_out, $outfile,3);
+		
+		} elseif(isset($options['2webp'])){
 
-			}else{
-				$outfile=TEMP_DIR.$time.'.jpg.tmp';//一時ファイル
-				ImageJPEG($im_out, $outfile,98);
-
-			}
+			$outfile=TEMP_DIR.$time.'.webp.tmp';//一時ファイル
+			ImageWEBP($im_out, $outfile,98);
 		
 		} elseif(isset($options['webp'])){
 
