@@ -771,7 +771,7 @@ function delete_res_cache (): void {
 	safe_unlink(__DIR__.'/template/cache/index_cache.json');
 }
 
-//pngをwebpに変換してみてファイル容量が小さくなっていたら元のファイルを上書き
+//PNG形式またはWebP形式で上書き保存
 function convert2($is_upload_img,$is_upload_img_png_format,$fname,$time): void {
 	global $max_kb,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
 	$upfile=TEMP_DIR.basename($fname);
@@ -782,7 +782,10 @@ function convert2($is_upload_img,$is_upload_img_png_format,$fname,$time): void {
 
 	clearstatcache();
 	$filesize=filesize($upfile);
-	$max_kb_size_over = ($filesize > ($max_kb * 1024));
+
+	//GDのPNGのサイズは少し大きくなるので制限値を1.5で割る
+	$max_kb_size_over = ($filesize > ($max_kb * 1024 / 1.5));
+
 	if(
 		//お絵かき画像は必ずPNG形式
 		//ファイルサイズが小さな時はもとのPNGのまま何もしない
@@ -800,7 +803,6 @@ function convert2($is_upload_img,$is_upload_img_png_format,$fname,$time): void {
 	}
 
 	if(is_file($img)){
-		clearstatcache();
 		rename($img,$upfile);//上書き保存
 		chmod($upfile,0606);
 	}
