@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.169.1';
-$petit_lot='lot.20260103';
+$petit_ver='v1.169.2';
+$petit_lot='lot.20260106';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1372,7 +1372,7 @@ function img_replace(): void {
 
 	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
-	(array)$flock_option = $is_upload_img ? []: ['paintcom'=>true];
+	$flock_option = $is_upload_img ? []: ['paintcom'=>true];
 	file_lock($fp, LOCK_EX,$flock_option);
 
 	$alllog_arr = create_array_from_fp($fp);
@@ -1387,7 +1387,7 @@ function img_replace(): void {
 	check_open_no($no);
 	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=fopen(LOG_DIR."{$no}.log","r+");
-	(array)$flock_option = $is_upload_img ? []: ['paintcom'=>true];
+	$flock_option = $is_upload_img ? []: ['paintcom'=>true];
 	file_lock($rp, LOCK_EX,$flock_option);
 
 	$r_arr = create_array_from_fp($rp);
