@@ -9,7 +9,7 @@
 	<?php include __DIR__ . '/parts/head_preload_css_js.html'; ?>
 	<title><?= h($boardname) ?></title>
 	<script>
-		const setAllNsfw = <?= h(isset($set_all_images_to_nsfw) ? ($set_all_images_to_nsfw ? "true" : "false") : "false") ?>;
+		const setAllNsfw = <?= h(($set_all_images_to_nsfw ?? false) ? "true" : "false") ?>;
 		const select_pic = () => {
 			const paintComPreview = document.getElementById("paintcom_attach_preview");
 			const paintcomPostCom = document.getElementById("post_com");
