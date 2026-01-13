@@ -776,10 +776,9 @@ function delete_res_cache (): void {
 function convert2($is_upload_img,$upload_img_mime_type,$fname,$time): void {
 	global $max_kb,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
 	$upfile=TEMP_DIR.basename($fname);
-	
-	$mimetype=mime_content_type($upfile);
-	if($mimetype==="image/gif"){
-		return;
+
+	if(mime_content_type($upfile)==="image/gif"){
+		return;//GIF形式の時は処理しない
 	}
 
 	clearstatcache();
@@ -813,7 +812,6 @@ function convert2($is_upload_img,$upload_img_mime_type,$fname,$time): void {
 			$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2webp'=>true]);
 			break;
 	}
-			
 
 	if(is_file($img)){
 		rename($img,$upfile);//上書き保存

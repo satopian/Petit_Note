@@ -1492,7 +1492,6 @@ function img_replace(): void {
 	if($is_upload_img){//実体データの縮小
 		thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 	}	
-
 	//お絵かき画像のサイズオーバ時にはWebPに変換
 	//アップロード画像の形式変換と上書き保存(ここでGPSデータも消える)
 	convert2($is_upload_img,$upload_img_mime_type,$time.'.tmp',$time);

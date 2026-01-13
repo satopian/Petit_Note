@@ -32,7 +32,7 @@ class thumbnail_gd {
 		list($w,$h) = GetImageSize($fname); // 画像の幅と高さを取得
 		$w_h_size_over = $max_w && $max_h && ($w > $max_w || $h > $max_h);
 		$f_size_over = !isset($options['toolarge']) ? ($fsize>1024*1024) : false;
-		if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['2webp']) && !isset($options['2png'])){//リサイズも変換もしない
+		if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['2webp']) && !isset($options['2png']) && !isset($options['2jpeg'])){//リサイズも変換もしない
 			return null;
 		}
 		if(!$w_h_size_over || isset($options['2webp']) || isset($options['2png']) || !$max_w || !$max_h){//リサイズしない
@@ -199,7 +199,7 @@ class thumbnail_gd {
 
 		}elseif(isset($options['2webp'])){
 
-		$outfile=TEMP_DIR.$time.'.webp.tmp';//一時ファイル
+			$outfile=TEMP_DIR.$time.'.webp.tmp';//一時ファイル
 			ImageWEBP($im_out, $outfile,98);
 		
 		} elseif(isset($options['webp'])){
