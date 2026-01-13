@@ -37,6 +37,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 	canvasHeight: <?=h($pich)?>,
 	<?php if($imgfile):?>loadImageUrl: "<?=h($imgfile)?>",<?php endif;?>
 	<?php if($img_chi):?>loadChibiFileUrl: "<?=h($img_chi)?>",<?php endif;?>
+	<?php if($img_aco ?? ''):?>loadSwatchesUrl: "<?=h($img_aco)?>",<?php endif;?>
 
 	saveUrl: "./?mode=saveimage&stime=<?=time();?>&tool=chi<?php if($resto):?>&resto=<?=h($resto)?><?php endif;?><?php if($rep):?>&repcode=<?=h($repcode)?><?php endif;?>",
 	postUrl: "./?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>",
@@ -50,7 +51,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 });
 //画像受信後の処理と画面移動
 const handleExit = ()=>{
-<?php if($rep):?>
+	<?php if($rep):?>
 // 画像差し換えに必要なフォームデータをセット
 const formData = new FormData();
 formData.append("mode", "picrep"); 
@@ -80,7 +81,7 @@ fetch("./", {
 			if (text.startsWith("error\n")) {
 					console.log(text);
 					return window.location.href = "./?mode=paintcom";
-				}
+			}
 		})
 	}
 })
