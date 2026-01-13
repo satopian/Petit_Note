@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260112;
+$functions_ver=20260113;
 
 //編集モードログアウト
 function logout(): void {
@@ -793,6 +793,7 @@ function convert2($is_upload_img,$upload_img_mime_type,$fname,$time): void {
 			return;
 	}
 	$upload_img_mime_type = ($upload_img_mime_type === true) ? "image/png" : $upload_img_mime_type;
+
 	switch($upload_img_mime_type){
 		case "image/png":
 			//サイズ違反チェック
@@ -802,13 +803,17 @@ function convert2($is_upload_img,$upload_img_mime_type,$fname,$time): void {
 				//WebP形式で保存
 				$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2webp'=>true]);
 			}
+				break;
 		case "image/jpeg":
 				$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2jpeg'=>true]);
+				break;
 		default:
 			//上記caseに該当しないmime_typeの時、またはお絵かき画像の時は
 			//WebP形式で保存
 			$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2webp'=>true]);
+			break;
 	}
+			
 
 	if(is_file($img)){
 		rename($img,$upfile);//上書き保存
