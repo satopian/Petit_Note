@@ -3,7 +3,7 @@
 // https://paintbbs.sakura.ne.jp/
 // originalscript (C)SakaQ 2005 http://www.punyu.net/php/
 
-$thumbnail_gd_ver=20260103;
+$thumbnail_gd_ver=20260113;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 class thumbnail_gd {
 
@@ -192,9 +192,14 @@ class thumbnail_gd {
 			$outfile=TEMP_DIR.$time.'.png.tmp';//一時ファイル
 			ImagePNG($im_out, $outfile,3);
 		
-		} elseif(isset($options['2webp'])){
+		}elseif(isset($options['2jpeg'])){
 
-			$outfile=TEMP_DIR.$time.'.webp.tmp';//一時ファイル
+			$outfile=TEMP_DIR.$time.'.jpeg.tmp';//一時ファイル
+			imagejpeg($im_out, $outfile,98);
+
+		}elseif(isset($options['2webp'])){
+
+		$outfile=TEMP_DIR.$time.'.webp.tmp';//一時ファイル
 			ImageWEBP($im_out, $outfile,98);
 		
 		} elseif(isset($options['webp'])){

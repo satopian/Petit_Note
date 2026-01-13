@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.169.2';
-$petit_lot='lot.20260106';
+$petit_ver='v1.172.2';
+$petit_lot='lot.20260113';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260103){
+if(!isset($functions_ver)||$functions_ver<20260113){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -32,7 +32,7 @@ if(!isset($misskey_note_ver)||$misskey_note_ver<20250718){
 
 check_file(__DIR__.'/save.inc.php');
 require_once(__DIR__.'/save.inc.php');
-if(!isset($save_inc_ver)||$save_inc_ver<20250918){
+if(!isset($save_inc_ver)||$save_inc_ver<20260112){
 	die($en?'Please update save.inc.php to the latest version.':'save.inc.phpを最新版に更新してください。');
 }
 
@@ -50,7 +50,7 @@ if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20251031){
 
 check_file(__DIR__.'/thumbnail_gd.inc.php');
 require_once(__DIR__.'/thumbnail_gd.inc.php');
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20260103){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20260113){
 	error($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
 }
 
@@ -295,18 +295,20 @@ function post(): void {
 	$painttime ='';
 	$is_painted_img=false;
 	$tempfile='';
-	$picfile='';
+	$temp_filename='';
+	$temp_basepath='';
 	if($pictmp===2){//ユーザーデータを調べる
-		list($picfile,) = explode(",",(string)filter_input_data('POST', 'picfile'));
-		$picfile=basename($picfile);
-		$tempfile = TEMP_DIR.$picfile;
-		$picfile=pathinfo($tempfile, PATHINFO_FILENAME );//拡張子除去
+		list($temp_filename,) = explode(",",(string)filter_input_data('POST', 'picfile'));
+		$temp_filename=basename($temp_filename);
+		$tempfile = TEMP_DIR.$temp_filename;
+		$temp_basepath = pathinfo($temp_filename, PATHINFO_FILENAME );//拡張子除去
+		$temp_basepath = TEMP_DIR.$temp_basepath;
 		//選択された絵が投稿者の絵か再チェック
-		if (!$picfile || !is_file(TEMP_DIR.$picfile.".dat") || !is_file($tempfile)) {
+		if (!$temp_filename || !is_file($temp_basepath.".dat") || !is_file($tempfile)) {
 			error($en? 'Posting failed.':'投稿に失敗しました。');
 		}
 		//ユーザーデータから情報を取り出す
-		$userdata = file_get_contents(TEMP_DIR.$picfile.".dat");
+		$userdata = file_get_contents($temp_basepath.".dat");
 		list($uip,$uhost,,,$ucode,,$starttime,$postedtime,$uresto,$tool,$u_hide_animation) = explode("\t", rtrim($userdata)."\t\t\t");
 		//ユーザーコードまたはipアドレスは一致しているか?
 		$valid_poster_found = ($ucode && ($ucode == $usercode)) || ($uip && ($uip == $userip)); 
@@ -543,15 +545,15 @@ function post(): void {
 	$up_img_hash='';
 	if($is_file_upfile){
 
-		//アップロード画像でかつPNG形式か?
-		$is_upload_img_png_format = ($is_upload_img && mime_content_type($upfile)==="image/png");
+		//添付したアップロード画像の元のmime_type
+		$upload_img_mime_type = $is_upload_img ? mime_content_type($upfile) : "";
 
 		if($is_upload_img){//実体データの縮小 PNG形式で上書き
 			thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 		}
 		//お絵かき画像のサイズオーバ時にはWebPに変換
-		//アップロード画像は必ずWebPまたはPNGで上書き(ここでGPSデータも消える)
-		convert2($is_upload_img,$is_upload_img_png_format,$time.'.tmp',$time);
+		//アップロード画像の形式変換と上書き保存(ここでGPSデータも消える)
+		convert2($is_upload_img,$upload_img_mime_type,$time.'.tmp',$time);
 
 		if($is_upload_img){//アップロード画像のファイルサイズが大きすぎる時は削除
 			delete_file_if_sizeexceeds($upfile,$fp,$rp);
@@ -587,16 +589,26 @@ function post(): void {
 		}
 	}
 
-	$src='';
+	$pch_src='';
+	$aco_src='';
 	$pchext = '';
 	//PCHファイルアップロード
-	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-	if ($is_painted_img && $imgfile && ($pchext = check_pch_ext(TEMP_DIR.$picfile,['upload'=>true]))) {
-
-		$src = TEMP_DIR.$picfile.$pchext;
-		$dst = IMG_DIR.$time.$pchext;
-			if(copy($src, $dst)){
-				chmod($dst,0606);
+	if ($is_painted_img && $imgfile) {
+		// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
+		if($pchext = check_pch_ext($temp_basepath,['upload'=>true])){
+			$pch_src = $temp_basepath.$pchext;
+			$pch_dst = IMG_DIR.$time.$pchext;
+			if(copy($pch_src, $pch_dst)){
+				chmod($pch_dst,0606);
+			}
+		}
+		//litaChixのカラーセット
+		$aco_src = $temp_basepath.".aco";
+		$aco_dst = IMG_DIR.$time.".aco";
+		if(is_file($aco_src)){
+			if(copy($aco_src, $aco_dst)){
+				chmod($aco_dst,0606);
+			}
 		}
 	}
 	$pchext= ($pchext==='.pch' && $hide_animation) ? 'hide_animation' : $pchext; 
@@ -718,11 +730,12 @@ function post(): void {
 	closeFile($fp);
 
 	//ワークファイル削除
-	safe_unlink($src);
+	safe_unlink($pch_src);
+	safe_unlink($aco_src);
 	safe_unlink($tempfile);
 	safe_unlink($up_tempfile);
 	safe_unlink($upfile);
-	safe_unlink(TEMP_DIR.$picfile.".dat");
+	safe_unlink($temp_basepath.".dat");
 	delete_res_cache();
 
 	$resno = $resto ? $resto : $no;	
@@ -802,6 +815,7 @@ function paint(): void {
 	$oekaki_id='';
 	$pchfile='';
 	$img_chi='';
+	$img_aco='';
 	$img_klecks='';
 	$rep=false;
 	$paintmode='paintcom';
@@ -913,6 +927,9 @@ function paint(): void {
 		if($ctype=='img'){//画像から続き
 			if($_pch_ext==='.chi'){
 				$img_chi =IMG_DIR.$time.'.chi';
+			}
+			if(is_file(IMG_DIR.$time.'.aco')){
+				$img_aco =IMG_DIR.$time.'.aco';
 			}
 			if($_pch_ext==='.psd'){
 				$img_klecks =IMG_DIR.$time.'.psd';
@@ -1341,11 +1358,12 @@ function img_replace(): void {
 				$hide_animation = ($u_hide_animation==='true');
 				$tool= is_paint_tool_name($tool);
 				$file_name = pathinfo($file, PATHINFO_FILENAME );//拡張子除去
+				$temp_basepath = TEMP_DIR.$file_name;
 				$imgext=basename($imgext);
 				//ユーザーコードまたはipアドレスは一致しているか?
 				$valid_poster_found = ($ucode && ($ucode == $usercode)) || ($uip && ($uip == $userip)); 
 				//画像があり、認識コードがhitすれば抜ける
-				if($file_name && is_file(TEMP_DIR.$file_name.$imgext) && $valid_poster_found && $urepcode && ($urepcode === $repcode)){
+				if($file_name && is_file($temp_basepath.$imgext) && $valid_poster_found && $urepcode && ($urepcode === $repcode)){
 					$repfind=true;
 					$is_painted_img=true;
 					break;
@@ -1356,7 +1374,7 @@ function img_replace(): void {
 		if(!$repfind){//見つからなかった時は
 			location_paintcom();//新規投稿
 		}
-		$tempfile=TEMP_DIR.$file_name.$imgext;
+		$tempfile=$temp_basepath.$imgext;
 	}
 	if($up_tempfile && $is_upload_img && !is_file($up_tempfile)){
 		error($en?'Please attach an image.':'画像を添付してください。');
@@ -1409,7 +1427,7 @@ function img_replace(): void {
 			if($id===$_time && $no===$_no){
 
 				if($is_upload_img && ($_tool !== 'upload') || $is_painted_img && ($_tool === 'upload')) {
-					safe_unlink($tempfile);
+					safe_unlink($up_tempfile);
 					closeFile($rp);
 					closeFile($fp);
 					error($en?'This operation has failed.':'失敗しました。');
@@ -1468,14 +1486,16 @@ function img_replace(): void {
 	} 
 	chmod($upfile,0606);
 
-	//アップロード画像でかつPNG形式か?
-	$is_upload_img_png_format = ($is_upload_img && mime_content_type($upfile)==="image/png");
+	//添付したアップロード画像の元のmime_type
+	$upload_img_mime_type = $is_upload_img ? mime_content_type($upfile) : "";
 
 	if($is_upload_img){//実体データの縮小
 		thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 	}	
-	//アップロード画像は必ずWebPまたはPNGで上書き(ここでGPSデータも消える)
-	convert2($is_upload_img,$is_upload_img_png_format,$time.'.tmp',$time);
+
+	//お絵かき画像のサイズオーバ時にはWebPに変換
+	//アップロード画像の形式変換と上書き保存(ここでGPSデータも消える)
+	convert2($is_upload_img,$upload_img_mime_type,$time.'.tmp',$time);
 
 	if($is_upload_img){//アップロード画像のファイルサイズが大きすぎる時は削除
 		delete_file_if_sizeexceeds($upfile,$fp,$rp);
@@ -1529,17 +1549,29 @@ function img_replace(): void {
 		error($en?'This operation has failed.':'失敗しました。');
 	}
 	chmod(IMG_DIR.$imgfile,0606);
-	$src='';
+	$pch_src='';
+	$aco_src='';
 	$pchext='';
 	//PCHファイルアップロード
-	// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-	if (!$is_upload_img && $repfind && ($pchext = check_pch_ext(TEMP_DIR . $file_name,['upload'=>true]))) {
-		$src = TEMP_DIR . $file_name . $pchext;
-		$dst = IMG_DIR . $time . $pchext;
-		if(copy($src, $dst)){
-			chmod($dst, 0606);
+	if (!$is_upload_img && $repfind) {
+		// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
+		if($pchext = check_pch_ext($temp_basepath,['upload'=>true])){
+			$pch_src = $temp_basepath.$pchext;
+			$pch_dst = IMG_DIR.$time.$pchext;
+			if(copy($pch_src, $pch_dst)){
+				chmod($pch_dst,0606);
+			}
+		}
+		//litaChixのカラーセット
+		$aco_src = $temp_basepath.".aco";
+		$aco_dst = IMG_DIR.$time.".aco";
+		if(is_file($aco_src)){
+			if(copy($aco_src, $aco_dst)){
+				chmod($aco_dst,0606);
+			}
 		}
 	}
+
 	if($pchext === '.pch'){
 		$pchext = $hide_animation ? 'hide_animation' : '.pch'; 
 	}
@@ -1610,11 +1642,12 @@ function img_replace(): void {
 	//旧ファイル削除
 	delete_files($_imgfile, $_time);
 	//ワークファイル削除
-	safe_unlink($src);
+	safe_unlink($pch_src);
+	safe_unlink($aco_src);
 	safe_unlink($tempfile);
 	safe_unlink($up_tempfile);
 	safe_unlink($upfile);
-	safe_unlink(TEMP_DIR.$file_name.".dat");
+	safe_unlink($temp_basepath.".dat");
 
 	if($is_upload_img){
 		edit_form($time,$no);//編集画面にもどる

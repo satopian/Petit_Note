@@ -1,8 +1,8 @@
 <?php
-//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
+//Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20250918;
+$save_inc_ver=20260112;
 class image_save{
 
 	private $security_timer,$imgfile,$en,$count,$errtext,$session_usercode; // プロパティとして宣言
@@ -219,6 +219,16 @@ class image_save{
 					if(is_file(TEMP_DIR.$this->imgfile.'.chi')){
 						chmod(TEMP_DIR.$this->imgfile.'.chi',PERMISSION_FOR_DEST);
 					}
+				}
+			}
+		}
+		if(isset($_FILES['swatches']) && ($_FILES['swatches']['error'] == UPLOAD_ERR_OK)){
+			$mimetype = mime_content_type($_FILES['swatches']['tmp_name']);
+			if($mimetype==="application/x-adobe-aco" || $mimetype==="application/octet-stream"){
+				//chiファイルのアップロードができなかった場合はエラーメッセージはださず、画像のみ投稿する。 
+				move_uploaded_file($_FILES['swatches']['tmp_name'], TEMP_DIR.$this->imgfile.'.aco');
+				if(is_file(TEMP_DIR.$this->imgfile.'.aco')){
+					chmod(TEMP_DIR.$this->imgfile.'.aco',PERMISSION_FOR_DEST);
 				}
 			}
 		}

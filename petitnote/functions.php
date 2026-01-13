@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260103;
+$functions_ver=20260112;
 
 //編集モードログアウト
 function logout(): void {
@@ -762,6 +762,7 @@ function delete_files ($imgfile, $time): void {
 	safe_unlink(IMG_DIR.$time.'.pch');
 	safe_unlink(IMG_DIR.$time.'.spch');
 	safe_unlink(IMG_DIR.$time.'.chi');
+	safe_unlink(IMG_DIR.$time.'.aco');
 	safe_unlink(IMG_DIR.$time.'.psd');
 	safe_unlink(IMG_DIR.$time.'.tgkr');
 	delete_res_cache();
@@ -772,32 +773,39 @@ function delete_res_cache (): void {
 }
 
 //PNG形式またはWebP形式で上書き保存
-function convert2($is_upload_img,$is_upload_img_png_format,$fname,$time): void {
+function convert2($is_upload_img,$upload_img_mime_type,$fname,$time): void {
 	global $max_kb,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
 	$upfile=TEMP_DIR.basename($fname);
-
-	if(mime_content_type($upfile)==="image/gif"){
-		return;//GIF形式の時は処理しない
+	
+	$mimetype=mime_content_type($upfile);
+	if($mimetype==="image/gif"){
+		return;
 	}
 
 	clearstatcache();
 	$filesize=filesize($upfile);
-
 	//GDのPNGのサイズは少し大きくなるので制限値を1.5で割る
 	$max_kb_size_over = ($filesize > ($max_kb * 1024 / 1.5));
 
-	if(
-		//お絵かき画像は必ずPNG形式
-		//ファイルサイズが小さな時はもとのPNGのまま何もしない
-		(!$is_upload_img && $filesize < ($max_file_size_in_png_format_paint * 1024)))
-		//アップロード画像がPNG形式の時で、ファイルサイズがが小さな時はPNG形式のまま保存
-		{//PNG形式のまま何もしない
-			 return;
-		}//アップロード画像がPNG形式で、ファイルサイズが小さな時はPNG形式で上書き保存	
-		elseif($is_upload_img_png_format && $filesize < ($max_file_size_in_png_format_upload * 1024) && !$max_kb_size_over){
-			//PNG形式で保存
-			$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2png'=>true]);
-		}else{
+	//お絵かき画像は必ずPNG形式
+	//ファイルサイズが小さな時はもとのPNGのまま何もしない
+	if(!$is_upload_img && $filesize < ($max_file_size_in_png_format_paint * 1024)){
+			return;
+	}
+	$upload_img_mime_type = ($upload_img_mime_type === true) ? "image/png" : $upload_img_mime_type;
+	switch($upload_img_mime_type){
+		case "image/png":
+			//サイズ違反チェック
+			if($filesize < ($max_file_size_in_png_format_upload * 1024) && !$max_kb_size_over){
+				$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2png'=>true]);
+			}else{
+				//WebP形式で保存
+				$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2webp'=>true]);
+			}
+		case "image/jpeg":
+				$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2jpeg'=>true]);
+		default:
+			//上記caseに該当しないmime_typeの時、またはお絵かき画像の時は
 			//WebP形式で保存
 			$img = thumbnail_gd::thumb(TEMP_DIR,$fname,$time,null,null,['2webp'=>true]);
 	}
