@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.172.2';
-$petit_lot='lot.20260113';
+$petit_ver='v1.172.3';
+$petit_lot='lot.20260114';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -427,11 +427,6 @@ function post(): void {
 			safe_unlink($up_tempfile);
 			error($en?'This operation has failed.':'失敗しました。');
 		}
-		//Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
-		check_jpeg_exif($upfile);
-		if(!is_file($upfile)){
-			error($en?'This operation has failed.':'失敗しました。');
-		}
 
 		$tool = 'upload'; 
 		$is_upload_img=true;
@@ -548,13 +543,21 @@ function post(): void {
 		//添付したアップロード画像の元のmime_type
 		$upload_img_mime_type = $is_upload_img ? mime_content_type($upfile) : "";
 
-		if($is_upload_img){//実体データの縮小 PNG形式で上書き
+		if($is_upload_img){
+			//Exifをチェックして画像が回転している時は上書き保存
+			check_jpeg_exif($upfile);
+			//実体データの縮小 PNG形式で上書き
 			thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
-		}
+			}
 		//お絵かき画像のサイズオーバ時にはWebPに変換
 		//アップロード画像の形式変換と上書き保存(ここでGPSデータも消える)
 		convert2($is_upload_img,$upload_img_mime_type,$time.'.tmp',$time);
-
+		
+		if(!is_file($upfile)){
+			closeFile($fp);
+			closeFile($rp);
+			error($en?'This operation has failed.':'失敗しました。');
+		}
 		if($is_upload_img){//アップロード画像のファイルサイズが大きすぎる時は削除
 			delete_file_if_sizeexceeds($upfile,$fp,$rp);
 		}
@@ -585,6 +588,8 @@ function post(): void {
 
 		rename($upfile,IMG_DIR.$imgfile);
 		if(!is_file(IMG_DIR.$imgfile)){
+			closeFile($fp);
+			closeFile($rp);
 			error($en?'This operation has failed.':'失敗しました。');
 		}
 	}
@@ -634,6 +639,8 @@ function post(): void {
 	foreach($alllog_arr as $i => $_alllog){
 		list($log_no,)=explode("\t",$_alllog,2);
 		if(!ctype_digit($log_no)){
+			closeFile($fp);
+			closeFile($rp);
 			error($en?'This operation has failed.':'失敗しました。');
 		}
 		$no_arr[]=$log_no;
@@ -1469,8 +1476,6 @@ function img_replace(): void {
 			closeFile($fp);
 			error($en?'This operation has failed.':'失敗しました。');
 		}
-		//Exifをチェックして画像が回転している時と位置情報が付いている時は上書き保存
-		check_jpeg_exif($upfile);
 	}
 	if(!$is_upload_img && $repfind && is_file($tempfile) && ($_tool !== 'upload')){
 		copy($tempfile, $upfile);
@@ -1489,10 +1494,13 @@ function img_replace(): void {
 	//添付したアップロード画像の元のmime_type
 	$upload_img_mime_type = $is_upload_img ? mime_content_type($upfile) : "";
 
-	if($is_upload_img){//実体データの縮小
+	if($is_upload_img){
+		//Exifをチェックして画像が回転している時は上書き保存
+		check_jpeg_exif($upfile);
+		//実体データの縮小
 		thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 	}	
-	//お絵かき画像のサイズオーバ時にはWebPに変換
+	//お絵かき画像のサイズオーバ時はWebPに変換
 	//アップロード画像の形式変換と上書き保存(ここでGPSデータも消える)
 	convert2($is_upload_img,$upload_img_mime_type,$time.'.tmp',$time);
 
@@ -1566,7 +1574,7 @@ function img_replace(): void {
 		$aco_dst = IMG_DIR.$time.".aco";
 		if(is_file($aco_src)){
 			if(copy($aco_src, $aco_dst)){
-				chmod($aco_dst,0606);
+			chmod($aco_dst,0606);
 			}
 		}
 	}
