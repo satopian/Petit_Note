@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.172.3';
+$petit_ver='v1.172.5';
 $petit_lot='lot.20260114';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -1349,11 +1349,13 @@ function img_replace(): void {
 	}
 	$tempfile='';
 	$file_name='';
+	$temp_basepath='';
 	$starttime='';
 	$postedtime='';
 	$repfind=false;
 	$is_painted_img=false;
 	$hide_animation=false;
+	
 	if(!$is_upload_img){
 		/*--- テンポラリ捜査 ---*/
 		$handle = opendir(TEMP_DIR);
