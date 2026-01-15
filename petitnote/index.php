@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.172.5';
+$petit_ver='v1.172.6';
 $petit_lot='lot.20260114';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -549,7 +549,7 @@ function post(): void {
 			//実体データの縮小 PNG形式で上書き
 			thumbnail_gd::thumb(TEMP_DIR,$time.'.tmp',$time,$max_px,$max_px,['toolarge'=>true]);
 			}
-		//お絵かき画像のサイズオーバ時にはWebPに変換
+		//お絵かき画像のサイズオーバ時はWebPに変換
 		//アップロード画像の形式変換と上書き保存(ここでGPSデータも消える)
 		convert2($is_upload_img,$upload_img_mime_type,$time.'.tmp',$time);
 		
@@ -1894,6 +1894,7 @@ function edit_form($id='',$no=''): void {
 	list($_no,$sub,$name,$verified,$_com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$lines;
 
 	$_SESSION['current_resid']	= $first_posted_time;
+	$resid = $first_posted_time;
 
 	$com=h(str_replace('"\n"',"\n",$com));
 
