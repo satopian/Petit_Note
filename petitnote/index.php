@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.173.7';
+$petit_ver='v1.175.0';
 $petit_lot='lot.20260120';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -63,7 +63,7 @@ if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20250315){
 check_file(__DIR__.'/config.php');
 require_once(__DIR__.'/config.php');
 // jQueryバージョン
-const JQUERY='jquery-3.7.0.min.js';
+const JQUERY='jquery-4.0.0.min.js';
 check_file(__DIR__.'/lib/'.JQUERY);
 // luminous
 check_file(__DIR__.'/lib/lightbox/js/lightbox.min.js');
