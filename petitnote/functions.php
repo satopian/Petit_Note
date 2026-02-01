@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260113;
+$functions_ver=20260129;
 
 //編集モードログアウト
 function logout(): void {
@@ -1172,6 +1172,10 @@ function Reject_if_NGword_exists_in_the_post(): void {
 	if (is_ngword($badstring, [$chk_name,$chk_sub,$chk_url,$chk_com])) {
 		error($en?'There is an inappropriate string.':'不適切な表現があります。');
 	}
+	// 使えない文字チェック
+	if (is_ngword($badstring, [$chk_name,$chk_sub,$chk_url,$chk_com])) {
+		error($en?'There is an inappropriate string.':'不適切な表現があります。');
+	}
 
 	// 使えない名前チェック
 	if (is_ngword($badname, $chk_name)) {
@@ -1202,13 +1206,17 @@ function is_ngword ($ngwords, $strs): bool {
 	$strs = (array)$strs;//配列に変換
 	foreach($ngwords as $i => $ngword){//拒絶する文字列
 		$ngwords[$i]  = str_replace([" ", "　"], "", $ngword);
-		$ngwords[$i]  = str_replace("/", "\/", $ngwords[$i]);
+		$ngwords[$i]  = str_replace("/", "&#47;", $ngwords[$i]);
 	}
 	foreach ($strs as $str) {
+		$str =str_replace("/", "&#47;", $str);
 		foreach($ngwords as $ngword){//拒絶する文字列
 			if ($ngword && preg_match("/{$ngword}/ui", $str)){
 				return true;
 			}
+		}
+		if (preg_match('/[\p{Mn}\p{Me}]/u', $str)) {
+			return true;
 		}
 	}
 	return false;
