@@ -1172,11 +1172,6 @@ function Reject_if_NGword_exists_in_the_post(): void {
 	if (is_ngword($badstring, [$chk_name,$chk_sub,$chk_url,$chk_com])) {
 		error($en?'There is an inappropriate string.':'不適切な表現があります。');
 	}
-	// 使えない文字チェック
-	if (is_ngword($badstring, [$chk_name,$chk_sub,$chk_url,$chk_com])) {
-		error($en?'There is an inappropriate string.':'不適切な表現があります。');
-	}
-
 	// 使えない名前チェック
 	if (is_ngword($badname, $chk_name)) {
 		error($en?'This name cannot be used.':'この名前は使えません。');
