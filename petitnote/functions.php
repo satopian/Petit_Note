@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260129;
+$functions_ver=20260211;
 
 //編集モードログアウト
 function logout(): void {
@@ -741,6 +741,7 @@ function get_image_type ($img_file): string {
 }
 //ファイルがあれば削除
 function safe_unlink ($path): void {
+	clearstatcache();
 	if ($path && is_file($path)) {
 		unlink($path);
 	}
