@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260211;
+$functions_ver=20260212;
 
 //編集モードログアウト
 function logout(): void {
@@ -1211,7 +1211,7 @@ function is_ngword ($ngwords, $strs): bool {
 				return true;
 			}
 		}
-		if (preg_match('/[\p{Mn}\p{Me}]/u', $str)) {
+		if (preg_match('/\p{M}{3,}/u', $str)) {
 			return true;
 		}
 	}
