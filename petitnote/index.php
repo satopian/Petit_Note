@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.190.1';
-$petit_lot='lot.20260223';
+$petit_ver='v1.191.2';
+$petit_lot='lot.20260224';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260212){
+if(!isset($functions_ver)||$functions_ver<20260224){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -38,7 +38,7 @@ if(!isset($save_inc_ver)||$save_inc_ver<20260112){
 
 check_file(__DIR__.'/search.inc.php');
 require_once(__DIR__.'/search.inc.php');
-if(!isset($search_inc_ver)||$search_inc_ver<20250906){
+if(!isset($search_inc_ver)||$search_inc_ver<20260223){
 	die($en?'Please update search.inc.php to the latest version.':'search.inc.phpを最新版に更新してください。');
 }
 
@@ -2425,6 +2425,7 @@ function view(): void {
 					}
 				}
 				$out[$oya][]=$_res;
+				unset($lines[$i]);
 			}	
 			$out[$oya][0]['find_hide_thumbnail']=$find_hide_thumbnail;
 			$out[$oya][0]['countres']=$countres;
@@ -2433,7 +2434,7 @@ function view(): void {
 			}
 		}
 	}
-	unset($lines);
+	unset($article_nos);
 	$aikotoba = aikotoba_valid();
 	$adminpost=adminpost_valid();
 	$resform = ((!$only_admin_can_reply && !$use_diary && !$is_badhost && $aikotoba)||$adminpost);
@@ -2547,19 +2548,21 @@ function res_view_other_works($resno): array
 
 	$other_works = [];
 	$a = [];
-	foreach ($articles1 as $val) {
+	foreach ($articles1 as $key => $val) {
 
 		$r1 = create_res(explode("\t", trim($val)), ['catalog' => true]);
 		if (!empty($r1) && $r1['img'] && $r1['no'] !== $resno) {
 			$rr1[] = $r1;
 		}
+		unset($articles1[$key]);
 	}
-	foreach ($articles2 as $val) {
+	foreach ($articles2 as $key => $val) {
 
 		$r2 = create_res(explode("\t", trim($val)), ['catalog' => true]);
 		if (!empty($r2) && $r2['img'] && $r2['no'] !== $resno) {
 			$rr2[] = $r2;
 		}
+		unset($articles2[$key]);
 	}
 	if ((3 <= count($rr1)) && (3 <= count($rr2))) {
 		$rr1 = array_slice($rr1, -3);

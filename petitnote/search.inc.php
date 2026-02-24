@@ -1,8 +1,8 @@
 <?php
-//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
+//Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$search_inc_ver = 20250906;
+$search_inc_ver = 20260223;
 class processsearch
 {
 
@@ -79,7 +79,10 @@ class processsearch
 				$out[0][$i]['com'] = $com;
 
 				$j = $page + $i + 1; //表示件数
-			}
+
+				unset($articles[$i]);
+
+				}
 		}
 
 		if ($imgsearch) {
