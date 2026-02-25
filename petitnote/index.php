@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.191.3';
-$petit_lot='lot.20260224';
+$petit_ver='v1.192.1';
+$petit_lot='lot.20260225';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260224){
+if(!isset($functions_ver)||$functions_ver<20260225){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -500,7 +500,7 @@ function post(): void {
 	foreach($chk_lines as $chk_line){
 		$chk_ex_line=explode("\t",trim($chk_line));
 		list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_)=$chk_ex_line;
-		if($m2time===microtime2time($time_)){//投稿時刻の重複回避
+		if($m2time && $m2time === microtime2time($time_)){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);
@@ -528,7 +528,8 @@ function post(): void {
 		}
 
 		// 画像アップロードと画像なしそれぞれの待機時間
-		$interval=(int)time()-(int)microtime2time($_time_);
+		$_m2time = microtime2time($_time_);
+		$interval= $_m2time ? time()- $_m2time : -1;//待機時間。$ltimeが0の時は-1(待機時間なし)にする
 		if($interval>=0 && (($upfile && $interval<30)||(!$upfile && $interval<20))){//待機時間がマイナスの時は通す
 			closeFile($fp);
 			closeFile($rp);
@@ -1531,7 +1532,7 @@ function img_replace(): void {
 	foreach($chk_images as $chk_line){
 		list($chk_no,$chk_sub,$chk_name,$chk_verified,$chk_com,$chk_url,$chk_imgfile,$chk_w,$chk_h,$chk_thumbnail,$chk_painttime,$chk_log_img_hash,$chk_tool,$chk_pchext,$chk_time,$chk_first_posted_time,$chk_host,$chk_userid,$chk_hash,$chk_oya_)=explode("\t",trim($chk_line));
 
-		if($is_upload_img && ($m2time === microtime2time($chk_time))){//投稿時刻の重複回避
+		if($is_upload_img && ($m2time && $m2time === microtime2time($chk_time))){//投稿時刻の重複回避
 			safe_unlink($upfile);
 			closeFile($fp);
 			closeFile($rp);

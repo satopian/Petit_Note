@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260224;
+$functions_ver=20260225;
 
 //編集モードログアウト
 function logout(): void {
@@ -1451,7 +1451,7 @@ function check_elapsed_days ($postedtime): bool {
 		return true; // 投稿時間が不正な場合は許可
 	}
 	$postedtime=microtime2time($postedtime);//マイクロ秒を秒に戻す
-	return $elapsed_days //古いスレッドのフォームを閉じる日数が設定されていたら
+	return $elapsed_days && $postedtime //古いスレッドのフォームを閉じる日数が設定されていたら
 		? ((time() - (int)$postedtime) <= ((int)$elapsed_days * 86400)) // 指定日数以内なら許可
 		: true; // フォームを閉じる日数が未設定なら許可
 }
@@ -1470,7 +1470,8 @@ function time_left_to_close_the_thread ($postedtime): string {
 // マイクロ秒を秒に戻す
 function microtime2time($microtime): int {
 	$microtime=(string)$microtime;
-	$time=(strlen($microtime)>15) ? substr($microtime,0,-6) : substr($microtime,0,-3);
+	$time = (strlen($microtime)>15) ? substr($microtime,0,-6) : substr($microtime,0,-3);
+	$time = ctype_digit($time) ? $time : 0;
 	return (int)$time;
 }
 
