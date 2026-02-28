@@ -1,9 +1,9 @@
 <?php
-//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
+//Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver=20250718;
+$misskey_note_ver=20260228;
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
@@ -19,9 +19,9 @@ class misskey_note{
 
 		$pwdc=(string)filter_input_data('COOKIE','pwdc');
 		$id = t(filter_input_data('POST','id'));//intの範囲外
-		$id = $id ? $id : t(filter_input_data('GET','id'));//intの範囲外
+		$id = $id ?: t(filter_input_data('GET','id'));//intの範囲外
 		$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
-		$no = $no ? $no : t(filter_input_data('GET','no',FILTER_VALIDATE_INT));
+		$no = $no ?: t(filter_input_data('GET','no',FILTER_VALIDATE_INT));
 		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
 		$resmode = false;//使っていない
 		$page= $_SESSION['current_page_context']["page"] ?? 0;
@@ -98,7 +98,7 @@ class misskey_note{
 
 		$pwd=(string)filter_input_data('POST','pwd');
 		$pwdc=(string)filter_input_data('COOKIE','pwdc');
-		$pwd = $pwd ? $pwd : $pwdc;
+		$pwd = $pwd ?: $pwdc;
 		
 		$id_and_no=(string)filter_input_data('POST','id_and_no');
 

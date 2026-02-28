@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.192.1';
-$petit_lot='lot.20260225';
+$petit_ver='v1.193.1';
+$petit_lot='lot.20260228';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,13 +20,13 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260225){
+if(!isset($functions_ver)||$functions_ver<20260228){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20250718){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20260228){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
@@ -129,7 +129,7 @@ $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
 $all_hide_painttime  =  $all_hide_painttime  ?? false;
 $hide_userid  =  $hide_userid  ?? false;
 $mode = (string)filter_input_data('POST','mode');
-$mode = $mode ? $mode :(string)filter_input_data('GET','mode');
+$mode = $mode ?: (string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
 $httpsonly = (bool)($_SERVER['HTTPS'] ?? '');
 //user-codeの発行
@@ -139,7 +139,7 @@ session_sta();
 $session_usercode = $_SESSION['usercode'] ?? "";
 $session_usercode = t($session_usercode);
 
-$usercode = $usercode ? $usercode : $session_usercode;
+$usercode = $usercode ?: $session_usercode;
 if(!$usercode){//user-codeがなければ発行
 	$userip = get_uip();
 	$usercode = hash('sha256', $userip.random_bytes(16));
@@ -275,7 +275,7 @@ function post(): void {
 	$url = t(filter_input_data('POST','url',FILTER_VALIDATE_URL));
 	$url= (adminpost_valid() || $use_url_input_field) ? $url : '';
 
-	$pwd=$pwd ? $pwd : t(filter_input_data('COOKIE','pwdc'));//未入力ならCookieのパスワード
+	$pwd=$pwd ?: t(filter_input_data('COOKIE','pwdc'));//未入力ならCookieのパスワード
 	if(!$pwd){//それでも$pwdが空なら
 		$pwd = substr(hash('sha256', random_bytes(16)), 0, 15);
 	}
@@ -318,7 +318,7 @@ function post(): void {
 		$tool= is_paint_tool_name($tool);
 		$uresto = (string)filter_var($uresto,FILTER_VALIDATE_INT);
 		$hide_animation= $hide_animation ? true : ($u_hide_animation==='true');
-		$resto = $uresto ? $uresto : $resto;//変数上書き$userdataのレス先を優先する
+		$resto = $uresto ?: $resto;//変数上書き$userdataのレス先を優先する
 		$resto=(string)$resto;//(string)厳密な型
 		//描画時間を$userdataをもとに計算
 		$hide_painttime=(bool)filter_input_data('POST','hide_painttime',FILTER_VALIDATE_BOOLEAN);
@@ -489,7 +489,7 @@ function post(): void {
 	//チェックするスレッド数。画像ありなら15、コメントのみなら5 
 	$n= $is_file_upfile ? 15 : 5;
 	$chk_log_arr=array_slice($alllog_arr,0,$n,false);
-	$chk_resto=$chk_resto ? $chk_resto : $resto; 
+	$chk_resto=$chk_resto ?: $resto; 
 	//$n行分の全体ログをもとにスレッドのログファイルを開いて配列を作成
 	$_chk_lines = create_chk_lins($chk_log_arr,$chk_resto);//取得済みの$chk_restoの配列を除外
 	$chk_lines=array_merge($_chk_lines,$r_arr);
@@ -746,7 +746,7 @@ function post(): void {
 	safe_unlink($temp_basepath.".dat");
 	delete_res_cache();
 
-	$resno = $resto ? $resto : $no;	
+	$resno = $resto ?: $no;	
 
 	global $send_email,$to_mail,$root_url,$boardname;
 
@@ -949,7 +949,7 @@ function paint(): void {
 		if($type==='rep'){//画像差し換え
 			$rep=true;
 			$pwd = t(filter_input_data('POST', 'pwd'));
-			$pwd=$pwd ? $pwd : t(filter_input_data('COOKIE','pwdc'));//未入力ならCookieのパスワード
+			$pwd=$pwd ?: t(filter_input_data('COOKIE','pwdc'));//未入力ならCookieのパスワード
 			if(strlen($pwd) > 100) error($en? 'Password is too long.':'パスワードが長すぎます。');
 			if($pwd){
 				$pwd=basename($pwd);
@@ -1188,7 +1188,7 @@ function to_continue(): void {
 	$thumbnail_webp = ((strpos($thumbnail,'thumbnail_webp')!==false)) ? $time.'s.webp' : false; 
 	$thumbnail_jpg = (!$thumbnail_webp && strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
 
-	$thumbnail_img = $thumbnail_webp ? $thumbnail_webp : $thumbnail_jpg;
+	$thumbnail_img = $thumbnail_webp ?: $thumbnail_jpg;
 
 	list($picw, $pich) = getimagesize(IMG_DIR.$imgfile);
 	$picfile = $thumbnail_img ? THUMB_DIR.$thumbnail_img : IMG_DIR.$imgfile;
@@ -1254,7 +1254,7 @@ function download_app_dat(): void {
 
 	$pwd=(string)filter_input_data('POST','pwd');
 	$pwdc=(string)filter_input_data('COOKIE','pwdc');
-	$pwd = $pwd ? $pwd : $pwdc;
+	$pwd = $pwd ?: $pwdc;
 	$no = (string)filter_input_data('POST', 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input_data('POST', 'id');//intの範囲外
 
@@ -1302,14 +1302,14 @@ function img_replace(): void {
 	global $max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image,$usercode;
 
 	$no = t(filter_input_data('POST', 'no',FILTER_VALIDATE_INT));
-	$no = $no ? $no :t(filter_input_data('GET', 'no',FILTER_VALIDATE_INT));
+	$no = $no ?: t(filter_input_data('GET', 'no',FILTER_VALIDATE_INT));
 	$id = t(filter_input_data('POST', 'id'));//intの範囲外
-	$id = $id ? $id :t(filter_input_data('GET', 'id'));//intの範囲外
+	$id = $id ?: t(filter_input_data('GET', 'id'));//intの範囲外
 
 	$enc_pwd =t(filter_input_data('POST', 'enc_pwd'));
-	$enc_pwd = $enc_pwd ? $enc_pwd : t(filter_input_data('GET', 'pwd'));
+	$enc_pwd = $enc_pwd ?: t(filter_input_data('GET', 'pwd'));
 	$repcode = t(filter_input_data('POST', 'repcode'));
-	$repcode = $repcode ? $repcode : t(filter_input_data('GET', 'repcode'));
+	$repcode = $repcode ?: t(filter_input_data('GET', 'repcode'));
 	$userip = t(get_uip());
 	//ホスト取得
 	$host = $userip ? t(gethostbyaddr($userip)) : '';
@@ -1835,7 +1835,7 @@ function edit_form($id='',$no=''): void {
 
 	$pwd=(string)filter_input_data('POST','pwd');
 	$pwdc=(string)filter_input_data('COOKIE','pwdc');
-	$pwd = $pwd ? $pwd : $pwdc;
+	$pwd = $pwd ?: $pwdc;
 
 	if(!($admindel||$userdel)){
 		error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");
@@ -1946,7 +1946,7 @@ function edit(): void {
 	$hide_animation=(bool)filter_input_data('POST','hide_animation',FILTER_VALIDATE_BOOLEAN);
 	$pwd=(string)filter_input_data('POST','pwd');
 	$pwdc=(string)filter_input_data('COOKIE','pwdc');
-	$pwd = $pwd ? $pwd : $pwdc;
+	$pwd = $pwd ?: $pwdc;
 	$url = t(filter_input_data('POST','url',FILTER_VALIDATE_URL));
 
 	$admindel=(admindel_valid() || is_adminpass($pwd));
@@ -2040,7 +2040,7 @@ function edit(): void {
 
 	$thumbnail_webp = is_file(THUMB_DIR.$_time.'s.webp') ? 'thumbnail_webp' : '';
 	$thumbnail_jpg = is_file(THUMB_DIR.$_time.'s.jpg') ? 'thumbnail' : '';
-	$thumbnail = $thumbnail_webp ? $thumbnail_webp : $thumbnail_jpg;
+	$thumbnail = $thumbnail_webp ?: $thumbnail_jpg;
 
 	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
 	$thumbnail =  $mark_sensitive_image ? $hide_thumbnail.$thumbnail : $thumbnail;
@@ -2120,7 +2120,7 @@ function del(): void {
 
 	$pwd=(string)filter_input_data('POST','pwd');
 	$pwdc=(string)filter_input_data('COOKIE','pwdc');
-	$pwd = $pwd ? $pwd : $pwdc;
+	$pwd = $pwd ?: $pwdc;
 
 	if(!($admindel||$userdel)){
 		error($en?"This operation has failed.\nPlease reload.":"失敗しました。\nリロードしてください。");

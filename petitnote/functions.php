@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260225;
+$functions_ver=20260228;
 
 //編集モードログアウト
 function logout(): void {
@@ -361,7 +361,7 @@ function check_cont_pass(): void {
 	$no = (string)filter_input_data('POST', 'no',FILTER_VALIDATE_INT);
 	$id = (string)filter_input_data('POST', 'time');//intの範囲外
 	$pwd=t(filter_input_data('POST', 'pwd'));//パスワードを取得
-	$pwd=$pwd ? $pwd : t(filter_input_data('COOKIE','pwdc'));//未入力ならCookieのパスワード
+	$pwd=$pwd ?: t(filter_input_data('COOKIE','pwdc'));//未入力ならCookieのパスワード
 	$flag = false;
 	if(!is_file(LOG_DIR."$no.log")){
 		error($en? 'The article does not exist.':'記事がありません。');
@@ -427,7 +427,7 @@ function create_res($line,$options=[]): array {
 
 	$anime = $pchext ? in_array($pchext,['.pch','.tgkr']) : false; 
 	$hide_thumbnail = $mark_sensitive_image ? (strpos($thumbnail,'hide_')!==false) :'';
-	$hide_thumbnail = $set_all_images_to_nsfw ? $set_all_images_to_nsfw : $hide_thumbnail;
+	$hide_thumbnail = $set_all_images_to_nsfw ?: $hide_thumbnail;
 
 	$_w=(string)$w;
 	$_h=(string)$h;
@@ -440,7 +440,7 @@ function create_res($line,$options=[]): array {
 	$thumbnail_webp = ((strpos($thumbnail,'thumbnail_webp')!==false)) ? $time.'s.webp' : false; 
 	$thumbnail_jpg = (!$thumbnail_webp && strpos($thumbnail,'thumbnail')!==false) ? $time.'s.jpg' : false; 
 
-	$thumbnail_img = $thumbnail_webp ? $thumbnail_webp : $thumbnail_jpg;
+	$thumbnail_img = $thumbnail_webp ?: $thumbnail_jpg;
 
 	$link_thumbnail= ($thumbnail_img || $hide_thumbnail); 
 	$painttime = !$isset_catalog ? calcPtime($paintsec) : false;
@@ -627,9 +627,9 @@ function get_prev_next_pages($page,$pagedef,$count_alllog): array {
 //ユーザーip
 function get_uip(): string {
 	$ip = $_SERVER["HTTP_CLIENT_IP"] ?? '';
-	$ip = $ip ? $ip : ($_SERVER["HTTP_INCAP_CLIENT_IP"] ?? '');
-	$ip = $ip ? $ip : ($_SERVER["HTTP_X_FORWARDED_FOR"] ?? '');
-	$ip = $ip ? $ip : ($_SERVER["REMOTE_ADDR"] ?? '');
+	$ip = $ip ?: ($_SERVER["HTTP_INCAP_CLIENT_IP"] ?? '');
+	$ip = $ip ?: ($_SERVER["HTTP_X_FORWARDED_FOR"] ?? '');
+	$ip = $ip ?: ($_SERVER["REMOTE_ADDR"] ?? '');
 	if (strstr($ip, ', ')) {
 		$ips = explode(', ', $ip);
 		$ip = $ips[0];
