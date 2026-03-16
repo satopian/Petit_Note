@@ -1950,6 +1950,16 @@ var TegakiCursor = {
         let canvas = this.cursorCtx.canvas;
 
         let [w, h] = this.getMaxCanvasSize();
+        //縮小表示の時は滑らかに表示する
+        if (Tegaki.zoomFactor < 1) {
+            Tegaki.canvasCnt.querySelectorAll("canvas").forEach((canvas) => {
+                canvas.style.imageRendering = "auto";
+            });
+        } else {
+            Tegaki.canvasCnt.querySelectorAll("canvas").forEach((canvas) => {
+                canvas.style.imageRendering = "";
+            });
+        }
 
         if (w !== canvas.width || h !== canvas.height) {
             canvas.width = w;
