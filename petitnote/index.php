@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.203.2';
-$petit_lot='lot.20260406';
+$petit_ver='v1.205.1';
+$petit_lot='lot.20260406.2';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1674,9 +1674,12 @@ function pchview(): void {
 
 	aikotoba_required_to_view();
 
+	$id = basename((string)filter_input_data('GET', 'id'));//最初に投稿した時刻をidに
+
 	$imagefile = basename((string)filter_input_data('GET', 'imagefile'));
+	$id = $id ?: pathinfo($imagefile, PATHINFO_FILENAME);//旧テンプレート互換
+
 	$no = (string)filter_input_data('GET', 'no',FILTER_VALIDATE_INT);
-	$id = pathinfo($imagefile, PATHINFO_FILENAME);
 	if(!is_file(LOG_DIR."{$no}.log")){
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
@@ -1690,7 +1693,7 @@ function pchview(): void {
 		}
 		if(strpos($line,"\t".$id."\t")!==false){
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
-			if($id===$time && $no===$_no && $pchext){
+			if(($id===$first_posted_time || $id===$time) && $no===$_no && $pchext){
 				$resid=$first_posted_time;
 				$flag=true;
 				break;
