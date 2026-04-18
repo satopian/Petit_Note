@@ -28,6 +28,7 @@ jobs:
           extensions: ${{ env.PHP_EXTENSIONS }}
           ini-values: ${{ env.PHP_INI_VALUES }}
           tools: composer:v2
+          coverage: pcov
       - run: composer install
       - name: Run tests with phpunit
         run: ./vendor/bin/phpunit tests --coverage-text
