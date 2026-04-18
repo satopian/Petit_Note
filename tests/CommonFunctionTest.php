@@ -52,7 +52,7 @@ final class CommonFunctionTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function commentProvider(): array
+    public static function commentProvider(): array
     {
         return [
             [true, '', ''],
@@ -123,7 +123,7 @@ final class CommonFunctionTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function ngWordsProvider(): array
+    public static function ngWordsProvider(): array
     {
         return [
             [[], [], false],
@@ -179,7 +179,7 @@ final class CommonFunctionTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function imageReductionDisplayProvider(): array
+    public static function imageReductionDisplayProvider(): array
     {
         return [
             ['', 0, 0, 0, ['', '']],
@@ -209,7 +209,7 @@ final class CommonFunctionTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function calculatePaintTimeProvider(): array
+    public static function calculatePaintTimeProvider(): array
     {
         return [
             [0, ['ja' => '0秒', 'en' => '0 sec']],
@@ -236,7 +236,7 @@ final class CommonFunctionTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function microtime2TimeProvider(): array
+    public static function microtime2TimeProvider(): array
     {
         return [
             ["1620000000000000", 1620000000],
@@ -256,7 +256,7 @@ final class CommonFunctionTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function calc_remaining_time_to_close_thread_Provider(): array
+    public static function calc_remaining_time_to_close_thread_Provider(): array
     {
 
         return [
@@ -305,7 +305,7 @@ final class CommonFunctionTest extends TestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function createFormattedTextFromPostProvider(): array
+    public static function createFormattedTextFromPostProvider(): array
     {
         return [
             [false, '', '', '', '', ['name' => 'anonymous', 'sub' => '無題', 'url' => '', 'com' => '']],
@@ -380,7 +380,7 @@ final class CommonFunctionTest extends TestCase
         $this->assertEquals($expected,$actual);
     }
 
-    public function createFormattedTextForSearchProvider(): array
+    public static function createFormattedTextForSearchProvider(): array
     {
         return [
             ['Hello World', 'helloWorld'], // スペース削除、全角から半角変換
