@@ -8,6 +8,7 @@ final class CommonFunctionTest extends TestCase
 {
     /**
      * @covers t
+     * @uses zero_check
      */
     public function testT(): void
     {
@@ -372,12 +373,12 @@ final class CommonFunctionTest extends TestCase
      * @dataProvider createFormattedTextForSearchProvider
      * @covers       create_formatted_text_for_search
      */
-    public function createFormattedTextForSearch($str,string $expected): void
+    public function createFormattedTextForSearch($str, string $expected): void
     {
 
         $actual = create_formatted_text_for_search($str);
 
-        $this->assertEquals($expected,$actual);
+        $this->assertEquals($expected, $actual);
     }
 
     public static function createFormattedTextForSearchProvider(): array
