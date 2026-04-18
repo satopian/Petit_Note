@@ -19,6 +19,7 @@ final class CommonFunctionTest extends TestCase
 
     /**
      * @covers s
+     * @uses zero_check
      */
     public function testStripTags(): void
     {
@@ -29,6 +30,7 @@ final class CommonFunctionTest extends TestCase
 
     /**
      * @covers h
+     * @uses zero_check
      */
     public function testHtmlspecialchars(): void
     {
