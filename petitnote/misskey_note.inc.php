@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver=20260228;
+$misskey_note_ver=20260501;
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
@@ -45,6 +45,7 @@ class misskey_note{
 		}
 		$find=false;
 		$resid="";
+		$first_posted_time ="";
 		foreach($r_arr as $i =>$val){
 			$_line=explode("\t",trim($val));
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_hash_img,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
@@ -120,6 +121,8 @@ class misskey_note{
 
 		$flag=false;
 		$resid="";
+		$line="";
+		$first_posted_time="";
 		foreach($r_arr as $val){
 
 			$line=explode("\t",trim($val));

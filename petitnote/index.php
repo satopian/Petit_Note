@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.221.0';
-$petit_lot='lot.20260429';
+$petit_ver='v1.222.1';
+$petit_lot='lot.20260501';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,25 +20,25 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260228){
+if(!isset($functions_ver)||$functions_ver<20260501){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20260228){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20260501){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/save.inc.php');
 require_once(__DIR__.'/save.inc.php');
-if(!isset($save_inc_ver)||$save_inc_ver<20260112){
+if(!isset($save_inc_ver)||$save_inc_ver<20260501){
 	die($en?'Please update save.inc.php to the latest version.':'save.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/search.inc.php');
 require_once(__DIR__.'/search.inc.php');
-if(!isset($search_inc_ver)||$search_inc_ver<20260223){
+if(!isset($search_inc_ver)||$search_inc_ver<20260501){
 	die($en?'Please update search.inc.php to the latest version.':'search.inc.phpを最新版に更新してください。');
 }
 
@@ -50,13 +50,13 @@ if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20251031){
 
 check_file(__DIR__.'/thumbnail_gd.inc.php');
 require_once(__DIR__.'/thumbnail_gd.inc.php');
-if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20260113){
+if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20260501){
 	error($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/noticemail.inc.php');
 require_once(__DIR__.'/noticemail.inc.php');
-if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20250315){
+if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20260501){
 	error($en?'Please update noticemail.inc.php to the latest version.':'noticemail.inc.phpを最新版に更新してください。');
 }
 
@@ -406,7 +406,7 @@ function post(): void {
 	$com = $formatted_post['com'];
 
 	//ファイルアップロード
-	$up_tempfile = $_FILES['imgfile']['tmp_name'] ?? ''; // 一時ファイル名
+	$up_tempfile = (string)($_FILES['imgfile']['tmp_name'] ?? ''); // 一時ファイル名
 	if(isset($_FILES['imgfile']['error']) && in_array($_FILES['imgfile']['error'],[1,2])){//容量オーバー
 		error($en? "The file is too large." : "ファイルサイズが大きすぎます。");
 	} 
@@ -1157,6 +1157,9 @@ function to_continue(): void {
 	//記事は存在するか
 	$flag = false;
 	$resid = '';
+	$thumbnail = '';
+	$_pchext = '';
+	$imgfile = '';
 	while ($line = fgets($rp)) {
 		if(strpos($line,"\toya")!==false || strpos($line,"\t".$id."\t")!==false){
 			list($_no,$sub,$name,$verified,$com,$url,$_imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$_time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
@@ -1263,6 +1266,7 @@ function download_app_dat(): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
+	$time='';
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
@@ -1356,7 +1360,7 @@ function img_replace(): void {
 	$repfind=false;
 	$is_painted_img=false;
 	$hide_animation=false;
-	
+	$imgext='';
 	if(!$is_upload_img){
 		/*--- テンポラリ捜査 ---*/
 		$handle = opendir(TEMP_DIR);
@@ -1430,7 +1434,21 @@ function img_replace(): void {
 	}
 
 	$flag=false;
-
+	$_time=''; 
+	$_tool='';
+	$_oya='';
+	$_imgfile ='';
+	$_thumbnail='';
+	$_painttime='';
+	$_no='';
+	$_sub='';
+	$_name='';
+	$_verified='';
+	$_com='';
+	$_url='';
+	$_hash='';
+	$_first_posted_time='';
+	$i=0;
 	foreach($r_arr as $i => $line){
 		if(strpos($line,"\t".$id."\t")!==false){
 			list($_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya)=explode("\t",trim($line));
@@ -1495,7 +1513,7 @@ function img_replace(): void {
 	chmod($upfile,0606);
 
 	//添付したアップロード画像の元のmime_type
-	$upload_img_mime_type = $is_upload_img ? mime_content_type($upfile) : "";
+	$upload_img_mime_type = (string)($is_upload_img ? mime_content_type($upfile) : "");
 
 	if($is_upload_img){
 		//Exifをチェックして画像が回転している時は上書き保存
@@ -1619,6 +1637,10 @@ function img_replace(): void {
 		$newline = "$_no\t$_sub\t$_name\t$_verified\t$strcut_com\t$_url\t$imgfile\t$w\t$h\t$thumbnail\t$painttime\t$up_img_hash\t$tool\t$pchext\t$time\t$_first_posted_time\t$host\t$userid\t$_hash\toya\n";
 
 		$flag=false;
+		$time_='';
+		$no_='';
+		$verified_='';
+		$hash_='';
 		foreach($alllog_arr as $i => $val){
 			if (strpos(trim($val), $no . "\t") === 0) {//全体ログで$noが一致したら
 				list($no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_) = explode("\t",trim($val));
@@ -1687,6 +1709,9 @@ function pchview(): void {
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 	$flag=false;
 	$resid = '';
+	$pchext ='';
+	$time = '';
+	$imgfile = '';
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
@@ -1729,7 +1754,7 @@ function pchview(): void {
 
 }
 //削除前の確認画面
-function confirmation_before_deletion ($edit_mode=''): void {
+function confirmation_before_deletion (): void {
 
 	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$set_nsfw,$en;
 	global $deny_all_posts;
@@ -1775,7 +1800,8 @@ function confirmation_before_deletion ($edit_mode=''): void {
 		error($en?'This operation has failed.':'失敗しました。');
 	}
 	$find=false;
-	$resid= '';
+	$resid='';
+	$first_posted_time='';
 	foreach($r_arr as $i =>$val){
 		if(strpos($val,"\t".$id."\t")!==false){
 			$_line=explode("\t",trim($val));
@@ -1821,7 +1847,7 @@ function confirmation_before_deletion ($edit_mode=''): void {
 }
 
 //編集画面
-function edit_form($id='',$no=''): void {
+function edit_form(string $id='',string $no=''): void {
 
 	global $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image,$use_url_input_field;
 
@@ -1860,6 +1886,8 @@ function edit_form($id='',$no=''): void {
 	$rp=fopen(LOG_DIR."{$no}.log","r");
 
 	$flag=false;
+	$lines=[];
+	$com='';
 	while ($line = fgets($rp)) {
 		if(strpos($line,"\t".$id."\t")!==false){
 			$lines=explode("\t",trim($line));
@@ -1983,6 +2011,26 @@ function edit(): void {
 	}
 
 	$flag=false;
+	$_oya='';
+	$_sub='';
+	$_imgfile='';
+	$_com='';
+	$_time='';
+	$pchext='';
+	$_url='';
+	$_host='';
+	$res_oya_deleted = false;
+	$_userid='';
+	$_hash='';
+	$_verified='';
+	$_no='';
+	$_w='';
+	$_h='';
+	$_painttime='';
+	$_log_img_hash='';
+	$_tool='';
+	$_first_posted_time='';
+	$i=0;
 	foreach($r_arr as $i => $line){
 		if(strpos($line,"\t".$id."\t")!==false){
 
@@ -2161,6 +2209,10 @@ function del(): void {
 	}
 
 	$find=false;
+	$oya='';
+	$imgfile='';
+	$time='';
+	$i=0;
 	foreach($r_arr as $i =>$val){
 		if(strpos($val,"\t".$id."\t")!==false){
 			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($val));
@@ -2197,6 +2249,7 @@ function del(): void {
 			error($en?'This operation has failed.':'失敗しました。');
 		}
 		$flag=false;
+		$j=0;
 		foreach($alllog_arr as $j =>$_val){//全体ログ
 			if (strpos(trim($_val), $no . "\t") === 0) {//全体ログで$noが一致したら
 				break;
@@ -2492,7 +2545,7 @@ function view(): void {
 }
 
 //レス画面に前後のスレッドの画像一覧と次のスレッド前のスレッドのリンクを出す
-function res_view_other_works($resno): array
+function res_view_other_works(string $resno): array
 {
 	global $view_other_works;
 

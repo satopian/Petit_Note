@@ -93,7 +93,7 @@ noticemail::send($data);
 class noticemail
 {
 
-	public static function send($data): void
+	public static function send(array $data): void
 	{
 
 		mb_language('uni');
