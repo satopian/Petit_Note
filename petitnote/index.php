@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.222.1';
+$petit_ver='v1.222.2';
 $petit_lot='lot.20260501';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -51,13 +51,13 @@ if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20251031){
 check_file(__DIR__.'/thumbnail_gd.inc.php');
 require_once(__DIR__.'/thumbnail_gd.inc.php');
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20260501){
-	error($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
+	die($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/noticemail.inc.php');
 require_once(__DIR__.'/noticemail.inc.php');
 if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20260501){
-	error($en?'Please update noticemail.inc.php to the latest version.':'noticemail.inc.phpを最新版に更新してください。');
+	die($en?'Please update noticemail.inc.php to the latest version.':'noticemail.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/config.php');
@@ -1434,7 +1434,7 @@ function img_replace(): void {
 	}
 
 	$flag=false;
-	$_time=''; 
+	$_time='';
 	$_tool='';
 	$_oya='';
 	$_imgfile ='';
@@ -1595,7 +1595,7 @@ function img_replace(): void {
 		$aco_dst = IMG_DIR.$time.".aco";
 		if(is_file($aco_src)){
 			if(copy($aco_src, $aco_dst)){
-			chmod($aco_dst,0606);
+				chmod($aco_dst,0606);
 			}
 		}
 	}

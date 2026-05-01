@@ -735,7 +735,7 @@ function auto_link(?string $str,?string $verified = ""): string {
 }
 
 //mime typeを取得して拡張子を返す
-function get_image_type (string $img_file): string {
+function get_image_type (?string $img_file): string {
 
 	$img_type = mime_content_type($img_file);
 
@@ -1044,7 +1044,7 @@ function getId (?string $userip): string {
 }
 
 //Asyncリクエストの時は処理を中断
-function check_AsyncRequest(string $upfile=''): void {
+function check_AsyncRequest(?string $upfile=''): void {
 	//ヘッダーが確認できなかった時の保険
 	$asyncflag = (bool)filter_input_data('POST','asyncflag',FILTER_VALIDATE_BOOLEAN);
 	$paint_picrep = (bool)filter_input_data('POST','paint_picrep',FILTER_VALIDATE_BOOLEAN);
@@ -1334,8 +1334,7 @@ return $msg;
  * 一括書き込み（上書き）
  * @param resource|false $fp
  */
-
-function writeFile ($fp, string $data): void {
+function writeFile ($fp,?string $data): void {
 	global $en;
 	if($data === ''){
 		closeFile($fp);
@@ -1467,11 +1466,11 @@ function check_pch_ext (?string $filepath,array $options = []): string {
 	return '';
 }
 
-/** 
-* 古いスレッドへの投稿を許可するかどうか
-* @param string|null $postedtime
-*/
-function check_elapsed_days ($postedtime): bool {
+/**
+ * 古いスレッドへの投稿を許可するかどうか
+ * @param string|null|int $postedtime
+ */
+function check_elapsed_days (?string $postedtime): bool {
 	global $elapsed_days;
 	if(!$postedtime || !is_numeric($postedtime)){
 		return true; // 投稿時間が不正な場合は許可
@@ -1481,7 +1480,11 @@ function check_elapsed_days ($postedtime): bool {
 		? ((time() - (int)$postedtime) <= ((int)$elapsed_days * 86400)) // 指定日数以内なら許可
 		: true; // フォームを閉じる日数が未設定なら許可
 }
-// スレッドを閉じるまでの残り時間
+
+/**
+ * スレッドを閉じるまでの残り時間
+ * @param string|null|int $postedtime
+ */
 function time_left_to_close_the_thread (?string $postedtime): string {
 	global $elapsed_days;
 	if(!$elapsed_days || !$postedtime || !is_numeric($postedtime)){

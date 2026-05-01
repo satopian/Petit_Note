@@ -1,5 +1,5 @@
 <?php
-$noticemail_inc_ver = 20250315;
+$noticemail_inc_ver = 20260501;
 /*
 ** メール通知クラス(UTF-8) lot.20250314 for PetitNote
 ** https://paintbbs.sakura.ne.jp/
