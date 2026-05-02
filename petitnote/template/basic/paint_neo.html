@@ -30,6 +30,9 @@ return true;
 }
 return;
 }
+document.addEventListener('DOMContentLoaded',()=>{
+	document.addEventListener('dblclick', (e)=>{ e.preventDefault()}, { passive: false });
+});
 </script>
 <link rel="stylesheet" href="./app/neo/neo.css?<?=h($parameter_day)?><?=h($petit_lot)?>">
 <script src="./app/neo/neo.js?<?=h($parameter_day)?><?=h($petit_lot)?>"></script>

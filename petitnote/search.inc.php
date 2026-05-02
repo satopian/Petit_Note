@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$search_inc_ver = 20260223;
+$search_inc_ver = 20260501;
 class processsearch
 {
 
@@ -243,7 +243,9 @@ class processsearch
 				if ($imgsearch) { //画像検索の場合
 					$continue_to_search = (bool)$imgfile; //画像があったら
 				}
-
+				$s_name ="";
+				$s_sub = "";
+				$s_com = "";
 				if ($continue_to_search) {
 					if ($radio === 1 || $radio === 2 || $radio === 0) {
 						$s_name = self::create_formatted_text_for_search($name);
@@ -280,7 +282,7 @@ class processsearch
 		return $arr;
 	}
 	//検索文字列をフォーマット
-	private static function create_formatted_text_for_search($str): string
+	private static function create_formatted_text_for_search(?string $str): string
 	{
 
 		$s_str = mb_convert_kana($str, 'rn', 'UTF-8'); //全角英数を半角に

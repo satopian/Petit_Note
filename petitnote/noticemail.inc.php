@@ -1,5 +1,5 @@
 <?php
-$noticemail_inc_ver = 20250315;
+$noticemail_inc_ver = 20260501;
 /*
 ** メール通知クラス(UTF-8) lot.20250314 for PetitNote
 ** https://paintbbs.sakura.ne.jp/
@@ -93,7 +93,7 @@ noticemail::send($data);
 class noticemail
 {
 
-	public static function send($data): void
+	public static function send(array $data): void
 	{
 
 		mb_language('uni');

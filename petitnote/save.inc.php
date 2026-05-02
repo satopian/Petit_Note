@@ -2,11 +2,24 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$save_inc_ver=20260112;
+$save_inc_ver=20260501;
 class image_save{
 
-	private $security_timer,$imgfile,$en,$count,$errtext,$session_usercode; // プロパティとして宣言
-	private $tool,$repcode,$stime,$resto,$timer,$error_type,$hide_animation,$pmax_w,$pmax_h;
+	private int $security_timer;
+	private string $imgfile;
+	private bool $en;
+	/** @var string|int  */
+	private $count;
+	private ?string $session_usercode; // プロパティとして宣言
+	private ?string $tool;
+	private ?string $repcode;
+	private ?string $stime;
+	private ?string $resto;
+	private int $timer;
+	private ?string $error_type;
+	private ?string $hide_animation;
+	private int $pmax_w;
+	private int $pmax_h;
 	
 	function __construct(){
 
@@ -33,8 +46,8 @@ class image_save{
 	$this->imgfile = time().substr(microtime(),2,6);	//画像ファイル名
 	$this->imgfile = is_file(TEMP_DIR.$this->imgfile.'.png') ? ((time()+1).substr(microtime(),2,6)) : $this->imgfile;
 	
-	$this->pmax_w= $pmax_w ?? '';
-	$this->pmax_h= $pmax_h ?? '';
+	$this->pmax_w= $pmax_w ?? 0;
+	$this->pmax_h= $pmax_h ?? 0;
 	
 	}
 
@@ -197,7 +210,7 @@ class image_save{
 
 		// list($w,$h)=getimagesize($_FILES['picture']['tmp_name']);
 
-		// if($w > $this->pmax_w || $h > $this->pmax_h){//幅と高さ
+		// if($w && $this->pmax_w && $w > $this->pmax_w || $h && $this->pmax_h && $this->pmax_h > $this->pmax_h){//幅と高さ
 		// 	//規定サイズ違反を検出しました。画像は保存されません。
 		// 	$this->error_msg($this->en ? "The image dimensions are too large." : "画像のサイズが大きすぎます。");
 		// }
@@ -271,7 +284,7 @@ class image_save{
 		}
 	}
 
-	private function error_msg($message): void {
+	private function error_msg(?string $message): void {
 		switch ($this->error_type){
 			case "neo":
 				$errtext="error\n";
