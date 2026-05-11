@@ -2,7 +2,8 @@
 //	(C) のらネコ WonderCatStudio http://wondercatstudio.com/
 //substr()→substring()対策版 by satopian
 "use strict";
-var DynamicColor=1,Palettes=[];
+var DynamicColor = 1,
+    Palettes = [];
 // ========== パレット配列作成 ==========
 // {$palettes}
 Palettes[0] =
@@ -32,22 +33,28 @@ Palettes[11] =
 Palettes[12] =
     "#FFFFFF\n#7F7F7F\n#EFEFEF\n#5F5F5F\n#DFDFDF\n#4F4F4F\n#CFCFCF\n#3F3F3F\n#BFBFBF\n#2F2F2F\n#AFAFAF\n#1F1F1F\n#0F0F0F\n#000000";
 function setPalette() {
-    const Palette = document.forms["Palette"];
-    document.paintbbs.setColors(Palettes[Palette.select.selectedIndex]);
-    const grad = document.forms["grad"];
-    if (!grad.view.checked) {
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
+    document["paintbbs"].setColors(Palettes[Palette.select.selectedIndex]);
+    const grad = document.forms.namedItem("grad");
+    if (!grad || !grad.view.checked) {
         return;
     }
     GetPalette();
 }
 async function PaletteSave() {
-    Palettes[0] = String(await document.paintbbs.getColors());
+    Palettes[0] = String(await document["paintbbs"].getColors());
 }
 var cutomP = 0;
 async function PaletteNew() {
     const d = document;
-    let p = String(await d.paintbbs.getColors());
-    const Palette = document.forms["Palette"];
+    let p = String(await d["paintbbs"].getColors());
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     const s = Palette.select;
     Palettes[s.length] = p;
     cutomP++;
@@ -62,20 +69,26 @@ async function PaletteNew() {
 }
 async function PaletteRenew() {
     const d = document;
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     Palettes[Palette.select.selectedIndex] = String(
-        await d.paintbbs.getColors()
+        await d["paintbbs"].getColors(),
     );
     PaletteListSetColor();
 }
 function PaletteDel() {
     const p = Palettes.length;
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     const s = Palette.select;
     let i = s.selectedIndex;
     if (i == -1) return;
     const flag = confirm(
-        "「" + s.options[i].text + "」を削除してよろしいですか？"
+        "「" + s.options[i].text + "」を削除してよろしいですか？",
     );
     if (!flag) return;
     s.options[i] = null;
@@ -90,7 +103,7 @@ async function P_Effect(v) {
     let n;
     let x = 1;
     if (v == 255) x = -1;
-    const d = document.paintbbs;
+    const d = document["paintbbs"];
     let p = String(await d.getColors()).split("\n");
     const l = p.length;
     let s = "";
@@ -120,7 +133,10 @@ async function P_Effect(v) {
 }
 async function PaletteMatrixGet() {
     const p = Palettes.length;
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     const s = Palette.select;
     let m = Palette.m_m.selectedIndex;
     let t = Palette.setr;
@@ -147,14 +163,17 @@ async function PaletteMatrixGet() {
             break;
         case 1:
             t.value =
-                "!Palette\n" + String(await document.paintbbs.getColors());
+                "!Palette\n" + String(await document["paintbbs"].getColors());
             alert("現在使用されているパレット情報を取得しました");
             break;
     }
     t.value = t.value.trim() + "\n!Matrix";
 }
 function PalleteMatrixSet() {
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     let m = Palette.m_m.selectedIndex;
     const s = Palette.select;
     const str = "パレットマトリクスをセットします。";
@@ -163,18 +182,18 @@ function PalleteMatrixSet() {
         case 0:
         default:
             flag = confirm(
-                str + "\n現在の全パレット情報は失われますがよろしいですか？"
+                str + "\n現在の全パレット情報は失われますがよろしいですか？",
             );
             break;
         case 1:
             flag = confirm(
                 str +
-                    "\n現在使用しているパレットと置き換えますがよろしいですか？"
+                    "\n現在使用しているパレットと置き換えますがよろしいですか？",
             );
             break;
         case 2:
             flag = confirm(
-                str + "\n現在のパレット情報に追加しますがよろしいですか？"
+                str + "\n現在のパレット情報に追加しますがよろしいですか？",
             );
             break;
     }
@@ -189,16 +208,18 @@ function PalleteMatrixSet() {
 }
 function PalleteMatrixHelp() {
     alert(
-        "★PALETTE MATRIX\nパレットマトリクスとはパレット情報を列挙したテキストを用いる事により\n自由なパレット設定を使用する事が出来ます。\n\n□マトリクスの取得\n1)「取得」ボタンよりパレットマトリクスを取得します。\n2)取得された情報が下のテキストエリアに出ます、これを全てコピーします。\n3)このマトリクス情報をテキストとしてファイルに保存しておくなりしましょう。\n\n□マトリクスのセット\n1）コピーしたマトリクスを下のテキストエリアに貼り付け(ペースト)します。\n2)ファイルに保存してある場合は、それをコピーし貼り付けます。\n3)「セット」ボタンを押せば保存されたパレットが使用できます。\n\n余分な情報があるとパレットが正しくセットされませんのでご注意下さい。"
+        "★PALETTE MATRIX\nパレットマトリクスとはパレット情報を列挙したテキストを用いる事により\n自由なパレット設定を使用する事が出来ます。\n\n□マトリクスの取得\n1)「取得」ボタンよりパレットマトリクスを取得します。\n2)取得された情報が下のテキストエリアに出ます、これを全てコピーします。\n3)このマトリクス情報をテキストとしてファイルに保存しておくなりしましょう。\n\n□マトリクスのセット\n1）コピーしたマトリクスを下のテキストエリアに貼り付け(ペースト)します。\n2)ファイルに保存してある場合は、それをコピーし貼り付けます。\n3)「セット」ボタンを押せば保存されたパレットが使用できます。\n\n余分な情報があるとパレットが正しくセットされませんのでご注意下さい。",
     );
 }
 function PaletteSet() {
-    const Palette = document.forms["Palette"];
-    const d = Palette;
-    const se = d.setr.value;
-    const s = d.select;
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
+    const se = Palette.setr.value;
+    const s = Palette.select;
     let i;
-    let m = d.m_m.selectedIndex;
+    let m = Palette.m_m.selectedIndex;
     let l = se.length;
     let pa;
     if (l < 1) {
@@ -236,7 +257,7 @@ function PaletteSet() {
                     Palettes[i] = pa;
                     i++;
                 } else {
-                    document.paintbbs.setColors(pa);
+                    document["paintbbs"].setColors(pa);
                 }
 
                 n = o + 1;
@@ -250,12 +271,15 @@ function PaletteSet() {
             if (e >= 0) {
                 pa = se.substring(e + 1, o - 1);
             }
-            document.paintbbs.setColors(pa);
+            document["paintbbs"].setColors(pa);
     }
     PaletteListSetColor();
 }
 function PaletteListSetColor() {
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     let i;
     const s = Palette.select;
     for (i = 1; s.options.length > i; i++) {
@@ -272,7 +296,10 @@ function GetBright(c) {
     return 128 > c ? "#FFFFFF" : "#000000";
 }
 function Chenge_() {
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     const st = grad.pst.value;
     const ed = grad.ped.value;
 
@@ -281,7 +308,10 @@ function Chenge_() {
     GradView();
 }
 function ChengeGrad() {
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     const st = grad.pst.value;
     const ed = grad.ped.value;
     Chenge_();
@@ -315,7 +345,7 @@ function ChengeGrad() {
         }
         p += "#" + Hex(m1) + Hex(m2) + Hex(m3) + "\n";
     }
-    document.paintbbs.setColors(p);
+    document["paintbbs"].setColors(p);
 }
 function Hex(n) {
     n = Math.trunc(n);
@@ -361,12 +391,15 @@ function Hex_(n) {
 }
 async function GetPalette() {
     const d = document;
-    let p = String(await d.paintbbs.getColors());
+    let p = String(await d["paintbbs"].getColors());
     if (p == "null" || p == "") {
         return;
     }
     const ps = p.split("\n");
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     let st = grad.p_st.selectedIndex;
     let ed = grad.p_ed.selectedIndex;
     grad.pst.value = ps[st].substring(1, 7);
@@ -376,12 +409,15 @@ async function GetPalette() {
 }
 async function GradSelC() {
     const d = document;
-    let p = String(await d.paintbbs.getColors());
+    let p = String(await d["paintbbs"].getColors());
     if (p == "null" || p == "") {
         return;
     }
     const ps = p.split("\n");
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     let n;
     if (!grad.view.checked) return;
     const l = ps.length;
@@ -416,12 +452,18 @@ async function GradSelC() {
     }
 }
 function GradView() {
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     if (!grad.view.checked) return;
 }
 function showHideLayer() {
     //v3.0
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     const psft = document.getElementById("psft");
     const l = psft ? psft.style : null;
     if (l && !grad.view.checked) {

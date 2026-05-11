@@ -2,7 +2,8 @@
 //	(C) のらネコ WonderCatStudio http://wondercatstudio.com/
 //substr()→substring()対策版 by satopian
 "use strict";
-var DynamicColor=1,Palettes=[];
+var DynamicColor = 1,
+    Palettes = [];
 // ========== パレット配列作成 ==========
 // {$palettes}
 Palettes[0] =
@@ -32,22 +33,28 @@ Palettes[11] =
 Palettes[12] =
     "#FFFFFF\n#7F7F7F\n#EFEFEF\n#5F5F5F\n#DFDFDF\n#4F4F4F\n#CFCFCF\n#3F3F3F\n#BFBFBF\n#2F2F2F\n#AFAFAF\n#1F1F1F\n#0F0F0F\n#000000";
 function setPalette() {
-    const Palette = document.forms["Palette"];
-    document.paintbbs.setColors(Palettes[Palette.select.selectedIndex]);
-    const grad = document.forms["grad"];
-    if (!grad.view.checked) {
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
+    document["paintbbs"].setColors(Palettes[Palette.select.selectedIndex]);
+    const grad = document.forms.namedItem("grad");
+    if (!grad || !grad.view.checked) {
         return;
     }
     GetPalette();
 }
 async function PaletteSave() {
-    Palettes[0] = String(await document.paintbbs.getColors());
+    Palettes[0] = String(await document["paintbbs"].getColors());
 }
 var cutomP = 0;
 async function PaletteNew() {
     const d = document;
-    let p = String(await d.paintbbs.getColors());
-    const Palette = document.forms["Palette"];
+    let p = String(await d["paintbbs"].getColors());
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     const s = Palette.select;
     Palettes[s.length] = p;
     cutomP++;
@@ -62,20 +69,26 @@ async function PaletteNew() {
 }
 async function PaletteRenew() {
     const d = document;
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     Palettes[Palette.select.selectedIndex] = String(
-        await d.paintbbs.getColors()
+        await d["paintbbs"].getColors(),
     );
     PaletteListSetColor();
 }
 function PaletteDel() {
     const p = Palettes.length;
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     const s = Palette.select;
     let i = s.selectedIndex;
     if (i == -1) return;
     const flag = confirm(
-        "Are you sure you want to delete [" + s.options[i].text + "]?"
+        "Are you sure you want to delete [" + s.options[i].text + "]?",
     );
     if (!flag) return;
     s.options[i] = null;
@@ -90,7 +103,7 @@ async function P_Effect(v) {
     let n;
     let x = 1;
     if (v == 255) x = -1;
-    const d = document.paintbbs;
+    const d = document["paintbbs"];
     let p = String(await d.getColors()).split("\n");
     const l = p.length;
     let s = "";
@@ -120,7 +133,10 @@ async function P_Effect(v) {
 }
 async function PaletteMatrixGet() {
     const p = Palettes.length;
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     const s = Palette.select;
     let m = Palette.m_m.selectedIndex;
     let t = Palette.setr;
@@ -147,14 +163,17 @@ async function PaletteMatrixGet() {
             break;
         case 1:
             t.value =
-                "!Palette\n" + String(await document.paintbbs.getColors());
+                "!Palette\n" + String(await document["paintbbs"].getColors());
             alert("got the palette information currently used.");
             break;
     }
     t.value = t.value.trim() + "\n!Matrix";
 }
 function PalleteMatrixSet() {
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     let m = Palette.m_m.selectedIndex;
     const s = Palette.select;
     const str = "Set the palette matrix.";
@@ -164,18 +183,18 @@ function PalleteMatrixSet() {
         default:
             flag = confirm(
                 str +
-                    "\nAll current palette information will be lost. Are you sure you want to proceed?"
+                    "\nAll current palette information will be lost. Are you sure you want to proceed?",
             );
             break;
         case 1:
             flag = confirm(
-                str + "\nAre you sure you want to replace the current palette?"
+                str + "\nAre you sure you want to replace the current palette?",
             );
             break;
         case 2:
             flag = confirm(
                 str +
-                    "\nAre you sure you want to add this to the current palette?"
+                    "\nAre you sure you want to add this to the current palette?",
             );
             break;
     }
@@ -190,16 +209,18 @@ function PalleteMatrixSet() {
 }
 function PalleteMatrixHelp() {
     alert(
-        "**ABOUT PALETTE MATRIX**\nThe palette matrix allows you to use free palette settings \nby using text that lists palette information.\n\nGet the matrix\n1)Get the palette matrix from the [Get] button.\n2)The retrieved information will appear in the text area below, copy it all.\n3)Let's save this matrix information as text in a file.\n\nto set matrix\n1)Paste the copied matrix into the text area below.\n2)If you have saved it in a file, copy and paste it.\n3)You can use the saved palette by pressing the [Set] button.\n\nPlease note that the palette will not be set correctly if there is unnecessary information."
+        "**ABOUT PALETTE MATRIX**\nThe palette matrix allows you to use free palette settings \nby using text that lists palette information.\n\nGet the matrix\n1)Get the palette matrix from the [Get] button.\n2)The retrieved information will appear in the text area below, copy it all.\n3)Let's save this matrix information as text in a file.\n\nto set matrix\n1)Paste the copied matrix into the text area below.\n2)If you have saved it in a file, copy and paste it.\n3)You can use the saved palette by pressing the [Set] button.\n\nPlease note that the palette will not be set correctly if there is unnecessary information.",
     );
 }
 function PaletteSet() {
-    const Palette = document.forms["Palette"];
-    const d = Palette;
-    const se = d.setr.value;
-    const s = d.select;
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
+    const se = Palette.setr.value;
+    const s = Palette.select;
     let i;
-    let m = d.m_m.selectedIndex;
+    let m = Palette.m_m.selectedIndex;
     let l = se.length;
     let pa;
     if (l < 1) {
@@ -237,7 +258,7 @@ function PaletteSet() {
                     Palettes[i] = pa;
                     i++;
                 } else {
-                    document.paintbbs.setColors(pa);
+                    document["paintbbs"].setColors(pa);
                 }
 
                 n = o + 1;
@@ -251,12 +272,15 @@ function PaletteSet() {
             if (e >= 0) {
                 pa = se.substring(e + 1, o - 1);
             }
-            document.paintbbs.setColors(pa);
+            document["paintbbs"].setColors(pa);
     }
     PaletteListSetColor();
 }
 function PaletteListSetColor() {
-    const Palette = document.forms["Palette"];
+    const Palette = document.forms.namedItem("Palette");
+    if (!Palette) {
+        return;
+    }
     let i;
     const s = Palette.select;
     for (i = 1; s.options.length > i; i++) {
@@ -273,7 +297,10 @@ function GetBright(c) {
     return 128 > c ? "#FFFFFF" : "#000000";
 }
 function Chenge_() {
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     const st = grad.pst.value;
     const ed = grad.ped.value;
 
@@ -282,7 +309,10 @@ function Chenge_() {
     GradView();
 }
 function ChengeGrad() {
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     const st = grad.pst.value;
     const ed = grad.ped.value;
     Chenge_();
@@ -316,7 +346,7 @@ function ChengeGrad() {
         }
         p += "#" + Hex(m1) + Hex(m2) + Hex(m3) + "\n";
     }
-    document.paintbbs.setColors(p);
+    document["paintbbs"].setColors(p);
 }
 function Hex(n) {
     n = Math.trunc(n);
@@ -362,12 +392,15 @@ function Hex_(n) {
 }
 async function GetPalette() {
     const d = document;
-    let p = String(await d.paintbbs.getColors());
+    let p = String(await d["paintbbs"].getColors());
     if (p == "null" || p == "") {
         return;
     }
     const ps = p.split("\n");
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     let st = grad.p_st.selectedIndex;
     let ed = grad.p_ed.selectedIndex;
     grad.pst.value = ps[st].substring(1, 7);
@@ -377,12 +410,15 @@ async function GetPalette() {
 }
 async function GradSelC() {
     const d = document;
-    let p = String(await d.paintbbs.getColors());
+    let p = String(await d["paintbbs"].getColors());
     if (p == "null" || p == "") {
         return;
     }
     const ps = p.split("\n");
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     let n;
     if (!grad.view.checked) return;
     const l = ps.length;
@@ -417,12 +453,18 @@ async function GradSelC() {
     }
 }
 function GradView() {
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     if (!grad.view.checked) return;
 }
 function showHideLayer() {
     //v3.0
-    const grad = document.forms["grad"];
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
     const psft = document.getElementById("psft");
     const l = psft ? psft.style : null;
     if (l && !grad.view.checked) {
