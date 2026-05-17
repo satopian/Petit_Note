@@ -17,7 +17,7 @@ PHP8.1-PHP8.5での使用を推奨します。
 ## DEMO
 - [Petit Note サンプル掲示板](https://paintbbs.sakura.ne.jp/cgi/neosample/petitnote/)  
 
-# ダウンロードと設置
+# お絵かき掲示板PHPスクリプト Petit Note のダウンロードと設置
 
 ## ダウンロード
 
