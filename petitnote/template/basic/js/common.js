@@ -1,6 +1,7 @@
 "use strict";
 //Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
 //https://paintbbs.sakura.ne.jp/
+// @ts-check
 
 // コメント入力中画面からの離脱防止
 let isForm_Submit = false; //ページ離脱処理で使う
@@ -217,7 +218,7 @@ if (set_darkmode instanceof HTMLFormElement) {
 //ペイントツールを選択可能にする
 const set_app_select_submit = (event) => {
     const set_app_select_enabled = document.getElementById(
-        "set_app_select_enabled"
+        "set_app_select_enabled",
     );
     event.preventDefault(); // 通常フォームの送信を中断
     if (set_app_select_enabled instanceof HTMLFormElement) {
@@ -237,7 +238,7 @@ const post_com = document.querySelector("#res_form textarea.post_com");
 //添付ファイルを削除するボタン
 const removeAttachmentBtn = document.getElementById("remove_attachment_btn");
 const removePchAttachmentBtn = document.getElementById(
-    "remove_pch_attachment_btn"
+    "remove_pch_attachment_btn",
 );
 
 const clear_css_preview = () => {
@@ -276,7 +277,7 @@ const file_size_check = (
     form_id,
     error_messageid,
     elem_attach_image,
-    removeAttachmentBtnId = ""
+    removeAttachmentBtnId = "",
 ) => {
     const form = document.getElementById(form_id);
     const max_file_size = form?.querySelector('input[name="MAX_FILE_SIZE"]');
@@ -330,7 +331,7 @@ paint_form_fileInput?.addEventListener("change", () => {
             "paint_forme",
             "error_message_paintform",
             paint_form_fileInput,
-            "remove_pch_attachment_btn"
+            "remove_pch_attachment_btn",
         );
     } else {
         if (removePchAttachmentBtn) {
@@ -353,17 +354,21 @@ image_rep_form_fileInput?.addEventListener("change", () => {
     file_size_check(
         "image_rep",
         "error_message_imgrep",
-        image_rep_form_fileInput
+        image_rep_form_fileInput,
     );
 });
 
 let paint_com = false;
 let setAll_Nsfw = false;
 //お絵かきコメント用処理
+// @ts-ignore
 if (typeof paintcom !== "undefined") {
+    // @ts-ignore
     paint_com = paintcom;
 }
+// @ts-ignore
 if (typeof setAllNsfw !== "undefined") {
+    // @ts-ignore
     setAll_Nsfw = setAllNsfw;
 }
 
@@ -379,7 +384,7 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                 "res_form",
                 "error_message",
                 elem_attach_image,
-                "remove_attachment_btn"
+                "remove_attachment_btn",
             );
             const file =
                 elem_attach_image instanceof HTMLInputElement
@@ -459,7 +464,7 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
                 elem_attach_image.files.length > 0)
         ) {
             const paintComPreview = document.getElementById(
-                "paintcom_attach_preview"
+                "paintcom_attach_preview",
             );
 
             if (
@@ -686,7 +691,9 @@ document.addEventListener("DOMContentLoaded", () => {
 // (c)satopian MIT Licence ここまで
 
 jQuery(function () {
+    // @ts-ignore
     if (typeof lightbox !== "undefined") {
+        // @ts-ignore
         lightbox.option({
             alwaysShowNavOnTouchDevices: true,
             disableScrolling: true,

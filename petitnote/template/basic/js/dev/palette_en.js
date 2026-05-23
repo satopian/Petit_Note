@@ -2,6 +2,7 @@
 //	(C) のらネコ WonderCatStudio http://wondercatstudio.com/
 //substr()→substring()対策版 by satopian
 "use strict";
+// @ts-check
 var DynamicColor = 1,
     Palettes = [];
 // ========== パレット配列作成 ==========
