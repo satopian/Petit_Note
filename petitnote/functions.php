@@ -2,9 +2,11 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260502;
+$functions_ver=20260523;
 
-//編集モードログアウト
+/**
+ * 編集モードログアウト
+ */
 function logout(): void {
 	session_sta();
 	unset($_SESSION['admindel']);
@@ -12,7 +14,9 @@ function logout(): void {
 
 	branch_destination_of_location();
 }
-//管理者モードログアウト
+/**
+ * 管理者モードログアウト 
+ */
 function logout_admin(): void {
 	session_sta();
 	unset($_SESSION['admindel']);
@@ -21,7 +25,9 @@ function logout_admin(): void {
 	branch_destination_of_location();
 }
 
-//合言葉認証
+/**
+ * 合言葉認証 
+ */
 function aikotoba(): void {
 	global $aikotoba,$en,$keep_aikotoba_login_status;
 
@@ -52,7 +58,11 @@ function aikotoba(): void {
 	// 処理が終了したらJavaScriptでリロード
 
 }
-//記事の表示に合言葉を必須にする
+
+/**
+ * 記事の表示に合言葉を必須にする
+ * @param bool $required_flag 合言葉の入力が必要なページかどうか。
+ */
 function aikotoba_required_to_view(bool $required_flag=false): void {
 
 	global $use_aikotoba,$aikotoba_required_to_view,$skindir,$en,$petit_lot,$boardname;
@@ -81,7 +91,9 @@ function aikotoba_required_to_view(bool $required_flag=false): void {
 		exit();//return include では処理が止まらない。 
 	}
 }
-//ページのコンテキストをセッションに保存
+/**
+ * ページのコンテキストをセッションに保存 
+ */
 function set_page_context_to_session(){
 	session_sta();
 	// セッションに保存
@@ -98,7 +110,9 @@ function set_page_context_to_session(){
 	];
 	$_SESSION['current_resid'] = null;
 }
-// 年齢確認ボタン押下でCookieを発行
+/**
+ * 年齢確認ボタン押下でCookieを発行
+ */
 function age_check(): void {
 
 	check_same_origin();
@@ -109,7 +123,9 @@ function age_check(): void {
 	}
 	// 処理が終了したらJavaScriptでリロード
 }
-//記事の表示に年齢確認を必須にする
+/**
+ * 記事の表示に年齢確認を必須にする 
+ */
 function age_check_required_to_view(): void {
 	global $underage_submit_url;
 	global $age_check_required_to_view,$skindir,$en,$petit_lot,$boardname;
@@ -130,7 +146,11 @@ function age_check_required_to_view(): void {
 	}
 }
 
-//管理者パスワードを確認
+/**
+ * 管理者パスワードを確認
+ * @param string|null $pwd 入力されたパスワード
+ * @return bool パスワードが正しいかどうか
+ */
 function is_adminpass(?string $pwd): bool {
 	global $admin_pass,$second_pass;
 	$pwd=(string)$pwd;
@@ -165,7 +185,9 @@ function admin_in(): void {
 	$templete='admin_in.html';
 	include __DIR__.'/'.$skindir.$templete;
 }
-//管理者投稿モード
+/**
+ * 管理者投稿モード 
+ */
 function adminpost(): void {
 	global $second_pass,$en;
 
@@ -193,7 +215,9 @@ function adminpost(): void {
 	branch_destination_of_location();
 }
 
-//管理者削除モード
+/**
+ * 管理者削除モード 
+ */
 function admin_del(): void {
 	global $second_pass,$en;
 
@@ -221,7 +245,9 @@ function admin_del(): void {
 
 	branch_destination_of_location();
 }
-//ユーザー削除モード
+/**
+ * ユーザー削除モード 
+ */
 function userdel_mode(): void {
 
 	//禁止ホストをチェック
@@ -232,22 +258,32 @@ function userdel_mode(): void {
 	branch_destination_of_location();
 }
 
-//sessionの確認
+/**
+ * 管理者投稿モードのsessionを確認 
+ */
 function adminpost_valid(): bool {
 	global $second_pass;
 	session_sta();
 	return isset($_SESSION['adminpost']) && ($second_pass && hash_equals($second_pass,$_SESSION['adminpost']));
 }
+/**
+ * 管理者削除モードのsessionを確認
+ */
 function admindel_valid(): bool {
 	global $second_pass;
 	session_sta();
 	return isset($_SESSION['admindel']) && ($second_pass && hash_equals($second_pass,$_SESSION['admindel']));
 }
+/**
+ * ユーザー削除モードのsessionを確認
+ */
 function userdel_valid(): bool {
 	session_sta();
 	return isset($_SESSION['userdel'])&& hash_equals($_SESSION['userdel'],'userdel_mode');
 }
-//合言葉の確認
+/**
+ * 合言葉の確認 
+ */
 function aikotoba_valid(): bool {
 	global $keep_aikotoba_login_status,$aikotoba,$use_aikotoba,$aikotoba_required_to_view;
 	if(!$use_aikotoba && !$aikotoba_required_to_view){
@@ -259,7 +295,9 @@ function aikotoba_valid(): bool {
 	return ($keep||isset($_SESSION['aikotoba'])&& hash_equals($_SESSION['aikotoba'],'aikotoba'));
 }
 
-//センシティブコンテンツ
+/**
+ * センシティブコンテンツ 
+ */
 function view_nsfw(): void {
 
 	$view=(bool)filter_input_data('POST','view_nsfw',FILTER_VALIDATE_BOOLEAN);
@@ -270,7 +308,9 @@ function view_nsfw(): void {
 	branch_destination_of_location();
 }
 
-//閲覧注意画像を隠す隠さない
+/**
+ * 閲覧注意画像を隠す隠さない 
+ */
 function set_nsfw_show_hide(): void {
 
 	$view=(bool)filter_input_data('POST','set_nsfw_show_hide');
@@ -280,6 +320,9 @@ function set_nsfw_show_hide(): void {
 		setcookie("p_n_set_nsfw_show_hide","0",time()+(60*60*24*365),"","",false,true);
 	}
 }
+/**
+ * ダークモード
+ */
 function set_darkmode(): void {
 
 	$darkmode=(bool)filter_input_data('POST','darkmode');
@@ -290,7 +333,9 @@ function set_darkmode(): void {
 	}
 }
 
-//ログイン・ログアウト時のLocationを分岐
+/**
+ * ログイン・ログアウト時のLocationを分岐 
+ */
 function branch_destination_of_location(): void {
 	$paintcom=(bool)filter_input_data('POST','paintcom',FILTER_VALIDATE_BOOLEAN);
 	if($paintcom){
@@ -343,12 +388,17 @@ function branch_destination_of_location(): void {
 function location_paintcom(): void {
 	redirect('./?mode=paintcom');
 }
-//リダイレクト
+/**
+ * リダイレクト
+ * @param string|null $url リダイレクト先のURL。nullの場合はトップページにリダイレクト。
+ */
 function redirect(?string $url): void {
 	header("Location: {$url}");
 	exit();
 }
-// コンティニュー認証
+/**
+ * コンティニュー認証
+ */
 function check_cont_pass(): void {
 
 	global $en;
@@ -390,18 +440,28 @@ function check_cont_pass(): void {
 	}
 }
 
-//コンティニュー前画面のペイントツールを選択可能に
+/**
+ * コンティニュー前画面のペイントツールを選択可能に 
+ */
 function set_app_select_enabled_session() : void {
 	session_sta();
 	$_SESSION['enableappselect'] = true;
 }
 
-//設定済みのペイントツール名かどうか調べる
+/**
+ * @param string|null $tool ペイントツールの略称
+ * @return string ペイントツールの略称。設定されていない略称の場合は'???'を返す。
+ */
 function is_paint_tool_name(?string $tool): string {
 	return in_array($tool,['neo','chi','klecks','tegaki','axnos']) ? $tool : '???';
 }
 
-//ログ出力の前処理 行から情報を取り出す
+/**
+ * ログ出力の前処理 行から情報を取り出す
+ * @param array $line ログの1行をタブで分割した配列
+ * @param array $options オプション
+ * @return array 投稿情報の配列
+ */
 function create_res(array $line,array $options=[]): array {
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw,$all_hide_painttime,$hide_userid;
 	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
@@ -506,7 +566,11 @@ function create_res(array $line,array $options=[]): array {
 
 	return $res;
 }
-
+/**
+ * ペイントツールの略称を正式名称に変換する
+ * @param string|null $tool ペイントツールの略称
+ * @return string ペイントツールの正式名称
+ */
 function switch_tool(?string $tool): string {
 	global $en;
 	switch($tool){
@@ -541,7 +605,11 @@ function switch_tool(?string $tool): string {
 	return $tool;
 }
 
-//重複チェックのための配列を全体ログを元に作成
+/**
+ * 重複チェックのための配列を全体ログを元に作成
+ * @param array $chk_log_arr 全体ログの配列
+ * @param string|null $resno 現在のレス番号。
+ */
 function create_chk_lins(array $chk_log_arr,?string $resno): array {
 
 	$chk_resnos=[];
@@ -568,7 +636,9 @@ function create_chk_lins(array $chk_log_arr,?string $resno): array {
 	return $chk_lines;
 }
 
-//ファイル名が重複しない投稿時刻を作成
+/**
+ * ファイル名が重複しない投稿時刻を作成 
+ */
 function create_post_time(): string {
 	$time = (string)(time().substr(microtime(),2,6));	//投稿時刻
 	//画像重複チェック
@@ -607,8 +677,12 @@ function create_array_from_fp($fp): array {
 	return $arr;
 }
 
-//ページング
-//最初と最後のページ番号を取得
+/**
+ * ページング
+ * 最初と最後のページ番号を取得
+ * @param int $page 現在のページ番号
+ * @param int $pagedef 1ページあたりの表示件数
+ */
 function calc_pagination_range(int $page,int $pagedef): array {
 
 	$start_page=$page-$pagedef*8;
@@ -619,8 +693,14 @@ function calc_pagination_range(int $page,int $pagedef): array {
 	}
 	return [$start_page,$end_page];	
 }	
-//ページング
-//前のページと次のページのページの番号を取得
+/**
+ * ページング
+ * 前のページと次のページのページの番号を取得
+ * @param int $page 現在のページ番号
+ * @param int $pagedef 1ページあたりの表示件数
+ * @param int $count_alllog 全体のログの件数
+ * @return array 前のページと次のページのページの番号。次のページ
+ */
 function get_prev_next_pages(int $page,int $pagedef,int $count_alllog): array {
 	$next=(($page+$pagedef)<$count_alllog) ? $page+$pagedef : false;//ページ番号がmaxを超える時はnextのリンクを出さない
 	$prev=((int)$page<=0) ? false : ($page-$pagedef);//ページ番号が0の時はprevのリンクを出さない
@@ -628,7 +708,9 @@ function get_prev_next_pages(int $page,int $pagedef,int $count_alllog): array {
 	return [$prev,$next];
 }
 
-//ユーザーip
+/**
+ * ユーザーip 
+ */
 function get_uip(): string {
 	$ip = $_SERVER["HTTP_CLIENT_IP"] ?? '';
 	$ip = $ip ?: ($_SERVER["HTTP_INCAP_CLIENT_IP"] ?? '');
@@ -644,7 +726,11 @@ function get_uip(): string {
 	return $ip;
 }
 
-//タブ除去
+/**
+ * タブを除去
+ * @param string|null $str 入力文字列
+ * @return string タブを除去した文字列。入力がnullまたは空文字の場合は空文字を返す。
+ */
 function t(?string $str): string {
 	if(zero_check($str)){
 		return '0';
@@ -654,7 +740,11 @@ function t(?string $str): string {
 	}
 	return (string)str_replace("\t","",(string)$str);
 }
-//タグ除去
+/**
+ * タグを除去
+ * @param string|null $str 入力文字列
+ * @return string タグを除去した文字列。入力がnullまたは空文字の場合は空文字を返す。
+ */
 function s(?string $str): string {
 	if(zero_check($str)){
 		return '0';
@@ -664,7 +754,11 @@ function s(?string $str): string {
 	}
 	return strip_tags((string)$str);
 }
-//エスケープ
+/**
+ * HTMLエスケープ
+ * @param string|null $str 入力文字列
+ * @return string HTMLエスケープした文字列。入力がnullまたは空文字の場合は空文字を返す。
+ */
 function h(?string $str) :string{
 	if(zero_check($str)){
 		return '0';
@@ -682,7 +776,13 @@ function h(?string $str) :string{
 function zero_check($str): bool {
 	return($str === 0 || $str === '0');
 }
-//コメント出力
+/**
+ * コメント出力
+ * @param string|null $str コメントの文字列。nullまたは空文字の場合は空文字を返す。
+ * @param string|null $verified コメントが管理者投稿であるかどうか。
+ * @return string コメントをHTML形式で出力した文字列。入力がnullまたは空文字の場合は空文字を返す。
+ * 
+ */
 function com(?string $str,?string $verified=""): string {
 	global $use_autolink;
 
@@ -697,9 +797,14 @@ function com(?string $str,?string $verified=""): string {
 	return nl2br($str,false);
 }
 
-//マークダウン記法のリンクをHTMLに変換
+/**
+ * マークダウン記法のリンクをHTMLに変換
+ * @param string|null $str コメントの文字列。nullまたは空文字の場合は空文字を返す。
+ * @param string|null $verified コメントが管理者投稿であるかどうか。
+ * @return string マークダウン記法のリンクをHTMLに変換した文字列。入力がnullまたは空文字の場合は空文字を返す。
+ */		
 function md_link(?string $str, ?string $verified = ""): string {
-	$rel = $verified ? 'rel="noopener noreferrer"' : 'rel="nofollow noopener noreferrer"';
+	$rel = $verified ==='adminpost' ? 'rel="noopener noreferrer"' : 'rel="nofollow noopener noreferrer"';
 
 	// 正規表現パターンを使用してマークダウンリンクを検出
 	$pattern = "{\[((?:[^\[\]\\\\]|\\\\.)+?)\]\((https?://[^\s\)]+)\)}";
@@ -721,10 +826,15 @@ function md_link(?string $str, ?string $verified = ""): string {
 	return $str;
 }
 
-// 自動リンク
+/**
+ * 自動リンク
+ * @param string|null $str コメントの文字列。nullまたは空文字の場合は空文字を返す。
+ * @param string|null $verified コメントが管理者投稿であるかどうか。
+ * @return string コメント内のURLを自動的にHTMLリンクに変換した文字列。入力がnullまたは空文字の場合は空文字を返す。
+ */
 function auto_link(?string $str,?string $verified = ""): string {
 	if(strpos($str, '<a') === false){ // マークダウン記法がなかった時
-		if($verified){
+		if($verified === 'adminpost'){
 			$rel = 'rel="noopener noreferrer"';
 		}else{
 			$rel = 'rel="nofollow noopener noreferrer"';
@@ -734,7 +844,11 @@ function auto_link(?string $str,?string $verified = ""): string {
 		return (string)$str;
 }
 
-//mime typeを取得して拡張子を返す
+/**
+ * mime typeを取得して拡張子を返す
+ * @param string|null $img_file 画像ファイルのパス。nullまたは空文字の場合は空文字を返す。
+ * @return string 画像ファイルの拡張子。対応していないファイル形式の場合は空文字を返す。
+ */
 function get_image_type (?string $img_file): string {
 
 	if(!$img_file || !is_file($img_file)){
@@ -751,7 +865,10 @@ function get_image_type (?string $img_file): string {
 		default : return '';
 	}
 }
-//ファイルがあれば削除
+/**
+ * ファイルがあれば削除
+ * @param string|null $path ファイルのパス。nullまたは空文字の場合は何もしない。
+ */
 function safe_unlink (?string $path): void {
 	clearstatcache();
 	if ($path && is_file($path)) {
@@ -760,6 +877,8 @@ function safe_unlink (?string $path): void {
 }
 /**
  * 一連の画像ファイルを削除（元画像、サムネ、動画）
+ * @param string|null $imgfile 元画像のファイル名。nullまたは空文字の場合は元画像の削除をスキップする。
+ * @param string|null $time 画像の投稿時刻。nullまたは空文字の場合はサムネイルと動画の削除をスキップする。
  */
 function delete_files (?string $imgfile, ?string $time): void {
 
@@ -777,12 +896,20 @@ function delete_files (?string $imgfile, ?string $time): void {
 	safe_unlink(IMG_DIR.$time.'.tgkr');
 	delete_res_cache();
 }
-
+/**
+ * 1ページ目の配列を保存しているJSON形式のキャッシュファイルを削除
+ */
 function delete_res_cache (): void {
 	safe_unlink(__DIR__.'/template/cache/index_cache.json');
 }
 
-//PNG形式またはWebP形式で上書き保存
+/**
+ * PNG形式またはWebP形式で上書き保存
+ * @param bool $is_upload_img 画像がアップロードされたものかどうか
+ * @param string|null $upload_img_mime_type アップロードされた画像のmime type
+ * @param string|null $fname 画像のファイル名。nullまたは空文字の場合は何もしない。
+ * @param string|null $time 画像の投稿時刻。nullまたは空文字の場合は何もしない。
+ */
 function convert2(bool $is_upload_img,?string $upload_img_mime_type,?string $fname,?string $time): void {
 	global $max_kb,$max_file_size_in_png_format_paint,$max_file_size_in_png_format_upload;
 	$upfile=TEMP_DIR.basename($fname);
@@ -830,7 +957,10 @@ function convert2(bool $is_upload_img,?string $upload_img_mime_type,?string $fna
 	}
 }
 
-//Exifをチェックして画像が回転している時は上書き保存
+/**
+ * Exifをチェックして画像が回転している時は上書き保存
+ * @param string|null $upfile 画像ファイルのパス。nullまたは空文字の場合は何もしない。
+ */
 function check_jpeg_exif(?string $upfile): void {
 	global $max_px;
 
@@ -894,7 +1024,14 @@ function check_jpeg_exif(?string $upfile): void {
 	}
 }
 
-//サムネイル作成
+/**
+ * サムネイル作成
+ * @param string|null $imgfile 元画像のファイル名。nullまたは空文字の場合はサムネイルの作成をスキップする。
+ * @param string|null $time 画像の投稿時刻。nullまたは空文字の場合はサムネイルの作成をスキップする。
+ * @param int $max_w サムネイルの最大幅
+ * @param int $max_h サムネイルの最大高さ
+ * @return string 作成されたサムネイルの種類。webpのサムネイルが作成された場合は'thumbnail_webp'、jpegのサムネ
+ */
 function make_thumbnail(?string $imgfile,?string $time,int $max_w,int $max_h): string {
 	global $use_thumb; 
 	$thumbnail='';
@@ -929,6 +1066,11 @@ function delete_file_if_sizeexceeds(string $upfile,$fp,$rp): void {
 	}
 }
 
+/**
+ * エラー処理 
+ * @param string $str エラーメッセージ
+ * @param bool $historyback ヒストリーバックの有無
+ */
 function error(string $str,bool $historyback=true): void {
 
 	global $boardname,$skindir,$en,$petit_lot;
@@ -971,7 +1113,10 @@ function check_csrf_token(): void {
 		error($en?"CSRF token mismatch.\nPlease reload.":"CSRFトークンが一致しません。\nリロードしてください。");
 	}
 }
-//session開始
+/**
+ * session開始
+ * ssession_start()のラッパー関数
+ */
 function session_sta(): void {
 	global $session_name;
 
@@ -991,6 +1136,9 @@ function session_sta(): void {
 	}
 }
 
+/**
+ * 同一オリジンチェック
+ */
 function check_same_origin(): void {
 	global $en,$usercode;
 
@@ -1015,7 +1163,9 @@ function check_same_origin(): void {
 	}
 }
 
-//禁止ホストなら拒絶
+/**
+ * 禁止ホストなら拒絶 
+ */
 function check_badhost(): void {
 	global $en;
 	if(is_badhost()){
@@ -1028,7 +1178,11 @@ function check_badhost(): void {
 	}
 }
 
-//記事の番号かどうかチェック
+/**
+ * 記事の番号かどうかチェック
+ * @param string|null $no 記事の番号。nullまたは空文字の場合はエラーになる。
+ * @throws Exception エラーが発生した場合にスローされる例外
+ */
 function check_open_no(?string $no): void {
 	global $en;
 	$no=(string)$no;
@@ -1037,6 +1191,11 @@ function check_open_no(?string $no): void {
 	}
 }
 
+/**
+ * ユーザーIDを取得
+ * @param string|null $userip ユーザーのIPアドレス。nullまたは空文字の場合はIPアドレスを使用せずにユーザーIDを生成する。
+ * @return string ユーザーID。セッションにユーザーIDが保存されている場合はその値を返し、そうでない場合はIPアドレスを元に生成したユーザーIDを返す。
+ */
 function getId (?string $userip): string {
 
 	session_sta();
@@ -1047,7 +1206,10 @@ function getId (?string $userip): string {
 
 }
 
-//Asyncリクエストの時は処理を中断
+/**
+ * Asyncリクエストの時は処理を中断
+ * @param string|null $upfile アップロードされたファイルのパス。nullまたは空文字の場合はファイルの削除をスキップする。
+ */
 function check_AsyncRequest(?string $upfile=''): void {
 	//ヘッダーが確認できなかった時の保険
 	$asyncflag = (bool)filter_input_data('POST','asyncflag',FILTER_VALIDATE_BOOLEAN);
@@ -1060,7 +1222,9 @@ function check_AsyncRequest(?string $upfile=''): void {
 	}
 }
 
-//POSTがJavaScript経由かチェック
+/**
+ * POSTがJavaScript経由かチェック 
+ */
 function check_post_via_javascript(): void {
 	global $en;
 	//JavaScriptが無効な時はエラー
@@ -1069,12 +1233,16 @@ function check_post_via_javascript(): void {
 	}
 }
 
-//フォームの表示時刻をセット
+/**
+ * フォームの表示時刻をセット 
+ */
 function set_form_display_time(): void {
 	session_sta();
 	$_SESSION['form_display_time'] = microtime(true);
 }
-//投稿間隔をチェック
+/**
+ * 投稿間隔をチェック 
+ */
 function check_submission_interval(): void {
 	global $en;
 
@@ -1101,7 +1269,9 @@ function check_submission_interval(): void {
 		error($en? 'Please wait a little.':'少し待ってください。');
 	}
 }
-// テンポラリ内のゴミ除去 
+/**
+ * テンポラリ内のゴミ除去
+ */
 function deltemp(): void {
 	global $check_password_input_error_count;
 	$handle = opendir(TEMP_DIR);
@@ -1135,7 +1305,9 @@ function deltemp(): void {
 	}
 }
 
-// NGワードがあれば拒絶
+/**
+ * NGワードがあれば拒絶
+ */
 function Reject_if_NGword_exists_in_the_post(): void {
 	global $use_japanesefilter,$badstring,$badname,$badurl,$badstr_A,$badstr_B,$allow_comments_url,$max_com,$en;
 
@@ -1232,7 +1404,9 @@ function is_ngword ($ngwords, $strs): bool {
 	return false;
 }
 
-/* 禁止ホストチェック */
+/**
+ * 禁止ホストチェック
+ */
 function is_badhost(): bool {
 	global $badhost,$reject_if_no_reverse_dns,$use_badhost_session_cache;
 
@@ -1277,7 +1451,9 @@ function is_badhost(): bool {
 	}
 }
 
-//初期化
+/**
+ * 初期化 
+ */
 function init(): void {
 	
 	check_dir(__DIR__."/src");
@@ -1292,7 +1468,10 @@ function init(): void {
 	}
 }
 
-//ディレクトリ作成
+/**
+ * ディレクトリ作成
+ * @param string|null $path ディレクトリのパス。nullまたは空文字の場合はエラーになる。
+ */
 function check_dir (?string $path): void {
 
 	$msg=initial_error_message();
@@ -1315,7 +1494,10 @@ function check_dir (?string $path): void {
 	} 
 }
 
-// ファイル存在チェック
+/**
+ * ファイルの存在とアクセス権をチェック	
+ * @param string|null $path ファイルのパス。nullまたは空文字の場合はエラーになる。
+ */
 function check_file (?string $path): void {
 	$msg=initial_error_message();
 
@@ -1326,6 +1508,10 @@ function check_file (?string $path): void {
 		die(h($path) . $msg['002']);
 	} 
 }
+
+/**
+ * 初期化時に発生したエラーのエラーメッセージ
+ */
 function initial_error_message(): array {
 	global $en;
 	$msg['001']=$en ? ' does not exist.':'がありません。'; 
@@ -1511,7 +1697,14 @@ function microtime2time($microtime): int {
 	return (int)$time;
 }
 
-//POSTされた値をログファイルに格納する書式にフォーマット
+/**
+ * POSTされた値をログファイルに格納する書式にフォーマット
+ * @param string|null $name
+ * @param string|null $sub
+ * @param string|null $url
+ * @param string|null $com
+ * @return array
+ */
 function create_formatted_text_from_post(?string $name,?string $sub,?string $url,?string $com): array {
 	global $en,$name_input_required,$subject_input_required,$comment_input_required;
 
@@ -1552,7 +1745,11 @@ function create_formatted_text_from_post(?string $name,?string $sub,?string $url
 
 }
 
-//PaintBBS NEOのpchかどうか調べる
+/**
+ * PaintBBS NEOのpchかどうか調べる
+ * @param string|null $src pchファイルのパス。nullまたは空文字の場合はfalseを返す。
+ * @return bool pchファイルがPaintBBS NEOの形式であればtrue、そうでなければfalseを返す。
+ */
 function is_neo(?string $src): bool {
 	if(!$src){
 		return false;
@@ -1562,7 +1759,11 @@ function is_neo(?string $src): bool {
 	fclose($fp);
 	return $is_neo;
 }
-//pchデータから幅と高さを取得
+/**
+ * pchデータから幅と高さを取得
+ * @param string|null $src pchファイルのパス。nullまたは空文字の場合はnullを返す。
+ * @return array|null pchファイルから取得した幅と高さの配列。幅と高さが取得できない場合はnullを返す。
+ */
 function get_pch_size(?string $src): ?array {
 	if(!$src){
 		return null;
@@ -1591,7 +1792,10 @@ function get_pch_size(?string $src): ?array {
 	return[(int)$width,(int)$height];
 }
 
-// ini_getで取得したサイズ文字列をMBに変換
+/**
+ * ini_getで取得したサイズ文字列をMBに変換
+ * @param string $key 
+ */
 function ini_get_size_mb(string $key): float {
 	if (!function_exists('ini_get')) return 0;
 
@@ -1627,14 +1831,18 @@ function ini_get_size_mb(string $key): float {
 					return ($num / 1024 / 1024); // 単位なし → バイトとして処理
 	}
 }
-//投稿可能な最大ファイルサイズを取得 単位MB
+/**
+ * サーバーに投稿可能な最大ファイルサイズを取得 単位MB 
+ */
 function get_upload_max_filesize(): float {
 	$upload_max = ini_get_size_mb('upload_max_filesize');
 	$post_max = ini_get_size_mb('post_max_size');
 	return min($upload_max, $post_max);
 }
 
-//使用するペイントアプリの配列化
+/**
+ * 使用するペイントアプリの配列化 
+ */
 function app_to_use(): array {
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos;
 		$arr_apps=[];
@@ -1656,7 +1864,9 @@ function app_to_use(): array {
 		return $arr_apps;
 	}
 
-//パスワードを5回連続して間違えた時は拒絶
+/**
+ * パスワードを5回連続して間違えた時は拒絶 
+ */
 function check_password_input_error_count(): void {
 	global $second_pass,$en,$check_password_input_error_count;
 	if(!$check_password_input_error_count){
@@ -1679,7 +1889,9 @@ function check_password_input_error_count(): void {
 	}
 }
 
-// 優先言語のリストをチェックして対応する言語があればその翻訳されたレイヤー名を返す
+/**
+ * 優先言語のリストをチェックして対応する言語があればその翻訳されたレイヤー名を返す
+ */
 function getTranslatedLayerName(): string {
 	$acceptedLanguages = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '';
 	$languageList = explode(',', $acceptedLanguages);
@@ -1728,7 +1940,12 @@ function file_lock($fp, int $lock, array $options=[]): void {
 		}
 	}
 }
-//filter_input のラッパー関数
+/**
+ * filter_input のラッパー関数
+ * @param string $input
+ * @param string $key
+ * @param int $filter 
+ */
 function filter_input_data(string $input, string $key, int $filter=FILTER_UNSAFE_RAW) {
 	// $_GETまたは$_POSTからデータを取得
 	$value = null;

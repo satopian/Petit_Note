@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.230.1';
-$petit_lot='lot.20260523';
+$petit_ver='v1.232.0';
+$petit_lot='lot.20260530';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -69,7 +69,10 @@ check_file(__DIR__.'/lib/'.JQUERY);
 check_file(__DIR__.'/lib/lightbox/js/lightbox.min.js');
 check_file(__DIR__.'/lib/lightbox/css/lightbox.min.css');
 
-//テンプレート
+/**
+ * テンプレート
+ * @var string $skindir
+ */
 $skindir='template/'.$skindir;
 
 if(!$max_log){
@@ -982,6 +985,7 @@ function paint(): void {
 	$admin_pass= null;
 	//投稿可能な最大値
 	$max_pch = get_upload_max_filesize();
+	
 
 	switch($app){
 		case 'chi'://litaChix
@@ -1846,7 +1850,12 @@ function confirmation_before_deletion (): void {
 	error($en?'This operation has failed.':'失敗しました。');
 }
 
-//編集画面
+/**
+ * 編集画面
+ * @param string $id
+ * @param string $no
+ * @return void
+ */
 function edit_form(string $id='',string $no=''): void {
 
 	global $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload,$mark_sensitive_image,$use_url_input_field;
@@ -2388,7 +2397,11 @@ function catalog(): void {
 	$misskey_note=false;
 
 	//ページング
+	/** @var int $start_page */
+	/** @var int $end_page */
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
+	/** @var int|false $prev */
+	/** @var int|false $next */
 	list($prev,$next)=get_prev_next_pages($page,$pagedef,$count_alllog);
 
 	$is_badhost=is_badhost();//管理者ログインリンクを表示するかどうかの判定
@@ -2516,8 +2529,13 @@ function view(): void {
 
 	$use_top_form = true;//互換性のために常にtrue;
 	//ページング
+
+	/** @var int $start_page */
+	/** @var int $end_page */
 	list($start_page,$end_page)=calc_pagination_range($page,$pagedef);
-	//prev next 
+
+	/** @var int|false $prev */
+	/** @var int|false $next */
 	list($prev,$next)=get_prev_next_pages($page,$pagedef,$count_alllog);
 
 	if($page===0 && !$admindel && !$adminpost && !$is_badhost){
@@ -2544,7 +2562,11 @@ function view(): void {
 	exit();
 }
 
-//レス画面に前後のスレッドの画像一覧と次のスレッド前のスレッドのリンクを出す
+/**
+ * レス画面に前後のスレッドの画像一覧と次のスレッド前のスレッドのリンクを出す
+ * @param string $resno レス番号
+ * @return array [$next, $prev, $other_works]
+ */
 function res_view_other_works(string $resno): array
 {
 	global $view_other_works;
@@ -2589,10 +2611,10 @@ function res_view_other_works(string $resno): array
 	}
 	fclose($fp);
 
-	$next = $articles2[$i + 1] ?? '';
-	$prev = $articles1[$i - 1] ?? '';
-	$next = $next ? (create_res(explode("\t", trim($next)), ['catalog' => true])) : [];
-	$prev = $prev ? (create_res(explode("\t", trim($prev)), ['catalog' => true])) : [];
+	$nextLine = $articles2[$i + 1] ?? '';
+	$prevLine = $articles1[$i - 1] ?? '';
+	$next = $nextLine ? (create_res(explode("\t", trim($nextLine)), ['catalog' => true])) : [];
+	$prev = $prevLine ? (create_res(explode("\t", trim($prevLine)), ['catalog' => true])) : [];
 	$next = (!empty($next) && is_file(LOG_DIR . "{$next['no']}.log")) ? $next : [];
 	$prev = (!empty($prev) && is_file(LOG_DIR . "{$prev['no']}.log")) ? $prev : [];
 
@@ -2604,7 +2626,6 @@ function res_view_other_works(string $resno): array
 	}
 
 	$other_works = [];
-	$a = [];
 	foreach ($articles1 as $key => $val) {
 
 		$r1 = create_res(explode("\t", trim($val)), ['catalog' => true]);

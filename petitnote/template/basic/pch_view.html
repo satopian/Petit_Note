@@ -25,17 +25,19 @@
 <body>
 <div class="container" <?php if($appw>928):?>style="max-width:<?=h($appw) ?>px"<?php endif;?>>
 <div class="appstage" style="width:<?=h($appw) ?>px; height:<?=h($apph) ?>px">
-<applet-dummy
-name="pch" code="pch.PCHViewer.class" archive="PCHViewer.jar,PaintBBS.jar" width="<?=h($appw)?>" height="<?=h($apph)?>" MAYSCRIPT>
-<param name="image_width" value="<?=h($picw)?>">
-<param name="image_height" value="<?=h($pich)?>">
-<param name="pch_file" value="<?=h($pchfile)?>">
-<param name="speed" value="0">
-<param name="buffer_progress" value="false">
-<param name="buffer_canvas" value="false">
-<param name="neo_enable_zoom_out" value="true">
-<param name="neo_viewer_buttonswrapper_top" value="true">
-</applet-dummy>
+<div class="neo-applet-pch" data-width="<?=h($appw)?>" data-height="<?=h($apph)?>"></div>
+<script>
+Neo.param ={
+	pch:{
+	image_width:<?=h($picw)?>,
+	image_height:<?=h($pich)?>,
+	pch_file:"<?=h($pchfile)?>",
+	speed:0,
+	neo_enable_zoom_out:true,
+	neo_viewer_buttonswrapper_top:true,
+	}
+}
+</script>	
 	</div>
 <div class="pch_download">
 <A href="<?=h($pchfile)?>" target="_blank" rel="nofollow noopener noreferrer">Download</A><br>

@@ -335,9 +335,8 @@ const clear_css_form_submit = () => {
     }
 };
 
-//ファイルサイズチェック
 /**
- *
+ * ファイルサイズチェック
  * @param {string} form_id
  * @param {string} error_messageid
  * @param {HTMLInputElement} elem_attach_image
@@ -654,7 +653,11 @@ if (elem_form_submit && (elem_attach_image || paint_com)) {
     });
 }
 
+/**
+ * @type {any} snsWindow
+ */
 var snsWindow = null; // グローバル変数としてウィンドウオブジェクトを保存する
+
 /**
  * shareするSNSのserver一覧を開く
  * @param {Event} event
@@ -671,8 +674,8 @@ const open_sns_server_window = (event, width = 600, height = 600) => {
         height = 600; // デフォルト値
     }
     const target = event.currentTarget;
-    let url = target instanceof HTMLAnchorElement ? target.href : null;
-    let windowFeatures = "width=" + width + ",height=" + height; // ウィンドウのサイズを指定
+    const url = target instanceof HTMLAnchorElement ? target.href : "";
+    const windowFeatures = "width=" + width + ",height=" + height; // ウィンドウのサイズを指定
 
     if (snsWindow && !snsWindow.closed) {
         snsWindow.focus(); // 既に開かれているウィンドウがあればフォーカスする
@@ -728,6 +731,7 @@ window.addEventListener("pageshow", () => {
  */
 document.addEventListener("DOMContentLoaded", () => {
     const pagetop = document.getElementById("page_top");
+    /**@type {number} */
     let scrollTimeout; // スクロールが停止したタイミングをキャッチするタイマー
     if (!pagetop) {
         return; // pagetopが存在しない場合は処理を終了
@@ -742,13 +746,13 @@ document.addEventListener("DOMContentLoaded", () => {
     /**
      * フェードイン/フェードアウトを管理する関数
      * @param {HTMLElement} el
-     * @param {number} to
-     * @param {number} duration
+     * @param {number} to 0でフェードアウト、1でフェードイン
+     * @param {number} duration フェードの持続時間（ミリ秒）
      */
     const fade = (el, to, duration = 500) => {
         const startOpacity = parseFloat(el.style.opacity || "0");
         let startTime = performance.now();
-
+        /**@type {FrameRequestCallback} */
         const fadeStep = (now) => {
             const elapsed = now - startTime;
             const progress = Math.min(elapsed / duration, 1);
@@ -801,7 +805,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // 0.5秒かけてスクロール
         const start = window.scrollY;
         const startTime = performance.now();
-
+        /**@type {FrameRequestCallback} */
         const scrollStep = (now) => {
             const elapsed = now - startTime;
             const progress = Math.min(elapsed / duration, 1);

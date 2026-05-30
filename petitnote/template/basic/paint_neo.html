@@ -158,50 +158,47 @@ a[c],b.p_st.options[c].style.color=d[c],b.p_ed.options[c].style.background=a[c],
 </script>
 <?php endif;?>
 <noscript><h3><?php if($en):?>Please enable JavaScript.<?php else:?>javascriptが有効でないため正常に動作致しません<?php endif;?></h3></noscript>
-<div class="appstage"><div class="app">
+<div class="appstage">
+<div class="app">
 <!-- NEOを使う時はアプレットを読み込まないように -->
-<applet-dummy CODE="pbbs.PaintBBS.class" ARCHIVE="./PaintBBS.jar" NAME="paintbbs" WIDTH="<?=h($appw)?>"
-	 HEIGHT="<?=h($apph)?>" MAYSCRIPT>
-<?php if(isset($max_pch)):?>
-<param name="neo_max_pch" value="<?=h($max_pch)?>">
-<?php endif;?>
-<param name="neo_send_with_formdata" value="true">
-<param name="neo_validate_exact_ok_text_in_response" value="true">
-<param name="neo_confirm_layer_info_notsaved" value="true">
-<param name="neo_confirm_unload" value="true">
-<param name="neo_show_right_button" value="true">
-<param name="neo_animation_skip" value="true">
-<param name="neo_disable_grid_touch_move" value="true">
-<param name="neo_enable_zoom_out" value="true">
-<param name="neo_disable_turn_original_glitch" value="true">
-<param name="send_header_count" value="true">
-<param name="send_header_timer" value="true">
-<param name="image_width" value="<?=h($picw)?>">
-<param name="image_height" value="<?=h($pich)?>">
-<param name="image_jpeg" value="false">
-<param name="image_size" value="600">
-<param name="compress_level" value="15">
-<param name="undo" value="">
-<param name="undo_in_mg" value="">
-<param name="poo" value="false">
-<param name="send_advance" value="true">
-<param name="tool_advance" value="true">
-<param name="thumbnail_width" value="100%">
-<param name="thumbnail_height" value="100%">
-<param name="url_save" value="./?mode=saveimage&tool=neo">
-<param name="url_exit" value="./?mode=paintcom">
-<?php if($anime):?>
-<param name="thumbnail_type" value="animation">
-<?php endif;?>
-<?php if($pchfile):?>
-<param name="pch_file" value="<?=h($pchfile)?>">
-<?php endif;?>
-<?php if($imgfile):?>
-<param name="image_canvas" value="<?=h($imgfile)?>">
-<?php endif;?>
-<param name="send_header" value="stime=<?=time();?>&tool=neo<?php if($resto):?>&resto=<?=h($resto)?><?php endif;?><?php if($hide_animation):?>&hide_animation=<?=h($hide_animation)?><?php endif;?><?php if($rep):?>&repcode=<?=h($repcode)?><?php endif;?>">
+<div class="neo-applet-paintbbs" data-width="<?=h($appw)?>" data-height="<?=h($apph)?>"></div>
+<script>
+Neo.param ={
+	paintbbs:{
+	<?php if(isset($max_pch)):?>
+	neo_max_pch:<?=h($max_pch)?>,
+	<?php endif;?>
+	neo_send_with_formdata:true,
+	neo_validate_exact_ok_text_in_response:true,
+	neo_confirm_layer_info_notsaved:true,
+	neo_confirm_unload:true,
+	neo_show_right_button:true,
+	neo_animation_skip:true,
+	neo_disable_grid_touch_move:true,
+	neo_enable_zoom_out:true,
+	neo_disable_turn_original_glitch:true,
+	send_header_count:true,
+	send_header_timer:true,
+	image_width:<?=h($picw)?>,
+	image_height:<?=h($pich)?>,
+	thumbnail_width:"100%",
+	thumbnail_height:"100%",
+	url_save:"./?mode=saveimage&tool=neo",
+	url_exit:"./?mode=paintcom",
+	thumbnail_type:"animation",
 
-</applet-dummy>
+	<?php if($pchfile):?>
+	pch_file:"<?=h($pchfile)?>",
+	<?php endif;?>
+	<?php if($imgfile):?>
+	image_canvas:"<?=h($imgfile)?>",
+	<?php endif;?>
+	send_header:"stime=<?=h(time());?>&tool=neo<?php if($resto):?>&resto=<?=h($resto)?><?php endif;?><?php if($hide_animation):?>&hide_animation=<?=h($hide_animation)?><?php endif;?><?php if($rep):?>&repcode=<?=h($repcode)?><?php endif;?>"
+	}
+}
+
+</script>
+
 </div>
 <div class="palette_wrap">
 <div class="palette"><FORM name="Palette">
