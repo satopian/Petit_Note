@@ -26,6 +26,7 @@ const en = lang.startsWith("ja") ? false : true;
  *
  * @param {Event} event
  * @param {string} formId
+ * @returns {any}
  */
 const res_form_submit = (event, formId = "res_form") => {
     event.preventDefault(); // 通常フォームの送信を中断
@@ -51,7 +52,6 @@ const res_form_submit = (event, formId = "res_form") => {
 
     /**
      * フォームデータを送信してリダイレクトやエラーメッセージの表示を行う
-     * @type {?HTMLElement} form
      */
     const form = document.getElementById(formId);
     if (form instanceof HTMLFormElement) {
@@ -166,7 +166,6 @@ const res_form_submit = (event, formId = "res_form") => {
 /**
  * コメント入力中画面からの離脱防止
  * @param {Event} e
- * @type {boolean} isForm_Submit
  * @returns {void}
  */
 document.addEventListener("DOMContentLoaded", (e) => {
@@ -228,6 +227,7 @@ const view_nsfw = (event) => {
 /**
  * 年齢確認ボタンを押下するまで表示しない
  * @param {Event} event
+ * @returns {void}
  */
 const age_check = (event) => {
     event.preventDefault(); // 通常フォームの送信を中断
@@ -239,8 +239,6 @@ const age_check = (event) => {
 
 /**
  * 閲覧注意画像を隠す/隠さない
- * @param {Event} event
- * @returns {void}
  */
 const set_nsfw_show_hide = document.getElementById("set_nsfw_show_hide");
 if (set_nsfw_show_hide instanceof HTMLFormElement) {
@@ -251,8 +249,6 @@ if (set_nsfw_show_hide instanceof HTMLFormElement) {
 }
 /**
  * ダークモード
- * @param {Event} event
- * @returns {void}
  */
 const set_darkmode = document.getElementById("set_darkmode");
 if (set_darkmode instanceof HTMLFormElement) {
@@ -341,7 +337,7 @@ const clear_css_form_submit = () => {
  * @param {string} error_messageid
  * @param {HTMLInputElement} elem_attach_image
  * @param {string} removeAttachmentBtnId
- * @returns
+ * @returns {void}
  */
 const file_size_check = (
     form_id,

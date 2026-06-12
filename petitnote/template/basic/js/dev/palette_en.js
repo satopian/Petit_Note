@@ -99,8 +99,11 @@ function PaletteDel() {
     }
     if (30 > s.length) s.size = s.length;
 }
-async function P_Effect(v) {
-    v = parseInt(v);
+/**
+ * @param {string} color
+ */
+async function P_Effect(color) {
+    const v = parseInt(color);
     let n;
     let x = 1;
     if (v == 255) x = -1;
@@ -290,11 +293,15 @@ function PaletteListSetColor() {
         s.options[i].style.color = GetBright(c[4]);
     }
 }
-function GetBright(c) {
-    let r = parseInt("0x" + c.substring(1, 3));
-    let g = parseInt("0x" + c.substring(3, 5));
-    let b = parseInt("0x" + c.substring(5, 7));
-    c = r >= g ? (r >= b ? r : b) : g >= b ? g : b;
+/**
+ * @param {string} color
+ * @returns {string}
+ */
+function GetBright(color) {
+    let r = parseInt("0x" + color.substring(1, 3));
+    let g = parseInt("0x" + color.substring(3, 5));
+    let b = parseInt("0x" + color.substring(5, 7));
+    const c = r >= g ? (r >= b ? r : b) : g >= b ? g : b;
     return 128 > c ? "#FFFFFF" : "#000000";
 }
 function Chenge_() {
@@ -349,6 +356,10 @@ function ChengeGrad() {
     }
     document["paintbbs"].setColors(p);
 }
+/**
+ * @param {number} n
+ * @returns {string}
+ */
 function Hex(n) {
     n = Math.trunc(n);
     if (0 > n) n *= -1;
@@ -371,25 +382,31 @@ function Hex(n) {
     }
     return hex;
 }
-function Hex_(n) {
-    if (!isNaN(n)) {
-        if (n == 10) {
-            n = "A";
-        } else if (n == 11) {
-            n = "B";
-        } else if (n == 12) {
-            n = "C";
-        } else if (n == 13) {
-            n = "D";
-        } else if (n == 14) {
-            n = "E";
-        } else if (n == 15) {
-            n = "F";
+
+/**
+ * @param {number|string} value - 変換対象の数値
+ * @returns {number|string} 10-15の場合は 'A'-'F'、それ以外は元の値か空文字
+ */
+function Hex_(value) {
+    let val = Number(value);
+    if (!isNaN(val)) {
+        if (value == 10) {
+            value = "A";
+        } else if (value == 11) {
+            value = "B";
+        } else if (value == 12) {
+            value = "C";
+        } else if (value == 13) {
+            value = "D";
+        } else if (value == 14) {
+            value = "E";
+        } else if (value == 15) {
+            value = "F";
         }
     } else {
-        n = "";
+        value = "";
     }
-    return n;
+    return value;
 }
 async function GetPalette() {
     const d = document;
