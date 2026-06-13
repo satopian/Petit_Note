@@ -330,6 +330,7 @@ addEventListener("DOMContentLoaded", () => {
         document_resid.scrollIntoView();
     }
 });
+
 /**
  * ページが表示されたときにすべてのsubmitボタンを有効化する
  * ブラウザの戻るボタンで戻ったときなどにsubmitボタンが無効化されたままになるのを防止する
@@ -349,19 +350,23 @@ window.addEventListener("pageshow", () => {
 /**
  * スクロールすると出てくるトップに戻るボタン
  */
-document.addEventListener("DOMContentLoaded", () => {
-    const pagetop = document.getElementById("page_top");
-    /**@type {number} */
-    let scrollTimeout; // スクロールが停止したタイミングをキャッチするタイマー
-    if (!pagetop) {
-        return; // pagetopが存在しない場合は処理を終了
+class petitNoteScrollToTop {
+    constructor() {
+        this.pagetop = document.getElementById("page_top");
+        /**@type {number} */
+        this.scrollTimeout; // スクロールが停止したタイミングをキャッチするタイマー
+        if (!this.pagetop) {
+            return; // pagetopが存在しない場合は処理を終了
+        }
+        // 初期状態で非表示
+        const cssOpacity = getComputedStyle(this.pagetop).opacity; // CSSから最大opacity取得
+        // CSSで設定されているopacityの値を動的に取得（上限として使用）
+        const parseFloatOpacity = parseFloat(cssOpacity);
+        this.maxOpacity = parseFloatOpacity;
+        this.pagetop.style.visibility = "hidden"; // 初期状態で非表示
+        this.pagetop.style.opacity = "0"; // 初期opacityを0に設定
+        this.listener();
     }
-    // 初期状態で非表示
-    const cssOpacity = getComputedStyle(pagetop).opacity; // CSSから最大opacity取得
-    // CSSで設定されているopacityの値を動的に取得（上限として使用）
-    const maxOpacity = parseFloat(cssOpacity);
-    pagetop.style.visibility = "hidden"; // 初期状態で非表示
-    pagetop.style.opacity = "0"; // 初期opacityを0に設定
 
     /**
      * フェードイン/フェードアウトを管理する関数
@@ -369,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
      * @param {number} to 0でフェードアウト、1でフェードイン
      * @param {number} duration フェードの持続時間（ミリ秒）
      */
-    const fade = (el, to, duration = 500) => {
+    fade(el, to, duration = 500) {
         const startOpacity = parseFloat(el.style.opacity || "0");
         let startTime = performance.now();
         /**@type {FrameRequestCallback} */
@@ -378,9 +383,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const progress = Math.min(elapsed / duration, 1);
             let opacity = startOpacity + (to - startOpacity) * progress;
 
-            // opacityの上限をmaxOpacity（CSSで指定された値）に設定
-            opacity = opacity > maxOpacity ? maxOpacity : opacity; // 上限を超えないようにする
-
+            if (typeof this.maxOpacity === "number") {
+                opacity = Math.min(opacity, this.maxOpacity);
+            }
             el.style.opacity = opacity.toFixed(2);
 
             if (progress < 1) {
@@ -397,31 +402,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         requestAnimationFrame(fadeStep);
-    };
-
-    /**
-     * スクロール時の処理
-     */
-    window.addEventListener("scroll", () => {
-        // スクロール開始後に表示
-        if (window.scrollY > 100 && pagetop?.style.visibility === "hidden") {
-            fade(pagetop, 1, 500); // 0.5秒でフェードイン
-        }
-
-        // スクロール停止後に非表示
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            if (window.scrollY <= 100) {
-                fade(pagetop, 0, 200); // 0.2秒でフェードアウト
-            }
-        }, 200); // 200msの遅延で非表示
-    });
+    }
 
     /**
      * スムーススクロール
      * @param {number} duration
      */
-    const smoothScrollToTop = (duration = 500) => {
+    smoothScrollToTop(duration = 500) {
         // 0.5秒かけてスクロール
         const start = window.scrollY;
         const startTime = performance.now();
@@ -436,22 +423,54 @@ document.addEventListener("DOMContentLoaded", () => {
             if (progress < 1) {
                 requestAnimationFrame(scrollStep);
             } else {
-                fade(pagetop, 0, 500); // スクロール完了後にフェードアウト
+                if (this.pagetop) {
+                    this.fade(this.pagetop, 0, 500); // スクロール完了後にフェードアウト
+                }
             }
         };
 
         requestAnimationFrame(scrollStep);
-    };
+    }
 
-    /**
-     * トップに戻るボタンがクリックされたときの処理
-     * @param {Event} e
-     */
-    pagetop?.addEventListener("click", (e) => {
-        e.preventDefault();
-        smoothScrollToTop(500); // 0.5秒でスクロール
-    });
+    listener() {
+        /**
+         * スクロール時の処理
+         */
+        window.addEventListener("scroll", () => {
+            // スクロール開始後に表示
+            if (
+                window.scrollY > 100 &&
+                this.pagetop?.style.visibility === "hidden"
+            ) {
+                this.fade(this.pagetop, 1, 500); // 0.5秒でフェードイン
+            }
+
+            // スクロール停止後に非表示
+            clearTimeout(this.scrollTimeout);
+            this.scrollTimeout = setTimeout(() => {
+                if (window.scrollY <= 100) {
+                    if (this.pagetop) {
+                        this.fade(this.pagetop, 0, 200); // 0.2秒でフェードアウト
+                    }
+                }
+            }, 200); // 200msの遅延で非表示
+        });
+
+        /**
+         * トップに戻るボタンがクリックされたときの処理
+         * @param {Event} e
+         */
+        this.pagetop?.addEventListener("click", (e) => {
+            e.preventDefault();
+            this.smoothScrollToTop(500); // 0.5秒でスクロール
+        });
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    new petitNoteScrollToTop();
 });
+
 /**
  * 画像ファイルを添付
  */
@@ -847,7 +866,10 @@ class petitNoteImagePreview {
         });
     }
 }
-new petitNoteImagePreview();
+
+document.addEventListener("DOMContentLoaded", () => {
+    new petitNoteImagePreview();
+});
 
 // (c)satopian MIT Licence ここまで
 // @ts-ignore
