@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.236.0';
+$petit_ver='v1.236.1';
 $petit_lot='lot.20260613';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -251,7 +251,7 @@ switch($mode){
 function post(): void {
 	global $max_log,$max_res,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$mark_sensitive_image;
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
-	global $usercode,$use_url_input_field,$httpsonly;
+	global $usercode,$use_url_input_field,$httpsonly,$set_all_images_to_nsfw;
 
 	//投稿間隔をチェック
 	check_submission_interval();
@@ -272,6 +272,8 @@ function post(): void {
 	$pwd=t(filter_input_data('POST', 'pwd'));//パスワードを取得
 	$sage = $sage_all ? true : (bool)filter_input_data('POST','sage',FILTER_VALIDATE_BOOLEAN);
 	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input_data('POST','hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
+	$hide_thumbnail = $set_all_images_to_nsfw ? true : $hide_thumbnail;
+
 	$hide_animation=(bool)filter_input_data('POST','hide_animation',FILTER_VALIDATE_BOOLEAN);
 	$check_elapsed_days=false;
 
@@ -985,7 +987,6 @@ function paint(): void {
 	$admin_pass= null;
 	//投稿可能な最大値
 	$max_pch = get_upload_max_filesize();
-	
 
 	switch($app){
 		case 'chi'://litaChix
@@ -1307,7 +1308,7 @@ function download_app_dat(): void {
 // 画像差し換え
 function img_replace(): void {
 
-	global $max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image,$usercode;
+	global $max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image,$usercode,$set_all_images_to_nsfw;
 
 	$no = t(filter_input_data('POST', 'no',FILTER_VALIDATE_INT));
 	$no = $no ?: t(filter_input_data('GET', 'no',FILTER_VALIDATE_INT));
@@ -1619,8 +1620,7 @@ function img_replace(): void {
 	//サムネイル作成
 	$thumbnail = make_thumbnail($imgfile,$time,$max_w,$max_h);//サムネイル作成
 
-	$hide_thumbnail = ($_imgfile && strpos($_thumbnail,'hide_')!==false) ? 'hide_' : '';
-
+	$hide_thumbnail = ($_imgfile && (strpos($_thumbnail,'hide_')!==false||$set_all_images_to_nsfw)) ? 'hide_' : '';
 	$thumbnail =  $hide_thumbnail.$thumbnail;
 
 	//描画時間追加
@@ -1962,7 +1962,7 @@ function edit_form(string $id='',string $no=''): void {
 
 //編集
 function edit(): void {
-	global $name_input_required,$max_com,$en,$mark_sensitive_image,$use_url_input_field,$admin_pass;
+	global $name_input_required,$max_com,$en,$mark_sensitive_image,$use_url_input_field,$admin_pass,$set_all_images_to_nsfw;
 
 	//投稿間隔をチェック
 	check_submission_interval();
@@ -1983,6 +1983,8 @@ function edit(): void {
 	$id = t(filter_input_data('POST','id'));//intの範囲外
 	$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
 	$hide_thumbnail = $mark_sensitive_image ? (bool)filter_input_data('POST','hide_thumbnail',FILTER_VALIDATE_BOOLEAN) : false;
+	$hide_thumbnail = $set_all_images_to_nsfw ? true : $hide_thumbnail;
+
 	$hide_animation=(bool)filter_input_data('POST','hide_animation',FILTER_VALIDATE_BOOLEAN);
 	$pwd=(string)filter_input_data('POST','pwd');
 	$pwdc=(string)filter_input_data('COOKIE','pwdc');
@@ -2103,7 +2105,7 @@ function edit(): void {
 	$thumbnail = $thumbnail_webp ?: $thumbnail_jpg;
 
 	$hide_thumbnail=($_imgfile && $hide_thumbnail) ? 'hide_' : '';
-	$thumbnail =  $mark_sensitive_image ? $hide_thumbnail.$thumbnail : $thumbnail;
+	$thumbnail = $hide_thumbnail.$thumbnail;
 
 	if(in_array($pchext,['.pch','hide_animation'])){
 		$pchext= $hide_animation ? 'hide_animation' : '.pch'; 
@@ -2418,7 +2420,7 @@ function view(): void {
 	global $use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
-	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip;
+	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip,$set_all_images_to_nsfw;
 
 	aikotoba_required_to_view();
 	set_page_context_to_session();
