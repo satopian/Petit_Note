@@ -158,7 +158,13 @@ function is_adminpass(?string $pwd): bool {
 }
 
 function admin_in(): void {
-	global $boardname,$use_diary,$petit_lot,$petit_ver,$skindir,$en,$latest_var;
+	global $boardname,$use_diary,$petit_lot,$petit_ver,$skindir,$en,$latest_var,$enable_v1_legacy_template_unsafe_get_login;
+
+	if(!$enable_v1_legacy_template_unsafe_get_login &&
+	$_SERVER["REQUEST_METHOD"] != "POST")
+	{
+	error("失敗しました。");	
+	}
 
 	//禁止ホストをチェック
 	check_badhost();

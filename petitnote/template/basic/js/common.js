@@ -348,6 +348,48 @@ window.addEventListener("pageshow", () => {
 });
 
 /**
+ * データセットでPOSTして表示を切り替える
+ */
+
+document.addEventListener("click", (e) => {
+    const target = e.target;
+    if (!target) {
+        return;
+    }
+    /** @type {HTMLElement|null}**/
+    const trigger =
+        target instanceof HTMLElement
+            ? target.closest(".ref-target-do-submission")
+            : null;
+    if (!trigger) return;
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "./";
+    form.target = trigger.dataset.target ? "_blank" : "_self";
+
+    /**
+     * @param  {string} name
+     * @param  {string} value
+     */
+    const append = (name, value) => {
+        const i = document.createElement("input");
+        i.type = "hidden";
+        i.name = name;
+        i.value = value || "";
+        form.appendChild(i);
+    };
+
+    append("mode", trigger.dataset.mode ?? "");
+    append("no", trigger.dataset.no ?? "");
+    append("id", trigger.dataset.id ?? "");
+
+    document.body.appendChild(form);
+    form.submit();
+    document.body.removeChild(form);
+});
+
+/**
  * スクロールすると出てくるトップに戻るボタン
  */
 class petitNoteScrollToTop {

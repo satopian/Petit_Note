@@ -175,6 +175,7 @@ a:hover {
     color: var(--a-hover-color);
 }
 
+
 /* 見出し */
 h1 {
     font-size: 26px;
@@ -833,4 +834,17 @@ div#error_message_download:empty,
 div#error_message_beforedelete:empty,
 div#error_message_aikotobaform:empty {
     display: none;
+}
+
+/* リンクでPOST */
+.ref-target-do-submission{
+    cursor: pointer;
+    /* リンクのaタグと同じ見た目になるように装飾 */
+    text-decoration: underline;
+    color: var(--a-color);
+}
+.ref-target-do-submission:hover{
+    /* リンクのaタグと同じ見た目になるように装飾 */
+    text-decoration: none;
+    color: var(--a-hover-color);
 }

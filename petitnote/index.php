@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v1.236.1';
+$petit_ver='v2.0.0';
 $petit_lot='lot.20260613';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -131,6 +131,7 @@ $sitename = $sitename ?? '';
 $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
 $all_hide_painttime  =  $all_hide_painttime  ?? false;
 $hide_userid  =  $hide_userid  ?? false;
+$enable_v1_legacy_template_unsafe_get_login = $enable_v1_legacy_template_unsafe_get_login ?? false;
 $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ?: (string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
@@ -1131,7 +1132,7 @@ function paintcom(): void {
 function to_continue(): void {
 
 	global $boardname,$use_diary,$set_nsfw,$skindir,$en,$password_require_to_continue;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$petit_lot,$elapsed_days,$max_res;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$petit_lot,$elapsed_days,$max_res,$enable_v1_legacy_template_unsafe_get_login;
 
 	$is_badhost=is_badhost();//テンプレートの互換性のため変数名が必要
 	if($is_badhost){
@@ -1143,8 +1144,13 @@ function to_continue(): void {
 	$appc=(string)filter_input_data('COOKIE','appc');
 	$pwdc=(string)filter_input_data('COOKIE','pwdc');
 
-	$no = (string)filter_input_data('GET', 'no',FILTER_VALIDATE_INT);
-	$id = (string)filter_input_data('GET', 'id');//intの範囲外
+	$id = t(filter_input_data('POST','id'));//intの範囲外
+	$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
+	//互換設定時はgetでもログインできるようにする
+	if($enable_v1_legacy_template_unsafe_get_login){
+		$id = $id ?: t(filter_input_data('GET','id'));//intの範囲外
+		$no = $no ?: t(filter_input_data('GET','no',FILTER_VALIDATE_INT));
+	}
 
 	$adminpost = adminpost_valid();
 	session_sta();

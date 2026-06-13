@@ -627,6 +627,15 @@ $session_name = "session_petit";
 $fetch_articles_to_skip = false;
 // $fetch_articles_to_skip = true;
 
+//セキュリティを犠牲にして古いバージョン1用のテンプレートを使用する
+// する: true しない: false
+
+// この設定項目は互換性のためだけに存在しています。
+// この設定項目が最初から存在している場合はすでに対応テンプレートになっているため、設定を変更する必要はありません。
+
+// $enable_v1_legacy_template_unsafe_get_login = true;
+$enable_v1_legacy_template_unsafe_get_login = false;
+
 // ペイント画面の$pwdの暗号化
 
 define("CRYPT_PASS","v25Xc9nZ82a5JPT");//暗号鍵初期値

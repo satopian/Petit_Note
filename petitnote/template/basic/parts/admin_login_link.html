@@ -1,2 +1,2 @@
 <?php $is_badhost = $is_badhost ?? false; ?>
-[<a href="<?= h($home) ?>">HOME</a><?php if (!$is_badhost): ?> / <a href="./?mode=adminin"><?php if ($en): ?>Admin<?php else: ?>管理<?php endif; ?></a><?php endif; ?>]
+[<a href="<?= h($home) ?>">HOME</a><?php if (!$is_badhost): ?> / <span class="ref-target-do-submission" data-mode="adminin"><?php if ($en): ?>Admin<?php else: ?>管理<?php endif; ?></span><?php endif; ?>]
