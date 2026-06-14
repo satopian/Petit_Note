@@ -160,12 +160,6 @@ function is_adminpass(?string $pwd): bool {
 function admin_in(): void {
 	global $boardname,$use_diary,$petit_lot,$petit_ver,$skindir,$en,$latest_var,$enable_v1_legacy_template_unsafe_get_login;
 
-	if(!$enable_v1_legacy_template_unsafe_get_login &&
-	$_SERVER["REQUEST_METHOD"] != "POST")
-	{
-	error("失敗しました。");	
-	}
-
 	if(!$enable_v1_legacy_template_unsafe_get_login){
 		check_same_origin();
 	}
@@ -1111,9 +1105,6 @@ function get_csrf_token(): string {
 function check_csrf_token(): void {
 	global $en;
 
-	if(($_SERVER["REQUEST_METHOD"]) !== "POST"){
-		error($en?'This operation has failed.':'失敗しました。');
-	} 
 	check_same_origin();
 	session_sta();
 	$token=(string)filter_input_data('POST','token');
@@ -1151,6 +1142,11 @@ function session_sta(): void {
  */
 function check_same_origin(): void {
 	global $en,$usercode;
+
+	if($_SERVER["REQUEST_METHOD"] != "POST"){
+		header("HTTP/1.1 403 Forbidden");
+		exit();
+	}
 
 	session_sta();
 	$c_usercode = t(filter_input_data('COOKIE', 'usercode'));//user-codeを取得

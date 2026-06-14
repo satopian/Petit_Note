@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.0.1';
-$petit_lot='lot.20260614';
+$petit_ver='v2.0.3';
+$petit_lot='lot.20260614.1';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -245,7 +245,7 @@ switch($mode){
 		}
 		return view();
 	default:
-		return view();
+		return header("HTTP/1.1 403 Forbidden");
 }
 
 //投稿処理

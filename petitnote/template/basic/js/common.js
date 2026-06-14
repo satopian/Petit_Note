@@ -874,9 +874,6 @@ class petitNoteImagePreview {
         this.elem_hide_thumbnail?.addEventListener("change", () =>
             this.updateFormStyle(),
         );
-        document.addEventListener("DOMContentLoaded", () =>
-            this.updateFormStyle(),
-        );
 
         if (this.removeAttachmentBtn) {
             /**
@@ -910,7 +907,8 @@ class petitNoteImagePreview {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    new petitNoteImagePreview();
+    const pnImagePreview = new petitNoteImagePreview();
+    pnImagePreview.updateFormStyle();
 });
 
 // (c)satopian MIT Licence ここまで
