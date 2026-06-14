@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$search_inc_ver = 20260501;
+$search_inc_ver = 20260614;
 class processsearch
 {
 
@@ -13,10 +13,23 @@ class processsearch
 
 	private static function init(): void
 	{
-		self::$imgsearch = (bool)filter_input_data('GET', 'imgsearch', FILTER_VALIDATE_BOOLEAN);
+	
+	$gets=filter_input_array(INPUT_GET) ?? [];
+
+	// 許可リストをキーにした配列を作成
+	$allowed_keys = array_fill_keys(['mode', 'radio', 'imgsearch', 'q','page'], true);
+	// 不正なキーを抽出
+	$invalid_keys = array_diff_key($gets, $allowed_keys);
+	if (!empty($invalid_keys)) {
+		header("HTTP/1.1 403 Forbidden");
+		exit();
+	}
+
+	self::$imgsearch = (bool)filter_input_data('GET', 'imgsearch', FILTER_VALIDATE_BOOLEAN);
 		self::$page = (int)filter_input_data('GET', 'page', FILTER_VALIDATE_INT);
 		self::$q = (string)filter_input_data('GET', 'q');
-		self::$radio = (int)filter_input_data('GET', 'radio', FILTER_VALIDATE_INT);;
+		self::$radio = (int)filter_input_data('GET', 'radio', FILTER_VALIDATE_INT);
+		
 	}
 
 	//検索画面
