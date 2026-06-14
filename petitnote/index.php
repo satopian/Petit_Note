@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.0.0';
-$petit_lot='lot.20260613';
+$petit_ver='v2.0.1';
+$petit_lot='lot.20260614';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,13 +20,13 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260501){
+if(!isset($functions_ver)||$functions_ver<20260614){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/misskey_note.inc.php');
 require_once(__DIR__.'/misskey_note.inc.php');
-if(!isset($misskey_note_ver)||$misskey_note_ver<20260501){
+if(!isset($misskey_note_ver)||$misskey_note_ver<20260614){
 	die($en?'Please update misskey_note.inc.php to the latest version.':'misskey_note.inc.phpを最新版に更新してください。');
 }
 
@@ -1137,6 +1137,10 @@ function to_continue(): void {
 	$is_badhost=is_badhost();//テンプレートの互換性のため変数名が必要
 	if($is_badhost){
 		error($en? 'Rejected.' : '拒絶されました。');
+	}
+
+	if(!$enable_v1_legacy_template_unsafe_get_login){
+		check_same_origin();
 	}
 
 	aikotoba_required_to_view(true);

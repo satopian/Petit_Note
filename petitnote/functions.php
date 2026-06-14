@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260523;
+$functions_ver=20260614;
 
 /**
  * 編集モードログアウト
@@ -164,6 +164,10 @@ function admin_in(): void {
 	$_SERVER["REQUEST_METHOD"] != "POST")
 	{
 	error("失敗しました。");	
+	}
+
+	if(!$enable_v1_legacy_template_unsafe_get_login){
+		check_same_origin();
 	}
 
 	//禁止ホストをチェック

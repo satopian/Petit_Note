@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver=20260501;
+$misskey_note_ver=20260614;
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
@@ -12,6 +12,11 @@ class misskey_note{
 		global $boardname,$home,$petit_ver,$petit_lot,$skindir,$set_nsfw,$en,$deny_all_posts,$enable_v1_legacy_template_unsafe_get_login;
 		//管理者判定処理
 		session_sta();
+
+		if(!$enable_v1_legacy_template_unsafe_get_login){
+			check_same_origin();
+		}
+
 		aikotoba_required_to_view(true);
 		$aikotoba= true;//テンプレート互換性
 		$adminpost=adminpost_valid();
@@ -124,7 +129,7 @@ class misskey_note{
 
 		$flag=false;
 		$resid="";
-		$line="";
+		$line=[];
 		$first_posted_time="";
 		foreach($r_arr as $val){
 
