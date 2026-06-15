@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260614;
+$functions_ver=20260615;
 
 /**
  * 編集モードログアウト
@@ -1963,4 +1963,28 @@ function filter_input_data(string $input, string $key, int $filter=FILTER_UNSAFE
 			$value = filter_input(INPUT_COOKIE, $key, $filter);
 	}
 		return $value;
+}
+/**
+ * 不正なクエリパラメータの時は 403 Forbiddenを返す
+ */
+function validateQueryParameters(){
+	$resno=filter_input_data('GET','resno',FILTER_VALIDATE_INT);
+	$page=filter_input_data('GET','page',FILTER_VALIDATE_INT);
+	$id=filter_input_data('GET','id',FILTER_VALIDATE_INT);
+	$resid=filter_input_data('GET','resid',FILTER_VALIDATE_INT);
+	$res_catalog=filter_input_data('GET','res_catalog',FILTER_VALIDATE_BOOLEAN);
+	$misskey_note=filter_input_data('GET','misskey_note',FILTER_VALIDATE_BOOLEAN);
+	//フィルタが失敗した時はfalse
+	if(
+		$resno===false||
+		$page===false||
+		$id===false||
+		$resid===false||
+		$res_catalog===false||
+		$misskey_note===false
+	)
+	{
+			header("HTTP/1.1 403 Forbidden");
+			exit();
+	}
 }

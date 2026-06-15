@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$search_inc_ver = 20260614;
+$search_inc_ver = 20260615;
 class processsearch
 {
 
@@ -13,19 +13,10 @@ class processsearch
 
 	private static function init(): void
 	{
-	
-	$gets=filter_input_array(INPUT_GET) ?? [];
 
-	// 許可リストをキーにした配列を作成
-	$allowed_keys = array_fill_keys(['mode', 'radio', 'imgsearch', 'q','page'], true);
-	// 不正なキーを抽出
-	$invalid_keys = array_diff_key($gets, $allowed_keys);
-	if (!empty($invalid_keys)) {
-		header("HTTP/1.1 403 Forbidden");
-		exit();
-	}
+		self::validateQueryParameters();
 
-	self::$imgsearch = (bool)filter_input_data('GET', 'imgsearch', FILTER_VALIDATE_BOOLEAN);
+		self::$imgsearch = (bool)filter_input_data('GET', 'imgsearch', FILTER_VALIDATE_BOOLEAN);
 		self::$page = (int)filter_input_data('GET', 'page', FILTER_VALIDATE_INT);
 		self::$q = (string)filter_input_data('GET', 'q');
 		self::$radio = (int)filter_input_data('GET', 'radio', FILTER_VALIDATE_INT);
@@ -304,5 +295,35 @@ class processsearch
 		$s_str = strtolower($s_str); //小文字に
 
 		return $s_str;
+	}
+/**
+ * 不正なクエリパラメータの時は 403 Forbiddenを返す
+ * @return void
+ */
+	private static function validateQueryParameters(): void{
+
+		$gets=filter_input_array(INPUT_GET) ?? [];
+		// 許可リストをキーにした配列を作成
+		$allowed_keys = array_fill_keys(['mode', 'radio', 'imgsearch', 'q','page'], true);
+		// 不正なキーを抽出
+		$invalid_keys = array_diff_key($gets, $allowed_keys);
+
+		$page=filter_input_data('GET','page',FILTER_VALIDATE_INT);
+		$radio=filter_input_data('GET','radio',FILTER_VALIDATE_INT);
+		$imgsearch=filter_input_data('GET','imgsearch');
+		$imagSearchOptions =["on","off"];
+		$isAllowedOption = in_array($imgsearch,$imagSearchOptions);
+
+		//フィルタが失敗した時はfalse
+		if(
+			!empty($invalid_keys)||
+			$page===false||
+			$radio===false||
+			$imgsearch && $isAllowedOption===false
+		)
+		{
+			header("HTTP/1.1 403 Forbidden");
+			exit();
+		}
 	}
 }
