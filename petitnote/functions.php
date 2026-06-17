@@ -159,9 +159,13 @@ function is_adminpass(?string $pwd): bool {
 
 function admin_in(): void {
 	global $boardname,$use_diary,$petit_lot,$petit_ver,$skindir,$en,$latest_var,$enable_v1_legacy_template_unsafe_get_login;
-
-	if(!$enable_v1_legacy_template_unsafe_get_login){
+	if($enable_v1_legacy_template_unsafe_get_login){
+		//古いテンプレート互換設定の時
 		check_same_origin();
+	}else{
+		//新しいテンプレート使用時は
+		//same_originも、csrf_tokenもチェックする
+		check_csrf_token();
 	}
 
 	//禁止ホストをチェック
@@ -183,7 +187,7 @@ function admin_in(): void {
 	$resid = $_SESSION['current_resid'] ?? "";
 	//フォームの表示時刻をセット
 	set_form_display_time();
-
+	$token = get_csrf_token();
 	$admin_pass= null;
 	// HTML出力
 	$templete='admin_in.html';
@@ -193,7 +197,7 @@ function admin_in(): void {
  * 管理者投稿モード 
  */
 function adminpost(): void {
-	global $second_pass,$en;
+	global $second_pass,$en,$enable_v1_legacy_template_unsafe_get_login;
 
 	//禁止ホストをチェック
 	check_badhost();
@@ -201,7 +205,15 @@ function adminpost(): void {
 	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
-	check_same_origin();
+
+	if($enable_v1_legacy_template_unsafe_get_login){
+		//古いテンプレート互換設定の時
+		check_same_origin();
+	}else{
+		//新しいテンプレート使用時は
+		//same_originも、csrf_tokenもチェックする
+		check_csrf_token();
+	}
 
 	check_password_input_error_count();
 	session_sta();
@@ -404,11 +416,19 @@ function redirect(?string $url): void {
  * コンティニュー認証
  */
 function check_cont_pass(): void {
-
+	global $enable_v1_legacy_template_unsafe_get_login;
 	global $en;
 
 	check_submission_interval();
-	check_same_origin();
+
+	if($enable_v1_legacy_template_unsafe_get_login){
+		//古いテンプレート互換設定の時
+		check_same_origin();
+	}else{
+		//新しいテンプレート使用時は
+		//same_originも、csrf_tokenもチェックする
+		check_csrf_token();
+	}
 
 	$adminmode = adminpost_valid() || admindel_valid(); 
 
@@ -1093,7 +1113,10 @@ function error(string $str,bool $historyback=true): void {
 	include __DIR__.'/'.$skindir.$templete;
 	exit();
 }
-//csrfトークンを作成
+/**
+ * CSRFトークンを作成
+ * @return string
+ */
 function get_csrf_token(): string {
 	session_sta();
 	$token=hash('sha256', session_id(), false);
@@ -1101,7 +1124,10 @@ function get_csrf_token(): string {
 
 	return $token;
 }
-//csrfトークンをチェック	
+/**
+ * CSRFトークンをチェック
+ * @return void
+*/
 function check_csrf_token(): void {
 	global $en;
 

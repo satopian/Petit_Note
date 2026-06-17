@@ -22,6 +22,19 @@ const lang = (
 const en = lang.startsWith("ja") ? false : true;
 
 /**
+ * ブラウザ自動化ツールかどうか判定
+ * @returns {boolean}
+ */
+const isAutomaticBrowser = () => {
+    const languages_length0 = navigator.languages.length === 0;
+    const webdriver = navigator.webdriver;
+    if (webdriver || languages_length0) {
+        return true;
+    }
+    return false;
+};
+
+/**
  * 非同期通信
  *
  * @param {Event} event
@@ -63,14 +76,10 @@ const res_form_submit = (event, formId = "res_form") => {
 
         submitBtn.disabled = true; // 送信ボタンを無効化
 
-        //自動化ツールによる自動送信を拒否する
-        const languages_length0 = navigator.languages.length === 0;
-        const webdriver = navigator.webdriver;
-        if (webdriver || languages_length0) {
+        if (isAutomaticBrowser()) {
             elem_error_message.innerText = en
                 ? "The post has been rejected."
                 : "拒絶されました。";
-            submitBtn.disabled = false; // 再度有効化しておく
             return;
         }
 
@@ -352,6 +361,11 @@ window.addEventListener("pageshow", () => {
  */
 
 document.addEventListener("click", (e) => {
+    //ブラウザ自動化ツールを拒絶
+    if (isAutomaticBrowser()) {
+        return;
+    }
+
     const target = e.target;
     if (!target) {
         return;

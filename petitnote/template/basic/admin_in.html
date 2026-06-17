@@ -52,6 +52,8 @@
 	<?php if(!$adminpost || !$admindel):?>
 
 	<form action="./" method="post" class="admin" id="res_form" onsubmit="return res_form_submit(event)">
+	<input type="hidden" name="token" value="<?=h($token)?>">
+
 	<div id="error_message"></div>
 	<?php if(!$admindel):?>
 		

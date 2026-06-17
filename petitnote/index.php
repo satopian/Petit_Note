@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.0.7';
-$petit_lot='lot.20260616';
+$petit_ver='v2.0.8';
+$petit_lot='lot.20260617';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1256,6 +1256,8 @@ function to_continue(): void {
 	$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
 
 	set_form_display_time();
+	$token = get_csrf_token();
+
 	$admin_pass= null;
 
 	// HTML出力
