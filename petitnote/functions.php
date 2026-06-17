@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260615;
+$functions_ver=20260617;
 
 /**
  * 編集モードログアウト
@@ -157,21 +157,17 @@ function is_adminpass(?string $pwd): bool {
 	return ($pwd && $admin_pass && $second_pass && !hash_equals($admin_pass,$second_pass) && hash_equals($admin_pass,$pwd));
 }
 
+/**
+ * 管理者ログイン
+ * @return void
+ */
 function admin_in(): void {
 	global $boardname,$use_diary,$petit_lot,$petit_ver,$skindir,$en,$latest_var,$enable_v1_legacy_template_unsafe_get_login;
-	if($enable_v1_legacy_template_unsafe_get_login){
-		//古いテンプレート互換設定の時
-		check_same_origin();
-	}else{
-		//新しいテンプレート使用時は
-		//same_originも、csrf_tokenもチェックする
-		check_csrf_token();
-	}
 
+	check_same_origin();
 	//禁止ホストをチェック
 	check_badhost();
 	aikotoba_required_to_view();
-
 	//古いテンプレート用の使用しない変数
 	$page = $resno = $catalog = $res_catalog = $search = $radio = $imgsearch = $q = $id = "";
 
@@ -235,7 +231,7 @@ function adminpost(): void {
  * 管理者削除モード 
  */
 function admin_del(): void {
-	global $second_pass,$en;
+	global $second_pass,$en,$enable_v1_legacy_template_unsafe_get_login;
 
 	//禁止ホストをチェック
 	check_badhost();
@@ -243,7 +239,15 @@ function admin_del(): void {
 	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
-	check_same_origin();
+
+	if($enable_v1_legacy_template_unsafe_get_login){
+		//古いテンプレート互換設定の時
+		check_same_origin();
+	}else{
+		//新しいテンプレート使用時は
+		//same_originも、csrf_tokenもチェックする
+		check_csrf_token();
+	}
 
 	check_password_input_error_count();
 
@@ -1143,6 +1147,7 @@ function check_csrf_token(): void {
 /**
  * session開始
  * ssession_start()のラッパー関数
+ * @return void
  */
 function session_sta(): void {
 	global $session_name;
@@ -1990,6 +1995,7 @@ function filter_input_data(string $input, string $key, int $filter=FILTER_UNSAFE
 	}
 		return $value;
 }
+
 /**
  * 不正なクエリパラメータの時は 403 403 Forbiddenを返す
  * @param array $allowed_keys
