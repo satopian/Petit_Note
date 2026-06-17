@@ -1991,9 +1991,18 @@ function filter_input_data(string $input, string $key, int $filter=FILTER_UNSAFE
 		return $value;
 }
 /**
- * 不正なクエリパラメータの時は 403 Forbiddenを返す
+ * 不正なクエリパラメータの時は 403 403 Forbiddenを返す
+ * @param array $allowed_keys
  */
-function validateQueryParameters(){
+function validateQueryParameters($allowed_keys=[]){
+
+	$gets=filter_input_array(INPUT_GET) ?? [];
+	// 不正なキーを抽出
+	$invalid_keys=[];
+	if(!empty($allowed_keys)){
+		$invalid_keys = array_diff_key($gets, $allowed_keys);
+	}
+
 	$resno=filter_input_data('GET','resno',FILTER_VALIDATE_INT);
 	$page=filter_input_data('GET','page',FILTER_VALIDATE_INT);
 	$id=filter_input_data('GET','id',FILTER_VALIDATE_INT);
@@ -2002,6 +2011,7 @@ function validateQueryParameters(){
 	$misskey_note=filter_input_data('GET','misskey_note',FILTER_VALIDATE_BOOLEAN);
 	//フィルタが失敗した時はfalse
 	if(
+		!empty($invalid_keys)||
 		$resno===false||
 		$page===false||
 		$id===false||
