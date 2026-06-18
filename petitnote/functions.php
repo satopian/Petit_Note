@@ -1997,7 +1997,7 @@ function filter_input_data(string $input, string $key, int $filter=FILTER_UNSAFE
 }
 
 /**
- * 不正なクエリパラメータの時は 403 403 Forbiddenを返す
+ * 不正なクエリパラメータの時は 403 Forbiddenを返す
  * @param array $allowed_keys
  */
 function validateQueryParameters($allowed_keys=[]){
