@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.1.1';
-$petit_lot='lot.20260620';
+$petit_ver='v2.1.3';
+$petit_lot='lot.20260620.2';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -2693,7 +2693,7 @@ function res (): void {
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw;
 
 	//不正なクエリパラメータの時は 403 Forbiddenを返す
-	$allowed_keys = array_fill_keys(['resno','res_catalog','misskey_note','resid'], true);
+	$allowed_keys = array_fill_keys(['resno','res_catalog','misskey_note','resid','ogp_show'], true);
 	validateQueryParameters($allowed_keys);
 
 	aikotoba_required_to_view();
