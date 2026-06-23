@@ -1,6 +1,8 @@
 //	BBS Note 動的パレット＆マトリクス 2003/06/22
 //	(C) のらネコ WonderCatStudio http://wondercatstudio.com/
-//substr()→substring()対策版 by satopian
+//
+//	Modified by さとぴあ https://paintbbs.sakura.ne.jp/
+
 "use strict";
 // @ts-check
 var DynamicColor = 1,
@@ -38,9 +40,14 @@ function setPalette() {
     if (!Palette) {
         return;
     }
-    document["paintbbs"].setColors(Palettes[Palette.select.selectedIndex]);
+    const select = Palette.elements.namedItem("select");
+    if (!(select instanceof HTMLSelectElement)) {
+        return;
+    }
+    document["paintbbs"].setColors(Palettes[select.selectedIndex]);
     const grad = document.forms.namedItem("grad");
-    if (!grad || !grad.view.checked) {
+    const view = grad?.elements.namedItem("view");
+    if (!grad || !(view instanceof HTMLInputElement && view.checked)) {
         return;
     }
     GetPalette();
@@ -56,7 +63,12 @@ async function PaletteNew() {
     if (!Palette) {
         return;
     }
-    const s = Palette.select;
+    const s = Palette.elements.namedItem("select");
+
+    if (!(s instanceof HTMLSelectElement)) {
+        return;
+    }
+
     Palettes[s.length] = p;
     cutomP++;
     const str = prompt("Palette name", "Palette " + cutomP);
@@ -74,7 +86,11 @@ async function PaletteRenew() {
     if (!Palette) {
         return;
     }
-    Palettes[Palette.select.selectedIndex] = String(
+    const select = Palette.elements.namedItem("select");
+    if (!(select instanceof HTMLSelectElement)) {
+        return;
+    }
+    Palettes[Number(select.selectedIndex)] = String(
         await d["paintbbs"].getColors(),
     );
     PaletteListSetColor();
@@ -85,14 +101,18 @@ function PaletteDel() {
     if (!Palette) {
         return;
     }
-    const s = Palette.select;
+    const s = Palette.elements.namedItem("select");
+
+    if (!(s instanceof HTMLSelectElement)) {
+        return;
+    }
     let i = s.selectedIndex;
     if (i == -1) return;
     const flag = confirm(
         "Are you sure you want to delete [" + s.options[i].text + "]?",
     );
     if (!flag) return;
-    s.options[i] = null;
+    s.remove(i);
     while (p > i) {
         Palettes[i] = Palettes[i + 1];
         i++;
@@ -141,9 +161,17 @@ async function PaletteMatrixGet() {
     if (!Palette) {
         return;
     }
-    const s = Palette.select;
-    let m = Palette.m_m.selectedIndex;
-    let t = Palette.setr;
+    const s = Palette.elements.namedItem("select");
+
+    if (!(s instanceof HTMLSelectElement)) {
+        return;
+    }
+    const m_m = Palette.elements.namedItem("m_m");
+    let m = m_m instanceof HTMLSelectElement ? m_m.selectedIndex : null;
+    let t = Palette.elements.namedItem("setr");
+    if (!t || !(t instanceof HTMLTextAreaElement)) {
+        return;
+    }
     switch (m) {
         case 0:
         case 2:
@@ -163,12 +191,12 @@ async function PaletteMatrixGet() {
                 }
                 n++;
             }
-            alert("Number of pallets " + c + "\ngot the palette matrix.");
+            alert("Palettes: " + c + "\nGot the palette matrix.");
             break;
         case 1:
             t.value =
                 "!Palette\n" + String(await document["paintbbs"].getColors());
-            alert("got the palette information currently used.");
+            alert("Retrieved the current palette.");
             break;
     }
     t.value = t.value.trim() + "\n!Matrix";
@@ -178,8 +206,12 @@ function PalleteMatrixSet() {
     if (!Palette) {
         return;
     }
-    let m = Palette.m_m.selectedIndex;
-    const s = Palette.select;
+    const m_m = Palette.elements.namedItem("m_m");
+    let m = m_m instanceof HTMLSelectElement ? m_m.selectedIndex : null;
+    const s = Palette.elements.namedItem("select");
+    if (!(s instanceof HTMLSelectElement)) {
+        return;
+    }
     const str = "Set the palette matrix.";
     let flag;
     switch (m) {
@@ -213,7 +245,15 @@ function PalleteMatrixSet() {
 }
 function PalleteMatrixHelp() {
     alert(
-        "**ABOUT PALETTE MATRIX**\nThe palette matrix allows you to use free palette settings \nby using text that lists palette information.\n\nGet the matrix\n1)Get the palette matrix from the [Get] button.\n2)The retrieved information will appear in the text area below, copy it all.\n3)Let's save this matrix information as text in a file.\n\nto set matrix\n1)Paste the copied matrix into the text area below.\n2)If you have saved it in a file, copy and paste it.\n3)You can use the saved palette by pressing the [Set] button.\n\nPlease note that the palette will not be set correctly if there is unnecessary information.",
+        "★ PALETTE MATRIX\nThe Palette Matrix allows you to export and import palette settings as text.\n\n" +
+            "□ How to export\n" +
+            "1) Click the [Get] button.\n" +
+            "2) Copy the generated text from the area below.\n" +
+            "3) You can save it to a file or use it immediately.\n\n" +
+            "□ How to import\n" +
+            "1) Paste the palette text into the area below.\n" +
+            "2) Click the [Set] button to apply the settings.\n\n" +
+            "Note: Ensure no extra information is included, or the palette will not load correctly.",
     );
 }
 function PaletteSet() {
@@ -221,13 +261,19 @@ function PaletteSet() {
     if (!Palette) {
         return;
     }
-    const se = Palette.setr.value;
-    const s = Palette.select;
+    const setr = Palette.elements.namedItem("setr");
+    const se = setr instanceof HTMLTextAreaElement ? setr.value : null;
+    const s = Palette.elements.namedItem("select");
+    if (!(s instanceof HTMLSelectElement)) {
+        return;
+    }
     let i;
-    let m = Palette.m_m.selectedIndex;
-    let l = se.length;
+    const m_m = Palette.elements.namedItem("m_m");
+
+    let m = m_m instanceof HTMLSelectElement ? m_m.selectedIndex : null;
+    let l = se?.length;
     let pa;
-    if (l < 1) {
+    if (!se || !l || l < 1) {
         alert("There is no matrix information.");
         return;
     }
@@ -240,7 +286,7 @@ function PaletteSet() {
             n = s.length;
             while (n > 0) {
                 n--;
-                s.options[n] = null;
+                s.remove(n);
             }
         case 2:
             i = s.options.length;
@@ -286,7 +332,10 @@ function PaletteListSetColor() {
         return;
     }
     let i;
-    const s = Palette.select;
+    const s = Palette.elements.namedItem("select");
+    if (!(s instanceof HTMLSelectElement)) {
+        return;
+    }
     for (i = 1; s.options.length > i; i++) {
         const c = Palettes[i].split("\n");
         s.options[i].style.background = c[4];
@@ -309,20 +358,57 @@ function Chenge_() {
     if (!grad) {
         return;
     }
-    const st = grad.pst.value;
-    const ed = grad.ped.value;
+    const pst = grad.elements.namedItem("pst");
+    const ped = grad.elements.namedItem("ped");
+    const st = pst instanceof HTMLInputElement ? pst.value : null;
+    const ed = ped instanceof HTMLInputElement ? ped.value : null;
 
     if (isNaN(parseInt("0x" + st))) return;
     if (isNaN(parseInt("0x" + ed))) return;
     GradView();
 }
+function colorPickerChange() {
+    const grad = document.forms.namedItem("grad");
+    if (!grad) {
+        return;
+    }
+    const colorPickerPst = grad.elements.namedItem("colorPickerPst");
+    const st =
+        colorPickerPst instanceof HTMLInputElement
+            ? colorPickerPst.value.slice(1).toLocaleUpperCase()
+            : null;
+    const pst = grad.elements.namedItem("pst");
+    const ped = grad.elements.namedItem("ped");
+    if (st) {
+        if (pst instanceof HTMLInputElement) {
+            pst.value = st;
+        }
+    }
+    const colorPickerPed = grad.elements.namedItem("colorPickerPed");
+
+    const ed =
+        colorPickerPed instanceof HTMLInputElement
+            ? colorPickerPed.value.slice(1).toLocaleUpperCase()
+            : null;
+    if (ed) {
+        if (ped instanceof HTMLInputElement) {
+            ped.value = ed;
+        }
+    }
+}
+
 function ChengeGrad() {
     const grad = document.forms.namedItem("grad");
     if (!grad) {
         return;
     }
-    const st = grad.pst.value;
-    const ed = grad.ped.value;
+    const pst = grad.elements.namedItem("pst");
+    const st = pst instanceof HTMLInputElement ? pst.value : null;
+    const ped = grad.elements.namedItem("ped");
+    const ed = ped instanceof HTMLInputElement ? ped.value : null;
+    if (st === null || ed === null) {
+        return;
+    }
     Chenge_();
     const degi_R = parseInt("0x" + st.substring(0, 2));
     const degi_G = parseInt("0x" + st.substring(2, 4));
@@ -419,10 +505,33 @@ async function GetPalette() {
     if (!grad) {
         return;
     }
-    let st = grad.p_st.selectedIndex;
-    let ed = grad.p_ed.selectedIndex;
-    grad.pst.value = ps[st].substring(1, 7);
-    grad.ped.value = ps[ed].substring(1, 7);
+    const p_st = grad.elements.namedItem("p_st");
+    const st = p_st instanceof HTMLSelectElement ? p_st.selectedIndex : null;
+    const p_ed = grad.elements.namedItem("p_ed");
+    const ed = p_ed instanceof HTMLSelectElement ? p_ed.selectedIndex : null;
+
+    if (st === null || ed === null) {
+        return;
+    }
+
+    const pst = grad.elements.namedItem("pst");
+    const ped = grad.elements.namedItem("ped");
+    if (pst instanceof HTMLInputElement) {
+        pst.value = ps[st].substring(1, 7);
+    }
+    if (ped instanceof HTMLInputElement) {
+        ped.value = ps[ed].substring(1, 7);
+    }
+    const colorPickerPst = grad.elements.namedItem("colorPickerPst");
+    const colorPickerPed = grad.elements.namedItem("colorPickerPed");
+
+    if (
+        colorPickerPst instanceof HTMLInputElement &&
+        colorPickerPed instanceof HTMLInputElement
+    ) {
+        colorPickerPst.value = ps[st].substring(0, 7);
+        colorPickerPed.value = ps[ed].substring(0, 7);
+    }
     GradSelC();
     PaletteListSetColor();
 }
@@ -437,8 +546,9 @@ async function GradSelC() {
     if (!grad) {
         return;
     }
+    const view = grad?.elements.namedItem("view");
     let n;
-    if (!grad.view.checked) return;
+    if (view instanceof HTMLInputElement && !view.checked) return;
     const l = ps.length;
     let pe = "";
     for (n = 0; l > n; n++) {
@@ -463,19 +573,24 @@ async function GradSelC() {
         pe += "#" + Hex(R) + Hex(G) + Hex(B) + "\n";
     }
     let pes = pe.split("\n");
-    for (n = 0; l > n; n++) {
-        grad.p_st.options[n].style.background = ps[n];
-        grad.p_st.options[n].style.color = pes[n];
-        grad.p_ed.options[n].style.background = ps[n];
-        grad.p_ed.options[n].style.color = pes[n];
-    }
+    const p_st = grad.elements.namedItem("p_st");
+    const p_ed = grad.elements.namedItem("p_ed");
+    if (p_st instanceof HTMLSelectElement && p_ed instanceof HTMLSelectElement)
+        for (n = 0; l > n; n++) {
+            p_st.options[n].style.background = ps[n];
+            p_st.options[n].style.color = pes[n];
+            p_ed.options[n].style.background = ps[n];
+            p_ed.options[n].style.color = pes[n];
+        }
 }
 function GradView() {
     const grad = document.forms.namedItem("grad");
     if (!grad) {
         return;
     }
-    if (!grad.view.checked) return;
+    const view = grad?.elements.namedItem("view");
+
+    if (view instanceof HTMLInputElement && !view.checked) return;
 }
 function showHideLayer() {
     //v3.0
@@ -483,12 +598,14 @@ function showHideLayer() {
     if (!grad) {
         return;
     }
+    const view = grad?.elements.namedItem("view");
+
     const psft = document.getElementById("psft");
     const l = psft ? psft.style : null;
-    if (l && !grad.view.checked) {
+    if (l && view instanceof HTMLInputElement && !view.checked) {
         l.visibility = "hidden";
     }
-    if (l && grad.view.checked) {
+    if (l && view instanceof HTMLInputElement && view.checked) {
         l.visibility = "visible";
         GetPalette();
     }
