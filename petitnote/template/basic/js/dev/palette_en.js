@@ -365,7 +365,6 @@ function Chenge_() {
 
     if (isNaN(parseInt("0x" + st))) return;
     if (isNaN(parseInt("0x" + ed))) return;
-    GradView();
 }
 function colorPickerChange() {
     const grad = document.forms.namedItem("grad");
@@ -583,15 +582,6 @@ async function GradSelC() {
             p_ed.options[n].style.color = pes[n];
         }
 }
-function GradView() {
-    const grad = document.forms.namedItem("grad");
-    if (!grad) {
-        return;
-    }
-    const view = grad?.elements.namedItem("view");
-
-    if (view instanceof HTMLInputElement && !view.checked) return;
-}
 function showHideLayer() {
     //v3.0
     const grad = document.forms.namedItem("grad");
@@ -600,13 +590,7 @@ function showHideLayer() {
     }
     const view = grad?.elements.namedItem("view");
 
-    const psft = document.getElementById("psft");
-    const l = psft ? psft.style : null;
-    if (l && view instanceof HTMLInputElement && !view.checked) {
-        l.visibility = "hidden";
-    }
-    if (l && view instanceof HTMLInputElement && view.checked) {
-        l.visibility = "visible";
+    if (view instanceof HTMLInputElement && view.checked) {
         GetPalette();
     }
 }
