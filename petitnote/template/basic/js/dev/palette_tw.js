@@ -524,6 +524,10 @@ async function GetPalette() {
     GradSelC();
     PaletteListSetColor();
 }
+/**
+ * グラデーションリストに色を表示
+ * @returns {Promise<void>}
+ */
 async function GradSelC() {
     const d = document;
     let p = String(await d["paintbbs"].getColors());
@@ -535,9 +539,7 @@ async function GradSelC() {
     if (!grad) {
         return;
     }
-    const view = grad?.elements.namedItem("view");
     let n;
-    if (view instanceof HTMLInputElement && !view.checked) return;
     const l = ps.length;
     let pe = "";
     for (n = 0; l > n; n++) {
@@ -572,15 +574,5 @@ async function GradSelC() {
             p_ed.options[n].style.color = pes[n];
         }
 }
-function showHideLayer() {
-    //v3.0
-    const grad = document.forms.namedItem("grad");
-    if (!grad) {
-        return;
-    }
-    const view = grad?.elements.namedItem("view");
-
-    if (view instanceof HTMLInputElement && view.checked) {
-        GetPalette();
-    }
-}
+function showHideLayer() {}
+document.addEventListener("DOMContentLoaded", () => GradSelC());
