@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
 <style>
-.appstage{margin:10px auto;display: table;word-break: initial;overflow-wrap: initial;}.app{display: table-cell;vertical-align: top; width: <?=h($appw)?>px;}.palette_wrap{display: table-cell;vertical-align: middle}.palette{margin-left:12px;width:148px;border:1px solid var(--border-dynamic-palette-color);padding:6px}.palette_gradation{margin:10px 0 0 12px;padding:6px}.palette input,.palette_gradation input{color:#222;background-color:#fffeff;border:1px solid #686868}.palette_gradation .gradationColorInputText {width: 70px;}.palette_gradation .gradationColorInputColorPicker {border: 0;width: 30px;height: 19px; padding: 0;background-color: transparent;cursor: pointer;vertical-align:middle;}input#neo-colorPicker{width:30px;height:30px;border: 0;padding: 0;;background-color: transparent;cursor: pointer;vertical-align:middle;}
+.appstage{margin:10px auto;display: table;word-break: initial;overflow-wrap: initial;}.app{display: table-cell;vertical-align: top; width: <?=h($appw)?>px;}.palette_wrap{display: table-cell;vertical-align: middle}.palette{margin-left:12px;width:148px;border:1px solid var(--border-dynamic-palette-color);padding:6px}.palette_gradation{margin:10px 0 0 12px;padding:6px}.palette input,.palette_gradation input{color:#222;background-color:#fffeff;border:1px solid #686868}.palette_gradation .gradationColorInputText {width: 70px;}.palette_gradation .gradationColorInputColorPicker {border: 0;width: 30px;height: 19px; padding: 0;background-color: transparent;cursor: pointer;vertical-align:middle;}input#neo-colorPicker{width:30px;height:25px;border: 0;padding: 0;;background-color: transparent;cursor: pointer;vertical-align:middle;}
 .palette_hr{border:none}.palette_desc{font-family:Impact,Arial;font-size:14px}.palette_select{margin:2px 0;max-width: 100%;min-width: 130px;}.paintbbs_memo{margin:18px auto 18px;line-height:146%;min-width:180px;max-width:768px}.paintbbs_memo ul{margin:0;padding:0;}.paintbbs_memo li{list-style-type:circle;margin:6px 0;}.paintbbs_memo div{margin-bottom:15px}.applet_painttime{margin-top:15px}.continue_painttime{margin: 0 auto 8px;max-width:928px}.palette_type_select{height: 21px}
 .applet_painttime {text-align: center;}.bbs_title{max-width:928px;margin: 0 auto 5px}
 .nts_radiowrap{
@@ -169,7 +169,7 @@ async function GradSelC(){var a=String(await document.paintbbs.getColors());if(a
 if(f instanceof HTMLSelectElement&&b instanceof HTMLSelectElement)for(c=0;e>c;c++)f.options[c].style.background=a[c],f.options[c].style.color=d[c],b.options[c].style.background=a[c],b.options[c].style.color=d[c]}}}function showHideLayer(){}document.addEventListener("DOMContentLoaded",()=>GradSelC());
 </script>
 <?php endif;?>
-<noscript><h3><?php if($en):?>Please enable JavaScript.<?php else:?>javascriptが有効でないため正常に動作致しません<?php endif;?></h3></noscript>
+<noscript><p><?php if($en):?>Please enable JavaScript.<?php else:?>javascriptが有効でないため正常に動作致しません<?php endif;?></p></noscript>
 <div class="appstage">
 <div class="app">
 <!-- NEOを使う時はアプレットを読み込まないように -->
@@ -239,7 +239,7 @@ Neo.params ={
 <INPUT name="m_h" type="button" VALUE=" ? " OnClick="PalleteMatrixHelp()"><br>
 <TEXTAREA rows="1" name="setr" cols="13" onMouseOver="this.select()"></TEXTAREA><br>
 </FORM>
-<input id="neo-colorPicker" type="color"  size="8"  onChange="Neo.setColor(this.value)" value="#fff">
+<input id="neo-colorPicker" type="color"  size="8"  onChange="Neo.setColor(this.value)">
 <span class="palette_desc">COLOR</span>
 </div>
 <div class="palette_gradation"><FORM name="grad">
@@ -260,7 +260,7 @@ Neo.params ={
 <option>13</option>
 <option>14</option>
 </SELECT><input class="gradationColorInputText" type="text" name="pst" size="8" onKeyPress="Chenge_()" onChange="Chenge_()">
-<input class="gradationColorInputColorPicker" type="color" name="colorPickerPst" size="8"  onChange="colorPickerChange()" value="#fff"><br>
+<input class="gradationColorInputColorPicker" type="color" name="colorPickerPst" size="8"  onChange="colorPickerChange()" value="#ffffff"><br>
 <SELECT name="p_ed" onChange="GetPalette()">
 <option>1</option>
 <option>2</option>
@@ -277,7 +277,7 @@ Neo.params ={
 <option>13</option>
 <option>14</option>
 </SELECT><input class="gradationColorInputText" type="text" name="ped" size="8" onKeyPress="Chenge_()" onChange="Chenge_()">
-<input class="gradationColorInputColorPicker" type="color" name="colorPickerPed" size="8"  onChange="colorPickerChange()" value="#fff">
+<input class="gradationColorInputColorPicker" type="color" name="colorPickerPed" size="8"  onChange="colorPickerChange()" value="#ffffff">
 <div id="psft"></div>
 </FORM></div>
 <Script>
