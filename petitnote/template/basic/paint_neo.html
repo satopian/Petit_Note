@@ -239,7 +239,7 @@ Neo.params ={
 <INPUT name="m_h" type="button" VALUE=" ? " OnClick="PalleteMatrixHelp()"><br>
 <TEXTAREA rows="1" name="setr" cols="13" onMouseOver="this.select()"></TEXTAREA><br>
 </FORM>
-<input id="neo-colorPicker" type="color"  size="8"  onChange="Neo.setColor(this.value)">
+<input id="neo-colorPicker" type="color"  size="8"  oninput="Neo.setColor(this.value)">
 <span class="palette_desc">COLOR</span>
 </div>
 <div class="palette_gradation"><FORM name="grad">
