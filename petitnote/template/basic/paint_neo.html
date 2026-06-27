@@ -52,6 +52,17 @@ vertical-align: middle;
   cursor: default;
 }
 
+.NEO #neo-tools {
+  position: relative;
+}
+
+.pickr {
+  position: absolute;
+  top: calc(100% + 2px); /* #neo-toolSetの下端から2px */
+  left: 0;
+  z-index: 99999;
+}
+
 </style>
 <style>body{overscroll-behavior-x: none !important; }</style>
 <title><?=h($boardname)?></title> 
@@ -266,7 +277,7 @@ Neo.params ={
 <script>
 // Pickrの初期化
 const pickr = Pickr.create({
-    el: "#pickr-container", // 設定ファイルのIDを使用
+    el: "#pickr-container",
     theme: 'classic',
     components: {
         preview: true,
