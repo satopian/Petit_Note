@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$search_inc_ver = 20260615;
+$search_inc_ver = 20260627;
 class processsearch
 {
 
@@ -319,6 +319,7 @@ class processsearch
 			!empty($invalid_keys)||
 			$page===false||
 			$radio===false||
+			!in_array($radio ,[0,1,2,3]) || 
 			$imgsearch && $isAllowedOption===false
 		)
 		{

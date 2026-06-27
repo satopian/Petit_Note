@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.3.3';
-$petit_lot='lot.20260627';
+$petit_ver='v2.5.0';
+$petit_lot='lot.20260627.1';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -38,7 +38,7 @@ if(!isset($save_inc_ver)||$save_inc_ver<20260501){
 
 check_file(__DIR__.'/search.inc.php');
 require_once(__DIR__.'/search.inc.php');
-if(!isset($search_inc_ver)||$search_inc_ver<20260615){
+if(!isset($search_inc_ver)||$search_inc_ver<20260627){
 	die($en?'Please update search.inc.php to the latest version.':'search.inc.phpを最新版に更新してください。');
 }
 
