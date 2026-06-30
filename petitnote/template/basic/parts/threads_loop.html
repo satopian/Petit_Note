@@ -93,7 +93,7 @@
 						<span>☆<span class="ref-target-do-submission" data-mode="to_continue" data-id="<?=h($res['time'])?>" data-no="<?=h($res['no'])?>"><?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?></span></span>
 					<?php endif;?>
 					<?php if($res['anime']):?>
-						<span>☆<a href="?mode=pchview&id=<?=h($res['first_posted_time'])?>&no=<?=h($res['no'])?>" target="_blank" rel="noopener"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
+						<span>☆<a href="?mode=pchview&id=<?=h($res['first_posted_time'])?>&no=<?=h($res['no'])?>" target="_blank" rel="opener"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
 					<?php endif;?>
 				</div>
 				<?php endif;?>
