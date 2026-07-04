@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex,follow">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
 <link rel="stylesheet" href="<?=h($skindir)?>index.css?<?=h($petit_lot)?>">
-<link rel="stylesheet" href="./lib/pickr/themes/nano.min.css?<?=h($parameter_day)?><?=h($petit_lot)?>"/>
+<link rel="stylesheet" href="./lib/pickr/themes/monolith.min.css?<?=h($parameter_day)?><?=h($petit_lot)?>"/>
 <script src="./lib/pickr/pickr.min.js?<?=h($parameter_day)?><?=h($petit_lot)?>"></script>
 <style>
 .appstage{margin:10px auto;display: table;word-break: initial;overflow-wrap: initial;}.app{display: table-cell;vertical-align: top; width: <?=h($appw)?>px;}.palette_wrap{display: table-cell;vertical-align: middle}.palette{margin-left:12px;width:148px;border:1px solid var(--border-dynamic-palette-color);padding:6px}.palette_gradation{margin:6px 0 0 12px;padding:3px}.palette input,.palette_gradation input{color:#222;background-color:#fffeff;border:1px solid #686868}.palette_gradation .gradationColorInputText {width: 65px;}.palette_gradation .gradationColorInputColorPicker {border: 0;width: 30px;height: 19px; padding: 0;background-color: transparent;cursor: pointer;vertical-align:middle;}
@@ -130,6 +130,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 		<input type="radio" name="1" id="1" onclick="Neo.setToolSide(true)" class="nts_radio"><label class="ntslabel" for="1"><?php if($en):?>Left<?php else:?>左へ<?php endif;?></label>
 		<input type="radio" name="1" id="2" onclick="Neo.setToolSide(false)" checked="checked" class="nts_radio"><label class="ntslabel" for="2"><?php if($en):?>Right<?php else:?>右へ<?php endif;?></label>
 </span>
+<script>
+	document.addEventListener("DOMContentLoaded", (e) => {
+			Neo.setStabilizeLevel(1);//0-5の範囲で手ぶれ補正の初期値を設定する
+	});
+</script>
 <span class="nts_radiowrap"><span class="stabilizer_label"><?php if($en):?>Stabilizer<?php else:?>手ぶれ補正<?php endif;?></span>
 	<select onchange="Neo.setStabilizeLevel(this.value)">
 		<option value="0">0</option>
@@ -270,8 +275,9 @@ Neo.params ={
 // Pickrの初期化
 const pickr = Pickr.create({
     el: "#pickr-container",
-    theme: 'nano',
+    theme: 'monolith', // or 'monolith', or 'nano'
     position: 'top-start',
+    comparison: false,
     components: {
         preview: true,
         opacity: false,
