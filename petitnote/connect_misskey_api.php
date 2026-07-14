@@ -78,9 +78,8 @@ class connect_misskey_api{
 			error($en ? "Authentication failed." :"認証に失敗しました。" ,false);
 		}
 
-		list($com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw) = $_SESSION['sns_api_val'];
+		[$com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw] = $_SESSION['sns_api_val'];
 
-		// list($com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw) = $_SESSION['sns_api_val'];
 		$src_image=basename($src_image);
 
 		// 画像のアップロード

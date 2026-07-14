@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver=20260614;
+$misskey_note_ver=20260714;
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
@@ -56,7 +56,7 @@ class misskey_note{
 		$first_posted_time ="";
 		foreach($r_arr as $i =>$val){
 			$_line=explode("\t",trim($val));
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_hash_img,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$_line;
+			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_hash_img,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=$_line;
 			if($id===$time && $no===$_no){
 				$out[0][]=create_res($_line);
 				$resid=$first_posted_time;
@@ -111,7 +111,7 @@ class misskey_note{
 		
 		$id_and_no=(string)filter_input_data('POST','id_and_no');
 
-		list($id,$no)=explode(",",trim($id_and_no));
+		[$id,$no]=explode(",",trim($id_and_no));
 
 		check_open_no($no);
 		if(!is_file(LOG_DIR."{$no}.log")){
@@ -135,7 +135,7 @@ class misskey_note{
 
 			$line=explode("\t",trim($val));
 
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_hash_img,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_hash_img,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=$line;
 			if($id===$time && $no===$_no){
 			
 				if((!$admin || $verified!=='adminpost')&&(!$pwd||!password_verify($pwd,$hash))){

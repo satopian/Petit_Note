@@ -1,5 +1,5 @@
 <?php
-$noticemail_inc_ver = 20260501;
+$noticemail_inc_ver = 20260714;
 /*
 ** メール通知クラス(UTF-8) lot.20250314 for PetitNote
 ** https://paintbbs.sakura.ne.jp/
@@ -135,7 +135,7 @@ class noticemail
 		$Message .= $title ? ($label_subject . ': ' . $title . "\n") : '';
 		if (is_array($option)) {
 			foreach ($option as $value) {
-				list($optitle, $opvalue) = $value;
+				[$optitle, $opvalue] = $value;
 				$Message .= $optitle . ': ' . $opvalue . "\n";
 			}
 		}

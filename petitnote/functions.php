@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260617;
+$functions_ver=20260714;
 
 /**
  * 編集モードログアウト
@@ -454,7 +454,7 @@ function check_cont_pass(): void {
 			continue;
 		}
 		if(strpos($line,"\t".$id."\t")!==false){
-			list($_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=explode("\t",trim($line));
+			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=explode("\t",trim($line));
 			if($id===$time && $no===$_no && ($adminmode && $verified ==='adminpost' || $pwd && password_verify($pwd,$hash))){
 				$flag = true;
 				break;
@@ -492,7 +492,7 @@ function is_paint_tool_name(?string $tool): string {
  */
 function create_res(array $line,array $options=[]): array {
 	global $root_url,$boardname,$do_not_change_posts_time,$en,$mark_sensitive_image,$set_all_images_to_nsfw,$all_hide_painttime,$hide_userid;
-	list($no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya)=$line;
+	[$no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$paintsec,$log_hash_img,$abbr_toolname,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=$line;
 
 	$time = basename($time);
 
@@ -520,7 +520,7 @@ function create_res(array $line,array $options=[]): array {
 	$_w=(string)$w;
 	$_h=(string)$h;
 	if($hide_thumbnail){
-		list($w,$h)=image_reduction_display($w,$h,300,300);
+		[$w,$h]=image_reduction_display($w,$h,300,300);
 	}
 	$w=(string)$w;
 	$h=(string)$h;
@@ -642,7 +642,7 @@ function create_chk_lins(array $chk_log_arr,?string $resno): array {
 
 	$chk_resnos=[];
 	foreach($chk_log_arr as $chk_log){
-		list($chk_resno)=explode("\t",$chk_log,2);
+		[$chk_resno]=explode("\t",$chk_log,2);
 		$chk_resnos[]=$chk_resno;
 	}
 	$chk_lines=[];
@@ -1005,7 +1005,7 @@ function check_jpeg_exif(?string $upfile): void {
 		return;
 	}
 
-	list($w,$h) = getimagesize($upfile);
+	[$w,$h] = getimagesize($upfile);
 
 	$im_in = imagecreatefromjpeg($upfile);
 	if(!$im_in){
@@ -1029,7 +1029,7 @@ function check_jpeg_exif(?string $upfile): void {
 	}
 	if ($orientation === 6 || $orientation === 8) {
 		// 90度または270度回転の場合、幅と高さを入れ替える
-		list($w, $h) = [$h, $w];
+		[$w, $h] = [$h, $w];
 	}
 	$w_ratio = $max_px / $w;
 	$h_ratio = $max_px / $h;
@@ -1383,7 +1383,6 @@ function Reject_if_NGword_exists_in_the_post(): void {
 
 	//本文に日本語がなければ拒絶
 	if ($use_japanesefilter) {
-		mb_regex_encoding("UTF-8");
 		if ($com_len && !preg_match("/[ぁ-んァ-ヶｧ-ﾝー一-龠]+/u",$chk_com)) error($en?'Comment should have at least some Japanese characters.':'日本語で何か書いてください。');
 	}
 

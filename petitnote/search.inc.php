@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$search_inc_ver = 20260627;
+$search_inc_ver = 20260714;
 class processsearch
 {
 
@@ -141,8 +141,8 @@ class processsearch
 		$countarr = $count_alllog; //古いテンプレート互換
 
 		//ページング
-		list($start_page, $end_page) = calc_pagination_range($page, $pagedef);
-		list($prev,$next)=get_prev_next_pages($page,$pagedef,$count_alllog);
+		[$start_page, $end_page] = calc_pagination_range($page, $pagedef);
+		[$prev,$next]=get_prev_next_pages($page,$pagedef,$count_alllog);
 
 		//最終更新日時を取得
 		$postedtime = '';
@@ -227,7 +227,7 @@ class processsearch
 			if (!trim($log)) {
 				continue;
 			}
-			list($resno) = explode("\t", $log, 2);
+			[$resno] = explode("\t", $log, 2);
 			$resno = basename($resno);
 			//個別スレッドのループ
 			if (!is_file(LOG_DIR . "{$resno}.log")) {
@@ -238,7 +238,7 @@ class processsearch
 
 				$lines = explode("\t", $line);
 				//ホスト名とパスワードハッシュは含めない
-				list($no, $sub, $name, $verified, $com, $url, $imgfile, $w, $h, $thumbnail, $painttime, $log_img_hash, $tool, $pchext, $time, $first_posted_time,, $userid,, $oya) = $lines;
+				[$no, $sub, $name, $verified, $com, $url, $imgfile, $w, $h, $thumbnail, $painttime, $log_img_hash, $tool, $pchext, $time, $first_posted_time,, $userid,, $oya] = $lines;
 
 				if (!$name && !$com && !$url && !$imgfile && !$userid) { //この記事はありませんの時は表示しない
 					continue;

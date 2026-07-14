@@ -3,7 +3,7 @@
 // https://paintbbs.sakura.ne.jp/
 // originalscript (C)SakaQ 2005 http://www.punyu.net/php/
 
-$thumbnail_gd_ver=20260524;
+$thumbnail_gd_ver=20260714;
 defined('PERMISSION_FOR_DEST') or define('PERMISSION_FOR_DEST', 0606); //config.phpで未定義なら0606
 class thumbnail_gd {
 
@@ -41,7 +41,7 @@ class thumbnail_gd {
 		}
 
 		$fsize = filesize($fname); // ファイルサイズを取得
-		list($w,$h) = GetImageSize($fname); // 画像の幅と高さを取得
+		[$w,$h] = GetImageSize($fname); // 画像の幅と高さを取得
 		$w_h_size_over = $max_w && $max_h && ($w > $max_w || $h > $max_h);
 		$f_size_over = !isset($options['toolarge']) ? ($fsize>1024*1024) : false;
 		if(!$w_h_size_over && !$f_size_over && !isset($options['webp']) && !isset($options['2webp']) && !isset($options['2png']) && !isset($options['2jpeg'])){//リサイズも変換もしない

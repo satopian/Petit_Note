@@ -208,7 +208,7 @@ class image_save{
 			}
 		}
 
-		// list($w,$h)=getimagesize($_FILES['picture']['tmp_name']);
+		// [$w,$h]=getimagesize($_FILES['picture']['tmp_name']);
 
 		// if($w && $this->pmax_w && $w > $this->pmax_w || $h && $this->pmax_h && $this->pmax_h > $this->pmax_h){//幅と高さ
 		// 	//規定サイズ違反を検出しました。画像は保存されません。
