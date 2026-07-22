@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260714;
+$functions_ver=20260721;
 
 /**
  * 編集モードログアウト
@@ -2002,6 +2002,7 @@ function filter_input_data(string $input, string $key, int $filter=FILTER_UNSAFE
 function validateQueryParameters($allowed_keys=[]){
 
 	$gets=filter_input_array(INPUT_GET) ?? [];
+
 	// 不正なキーを抽出
 	$invalid_keys=[];
 	if(!empty($allowed_keys)){
@@ -2025,6 +2026,38 @@ function validateQueryParameters($allowed_keys=[]){
 		$misskey_note===false
 	)
 	{
+			header("HTTP/1.1 403 Forbidden");
+			exit();
+	}
+}
+
+/**
+ * SQLインジェクションを検知した時は 403 Forbiddenを返す
+ */
+function rejectSqlInjectionAttempt(): void {
+
+	$gets=filter_input_array(INPUT_GET) ?? [];
+
+	// SQLインジェクション検知パターン
+	$suspiciousPattern = '/(and\s+and|or\s+or|cast\s*\(.*as\s+(numeric|int|varchar|char)|union\s+(all\s+)?select|select\s+.*[(,].*\s+from|--\s+-|;.*--|\/\*!?\d*\s*(select|union|concat|extractvalue|updatexml)|\b(extractvalue|updatexml)\s*\(|\b(sleep|benchmark)\s*\(\s*\d)/';
+	$keywords = ['and and', 'or or', 'cast(', 'union select', 'union all select', 'select ', '--', '/*!', 'extractvalue', 'updatexml', 'sleep(', 'benchmark('];
+
+	$hasSuspiciousValue = false;
+
+	foreach ($gets as $value) {
+			if (!is_string($value)) continue;
+			$lower = strtolower($value);
+			foreach ($keywords as $kw) {
+					if (str_contains($lower, $kw)) {
+							if (preg_match($suspiciousPattern, $lower)) {
+									$hasSuspiciousValue = true;
+									break 2;
+							}
+					}
+			}
+	}
+
+	if($hasSuspiciousValue){
 			header("HTTP/1.1 403 Forbidden");
 			exit();
 	}

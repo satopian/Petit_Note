@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.7.1';
-$petit_lot='lot.20260714';
+$petit_ver='v2.8.1';
+$petit_lot='lot.20260721';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260714){
+if(!isset($functions_ver)||$functions_ver<20260721){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -86,6 +86,10 @@ if(!isset($admin_pass)||!$admin_pass){
  * 不正なクエリパラメータの時は 403 Forbiddenを返す
  */
 validateQueryParameters();
+/**
+ * SQLインジェクションを検知した時は 403 Forbiddenを返す
+ */
+rejectSqlInjectionAttempt();
 
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 $max_com= $max_com ?? 1000;
