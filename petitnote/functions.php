@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260721;
+$functions_ver=20260723;
 
 /**
  * 編集モードログアウト
@@ -2048,7 +2048,7 @@ function rejectSqlInjectionAttempt(): void {
 			if (!is_string($value)) continue;
 			$lower = strtolower($value);
 			foreach ($keywords as $kw) {
-					if (str_contains($lower, $kw)) {
+					if (strpos($lower, $kw) !== false) {
 							if (preg_match($suspiciousPattern, $lower)) {
 									$hasSuspiciousValue = true;
 									break 2;
