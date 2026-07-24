@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
 	<?php if($img_aco ?? ''):?>loadSwatchesUrl: "<?=h($img_aco)?>",<?php endif;?>
 
 	saveUrl: "./?mode=saveimage&stime=<?=time();?>&tool=chi<?php if($resto):?>&resto=<?=h($resto)?><?php endif;?><?php if($rep):?>&repcode=<?=h($repcode)?><?php endif;?>",
-	postUrl: "./?mode=<?=h($paintmode)?><?php if($rep):?>&no=<?=h($no)?>&id=<?=h($id)?>&pwd=<?=h($pwd)?>&repcode=<?=h($repcode)?><?php endif;?>",
+	postUrl: "./?mode=<?=h($paintmode)?>",
 	exitUrl: "./",
 	allowDownload: true,
 	resourcesRoot: "./app/chickenpaint/",

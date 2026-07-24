@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.8.3';
-$petit_lot='lot.20260723';
+$petit_ver='v2.8.5';
+$petit_lot='lot.20260724';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1334,14 +1334,10 @@ function img_replace(): void {
 	global $max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image,$usercode,$set_all_images_to_nsfw;
 
 	$no = t(filter_input_data('POST', 'no',FILTER_VALIDATE_INT));
-	$no = $no ?: t(filter_input_data('GET', 'no',FILTER_VALIDATE_INT));
 	$id = t(filter_input_data('POST', 'id'));//intの範囲外
-	$id = $id ?: t(filter_input_data('GET', 'id'));//intの範囲外
 
 	$enc_pwd =t(filter_input_data('POST', 'enc_pwd'));
-	$enc_pwd = $enc_pwd ?: t(filter_input_data('GET', 'pwd'));
 	$repcode = t(filter_input_data('POST', 'repcode'));
-	$repcode = $repcode ?: t(filter_input_data('GET', 'repcode'));
 	$userip = t(get_uip());
 	//ホスト取得
 	$host = $userip ? t(gethostbyaddr($userip)) : '';
@@ -2198,6 +2194,7 @@ function del(): void {
 	global $en;
 
 	//禁止ホストをチェック
+
 	check_badhost();
 	//投稿間隔をチェック
 	check_submission_interval();
@@ -2452,6 +2449,9 @@ function view(): void {
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
 	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip,$set_all_images_to_nsfw;
+	//不正なクエリパラメータの時は 403 Forbiddenを返す
+	$allowed_keys = array_fill_keys(['page'], true);
+	validateQueryParameters($allowed_keys);
 
 	aikotoba_required_to_view();
 	set_page_context_to_session();
