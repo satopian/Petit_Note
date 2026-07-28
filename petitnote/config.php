@@ -138,6 +138,15 @@ $reject_if_no_reverse_dns = false;
 
 // ※逆引きできないIPアドレスの利用者も多いため、true にすると一部の正当なユーザーが投稿できなくなる可能性があります。
 
+//ホスト名が逆引きできないIPアドレスからの管理者ログインを拒絶する
+// する: true しない: false
+
+// $reject_if_no_reverse_dns_admin_login = true;
+$reject_if_no_reverse_dns_admin_login = false;
+
+// ※trueに設定すると、正当な管理者がログインできなくなる可能性があります。
+// 大手プロパイダの回線であればログインできる筈ですが、公衆Wi-Fiなどで回線が変わるケースでは正当な管理者がログインできなくなる可能性があります。
+
 //禁止ホストからのアクセスがあった時は、SESSIONにキャッシュする
 // する: true しない: false
 

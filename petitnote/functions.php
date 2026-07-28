@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260723;
+$functions_ver=20260726;
 
 /**
  * 編集モードログアウト
@@ -166,7 +166,7 @@ function admin_in(): void {
 
 	check_same_origin();
 	//禁止ホストをチェック
-	check_badhost();
+	check_badhost(['admin_in'=>true]);
 	aikotoba_required_to_view();
 	//古いテンプレート用の使用しない変数
 	$page = $resno = $catalog = $res_catalog = $search = $radio = $imgsearch = $q = $id = "";
@@ -738,6 +738,7 @@ function get_prev_next_pages(int $page,int $pagedef,int $count_alllog): array {
 
 /**
  * ユーザーip 
+ * @return string $ip
  */
 function get_uip(): string {
 	$ip = $_SERVER["HTTP_CLIENT_IP"] ?? '';
@@ -1202,10 +1203,12 @@ function check_same_origin(): void {
 
 /**
  * 禁止ホストなら拒絶 
+ * @param array $options
  */
-function check_badhost(): void {
+function check_badhost(array $options=[]): void {
 	global $en;
-	if(is_badhost()){
+
+	if(is_badhost($options)){
 		//禁止ホストの管理者ログインを解除
 		unset($_SESSION['adminpost']);
 		unset($_SESSION['admindel']);
@@ -1442,20 +1445,23 @@ function is_ngword ($ngwords, $strs): bool {
 
 /**
  * 禁止ホストチェック
+ * @param array $options
  */
-function is_badhost(): bool {
-	global $badhost,$reject_if_no_reverse_dns,$use_badhost_session_cache;
+function is_badhost(array $options=[]): bool {
+	global $badhost,$reject_if_no_reverse_dns,$reject_if_no_reverse_dns_admin_login,$use_badhost_session_cache;
 
 	//ホスト名が逆引きできないIPアドレスからの投稿を拒絶する
-	$reject_if_no_reverse_dns = $reject_if_no_reverse_dns ?? false;
-	
+	$reject_dns = $reject_if_no_reverse_dns ?? false;
+ //ホスト名が逆引きできないIPアドレスからの管理画面ログインを拒否する
+	$reject_dns = (isset($options['admin_in']) && $reject_if_no_reverse_dns_admin_login || $reject_dns);
 	//禁止ホストからのアクセスがあった時は、SESSIONにキャッシュする
 	$use_badhost_session_cache = $use_badhost_session_cache ?? false;
 	
 	session_sta();
 
 	$session_is_badhost = $_SESSION['is_badhost'] ?? false; //SESSIONに保存された値を取得
-	if($use_badhost_session_cache && $session_is_badhost){//禁止ホストフラグがSESSIONに保存されていたら拒絶
+	if(!isset($options['admin_in']) && $use_badhost_session_cache && $session_is_badhost){
+	//投稿時に禁止ホストフラグがSESSIONに保存されていたら拒絶する。管理者ログインは除外。
 		return true;
 	}
 	//ホスト取得
@@ -1463,15 +1469,18 @@ function is_badhost(): bool {
 	$host = $userip ? gethostbyaddr($userip) :'';
 
 	if($host === $userip){//ホスト名がipアドレスになる場合は
-		if($reject_if_no_reverse_dns){
+		if($reject_dns){
 			if(!$host || filter_var($userip, FILTER_VALIDATE_IP,FILTER_FLAG_IPV4)){//IPv4アドレスなら
-				$_SESSION['is_badhost'] = true;
+				// ホスト名逆引き不可の場合は、拒絶するのみで禁止ホストとしてsessionにキャッシュしない
 				return true; //リバースDNSがない場合は拒絶
 			}
 		}
 		foreach($badhost as $value){
 			if (preg_match("/\A$value/i",$host)) {//前方一致
+			//管理者ログイン時はsessionにキャッシュしない
+			if(!isset($options['admin_in'])){
 				$_SESSION['is_badhost'] = true;
+			}
 				return true;
 			}
 		}
@@ -1479,7 +1488,10 @@ function is_badhost(): bool {
 	}else{
 		foreach($badhost as $value){
 			if (preg_match("/$value\z/i",$host)) {
+			//管理者ログイン時はsessionにキャッシュしない
+			if(!isset($options['admin_in'])){
 				$_SESSION['is_badhost'] = true;
+			}
 				return true;
 			}
 		}
@@ -1999,7 +2011,7 @@ function filter_input_data(string $input, string $key, int $filter=FILTER_UNSAFE
  * 不正なクエリパラメータの時は 403 Forbiddenを返す
  * @param array $allowed_keys
  */
-function validateQueryParameters($allowed_keys=[]){
+function validateQueryParameters($allowed_keys=[]): void {
 
 	$gets=filter_input_array(INPUT_GET) ?? [];
 
