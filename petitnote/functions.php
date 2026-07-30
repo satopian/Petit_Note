@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260726;
+$functions_ver=20260730;
 
 /**
  * 編集モードログアウト
@@ -31,13 +31,13 @@ function logout_admin(): void {
 function aikotoba(): void {
 	global $aikotoba,$en,$keep_aikotoba_login_status;
 
+	check_same_origin();
 	//投稿間隔をチェック
 	check_submission_interval();
 	//禁止ホストをチェック
 	check_badhost();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
-	check_same_origin();
 
 	session_sta();
 	if(!$aikotoba || !hash_equals($aikotoba,(string)filter_input_data('POST','aikotoba'))){
@@ -195,13 +195,6 @@ function admin_in(): void {
 function adminpost(): void {
 	global $second_pass,$en,$enable_v1_legacy_template_unsafe_get_login;
 
-	//禁止ホストをチェック
-	check_badhost();
-	//投稿間隔をチェック
-	check_submission_interval();
-	//Fetch API以外からのPOSTを拒否
-	check_post_via_javascript();
-
 	if($enable_v1_legacy_template_unsafe_get_login){
 		//古いテンプレート互換設定の時
 		check_same_origin();
@@ -210,6 +203,13 @@ function adminpost(): void {
 		//same_originも、csrf_tokenもチェックする
 		check_csrf_token();
 	}
+	//禁止ホストをチェック
+	check_badhost();
+	//投稿間隔をチェック
+	check_submission_interval();
+	//Fetch API以外からのPOSTを拒否
+	check_post_via_javascript();
+
 
 	check_password_input_error_count();
 	session_sta();
@@ -233,13 +233,6 @@ function adminpost(): void {
 function admin_del(): void {
 	global $second_pass,$en,$enable_v1_legacy_template_unsafe_get_login;
 
-	//禁止ホストをチェック
-	check_badhost();
-	//投稿間隔をチェック
-	check_submission_interval();
-	//Fetch API以外からのPOSTを拒否
-	check_post_via_javascript();
-
 	if($enable_v1_legacy_template_unsafe_get_login){
 		//古いテンプレート互換設定の時
 		check_same_origin();
@@ -248,6 +241,14 @@ function admin_del(): void {
 		//same_originも、csrf_tokenもチェックする
 		check_csrf_token();
 	}
+
+	//禁止ホストをチェック
+	check_badhost();
+	//投稿間隔をチェック
+	check_submission_interval();
+	//Fetch API以外からのPOSTを拒否
+	check_post_via_javascript();
+
 
 	check_password_input_error_count();
 
@@ -333,6 +334,8 @@ function view_nsfw(): void {
  */
 function set_nsfw_show_hide(): void {
 
+	check_same_origin();
+
 	$view=(bool)filter_input_data('POST','set_nsfw_show_hide');
 	if($view){
 		setcookie("p_n_set_nsfw_show_hide","1",time()+(60*60*24*365),"","",false,true);
@@ -344,6 +347,8 @@ function set_nsfw_show_hide(): void {
  * ダークモード
  */
 function set_darkmode(): void {
+
+	check_same_origin();
 
 	$darkmode=(bool)filter_input_data('POST','darkmode');
 	if($darkmode){
@@ -472,6 +477,7 @@ function check_cont_pass(): void {
  * コンティニュー前画面のペイントツールを選択可能に 
  */
 function set_app_select_enabled_session() : void {
+	check_same_origin();
 	session_sta();
 	$_SESSION['enableappselect'] = true;
 }
@@ -1507,7 +1513,7 @@ function init(): void {
 	check_dir(__DIR__."/src");
 	check_dir(__DIR__."/temp");
 	check_dir(__DIR__."/thumbnail");
-	check_dir(__DIR__."/log");
+	check_dir(__DIR__."/log",0700);
 	check_dir(__DIR__."/webp");
 	check_dir(__DIR__."/template/cache");
 	if(!is_file(LOG_DIR.'alllog.log')){
@@ -1518,18 +1524,28 @@ function init(): void {
 
 /**
  * ディレクトリ作成
- * @param string|null $path ディレクトリのパス。nullまたは空文字の場合はエラーになる。
+ * @param string $path ディレクトリのパス。
+ * @param int $permission ディレクトリのパーミッション 未指定時は0707
  */
-function check_dir (?string $path): void {
+function check_dir (string $path,int $permission=0): void {
+
+	if((is_dir($path)) && $permission){
+		// 現在のパーミッションを取得（8進数下位3桁を抽出）
+		$current_perms = fileperms($path) & 0777; 
+		// 異なる場合のみ chmod を実行する
+		if ($current_perms !== $permission) {
+				chmod($path, $permission);
+		}
+	}
 
 	$msg=initial_error_message();
-
+	$permission = $permission ?: 0707;
 	if (!is_dir($path)) {
-			mkdir($path, 0707);
-			chmod($path, 0707);
+		mkdir($path, $permission);
+		chmod($path, $permission);
 	}
 	if (!is_readable($path) || !is_writable($path)){
-		chmod($path, 0707);
+		chmod($path, $permission);
 	}
 	if (!is_dir($path)){
 		die(h($path) . $msg['001']);
@@ -1544,14 +1560,25 @@ function check_dir (?string $path): void {
 
 /**
  * ファイルの存在とアクセス権をチェック	
- * @param string|null $path ファイルのパス。nullまたは空文字の場合はエラーになる。
+ * @param string $path ファイルのパス。
+ * @param int $permission
  */
-function check_file (?string $path): void {
+function check_file (string $path, int $permission=0): void {
 	$msg=initial_error_message();
 
 	if (!is_file($path)){
 		die(h($path) . $msg['001']);
 	} 
+
+	if($permission){
+		// 現在のパーミッションを取得（8進数下位3桁を抽出）
+		$current_perms = fileperms($path) & 0777; 
+		// 異なる場合のみ chmod を実行する
+		if ($current_perms !== $permission) {
+				chmod($path, $permission);
+		}
+	}
+
 	if (!is_readable($path)){
 		die(h($path) . $msg['002']);
 	} 

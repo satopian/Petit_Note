@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.9.0';
-$petit_lot='lot.20260726';
+$petit_ver='v2.10.2';
+$petit_lot='lot.20260730';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260726){
+if(!isset($functions_ver)||$functions_ver<20260730){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -44,7 +44,7 @@ if(!isset($search_inc_ver)||$search_inc_ver<20260714){
 
 check_file(__DIR__.'/sns_share.inc.php');
 require_once(__DIR__.'/sns_share.inc.php');
-if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20251031){
+if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20260730){
 	die($en?'Please update search.inc.php to the latest version.':'sns_share.inc.phpを最新版に更新してください。');
 }
 
@@ -60,7 +60,7 @@ if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20260714){
 	die($en?'Please update noticemail.inc.php to the latest version.':'noticemail.inc.phpを最新版に更新してください。');
 }
 
-check_file(__DIR__.'/config.php');
+check_file(__DIR__.'/config.php',0600);
 require_once(__DIR__.'/config.php');
 // jQueryバージョン
 const JQUERY='jquery-4.0.0.min.js';
@@ -259,17 +259,19 @@ switch($mode){
 		exit();
 }
 
-//投稿処理
+/**
+ *  投稿処理
+ */
 function post(): void {
 	global $max_log,$max_res,$use_upload,$use_res_upload,$use_diary,$max_w,$max_h,$mark_sensitive_image;
 	global $allow_comments_only,$res_max_w,$res_max_h,$name_input_required,$max_com,$max_px,$sage_all,$en,$only_admin_can_reply;
 	global $usercode,$use_url_input_field,$httpsonly,$set_all_images_to_nsfw;
 
+	check_csrf_token();
 	//投稿間隔をチェック
 	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
-	check_csrf_token();
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
 	//POSTされた内容を取得
@@ -807,7 +809,9 @@ function post(): void {
 	redirect("./?resno={$resno}&resid={$time}");
 
 }
-//お絵かき画面
+/**
+ * お絵かき画面
+ */
 function paint(): void {
 
 	global $boardname,$skindir,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$max_px,$en;
@@ -1066,7 +1070,9 @@ function paint(): void {
 	}
 
 }
-// お絵かきコメント 
+/**
+ *  お絵かきコメント
+ */ 
 function paintcom(): void {
 	global $boardname,$home,$skindir,$sage_all,$en,$mark_sensitive_image;
 	global $usercode,$petit_lot,$use_hide_painttime,$all_hide_painttime,$nsfw_checked,$set_all_images_to_nsfw;
@@ -1139,7 +1145,9 @@ function paintcom(): void {
 	exit();
 }
 
-//コンティニュー前画面
+/**
+ * コンティニュー前画面
+ */
 function to_continue(): void {
 
 	global $boardname,$use_diary,$set_nsfw,$skindir,$en,$password_require_to_continue;
@@ -1276,7 +1284,9 @@ function to_continue(): void {
 	exit();
 }
 
-//アプリ固有ファイルのダウンロード
+/**
+ * アプリ固有ファイルのダウンロード
+ */
 function download_app_dat(): void {
 	global $en;
 	//投稿間隔をチェック
@@ -1328,10 +1338,14 @@ function download_app_dat(): void {
 	readfile($filepath);
 }
 
-// 画像差し換え
+/**
+ *  画像差し換え
+ */
 function img_replace(): void {
 
 	global $max_w,$max_h,$res_max_w,$res_max_h,$max_px,$en,$use_upload,$mark_sensitive_image,$usercode,$set_all_images_to_nsfw;
+
+	check_same_origin();
 
 	$no = t(filter_input_data('POST', 'no',FILTER_VALIDATE_INT));
 	$id = t(filter_input_data('POST', 'id'));//intの範囲外
@@ -1712,7 +1726,9 @@ function img_replace(): void {
 
 }
 
-// 動画表示
+/**
+ *  動画表示
+ */
 function pchview(): void {
 
 	//不正なクエリパラメータの時は 403 Forbiddenを返す
@@ -1780,7 +1796,9 @@ function pchview(): void {
 	exit();
 
 }
-//削除前の確認画面
+/**
+ * 削除前の確認画面
+ */
 function confirmation_before_deletion (): void {
 
 	global $boardname,$home,$petit_ver,$petit_lot,$skindir,$set_nsfw,$en;
@@ -1983,15 +2001,17 @@ function edit_form(string $id='',string $no=''): void {
 	exit();
 }
 
-//編集
+/**
+ * 編集
+ */
 function edit(): void {
 	global $name_input_required,$max_com,$en,$mark_sensitive_image,$use_url_input_field,$admin_pass,$set_all_images_to_nsfw;
 
+	check_csrf_token();
 	//投稿間隔をチェック
 	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
 	check_post_via_javascript();
-	check_csrf_token();
 	//NGワードがあれば拒絶
 	Reject_if_NGword_exists_in_the_post();
 	//POSTされた内容を取得
@@ -2189,12 +2209,13 @@ function edit(): void {
 
 }
 
-//記事削除
+/**
+ * 記事削除
+ */
 function del(): void {
 	global $en;
 
 	//禁止ホストをチェック
-
 	check_badhost();
 	//投稿間隔をチェック
 	check_submission_interval();
@@ -2348,6 +2369,9 @@ function del(): void {
 	branch_destination_of_location();
 }
 
+/**
+ * お絵かきデータを保存
+ */
 function saveimage(): void {
 	
 	$tool=filter_input_data('GET',"tool");
@@ -2369,10 +2393,15 @@ function saveimage(): void {
 		case "tegaki":
 			$image_save->save_klecks();
 			break;
+		default:
+			header("HTTP/1.1 403 Forbidden");
+			exit();
 	}
-
 }
-//カタログ表示
+
+/**
+ * カタログ表示
+ */
 function catalog(): void {
 	global $home,$catalog_pagedef,$skindir,$display_link_back_to_home;
 	global $boardname,$petit_ver,$petit_lot,$set_nsfw,$en,$mark_sensitive_image; 
@@ -2443,7 +2472,9 @@ function catalog(): void {
 	exit();
 }
 
-//通常表示
+/**
+ * 通常表示
+ */
 function view(): void {
 	global $use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
@@ -2690,7 +2721,9 @@ function res_view_other_works(string $resno): array
 	return 	[$next, $prev, $other_works];
 }
 
-//レス画面
+/**
+ * レス画面
+ */
 function res (): void {
 	global $use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
 	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$set_nsfw_hide_flag,$age_check_required_to_view,$use_sns_button,$deny_all_posts,$sage_all,$en,$use_diary,$nsfw_checked;
