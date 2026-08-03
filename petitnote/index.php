@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.10.2';
-$petit_lot='lot.20260730';
+$petit_ver='v2.11.0';
+$petit_lot='lot.20260803';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260730){
+if(!isset($functions_ver)||$functions_ver<20260803){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -45,7 +45,7 @@ if(!isset($search_inc_ver)||$search_inc_ver<20260714){
 check_file(__DIR__.'/sns_share.inc.php');
 require_once(__DIR__.'/sns_share.inc.php');
 if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20260730){
-	die($en?'Please update search.inc.php to the latest version.':'sns_share.inc.phpを最新版に更新してください。');
+	die($en?'Please update sns_share.inc.php to the latest version.':'sns_share.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/thumbnail_gd.inc.php');
@@ -58,6 +58,11 @@ check_file(__DIR__.'/noticemail.inc.php');
 require_once(__DIR__.'/noticemail.inc.php');
 if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20260714){
 	die($en?'Please update noticemail.inc.php to the latest version.':'noticemail.inc.phpを最新版に更新してください。');
+}
+check_file(__DIR__.'/clap.inc.php');
+require_once(__DIR__.'/clap.inc.php');
+if(!isset($clap_inc_ver)||$clap_inc_ver<20260803){
+	die($en?'Please update clap.inc.php to the latest version.':'clap.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/config.php',0600);
@@ -142,6 +147,7 @@ $fetch_articles_to_skip = $fetch_articles_to_skip ?? true;
 $all_hide_painttime  =  $all_hide_painttime  ?? false;
 $hide_userid  =  $hide_userid  ?? false;
 $enable_v1_legacy_template_unsafe_get_login = $enable_v1_legacy_template_unsafe_get_login ?? false;
+$use_clap = $use_clap ?? true;
 $mode = (string)filter_input_data('POST','mode');
 $mode = $mode ?: (string)filter_input_data('GET','mode');
 $resno=(int)filter_input_data('GET','resno',FILTER_VALIDATE_INT);
@@ -247,6 +253,8 @@ switch($mode){
 		return processsearch::search();
 	case 'catalog':
 		return catalog();
+	case 'clap':
+		return clap::addclap();
 	case 'download':
 		return download_app_dat();
 	case '':
@@ -2479,7 +2487,7 @@ function view(): void {
 	global $use_upload,$home,$pagedef,$dispres,$allow_comments_only,$skindir,$descriptions,$max_kb,$root_url,$use_misskey_note;
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
-	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip,$set_all_images_to_nsfw;
+	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip,$set_all_images_to_nsfw,$use_clap;
 	//不正なクエリパラメータの時は 403 Forbiddenを返す
 	$allowed_keys = array_fill_keys(['page'], true);
 	validateQueryParameters($allowed_keys);
@@ -2536,6 +2544,7 @@ function view(): void {
 			$out[$oya]=[];
 			$find_hide_thumbnail=false;
 			check_open_no($no);
+			$claps = clap::create_claplog_array($no);
 			$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
 			$lines=create_array_from_fp($rp);
 			fclose($rp);
@@ -2552,6 +2561,7 @@ function view(): void {
 
 				if($fetch_articles_to_skip ||($i===0 || $i>$com_skipres)){//省略するレスは処理しない
 					$_res = create_res(explode("\t",trim($line)),['is_badhost'=>$is_badhost]);//$lineから、情報を取り出す
+					$_res['clap_count'] = $claps[$_res['first_posted_time']] ?? 0;
 				}
 				if(isset($_res['img']) && $_res['img']){
 					if($_res['hide_thumbnail']){
@@ -2727,7 +2737,7 @@ function res_view_other_works(string $resno): array
 function res (): void {
 	global $use_upload,$home,$skindir,$root_url,$use_res_upload,$max_kb,$mark_sensitive_image,$only_admin_can_reply,$use_misskey_note;
 	global $boardname,$max_res,$petit_ver,$petit_lot,$set_nsfw,$set_nsfw_hide_flag,$age_check_required_to_view,$use_sns_button,$deny_all_posts,$sage_all,$en,$use_diary,$nsfw_checked;
-	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw;
+	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field,$set_all_images_to_nsfw,$use_clap;
 
 	//不正なクエリパラメータの時は 403 Forbiddenを返す
 	$allowed_keys = array_fill_keys(['resno','res_catalog','misskey_note','resid','ogp_show'], true);
@@ -2765,7 +2775,12 @@ function res (): void {
 	$og_name = '';
 	$og_resid = '';
 
+	$claps=[];
+
 	check_open_no($resno);
+
+	$claps=clap::create_claplog_array($resno);
+
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 
 	$out[0]=[];
@@ -2773,6 +2788,7 @@ function res (): void {
 	$og_img="";
 	$og_descriptioncom = ""; 
 	$og_hide_thumbnail = "";
+
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
@@ -2805,6 +2821,8 @@ function res (): void {
 			$og_name = $_res['name'];
 			$og_resid = $_res['oya'] === 'res' ? $resid : ""; //oyaの時はresidを出さない
 		}
+		$_res['clap_count'] = $claps[$_res['first_posted_time']] ?? 0;
+
 		$out[0][]=$_res;
 		$out[0][0]['find_hide_thumbnail']=$find_hide_thumbnail;
 	}	

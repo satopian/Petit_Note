@@ -79,6 +79,9 @@
 						<?php if($en):?>- Showing thumbnail -<?php else:?>- サムネイル表示中 -<?php endif;?>
 					<?php endif;?>
 					</span>
+					<?php if(isset($use_clap) && $use_clap):?>
+					<span class="ref-target-do-submission" data-mode="clap" data-id="<?=h($res['first_posted_time'])?>" data-no="<?=h($res['no'])?>" data-fetch="true"><?php if($en):?>Likes<?php else:?>いいね<?php endif;?><?php if(isset($res['clap_count']) && $res['clap_count'] > 0):?> x <?=h($res['clap_count'])?><?php endif;?></span>
+					<?php endif;?>
 				<?php endif;?>
 				<?php if($admindel):?>
 				<br>

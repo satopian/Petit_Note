@@ -214,7 +214,11 @@ const postFormAndReload = (formData) => {
       console.error("Error:", error);
     });
 };
-//formDataの送信と再表示
+/**
+ * formDataの送信と再表示
+ * @param {FormData} formData
+ * @returns {void}
+ */
 const postFormAndRedisplay = (formData) => {
   fetch("./", {
     method: "post",
@@ -372,7 +376,6 @@ window.addEventListener("pageshow", () => {
 /**
  * データセットでPOSTして表示を切り替える
  */
-
 document.addEventListener("click", (e) => {
   //ブラウザ自動化ツールを拒絶
   if (isAutomaticBrowser()) {
@@ -412,7 +415,11 @@ document.addEventListener("click", (e) => {
   append("id", trigger.dataset.id ?? "");
 
   document.body.appendChild(form);
-  form.submit();
+  if (trigger.dataset.fetch === "true") {
+    postFormAndReload(new FormData(form));
+  } else {
+    form.submit();
+  }
   document.body.removeChild(form);
 });
 

@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260730;
+$functions_ver=20260803;
 
 /**
  * 編集モードログアウト
@@ -1516,6 +1516,7 @@ function init(): void {
 	check_dir(__DIR__."/log",0700);
 	check_dir(__DIR__."/webp");
 	check_dir(__DIR__."/template/cache");
+	check_dir(__DIR__."/claplog",0700);
 	if(!is_file(LOG_DIR.'alllog.log')){
 	file_put_contents(LOG_DIR.'alllog.log','',FILE_APPEND|LOCK_EX);
 	chmod(LOG_DIR.'alllog.log',0600);	
