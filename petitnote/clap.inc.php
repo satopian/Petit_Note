@@ -22,7 +22,7 @@ class clap{
 		return $claps;
 	}
 
-	public static function addclap():void{
+	public static function addclap(): void {
 
 		global $use_clap;
 		if(!$use_clap){
@@ -51,6 +51,8 @@ class clap{
 		}
 		fclose($rp);
 		if(!$flag){
+			header('Content-type: text/plain');
+			echo ""; // このIDは存在しない	
 			exit();
 		}
 		//ログファイルにIDが存在する場合は、拍手ログを更新する
@@ -61,6 +63,8 @@ class clap{
 			file_put_contents($calplog,"$id\t1\t" . base64_encode($bits) . "\n",LOCK_EX);
 			chmod($calplog,0600);
 			delete_res_cache();
+			header('Content-type: text/plain');
+			echo "1";
 			exit();
 		}
 		chmod($calplog,0600);
@@ -76,10 +80,12 @@ class clap{
 				$bits = base64_decode($_bitsB64);
 				if(self::hasBit($bits, $userip)){
 					closeFile($cp);
+					header('Content-type: text/plain');
+					echo ""; // このIPは拍手済み
 					exit(); // このIPは拍手済み
 				}
 				$_clap = min($_clap+1, 100000);
-				 $newBits = self::setBit($bits, $userip);
+				$newBits = self::setBit($bits, $userip);
 				$lines[$i]="$_id\t$_clap\t" . base64_encode($newBits) . "\n";
 				break;
 			}
@@ -95,6 +101,8 @@ class clap{
 		writeFile($cp,$newline);
 		closeFile($cp);
 		delete_res_cache();
+		header('Content-type: text/plain');
+		echo h($_clap);
 	}
 
 	// IPのビットが立っているか見る

@@ -848,3 +848,7 @@ div#error_message_aikotobaform:empty {
     text-decoration: none;
     color: var(--a-hover-color);
 }
+.imginfo_wrap span.ref-target-do-submission,
+.imginfo_wrap span.ref-target-do-submission span {
+    display: inline;
+}

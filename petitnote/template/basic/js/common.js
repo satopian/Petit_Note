@@ -235,7 +235,24 @@ const postFormAndRedisplay = (formData) => {
       console.error("Error:", error);
     });
 };
-
+/**
+ * formDataの送信とレスポンスの取得
+ * @param {FormData} formData
+ * @returns {Promise<string>}
+ */
+const postFormAndGetResponse = async (formData) => {
+  try {
+    const response = await fetch("./", {
+      method: "post",
+      mode: "same-origin",
+      body: formData,
+    });
+    return await response.text();
+  } catch (error) {
+    console.error("Error:", error);
+    return "";
+  }
+};
 /**
  * 年齢制限付きの掲示板に設定されている時はボタンを押下するまで表示しない
  *
@@ -376,12 +393,11 @@ window.addEventListener("pageshow", () => {
 /**
  * データセットでPOSTして表示を切り替える
  */
-document.addEventListener("click", (e) => {
+document.addEventListener("click", async (e) => {
   //ブラウザ自動化ツールを拒絶
   if (isAutomaticBrowser()) {
     return;
   }
-
   const target = e.target;
   if (!target) {
     return;
@@ -397,6 +413,10 @@ document.addEventListener("click", (e) => {
   form.method = "POST";
   form.action = "./";
   form.target = trigger.dataset.target ? "_blank" : "_self";
+  //いいねボタンのカウントの表示を更新するための要素を取得
+  const clapCountId = trigger.dataset.clapCountId
+    ? document.getElementById(trigger.dataset.clapCountId)
+    : null;
 
   /**
    * @param  {string} name
@@ -416,7 +436,17 @@ document.addEventListener("click", (e) => {
 
   document.body.appendChild(form);
   if (trigger.dataset.fetch === "true") {
-    postFormAndReload(new FormData(form));
+    const responseText = await postFormAndGetResponse(new FormData(form));
+    if (clapCountId) {
+      if (responseText !== "") {
+        const trimmed = responseText.trim();
+        if (/^\d+$/.test(trimmed)) {
+          clapCountId.textContent = `x ${trimmed}`;
+        } else {
+          console.error("Unexpected response (not a number):", responseText);
+        }
+      }
+    }
   } else {
     form.submit();
   }
