@@ -1,10 +1,9 @@
 @font-face {
   font-family: 'icomoon';
-  src:  url('fonts/icomoon.eot?md8nv9');
-  src:  url('fonts/icomoon.eot?md8nv9#iefix') format('embedded-opentype'),
-    url('fonts/icomoon.ttf?md8nv9') format('truetype'),
-    url('fonts/icomoon.woff?md8nv9') format('woff'),
-    url('fonts/icomoon.svg?md8nv9#icomoon') format('svg');
+  src:
+    url('fonts/icomoon.ttf?vb6z6j') format('truetype'),
+    url('fonts/icomoon.woff?vb6z6j') format('woff'),
+    url('fonts/icomoon.svg?vb6z6j#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -13,6 +12,7 @@
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
+  speak: never;
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
@@ -24,8 +24,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-Simpleicons-Team-Simple-Misskey:before {
+.icon-heart-favorite:before {
   content: "\e900";
+}
+.icon-Simpleicons-Team-Simple-Misskey:before {
+  content: "\e901";
 }
 .icon-angles-up-solid:before {
   content: "\e903";
