@@ -1,6 +1,13 @@
 <?php
-$clap_inc_ver=20260803;
+//Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
+//https://paintbbs.sakura.ne.jp/
+
+$clap_inc_ver=20260804;
 class clap{
+	/**
+	 * 指定されたスレッドの拍手ログを配列で返す
+	 * @return array 拍手ログの配列
+	 */
 	public static function create_claplog_array(int $no):array{
 		global $use_clap;
 		if(!$use_clap){
@@ -21,7 +28,9 @@ class clap{
 		}
 		return $claps;
 	}
-
+	/**
+	 * 拍手を追加して拍手数を非同期通信のレスポンスとして返す
+	 */
 	public static function addclap(): void {
 
 		global $use_clap;
@@ -43,7 +52,8 @@ class clap{
 			}
 			if(strpos($resline,"\t".$id."\t")!==false){
 			$res=create_res(explode("\t",trim($resline)));
-			if($res['first_posted_time']===$id && $res['img']){
+			//IDが一一致、画像あり、投稿から一定日数以内であれば拍手可能
+			if($res['first_posted_time']===$id && $res['img'] && $res['check_elapsed_days']){
 				$flag=true;
 			} 	
 				break;
@@ -90,13 +100,13 @@ class clap{
 				break;
 			}
 		}	
-		 if(!$flag){
+		if(!$flag){
 			$bits = self::setBit("", $userip);
-			 $newline="$id\t1\t" . base64_encode($bits) . "\n";
-			 $_clap = 1;
-		 }else{
+			$newline="$id\t1\t" . base64_encode($bits) . "\n";
+			$_clap = 1;
+		}else{
 			$newline="";
-		 }
+		}
 		$newline.=implode("",$lines);
 		writeFile($cp,$newline);
 		closeFile($cp);
@@ -105,28 +115,43 @@ class clap{
 		echo h($_clap);
 	}
 
-	// IPのビットが立っているか見る
+	/**
+	 * IPのビットが立っているか見る
+	 * @param string $bits ビット列
+	 * @param string $ip IPアドレス
+	 * @return bool ビットが立っている場合はtrue、立っていない場合はfalse
+	 */
 	private static function hasBit(string $bits, string $ip): bool {
-			$pos  = self::bitPosition($ip);
-			$byte = intdiv($pos, 8);
-			$bit  = $pos % 8;
-			return (bool)((ord($bits[$byte] ?? "\0") >> $bit) & 1);
+		$pos  = self::bitPosition($ip);
+		$byte = intdiv($pos, 8);
+		$bit  = $pos % 8;
+		return (bool)((ord($bits[$byte] ?? "\0") >> $bit) & 1);
 	}
 
-	// ビットを立てた「新しい」文字列を返す(元の$bitsは変更しない)
+	/**
+	 * ビットを立てた「新しい」文字列を返す(元の$bitsは変更しない)
+	 * @param string $bits ビット列
+	 * @param string $ip IPアドレス
+	 * @return string 変更されたビット列
+	 */
 	private static function setBit(string $bits, string $ip): string {
-			$pos  = self::bitPosition($ip);
-			$byte = intdiv($pos, 8);
-			$bit  = $pos % 8;
-			if(strlen($bits) <= $byte){
-					$bits = str_pad($bits, $byte+1, "\0");
-			}
-			$bits[$byte] = chr(ord($bits[$byte]) | (1 << $bit));
-			return $bits;
+		$pos  = self::bitPosition($ip);
+		$byte = intdiv($pos, 8);
+		$bit  = $pos % 8;
+		if(strlen($bits) <= $byte){
+				$bits = str_pad($bits, $byte+1, "\0");
+		}
+		$bits[$byte] = chr(ord($bits[$byte]) | (1 << $bit));
+		return $bits;
 	}
 
+	/**
+	 * IPアドレスのビット位置を計算する
+	 * @param string $ip IPアドレス
+	 * @return int ビット位置
+	 */
 	private static function bitPosition(string $ip): int {
-			$SIZE_BITS = 4096; // 512バイト固定
-			return crc32($ip) % $SIZE_BITS;
+		$SIZE_BITS = 256; // 256ビット固定
+		return crc32($ip) % $SIZE_BITS;
 	}
 }

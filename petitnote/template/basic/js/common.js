@@ -1,4 +1,4 @@
-//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
+//Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
 "use strict";
@@ -214,6 +214,7 @@ const postFormAndReload = (formData) => {
       console.error("Error:", error);
     });
 };
+
 /**
  * formDataの送信と再表示
  * @param {FormData} formData
@@ -337,7 +338,11 @@ const open_sns_server_window = (event, width = 600, height = 600) => {
     height = 600; // デフォルト値
   }
   const target = event.currentTarget;
-  const url = target instanceof HTMLAnchorElement ? target.href : "";
+
+  const url =
+    (target instanceof HTMLElement && target.dataset.shareurl) ||
+    (target instanceof HTMLAnchorElement ? target.href : "");
+
   const windowFeatures = "width=" + width + ",height=" + height; // ウィンドウのサイズを指定
 
   if (snsWindow && !snsWindow.closed) {

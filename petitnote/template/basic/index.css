@@ -143,7 +143,7 @@ td {
 }
 
 .container {
-    max-width: 928px;
+    max-width: 1024px;
     margin: 0 auto 12px;
 }
 hr {
@@ -175,6 +175,21 @@ a:hover {
     color: var(--a-hover-color);
 }
 
+/* SNSで共有する */
+span[data-shareurl],
+span[data-downloadurl],
+span#pch_close {
+    cursor: pointer;
+    text-decoration: underline;
+    color: var(--a-color);
+}
+
+span[data-shareurl]:hover,
+span[data-downloadurl]:hover,
+span#pch_close:hover {
+    text-decoration: none;
+    color: var(--a-hover-color);
+}
 
 /* 見出し */
 h1 {
@@ -331,13 +346,24 @@ span.info_name > span {
 /* 記事 */
 
 .imginfo_wrap {
-    margin: 3px 0 10px;
+    margin: 3px 0 5px;
     font-size: 1rem;
     font-weight: normal;
+    line-height:1.8;
 }
 .imginfo_wrap span {
     display: inline-block;
 }
+.imginfo_wrap span.ref-target-do-submission span {
+    display: inline;
+}
+.continue_anime_wrap {
+    margin: 0px 0 1.1em;
+}
+.continue_anime_wrap span {
+    display: inline-block;
+}
+
 .res_wrap {
     display: table;
 }
@@ -414,6 +440,7 @@ button.copy_button {
     border-radius: 6px;
     border: 1px solid var(--border-color);
     color: var(--text-color);
+    margin-top: 1em;
 }
 
 button.copy_button:hover {
@@ -489,7 +516,13 @@ span.txtnon {
 
 .res_button_wrap {
     text-align: right;
-    margin: 16px 0 0;
+}
+.res_button_wrap >span {
+    display: inline-block;
+    margin: 10px 0 0 12px;
+}
+.res_button_wrap.clap_wrap {
+    margin: 10px 0 0;
 }
 .res_notice_wrap {
     text-align: right;
@@ -501,7 +534,7 @@ form.res_button {
 }
 form.res_button input {
     padding: 1px 12px;
-    margin: 12px 0 0 8px;
+    margin: 1em 0 1em;
 }
 /* 返信フォーム */
 form.res_form {
@@ -727,6 +760,10 @@ input.input_count_timer {
         font-size: 1.1rem;
         margin: 3px 0 1rem;
     }
+    .continue_anime_wrap {
+        font-size: 1.1rem;
+        margin: 0px 0 1.6em;
+    }
 }
 
 @media screen and (max-width: 700px) {
@@ -783,7 +820,9 @@ input.input_count_timer {
     border-radius: 50%;
 }
 
-#page_top a {
+#page_top a,
+#page_top span,
+#page_top button{
     position: relative;
     display: block;
     width: 50px;
@@ -791,7 +830,9 @@ input.input_count_timer {
     text-decoration: none;
 }
 
-#page_top a::before {
+#page_top a::before,
+#page_top span::before,
+#page_top button {
     font-weight: 900;
     font-size: 25px;
     color: var(--page-top-color);
@@ -804,6 +845,9 @@ input.input_count_timer {
     left: 0;
     margin: auto;
     text-align: center;
+    background: none;
+    border: none;
+    padding: 0;
 }
 /* ページネーション */
 .pagination a,
@@ -847,8 +891,4 @@ div#error_message_aikotobaform:empty {
     /* リンクのaタグと同じ見た目になるように装飾 */
     text-decoration: none;
     color: var(--a-hover-color);
-}
-.imginfo_wrap span.ref-target-do-submission,
-.imginfo_wrap span.ref-target-do-submission span {
-    display: inline;
 }

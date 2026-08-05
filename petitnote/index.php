@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v2.11.1';
-$petit_lot='lot.20260803.1';
+$petit_ver='v2.11.5';
+$petit_lot='lot.20260805';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -44,7 +44,7 @@ if(!isset($search_inc_ver)||$search_inc_ver<20260714){
 
 check_file(__DIR__.'/sns_share.inc.php');
 require_once(__DIR__.'/sns_share.inc.php');
-if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20260730){
+if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20260805){
 	die($en?'Please update sns_share.inc.php to the latest version.':'sns_share.inc.phpを最新版に更新してください。');
 }
 
@@ -61,7 +61,7 @@ if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20260714){
 }
 check_file(__DIR__.'/clap.inc.php');
 require_once(__DIR__.'/clap.inc.php');
-if(!isset($clap_inc_ver)||$clap_inc_ver<20260803){
+if(!isset($clap_inc_ver)||$clap_inc_ver<20260804){
 	die($en?'Please update clap.inc.php to the latest version.':'clap.inc.phpを最新版に更新してください。');
 }
 
@@ -2776,11 +2776,8 @@ function res (): void {
 	$og_resid = '';
 
 	$claps=[];
-
 	check_open_no($resno);
-
 	$claps=clap::create_claplog_array($resno);
-
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 
 	$out[0]=[];

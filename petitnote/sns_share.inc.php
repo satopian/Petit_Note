@@ -1,32 +1,30 @@
 <?php
 // Mastodon、misskey等の分散型SNSへ記事を共有するクラス
-//Petit Note (c)さとぴあ @satopian 2021-2025 MIT License
+//Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
-$sns_share_inc_ver = 20260730;
+$sns_share_inc_ver = 20260805;
 class sns_share
 {
 
 	//シェアするserverの選択画面
 	public static function set_share_server(): void
 	{
-		global $en, $skindir, $servers, $petit_lot, $boardname,$set_nsfw_hide_flag,$age_check_required_to_view;
-		
+		global $en, $skindir, $servers, $petit_lot, $boardname, $set_nsfw_hide_flag, $age_check_required_to_view;
+
 		//ShareするServerの一覧
 		//｢"ラジオボタンに表示するServer名","snsのserverのurl"｣
 		$servers = $servers ??
 			[
-
 				["X", "https://x.com"],
 				["Bluesky", "https://bsky.app"],
 				["Threads", "https://www.threads.net"],
-				["pawoo.net", "https://pawoo.net"],
+				["Pommu", "https://ch.dlsite.com/pommu"],
+				["Pawoo", "https://pawoo.net"],
 				["fedibird.com", "https://fedibird.com"],
 				["misskey.io", "https://misskey.io"],
 				["xissmie.xfolio.jp", "https://xissmie.xfolio.jp"],
 				["misskey.design", "https://misskey.design"],
 				["nijimiss.moe", "https://nijimiss.moe"],
-				["sushi.ski", "https://sushi.ski"],
-
 			];
 		//設定項目ここまで
 
@@ -39,8 +37,8 @@ class sns_share
 		$hide_thumbnail = filter_input_data('GET', "hide_thumbnail", FILTER_VALIDATE_BOOLEAN);
 		//年齢制限が設定されている時は、閲覧注意画像を共有するチェックボックスを表示しない
 		$set_nsfw_hide_flag = $age_check_required_to_view ? false : $set_nsfw_hide_flag;
-		$hide_thumbnail = $age_check_required_to_view ? false : $hide_thumbnail; 
-		
+		$hide_thumbnail = $age_check_required_to_view ? false : $hide_thumbnail;
+
 		$admin_pass = null;
 		//HTML出力
 		$templete = 'set_share_server.html';
@@ -50,7 +48,7 @@ class sns_share
 
 	public static function post_share_server(): void
 	{
-		global $en,$age_check_required_to_view;
+		global $en, $age_check_required_to_view;
 
 		check_same_origin();
 
@@ -73,6 +71,8 @@ class sns_share
 				$share_url = "https://bsky.app/intent/compose?text=";
 			} elseif ($sns_server_radio === "https://www.threads.net") {
 				$share_url = "https://www.threads.net/intent/post?text=";
+			} elseif ($sns_server_radio === "https://ch.dlsite.com/pommu") {
+				$share_url = "https://ch.dlsite.com/pommu/intent/posts/create?text=";
 			} else {
 				$share_url = $sns_server_radio . "/share?text=";
 			}

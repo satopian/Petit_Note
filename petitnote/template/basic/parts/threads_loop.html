@@ -1,217 +1,215 @@
-<?php $resid = $resid ?? "";?>
-<?php foreach($out as $t => $ress) : ?>
-	<?php if($sort_comments_by_newest){
+<?php $resid = $resid ?? ""; ?>
+<?php foreach ($out as $t => $ress) : ?>
+	<?php if ($sort_comments_by_newest) {
 		krsort($ress);
 	}
-	if(!$resmode){//レス画面では必要がない
-		$revd_count_images=0;
+	if (!$resmode) { //レス画面では必要がない
+		$revd_count_images = 0;
 		$ress_revd = $ress;
-		krsort($ress_revd);//キーを逆順でソート
-		foreach($ress_revd as $img_skipres =>$res){
-			if(isset($res['img']) && $res['img']){//配列の後ろからの画像の出現回数を数える
+		krsort($ress_revd); //キーを逆順でソート
+		foreach ($ress_revd as $img_skipres => $res) {
+			if (isset($res['img']) && $res['img']) { //配列の後ろからの画像の出現回数を数える
 				++$revd_count_images;
 			}
-			if($disp_image_res < $revd_count_images){
-				break;//breakしてのキーの値を取得する
+			if ($disp_image_res < $revd_count_images) {
+				break; //breakしてのキーの値を取得する
 			}
 		}
-		$countres= $ress[0]['countres'] ?? count($ress);
+		$countres = $ress[0]['countres'] ?? count($ress);
 		// $dispresを設定しない場合の処理の振り分け
-		$com_skipres= $dispres ? ($countres-($dispres+1)) : 0;
+		$com_skipres = $dispres ? ($countres - ($dispres + 1)) : 0;
 		// $disp_image_resを設定しない場合の処理の振り分け
 		$img_skipres = $disp_image_res ? $img_skipres : 0;
-		$skipres = max($com_skipres,$img_skipres);
-
+		$skipres = max($com_skipres, $img_skipres);
 	}
-	if($userdel || $admindel || $resmode){
-		$skipres=0;	//削除モードの時はレスを省略しない
+	if ($userdel || $admindel || $resmode) {
+		$skipres = 0;	//削除モードの時はレスを省略しない
 	}
-	$last_key = array_key_last($ress);//ループの最後のキーを取得
-?>
+	$last_key = array_key_last($ress); //ループの最後のキーを取得
+	?>
 	<article>
-	<!-- タイトル -->
-	<h2 class="article_title" id="<?=h($ress[0]['first_posted_time'] ?? "")?>">
-		<a href="./?resno=<?= h($ress[0]['no'])?>">[<?= h($ress[0]['no'])?>] <?= h($ress[0]['sub'])?></a>
-	</h2>
-	<!-- 個別threadのループ -->
-	<?php foreach($ress as $i => $res) : ?>
-	<?php	$res_max_over=(!$adminpost && ($i>=$max_res||!$ress[0]['check_elapsed_days']));?>
-		<?php if($skipres && $i===$skipres):?>
-	<hr>
-	<?php if($en):?>
-		<?=h($skipres)?>
-		<?php if($skipres>1):?> posts<?php else:?> post<?php endif;?> omitted.
-	<?php else:?>レス<?=h($skipres)?>件省略中。<?php endif;?>
-	<?php endif;?>	
-	<?php if($i===0 || $i>$skipres):?>
-	<?php
-	if(empty($res)){
-		continue;
-	}
-	// 縮小のかかったNSFW画像を元のサイズへ
-	if($set_nsfw_show_hide){
-		$res['w']=$res['_w'];$res['h']=$res['_h'];
-	}?>
-		<hr>
-		<?php if($i!==0):?>
-			<div class="res_wrap" <?php if($resmode):?>id="<?=h($res['first_posted_time'] ?? "")?>"<?php endif;?>>
-		<?php endif;?>
-			<h3 class="imginfo_wrap">
-			<?php if(!isset($res['not_deleted']) || $res['not_deleted']):?>
-				<span class="info_name"><a href="./?mode=search&radio=2&imgsearch=on&q=<?=h($res['encoded_name'])?>" target="_blank" rel="noopener"><?= h($res['name'])?></a></span>
-				<?php if($res['verified']):?>
-				<span class="icon-checkmark2"></span>
-				<?php endif?>
-				<?php if($res['url']):?><span>[<a href="<?=h($res['url'])?>" target="_blank" rel="<?php if(!$res['verified']):?>nofollow <?php endif;?>noopener noreferrer">URL</a>]</span><?php endif;?>
-					<?php if($res['userid']):?><span>ID:<?= h($res['userid'])?></span><?php endif;?>
-					<span><?=h($res['date'])?></span>		
-				<?php if($res['img']):?>
-					<?php if($res['tool']):?><span>Tool:<?=h($res['tool'])?></span><?php endif;?>
-					<?php if($res['painttime']):?>
-					<span>
-					<?php if($en):?>Paint time:<?=h($res['painttime_en'])?><?php else:?>描画時間:<?=h($res['painttime'])?><?php endif;?>
-					</span>
-					<?php endif;?>
-					<span>
-					<?php if($res['hide_thumbnail']):?>
-						<?php if($en):?>- Hiding thumbnail -<?php else:?>- サムネ非表示 -<?php endif;?>
-					<?php elseif($res['thumbnail']):?>
-						<?php if($en):?>- Showing thumbnail -<?php else:?>- サムネイル表示中 -<?php endif;?>
-					<?php endif;?>
-					</span>
-					<?php if(isset($use_clap) && $use_clap):?>
-						<span class="ref-target-do-submission" data-mode="clap" data-id="<?=h($res['first_posted_time'])?>" data-no="<?=h($res['no'])?>" data-clap-count-id="clapCountId_<?=h($res['first_posted_time'])?>" data-fetch="true"><?php if($en):?>Likes <?php else:?>いいね <?php endif;?><span id="clapCountId_<?=h($res['first_posted_time'])?>"><?php if(isset($res['clap_count']) && $res['clap_count'] > 0):?>x <?=h($res['clap_count'])?><?php endif;?></span></span>
-					<?php endif;?>
-				<?php endif;?>
-				<?php if($admindel):?>
-				<br>
-				HOST:<?=h($res['host'])?>
-				<?php endif;?> 
-			<?php endif;?>
-			</h3>
-			<?php if($res['img']):?>
-				<?php if($res['continue']||$res['anime']):?>
-				<div class="imginfo_wrap">
-					<?php if($res['continue'] && $aikotoba && $use_paint):?>
-						<span>☆<span class="ref-target-do-submission" data-mode="to_continue" data-id="<?=h($res['time'])?>" data-no="<?=h($res['no'])?>"><?php if($en):?>Continue<?php else:?>続きを描く<?php endif;?></span></span>
-					<?php endif;?>
-					<?php if($res['anime']):?>
-						<span>☆<a href="?mode=pchview&id=<?=h($res['first_posted_time'])?>&no=<?=h($res['no'])?>" target="_blank" rel="opener"><?php if($en):?>Animation<?php else:?>動画<?php endif;?></a></span>
-					<?php endif;?>
-				</div>
-				<?php endif;?>
-				<div class="posted_image <?php if($res['hide_thumbnail']):?>hide_thumbnail<?php endif;?>" style="<?php if($res['w']>747):?>float:none;margin-right:0;<?php endif;?>max-width:<?=h($res['w'])?>px;max-height:<?=h($res['h'])?>px;">
-					<a href="src/<?=h($res['img'])?>" target="_blank" rel="noopener" data-lightbox="<?php if(isset($ress[0]['find_hide_thumbnail'])&&!$ress[0]['find_hide_thumbnail']||$set_nsfw_show_hide):?><?=h($res['no'])?><?php else:?><?=h($res['no'])?>_<?=h($res['time'])?><?php endif;?>">
-				<?php if($res['thumbnail']):?>
-						<img src="thumbnail/<?=h($res['thumbnail'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4||($resmode && $i>4)):?>loading="lazy"<?php endif;?>>
-				<?php else:?>
-						<img src="src/<?=h($res['img'])?>" alt="<?=h($res['sub'])?> by <?=h($res['name'])?>" title="<?=h($res['sub'])?> by <?=h($res['name'])?>" width="<?=h($res['w'])?>" height="<?=h($res['h'])?>" <?php if($t>4||($resmode && $i>4)):?>loading="lazy"<?php endif;?>>
-				<?php endif;?>
-					<?php if($res['hide_thumbnail']):?>
-						<span>NSFW</span>
-					<?php endif;?>
-						</a>
-				</div>
-			<?php endif;?>
-			<?php if(isset($res['not_deleted']) && !$res['not_deleted']):?>
-			<?php if($admindel):?>
-				<div class="imginfo_wrap">
-				HOST:<?=h($res['host'])?>
-				</div>
-			<?php endif;?> 
-			<?php endif;?>
-			<div class="comment"><?=com(h($res['com']),h($res['verified']))?>
-			<?php if(isset($res['not_deleted']) && !$res['not_deleted']):?>
-			<?php if($en):?>This post does not exist.<?php else:?>この記事はありません。<?php endif;?>
-			<?php endif;?>
-			<?php if($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted'])||$res['not_deleted']) && $userdel) || $admindel)):?>
-			<div class="edit_button">
-					<!-- 編集削除のためのボタン -->
-				<?php if($res['check_elapsed_days']||$admindel):?>
-					<form action="./" method="POST" class="aikotoba">
-					<input type="hidden" name="mode" value="before_del">
-					<input type="hidden" name="edit_mode" value="editmode">
-					<input type="hidden" name="id" value="<?=h($res['time'])?>">
-					<input type="hidden" name="no" value="<?=h($res['no'])?>">
-					<input type="submit" value="<?php if($en):?>Edit<?php else:?>編集<?php endif;?>">
-					</form>
-				<?php endif;?>
-				<form action="./" method="POST" class="aikotoba">
-					<input type="hidden" name="mode" value="before_del">
-					<input type="hidden" name="edit_mode" value="delmode">
-					<input type="hidden" name="id" value="<?=h($res['time'])?>">
-					<input type="hidden" name="no" value="<?=h($res['no'])?>">
-					<input type="submit" value="<?php if($en):?>Delete<?php else:?>削除<?php endif;?>">
-				</form>
+		<!-- タイトル -->
+		<h2 class="article_title" id="<?= h($ress[0]['first_posted_time'] ?? "") ?>">
+			<a href="./?resno=<?= h($ress[0]['no']) ?>">[<?= h($ress[0]['no']) ?>] <?= h($ress[0]['sub']) ?></a>
+		</h2>
+		<!-- 個別threadのループ -->
+		<?php foreach ($ress as $i => $res) : ?>
+			<?php $res_max_over = (!$adminpost && ($i >= $max_res || !$ress[0]['check_elapsed_days'])); ?>
+			<?php if ($skipres && $i === $skipres): ?>
+				<hr>
+				<?php if ($en): ?>
+					<?= h($skipres) ?>
+					<?php if ($skipres > 1): ?> posts<?php else: ?> post<?php endif; ?> omitted.
+						<?php else: ?>レス<?= h($skipres) ?>件省略中。<?php endif; ?>
+					<?php endif; ?>
+					<?php if ($i === 0 || $i > $skipres): ?>
+						<?php
+						if (empty($res)) {
+							continue;
+						}
+						// 縮小のかかったNSFW画像を元のサイズへ
+						if ($set_nsfw_show_hide) {
+							$res['w'] = $res['_w'];
+							$res['h'] = $res['_h'];
+						} ?>
+						<hr>
+						<?php if ($i !== 0): ?>
+							<div class="res_wrap" <?php if ($resmode): ?>id="<?= h($res['first_posted_time'] ?? "") ?>" <?php endif; ?>>
+							<?php endif; ?>
+							<h3 class="imginfo_wrap">
+								<?php if (!isset($res['not_deleted']) || $res['not_deleted']): ?>
+									<span class="info_name"><a href="./?mode=search&radio=2&imgsearch=on&q=<?= h($res['encoded_name']) ?>" target="_blank" rel="noopener"><?= h($res['name']) ?></a></span>
+									<?php if ($res['verified']): ?>
+										<span class="icon-checkmark2"></span>
+									<?php endif ?>
+									<?php if ($res['url']): ?><span>[<a href="<?= h($res['url']) ?>" target="_blank" rel="<?php if (!$res['verified']): ?>nofollow <?php endif; ?>noopener noreferrer">URL</a>]</span><?php endif; ?>
+									<?php if ($res['userid']): ?><span>ID:<?= h($res['userid']) ?></span><?php endif; ?>
+									<span><?= h($res['date']) ?></span>
+									<?php if ($res['img']): ?>
+										<br>
+										<?php if ($res['tool']): ?><span>Tool:<?= h($res['tool']) ?></span><?php endif; ?>
+										<?php if ($res['painttime']): ?>
+											<span>
+												<?php if ($en): ?>Paint time:<?= h($res['painttime_en']) ?><?php else: ?>描画時間:<?= h($res['painttime']) ?><?php endif; ?>
+											</span>
+										<?php endif; ?>
+										<span>
+											<?php if ($res['hide_thumbnail']): ?>
+												<?php if ($en): ?>- Hiding thumbnail -<?php else: ?>- サムネ非表示 -<?php endif; ?>
+											<?php elseif ($res['thumbnail']): ?>
+												<?php if ($en): ?>- Showing thumbnail -<?php else: ?>- サムネイル表示中 -<?php endif; ?>
+											<?php endif; ?>
+										</span>
+									<?php endif; ?>
+									<?php if ($admindel): ?>
+										<br>
+										HOST:<?= h($res['host']) ?>
+									<?php endif; ?>
+								<?php endif; ?>
+							</h3>
+							<?php if ($res['img']): ?>
+								<?php if ($res['continue'] || $res['anime']): ?>
+									<div class="continue_anime_wrap">
+										<?php if ($res['continue'] && $aikotoba && $use_paint): ?>
+											<span>☆<span class="ref-target-do-submission" data-mode="to_continue" data-id="<?= h($res['time']) ?>" data-no="<?= h($res['no']) ?>"><?php if ($en): ?>Continue<?php else: ?>続きを描く<?php endif; ?></span></span>
+										<?php endif; ?>
+										<?php if ($res['anime']): ?>
+											<span>☆<a href="?mode=pchview&id=<?= h($res['first_posted_time']) ?>&no=<?= h($res['no']) ?>" target="_blank" rel="opener"><?php if ($en): ?>Animation<?php else: ?>動画<?php endif; ?></a></span>
+										<?php endif; ?>
+									</div>
+								<?php endif; ?>
+								<div class="posted_image <?php if ($res['hide_thumbnail']): ?>hide_thumbnail<?php endif; ?>" style="<?php if ($res['w'] > 747): ?>float:none;margin-right:0;<?php endif; ?>max-width:<?= h($res['w']) ?>px;max-height:<?= h($res['h']) ?>px;">
+									<a href="src/<?= h($res['img']) ?>" target="_blank" rel="noopener" data-lightbox="<?php if (isset($ress[0]['find_hide_thumbnail']) && !$ress[0]['find_hide_thumbnail'] || $set_nsfw_show_hide): ?><?= h($res['no']) ?><?php else: ?><?= h($res['no']) ?>_<?= h($res['time']) ?><?php endif; ?>">
+										<?php if ($res['thumbnail']): ?>
+											<img src="thumbnail/<?= h($res['thumbnail']) ?>" alt="<?= h($res['sub']) ?> by <?= h($res['name']) ?>" title="<?= h($res['sub']) ?> by <?= h($res['name']) ?>" width="<?= h($res['w']) ?>" height="<?= h($res['h']) ?>" <?php if ($t > 4 || ($resmode && $i > 4)): ?>loading="lazy" <?php endif; ?>>
+										<?php else: ?>
+											<img src="src/<?= h($res['img']) ?>" alt="<?= h($res['sub']) ?> by <?= h($res['name']) ?>" title="<?= h($res['sub']) ?> by <?= h($res['name']) ?>" width="<?= h($res['w']) ?>" height="<?= h($res['h']) ?>" <?php if ($t > 4 || ($resmode && $i > 4)): ?>loading="lazy" <?php endif; ?>>
+										<?php endif; ?>
+										<?php if ($res['hide_thumbnail']): ?>
+											<span>NSFW</span>
+										<?php endif; ?>
+									</a>
+								</div>
+							<?php endif; ?>
+							<?php if (isset($res['not_deleted']) && !$res['not_deleted']): ?>
+								<?php if ($admindel): ?>
+									<div class="imginfo_wrap">
+										HOST:<?= h($res['host']) ?>
+									</div>
+								<?php endif; ?>
+							<?php endif; ?>
+							<div class="comment"><?= com(h($res['com']), h($res['verified'])) ?>
+								<?php if (isset($res['not_deleted']) && !$res['not_deleted']): ?>
+									<?php if ($en): ?>This post does not exist.<?php else: ?>この記事はありません。<?php endif; ?>
+								<?php endif; ?>
+								<?php if ($aikotoba && !$deny_all_posts && (((!isset($res['not_deleted']) || $res['not_deleted']) && $userdel) || $admindel)): ?>
+									<div class="edit_button">
+										<!-- 編集削除のためのボタン -->
+										<?php if ($res['check_elapsed_days'] || $admindel): ?>
+											<form action="./" method="POST" class="aikotoba">
+												<input type="hidden" name="mode" value="before_del">
+												<input type="hidden" name="edit_mode" value="editmode">
+												<input type="hidden" name="id" value="<?= h($res['time']) ?>">
+												<input type="hidden" name="no" value="<?= h($res['no']) ?>">
+												<input type="submit" value="<?php if ($en): ?>Edit<?php else: ?>編集<?php endif; ?>">
+											</form>
+										<?php endif; ?>
+										<form action="./" method="POST" class="aikotoba">
+											<input type="hidden" name="mode" value="before_del">
+											<input type="hidden" name="edit_mode" value="delmode">
+											<input type="hidden" name="id" value="<?= h($res['time']) ?>">
+											<input type="hidden" name="no" value="<?= h($res['no']) ?>">
+											<input type="submit" value="<?php if ($en): ?>Delete<?php else: ?>削除<?php endif; ?>">
+										</form>
+									</div>
+								<?php endif; ?>
+							</div>
+							<?php if ($i !== 0): ?>
+							</div><!-- 子レスのwrap	 -->
+						<?php endif; ?>
 
-				<?php if($use_misskey_note && $res['img'] && ($res['check_elapsed_days'] && !$is_badhost||($admindel||$adminpost))):?>
-				
-					<form action="./" method="POST" class="aikotoba" target="_blank" rel="noopener">
-					<input type="hidden" name="mode" value="before_misskey_note">
-					<input type="hidden" name="edit_mode" value="editmode">
-					<input type="hidden" name="id" value="<?=h($res['time'])?>">
-					<input type="hidden" name="no" value="<?=h($res['no'])?>">
+						<?php if ($res['img'] && $aikotoba) : ?>
+							<div class="clear"></div>
+							<div class="res_button_wrap clap_wrap">
+								<?php if (isset($use_clap) && $use_clap && ($ress[0]['check_elapsed_days'] || $res['clap_count'] > 0)): ?>
+									<span <?php if ($ress[0]['check_elapsed_days']): ?>class="ref-target-do-submission" <?php endif; ?> data-mode="clap" data-id="<?= h($res['first_posted_time']) ?>" data-no="<?= h($res['no']) ?>" data-clap-count-id="clapCountId_<?= h($res['no']) ?>_<?= h($res['first_posted_time']) ?>" data-fetch="true"><span class="icon-heart-favorite"></span>
+										<?php if ($en): ?>Like <?php else: ?>いいね <?php endif; ?><span id="clapCountId_<?= h($res['no']) ?>_<?= h($res['first_posted_time']) ?>"><?php if (isset($res['clap_count']) && $res['clap_count'] > 0): ?>x <?= h($res['clap_count']) ?><?php endif; ?></span></span>
+								<?php endif; ?>
+								<?php if ($use_misskey_note && $ress[0]['check_elapsed_days']): ?>
+									<span class="ref-target-do-submission" data-mode="before_misskey_note" data-no="<?= h($res['no']) ?>" data-id="<?= h($res['time']) ?>" data-target="_blank"><span class="icon-Simpleicons-Team-Simple-Misskey"></span>
+										<?php if ($en): ?>Note<?php else: ?>ノート<?php endif; ?></span>
+								<?php endif; ?>
+								<?php if ($use_sns_button): ?>
+									<span data-shareurl="?mode=set_share_server&encoded_t=<?= h($res['encoded_t']) ?>&amp;encoded_u=<?= h($res['encoded_item_u'] ?? '') ?><?= h($res['hide_thumbnail'] ? "&amp;hide_thumbnail=on" : "") ?>" onclick="open_sns_server_window(event,<?= h($sns_window_width) ?>,<?= h($sns_window_height) ?>)"><span class="icon-share-from-square-solid"></span>
+										<?php if ($en): ?>Share on SNS<?php else: ?>SNSで共有する<?php endif; ?></span>
+								<?php endif; ?>
 
-					<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <input type="submit" value="<?php if($en):?>Note to Misskey<?php else:?>Misskeyにノート<?php endif;?>">
-					</form>
-				<?php endif;?>
-			</div>
-			<?php endif;?>
-		</div>
-		<?php if($i!==0):?>
-		</div><!-- 子レスのwrap	 -->
-		<?php endif;?>
-	<?php if($use_sns_button):?>
-		<?php if($res['img'] && (isset($res['first_posted_time']) && $res['first_posted_time']===$resid || $userdel || $admindel)) :?>
-		<div class="clear"></div>
-		<div class="res_button_wrap">
-			<a href="?mode=set_share_server&encoded_t=<?=h($res['encoded_t'])?>&amp;encoded_u=<?=h($res['encoded_item_u']??'')?><?=h($res['hide_thumbnail'] ? "&amp;hide_thumbnail=on" : "")?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow noopener"><span class="icon-share-from-square-solid"></span>
-			<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
-			<!-- 最後のループの時にhr -->
-			<?php if(($i === $last_key)):?>
-				<!-- 投稿可能件数日数の罫線との重複回避 -->
-				<?php $maxres_current=(int)$max_res-(int)$i;?>
-				<?php if((($maxres_current>20) && empty($ress[0]['time_left_to_close_the_thread'])) || $adminpost || !$resform || $res_max_over):?>
-					<hr>
-				<?php endif;?>
-			<?php endif;?>
-			</div>
-		<?php endif;?>
-	<?php endif;?>
-	<?php endif;?>
-<?php endforeach;?>
+							</div>
+						<?php endif; ?>
+
+						<!-- 最後のループの時にhr -->
+						<?php if ($i === $last_key && ($res['img'] || $resmode)): ?>
+							<!-- 投稿可能件数日数の罫線との重複回避 -->
+							<?php $maxres_current = (int)$max_res - (int)$i; ?>
+							<?php if ((($maxres_current > 20) && empty($ress[0]['time_left_to_close_the_thread'])) || $adminpost || !$resform || $res_max_over): ?>
+								<hr>
+							<?php endif; ?>
+						<?php endif; ?>
+
+					<?php endif; ?>
+				<?php endforeach; ?>
 	</article>
 	<!-- 返信ボタン -->
 	<div class="clear"></div>
-	<?php if($resmode && $aikotoba && (!$userdel && !$admindel)):?>
-	<!-- 返信可能な数の表示 -->
-			<div class="res_notice_wrap">
-			<?php $maxres_current=(int)$max_res-(int)$i;?>
-			<?php if(($maxres_current<=20) && !$adminpost && $resform && !$res_max_over):?>
+	<?php if ($resmode && $aikotoba && (!$userdel && !$admindel)): ?>
+		<!-- 返信可能な数の表示 -->
+		<div class="res_notice_wrap">
+			<?php $maxres_current = (int)$max_res - (int)$i; ?>
+			<?php if (($maxres_current <= 20) && !$adminpost && $resform && !$res_max_over): ?>
 				<hr>
-					<?php if($en):?>
-						This thread will be closed with <?=h($maxres_current)?> more 
-						<?php if($maxres_current>1):?>posts.<?php else:?>post.<?php endif;?>
-					<?php else:?>
-						あと<?=h($maxres_current)?>件投稿できます。
-					<?php endif;?>
-			<?php endif;?>
-			<?php if($ress[0]['time_left_to_close_the_thread']&& !$adminpost && $resform && !$res_max_over):?>
+				<?php if ($en): ?>
+					This thread will be closed with <?= h($maxres_current) ?> more
+					<?php if ($maxres_current > 1): ?>posts.<?php else: ?>post.<?php endif; ?>
+				<?php else: ?>
+					あと<?= h($maxres_current) ?>件投稿できます。
+				<?php endif; ?>
+			<?php endif; ?>
+			<?php if ($ress[0]['time_left_to_close_the_thread'] && !$adminpost && $resform && !$res_max_over): ?>
 				<hr>
-					<?php if($en):?>
-						This thread will be closed after <?=h($ress[0]['time_left_to_close_the_thread'])?>.
-					<?php else:?>
-						このスレッドは<?=h($ress[0]['time_left_to_close_the_thread'])?>後に閉じられます。
-				<?php endif;?>
-			<?php endif;?>
-			</div>
-		<?php endif;?>
-		<div class="res_button_wrap">
-			<?php if($resmode && $resform && $resname && !$res_max_over):?>
-				<script>
-				const add_to_com = ()=> {
+				<?php if ($en): ?>
+					This thread will be closed after <?= h($ress[0]['time_left_to_close_the_thread']) ?>.
+				<?php else: ?>
+					このスレッドは<?= h($ress[0]['time_left_to_close_the_thread']) ?>後に閉じられます。
+				<?php endif; ?>
+			<?php endif; ?>
+		</div>
+	<?php endif; ?>
+	<div class="res_button_wrap">
+		<?php if ($resmode && $resform && $resname && !$res_max_over): ?>
+			<script>
+				const add_to_com = () => {
 					const textField = document.getElementById("res_com");
-					const postername = <?= json_encode(htmlspecialchars_decode($resname) . ($en ? '-san' : 'さん'),JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+					const postername = <?= json_encode(htmlspecialchars_decode($resname) . ($en ? '-san' : 'さん'), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 					// テキストフィールドの現在のカーソル位置を取得
 					const startPos = textField.selectionStart;
 					const endPos = textField.selectionEnd;
@@ -219,42 +217,24 @@
 					textField.value = textField.value.substring(0, startPos) + postername + textField.value.substring(endPos);
 					// カーソル位置を更新
 					const newCursorPosition = startPos + postername.length;
-					textField.setSelectionRange(newCursorPosition, newCursorPosition);						// テキストフィールドにフォーカスを設定
+					textField.setSelectionRange(newCursorPosition, newCursorPosition); // テキストフィールドにフォーカスを設定
 					textField.focus();
 				}
-				</script>
-				<button class="copy_button" onclick="add_to_com()"><?php if($en):?>Copy the poster name<?php else:?>投稿者名をコピー<?php endif;?></button>
-			<?php endif; ?>
+			</script>
+			<button class="copy_button" onclick="add_to_com()"><?php if ($en): ?>Copy the poster name<?php else: ?>投稿者名をコピー<?php endif; ?></button>
+		<?php endif; ?>
 
-			<?php if($aikotoba && (!$userdel && !$admindel)):?>
-				<?php if($use_misskey_note && ($resform && $ress[0]['check_elapsed_days'] || $adminpost)):?>
-					<span class="share_button">
-						<a href="?resno=<?=h($res['no'])?>&misskey_note=on" target="_blank" rel="noopener">
-						<span class="icon-Simpleicons-Team-Simple-Misskey"></span> <?php if($en):?>Note<?php else:?>ノート<?php endif;?></a>
-					</span>
-				<?php endif;?>
-				<?php if($use_sns_button):?>
-				<span class="share_button">
-				<?php if($switch_sns):?>
-					<a href="?mode=set_share_server&encoded_t=<?=h($ress[0]['encoded_t'])?>&amp;encoded_u=<?=h($ress[0]['encoded_u'])?><?=h($ress[0]['hide_thumbnail'] ? "&amp;hide_thumbnail=on" : "")?>" onclick="open_sns_server_window(event,<?=h($sns_window_width)?>,<?=h($sns_window_height)?>)" rel="nofollow noopener"><span class="icon-share-from-square-solid"></span>
-					<?php if($en):?>Share on SNS<?php else:?>SNSで共有する<?php endif;?></a>
-				<?php else:?>
-				<a target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?text=<?=h($ress[0]['encoded_t'])?>&amp;url=<?=h($ress[0]['encoded_u'])?>"><span class="icon-twitter"></span>Tweet</a>
-				<?php endif;?>
-				</span>
-				<?php endif; ?>
-			<?php endif; ?>
-
-		<?php if(!$resmode):?>
-			<form action="./?resno=<?=h($res['no'])?>" method="POST" class="res_button">
-			<?php if($resform && !$res_max_over && !$userdel && !$admindel):?>
-				<input type="submit" value="<?php if($en):?>Post to this thread<?php else:?>このスレッドに投稿<?php endif;?>"></form>
-			<?php else:?>
-				<input type="submit" value="<?php if($en):?>View this thread<?php else:?>このスレッドを表示<?php endif;?>"></form>
-			<?php endif;?>
-		<?php endif;?>
-		</div>
-		<?php if(!$resmode):?>
-	<hr>
-	<?php endif;?>
-<?php endforeach;?>
+		<?php if (!$resmode): ?>
+			<form action="./?resno=<?= h($res['no']) ?>" method="POST" class="res_button">
+				<?php if ($resform && !$res_max_over && !$userdel && !$admindel): ?>
+					<input type="submit" value="<?php if ($en): ?>Post to this thread<?php else: ?>このスレッドに投稿<?php endif; ?>">
+			</form>
+		<?php else: ?>
+			<input type="submit" value="<?php if ($en): ?>View this thread<?php else: ?>このスレッドを表示<?php endif; ?>"></form>
+		<?php endif; ?>
+	<?php endif; ?>
+	</div>
+	<?php if (!$resmode): ?>
+		<hr>
+	<?php endif; ?>
+<?php endforeach; ?>
