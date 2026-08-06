@@ -262,6 +262,9 @@ const postFormAndGetResponse = async (formData) => {
  */
 const view_nsfw = (event) => {
   event.preventDefault(); // 通常フォームの送信を中断
+  if (isAutomaticBrowser()) {
+    return;
+  }
   const formData = new FormData();
   formData.append("mode", "view_nsfw");
   formData.append("view_nsfw", "on");
@@ -275,6 +278,9 @@ const view_nsfw = (event) => {
  */
 const age_check = (event) => {
   event.preventDefault(); // 通常フォームの送信を中断
+  if (isAutomaticBrowser()) {
+    return;
+  }
   const formData = new FormData();
   formData.append("mode", "age_check");
   formData.append("agecheck_passed", "on");
