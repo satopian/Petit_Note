@@ -54,6 +54,7 @@
 <br>
 <input type="hidden" name="encoded_t" value="<?=h($encoded_t)?>">
 <input type="hidden" name="encoded_u" value="<?=h($encoded_u)?>">
+<input type="hidden" name="hide_thumbnail" value="<?=h($hide_thumbnail)?>">
 <input type="hidden" name="mode" value="post_share_server">
 <input type="submit" value="<?php if($en):?>Share<?php else:?>シェア<?php endif;?>" class="post_share_button">
 <?php if(!empty($hide_thumbnail) || !empty($set_nsfw_hide_flag)):?>

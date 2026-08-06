@@ -2,7 +2,7 @@
 // Mastodon、misskey等の分散型SNSへ記事を共有するクラス
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
-$sns_share_inc_ver = 20260805;
+$sns_share_inc_ver = 20260806;
 class sns_share
 {
 
@@ -48,9 +48,12 @@ class sns_share
 
 	public static function post_share_server(): void
 	{
-		global $en, $age_check_required_to_view;
+		global $en, $age_check_required_to_view, $set_nsfw, $set_all_images_to_nsfw;
 
 		check_same_origin();
+
+		$hide_thumbnail = filter_input_data('POST', "hide_thumbnail", FILTER_VALIDATE_BOOLEAN);
+		$nsfw_falg = ($hide_thumbnail || $set_nsfw || $age_check_required_to_view || $set_all_images_to_nsfw);
 
 		$sns_server_radio = (string)filter_input_data('POST', "sns_server_radio", FILTER_VALIDATE_URL);
 		$sns_server_radio_for_cookie = (string)filter_input_data('POST', "sns_server_radio"); //directを判定するためurlでバリデーションしていない
@@ -72,7 +75,8 @@ class sns_share
 			} elseif ($sns_server_radio === "https://www.threads.net") {
 				$share_url = "https://www.threads.net/intent/post?text=";
 			} elseif ($sns_server_radio === "https://ch.dlsite.com/pommu") {
-				$share_url = "https://ch.dlsite.com/pommu/intent/posts/create?text=";
+				$pommu_nsfw_falgtext = $nsfw_falg ? "r18=1" : "r18=0";
+				$share_url = "https://ch.dlsite.com/pommu/intent/posts/create?{$pommu_nsfw_falgtext}&text=";
 			} else {
 				$share_url = $sns_server_radio . "/share?text=";
 			}

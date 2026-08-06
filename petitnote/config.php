@@ -556,12 +556,6 @@ $x_frame_options_deny=true;
 
 // SNSシェア機能詳細設定
 
-// シェア機能に、Mastodon、Misskeyの各サーバを含める 
-// 含める: true 含めない: false
-
-$switch_sns = true;
-// $switch_sns = false;
-
 // SNS共有の時に一覧で表示するサーバ
 // 例 	["表示名","https://example.com (SNSのサーバのurl)"],(最後にカンマが必要です)
 
@@ -615,6 +609,12 @@ $misskey_servers=
 	["mk.shrimpia.network","https://mk.shrimpia.network"],
 	
 ];
+
+// いいね機能を有効にする
+// する: true しない: false
+
+$use_clap = true;
+// $use_clap = false;
 
 //SESSION名を独自性のあるものに変更する事で、セキュリティを向上させる事ができます。
 //システムの内部で使用するため覚えておく必要はありません。
