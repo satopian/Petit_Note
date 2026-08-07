@@ -66,7 +66,7 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   /* ダークモードの配色 */
 
   /* 文字色 */
-  --text-color: #e7ebf1;
+  --text-color: hsl(216 16% 82% / 1);
   /* リンクの色 */
   --a-color: #b8bfcb;
   /* リンクホバー */
