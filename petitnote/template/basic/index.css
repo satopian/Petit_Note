@@ -12,6 +12,10 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   --a-color: var(--text-color);
   /* リンクホバー */
   --a-hover-color: var(--text-color);
+  /* SNS共有 */
+  --sns-share-text-color: hsl(0 0% 36% / 1);
+  /* いいね */
+  --clap-text-color: var(--sns-share-text-color);
   /* 背景色 */
   --background-color: #fff;
   /* 掲示板タイトルの文字色 */
@@ -62,19 +66,23 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   /* ダークモードの配色 */
 
   /* 文字色 */
-  --text-color: hsl(211 12% 92% / 1);
+  --text-color: #e7ebf1;
   /* リンクの色 */
-  --a-color: hsl(211 18% 79% / 1);
+  --a-color: #b8bfcb;
   /* リンクホバー */
   --a-hover-color: var(--a-color);
+  /* SNS共有 */
+  --sns-share-text-color: hsl(211 10% 62% / 1);
+  /* いいね */
+  --clap-text-color: var(--sns-share-text-color);
   /* 背景色 */
-  --background-color: hsl(211 22% 14% / 1);
+  --background-color: hsl(212 24% 12% / 1);
   /* 掲示板タイトルの文字色 */
   --title-a-color: var(--a-color);
   /* 記事タイトルの文字色 */
   --article-title-color: var(--a-color);
   /* 記事タイトルの背景色 */
-  --accent-background-color: hsl(211 23% 25% / 1);
+  --accent-background-color: hsl(211 26% 22% / 1);
   /* 記事タイトル背景色のアクセント */
   --strong-accent-background-color: hsl(208 28% 37% / 1);
   /* チェック済みのフォームのラベルの色 */
@@ -179,12 +187,12 @@ a:hover {
 span[data-shareurl] {
   text-decoration: none;
   cursor: pointer;
-  color: var(--a-color);
+  color: var(--sns-share-text-color);
 }
 
 span[data-shareurl]:hover {
   text-decoration: none;
-  color: var(--a-hover-color);
+  color: var(--sns-share-text-color);
 }
 span[data-downloadurl],
 span#pch_close {
@@ -528,6 +536,7 @@ span.txtnon {
 .res_button_wrap > span {
   display: inline-block;
   margin: 10px 0 0 12px;
+  color: var(--clap-text-color);
 }
 .res_button_wrap.clap_wrap {
   margin: 10px 0 0;
@@ -535,6 +544,9 @@ span.txtnon {
 .clap_wrap {
   .ref-target-do-submission {
     text-decoration: none;
+  }
+  .ref-target-do-submission:hover {
+    color: var(--clap-text-color);
   }
 }
 .res_notice_wrap {
@@ -547,12 +559,12 @@ form.res_button {
 }
 form.res_button input {
   padding: 1px 12px;
-  margin: 1em 0 1em;
+  margin: 1.2em 0 0.8em;
 }
 /* 返信フォーム */
 form.res_form {
   text-align: right;
-  margin: 16px 0 5px;
+  margin: 1em 0 5px;
 }
 table.resform {
   margin: 0 0 0 auto;
