@@ -343,7 +343,7 @@ input.delete_button {
 span.info_name {
   display: inline-block;
   border: 1px solid var(--border-color);
-  border-radius: 3px;
+  border-radius: 5px;
   line-height: 1;
   margin: 0 2px 2px 0px;
 }
@@ -353,7 +353,7 @@ span.info_name:hover a {
 span.info_name a,
 span.info_name > span {
   display: block;
-  padding: 5px;
+  padding: 4.2px 6px;
   text-decoration: none;
   font-weight: 600;
   color: var(--name-a-color);
