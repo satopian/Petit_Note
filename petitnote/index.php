@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.0.9';
-$petit_lot='lot.20260809';
+$petit_ver='v3.1.0';
+$petit_lot='lot.20260810';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -482,7 +482,7 @@ function post(): void {
 		error($en?'Please attach an image.':'画像を添付してください。');
 	}
 
-	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 5]) : '';
+	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 10]) : '';
 
 	setcookie("namec",$name,time()+(60*60*24*30),"","",$httpsonly,true);
 	setcookie("urlc",$url,time()+(60*60*24*30),"","",$httpsonly,true);
@@ -2167,7 +2167,7 @@ function edit(): void {
 	$is_admin_set_nsfw = ($admindel && ($sub === $_sub) && ($url === $_url) && ($com === $_com));
 	$host = $is_admin_set_nsfw ? $_host : $host;//管理者による閲覧注意への変更時は投稿者のホスト名を変更しない
 	$userid = ($admindel && !$res_oya_deleted) ? $_userid : $userid;//管理者による変更時は投稿者のidを変更しない
-	$hash = ($admindel && $res_oya_deleted) ? password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 5]) : $_hash;//削除ずみのoyaの編集時は管理者パスを設定。
+	$hash = ($admindel && $res_oya_deleted) ? password_hash($admin_pass,PASSWORD_BCRYPT,['cost' => 10]) : $_hash;//削除ずみのoyaの編集時は管理者パスを設定。
 	$verified = ($admindel && $res_oya_deleted) ? 'adminpost' : $_verified;//削除ずみのoyaの編集時は管理者パスを設定。
 
 	$r_line= "$_no\t$sub\t$name\t$verified\t$com\t$url\t$_imgfile\t$_w\t$_h\t$thumbnail\t$_painttime\t$_log_img_hash\t$_tool\t$pchext\t$_time\t$_first_posted_time\t$host\t$userid\t$hash\t$_oya\n";
