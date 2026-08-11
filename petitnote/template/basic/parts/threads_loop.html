@@ -151,7 +151,7 @@
 						<?php endif; ?>
 
 						<?php if ($res['img'] && $aikotoba) : ?>
-							<div class="clear"></div>
+							<!-- <div class="clear"></div> -->
 							<div class="res_button_wrap clap_wrap">
 								<?php if (isset($use_clap) && $use_clap && ($res['check_elapsed_days'] || $res['clap_count'] > 0)): ?>
 									<span <?php if ($res['check_elapsed_days']): ?>class="ref-target-do-submission" <?php endif; ?> data-mode="clap" data-id="<?= h($res['first_posted_time']) ?>" data-no="<?= h($res['no']) ?>" data-clap-count-id="clapCountId_<?= h($res['no']) ?>_<?= h($res['first_posted_time']) ?>" data-fetch="true"><span class="icon-heart-favorite"></span>
@@ -170,7 +170,7 @@
 						<?php endif; ?>
 
 						<!-- 最後のループの時にhr -->
-						<?php if ($i === $last_key && $resmode): ?>
+						<?php if ($i === $last_key && ($resmode || $res['img'])): ?>
 							<!-- 投稿可能件数日数の罫線との重複回避 -->
 							<?php $maxres_current = (int)$max_res - (int)$i; ?>
 							<?php if ((($maxres_current > 20) && empty($ress[0]['time_left_to_close_the_thread'])) || $adminpost || !$resform || $res_max_over): ?>
