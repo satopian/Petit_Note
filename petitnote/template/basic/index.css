@@ -76,21 +76,21 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   /* いいね */
   --clap-text-color: var(--sns-share-text-color);
   /* 背景色 */
-  --background-color: hsl(212 24% 14% / 1);
+  --background-color: hsl(212 24% 15% / 1);
   /* 掲示板タイトルの文字色 */
   --title-a-color: var(--a-color);
   /* 記事タイトルの文字色 */
   --article-title-color: var(--a-color);
   /* 記事タイトルの背景色 */
-  --accent-background-color: hsl(211 24% 25% / 1);
+  --accent-background-color: hsl(211 24% 26% / 1);
   /* 記事タイトル背景色のアクセント */
-  --strong-accent-background-color: hsl(214 28% 31% / 1);
+  --strong-accent-background-color: hsl(214 28% 33% / 1);
   /* チェック済みのフォームのラベルの色 */
   --checked-color: var(--title-a-color);
   /* チェック済みのフォームの背景色 */
   --checked-background-color: var(--accent-background-color);
   /* ボーダー */
-  --border-color: hsl(215 18% 38% / 1);
+  --border-color: hsl(215 19% 40% / 1);
   /* 点線 */
   --border-dashed-color: var(--border-color);
   /* ラベルのボーダー */
