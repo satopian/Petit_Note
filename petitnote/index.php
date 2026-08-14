@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.5.0';
-$petit_lot='lot.20260812';
+$petit_ver='v3.6.1';
+$petit_lot='lot.20260814';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260803){
+if(!isset($functions_ver)||$functions_ver<20260814){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -612,7 +612,7 @@ function post(): void {
 				}
 			}
 		}
-		$imgfile=$time.$ext;
+		$imgfile=basename($time.$ext);
 
 		rename($upfile,IMG_DIR.$imgfile);
 		if(!is_file(IMG_DIR.$imgfile)){
@@ -954,6 +954,8 @@ function paint(): void {
 		[$picw,$pich]=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
 
 		$_pch_ext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
+		$_pch_ext=basename($_pch_ext);
+		$time=basename($time);
 
 		if($ctype=='pch'&& $_pch_ext){//動画から続き
 			$pchfile = IMG_DIR.$time.$_pch_ext;
@@ -1615,7 +1617,7 @@ function img_replace(): void {
 
 	check_AsyncRequest($upfile);//Asyncリクエストの時は処理を中断
 
-	$imgfile = $time.$imgext;
+	$imgfile = basename($time.$imgext);
 	rename($upfile,IMG_DIR.$imgfile);
 	if(!is_file(IMG_DIR.$imgfile)){
 		closeFile($rp);
@@ -1630,6 +1632,7 @@ function img_replace(): void {
 	if (!$is_upload_img && $repfind) {
 		// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
 		if($pchext = check_pch_ext($temp_basepath,['upload'=>true])){
+			$pchext=basename($pchext);
 			$pch_src = $temp_basepath.$pchext;
 			$pch_dst = IMG_DIR.$time.$pchext;
 			if(copy($pch_src, $pch_dst)){
@@ -1740,7 +1743,7 @@ function img_replace(): void {
 function pchview(): void {
 
 	//不正なクエリパラメータの時は 403 Forbiddenを返す
-	$allowed_keys = array_fill_keys(['mode','pchview','imagefile','id','no'], true);
+	$allowed_keys = array_fill_keys(['mode','pchview','id','no'], true);
 	validateQueryParameters($allowed_keys);
 
 	global $boardname,$skindir,$en,$petit_lot;
@@ -1748,9 +1751,6 @@ function pchview(): void {
 	aikotoba_required_to_view();
 
 	$id = basename((string)filter_input_data('GET', 'id'));//最初に投稿した時刻をidに
-
-	$imagefile = basename((string)filter_input_data('GET', 'imagefile'));
-	$id = $id ?: pathinfo($imagefile, PATHINFO_FILENAME);//旧テンプレート互換
 
 	$no = (string)filter_input_data('GET', 'no',FILTER_VALIDATE_INT);
 	if(!is_file(LOG_DIR."{$no}.log")){
@@ -1769,7 +1769,7 @@ function pchview(): void {
 		}
 		if(strpos($line,"\t".$id."\t")!==false){
 			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=explode("\t",trim($line));
-			if(($id===$first_posted_time || $id===$time) && $no===$_no && $pchext){
+			if($id===$first_posted_time && $no===$_no && $pchext){
 				$resid=$first_posted_time;
 				$flag=true;
 				break;
@@ -1783,11 +1783,16 @@ function pchview(): void {
 	}
 
 	$pchext=basename($pchext);
+	$time=basename($time);
 	$view_replay = in_array($pchext,['.pch','.tgkr']);
 	$pchfile = IMG_DIR.$time.$pchext;
 	if(!$view_replay){
 		error($en?'This operation has failed.':'失敗しました。');
 	}
+	if(!is_file(IMG_DIR.$imgfile)){
+		error($en? 'The article does not exist.':'記事がありません。');
+	}
+
 	[$picw, $pich] = getimagesize(IMG_DIR.$imgfile);
 	$appw = $picw < 200 ? 200 : $picw;
 	$apph = $pich < 200 ? 200 : $pich + 26;
