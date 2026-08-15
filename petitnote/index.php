@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.6.1';
-$petit_lot='lot.20260814';
+$petit_ver='v3.6.3';
+$petit_lot='lot.20260815';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -95,6 +95,19 @@ validateQueryParameters();
  * SQLインジェクションを検知した時は 403 Forbiddenを返す
  */
 rejectSqlInjectionAttempt();
+
+/** 
+ディレクトリ
+*/
+
+// テンポラリ
+defined("TEMP_DIR") || define("TEMP_DIR","temp/");
+// ログ
+defined("LOG_DIR") || define("LOG_DIR","log/");
+// 画像
+defined("IMG_DIR") || define("IMG_DIR","src/");
+// サムネイル
+defined("THUMB_DIR") || define("THUMB_DIR","thumbnail/");
 
 $max_log=($max_log<500) ? 500 : $max_log;//最低500スレッド
 $max_com= $max_com ?? 1000;
@@ -1743,7 +1756,7 @@ function img_replace(): void {
 function pchview(): void {
 
 	//不正なクエリパラメータの時は 403 Forbiddenを返す
-	$allowed_keys = array_fill_keys(['mode','pchview','id','no'], true);
+	$allowed_keys = array_fill_keys(['mode','pchview','imagefile','id','no'], true);
 	validateQueryParameters($allowed_keys);
 
 	global $boardname,$skindir,$en,$petit_lot;
@@ -1751,6 +1764,9 @@ function pchview(): void {
 	aikotoba_required_to_view();
 
 	$id = basename((string)filter_input_data('GET', 'id'));//最初に投稿した時刻をidに
+
+	$imagefile = basename((string)filter_input_data('GET', 'imagefile'));
+	$id = $id ?: pathinfo($imagefile, PATHINFO_FILENAME);//旧テンプレート互換
 
 	$no = (string)filter_input_data('GET', 'no',FILTER_VALIDATE_INT);
 	if(!is_file(LOG_DIR."{$no}.log")){
@@ -1769,7 +1785,7 @@ function pchview(): void {
 		}
 		if(strpos($line,"\t".$id."\t")!==false){
 			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=explode("\t",trim($line));
-			if($id===$first_posted_time && $no===$_no && $pchext){
+			if(($id===$first_posted_time || $id===$time) && $no===$_no && $pchext){
 				$resid=$first_posted_time;
 				$flag=true;
 				break;
@@ -2823,6 +2839,7 @@ function res (): void {
 			$og_name = $_res['name'];
 			$og_resid = $_res['oya'] === 'res' ? $resid : ""; //oyaの時はresidを出さない
 		}
+
 		$_res['clap_count'] = $claps[$_res['first_posted_time']] ?? 0;
 
 		$out[0][]=$_res;

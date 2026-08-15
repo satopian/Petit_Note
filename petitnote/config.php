@@ -650,16 +650,3 @@ $enable_v1_legacy_template_unsafe_get_login = false;
 define("CRYPT_PASS","v25Xc9nZ82a5JPT");//暗号鍵初期値
 define("CRYPT_METHOD","aes-128-cbc");
 define("CRYPT_IV","T3pkYxNyjN7Wz3pu");//半角英数16文字
-
-/*変更不可*/
-
-// 変更しないでください
-// テンポラリ
-define("TEMP_DIR","temp/");
-// ログ
-define("LOG_DIR","log/");
-// 画像
-define("IMG_DIR","src/");
-// 画像
-define("THUMB_DIR","thumbnail/");
-
