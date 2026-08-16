@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.7.0';
+$petit_ver='v3.7.2';
 $petit_lot='lot.20260816';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -832,8 +832,9 @@ function post(): void {
 }
 
 /**
- *  PCHファイルアップロードペイント
+ * PCHファイルアップロードペイント
  * @return array
+ * paint()関数の内部で使用
  */
 function pch_file_upload_paint(): array{
 	global $en, $pmax_w, $pmax_h;
@@ -853,6 +854,10 @@ function pch_file_upload_paint(): array{
 
 	$pchtmp = $_FILES['pchup']['tmp_name'] ?? '';
 
+	if(!$pchtmp){
+		return [];
+	}
+
 	if (isset($_FILES['pchup']['error']) && in_array($_FILES['pchup']['error'], [1, 2])) { //容量オーバー
 		error($en ? 'The file size is too large.' : 'ファイルサイズが大きすぎます。');
 	}
@@ -861,7 +866,9 @@ function pch_file_upload_paint(): array{
 
 		$time = (string)(time() . substr(microtime(), 2, 6));
 		$pchext = pathinfo($pchfilename, PATHINFO_EXTENSION);
+		$pchext = basename($pchext);
 		$pchext = strtolower($pchext); //すべて小文字に
+
 		//拡張子チェック
 		if (!in_array($pchext, ['pch', 'chi', 'psd', 'gif', 'jpg', 'jpeg', 'png', 'webp'])) {
 			safe_unlink($pchtmp);
@@ -900,8 +907,10 @@ function pch_file_upload_paint(): array{
 	return [];
 }
 
-/** 続きを描く
+/**
+ * 続きを描く
  * @return array
+ * paint()関数の内部で使用
  */
 function continue_paint(): array{
 	global $en;
@@ -1027,7 +1036,6 @@ function paint(): void{
 	/** PCHファイルアップロードペイント */
 	$pch_file_upload_paint = pch_file_upload_paint();
 	if (!empty($pch_file_upload_paint)) {
-
 		[$pchup_app, $pchup_picw, $pchup_pich, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks] = $pch_file_upload_paint;
 		$picw = $pchup_picw ?: $picw;
 		$pich = $pchup_pich ?: $pich;
