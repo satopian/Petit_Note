@@ -834,69 +834,68 @@ function post(): void {
 /**
  *  PCHファイルアップロードペイント
  * @return array
-*/
-function pch_file_upload_paint(): array {
-	global $en,$pmax_w,$pmax_h;	
+ */
+function pch_file_upload_paint(): array{
+	global $en, $pmax_w, $pmax_h;
 
-	$adminpost=adminpost_valid();
+	$adminpost = adminpost_valid();
 
-	if(!$adminpost){
+	if (!$adminpost) {
 		return [];
 	}
-	$picw=0;
-	$pich=0;
+	$picw = 0;
+	$pich = 0;
 
-	$app = $imgfile = $pchfile = $img_chi = $img_aco= $img_klecks = "";
+	$app = $imgfile = $pchfile = $img_chi = $img_aco = $img_klecks = "";
 
 	$pchfilename = $_FILES['pchup']['name'] ?? '';
 	$pchfilename = basename($pchfilename);
-	
-	$pchtmp= $_FILES['pchup']['tmp_name'] ?? '';
 
-	if(isset($_FILES['pchup']['error']) && in_array($_FILES['pchup']['error'],[1,2])){//容量オーバー
-		error($en? 'The file size is too large.':'ファイルサイズが大きすぎます。');
-	} 
+	$pchtmp = $_FILES['pchup']['tmp_name'] ?? '';
 
-	if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK){
+	if (isset($_FILES['pchup']['error']) && in_array($_FILES['pchup']['error'], [1, 2])) { //容量オーバー
+		error($en ? 'The file size is too large.' : 'ファイルサイズが大きすぎます。');
+	}
 
-		$time = (string)(time().substr(microtime(),2,6));
-		$pchext=pathinfo($pchfilename, PATHINFO_EXTENSION);
-		$pchext=strtolower($pchext);//すべて小文字に
+	if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK) {
+
+		$time = (string)(time() . substr(microtime(), 2, 6));
+		$pchext = pathinfo($pchfilename, PATHINFO_EXTENSION);
+		$pchext = strtolower($pchext); //すべて小文字に
 		//拡張子チェック
-		if (!in_array($pchext, ['pch','chi','psd','gif','jpg','jpeg','png','webp'])) {
+		if (!in_array($pchext, ['pch', 'chi', 'psd', 'gif', 'jpg', 'jpeg', 'png', 'webp'])) {
 			safe_unlink($pchtmp);
-			error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
+			error($en ? 'This file is an unsupported format.' : '対応していないファイル形式です。');
 		}
-		$pchup = TEMP_DIR.'pchup-'.$time.'-tmp.'.$pchext;//アップロードされるファイル名
+		$pchup = TEMP_DIR . 'pchup-' . $time . '-tmp.' . $pchext; //アップロードされるファイル名
 
 		$move_uploaded = move_uploaded_file($pchtmp, $pchup);
-		if(!$move_uploaded){//アップロードは成功した?
+		if (!$move_uploaded) { //アップロードは成功した?
 			safe_unlink($pchtmp);
-			error($en?'This operation has failed.':'失敗しました。');
-		
+			error($en ? 'This operation has failed.' : '失敗しました。');
 		}
 		$mime_type = mime_content_type($pchup);
-		if(($pchext==="pch") && ($mime_type === "application/octet-stream") && is_neo($pchup)){
-		$app='neo';
-			if($get_pch_size = get_pch_size($pchup)){
-				[$picw,$pich]=$get_pch_size;//pchの幅と高さを取得
+		if (($pchext === "pch") && ($mime_type === "application/octet-stream") && is_neo($pchup)) {
+			$app = 'neo';
+			if ($get_pch_size = get_pch_size($pchup)) {
+				[$picw, $pich] = $get_pch_size; //pchの幅と高さを取得
 			}
-		$pchfile = $pchup;
-		} elseif(($pchext==="chi") && ($mime_type === "application/octet-stream")){
-				$app='chi';
+			$pchfile = $pchup;
+		} elseif (($pchext === "chi") && ($mime_type === "application/octet-stream")) {
+			$app = 'chi';
 			$img_chi = $pchup;
-		} elseif(($pchext==="psd") && ($mime_type === "image/vnd.adobe.photoshop")){
-				$app='klecks';
+		} elseif (($pchext === "psd") && ($mime_type === "image/vnd.adobe.photoshop")) {
+			$app = 'klecks';
 			$img_klecks = $pchup;
-		} elseif(get_image_type($pchup)){
-			thumbnail_gd::thumb(TEMP_DIR,$pchup,$time,$pmax_w,$pmax_h,['toolarge'=>true]);
-			[$picw,$pich] = getimagesize($pchup);
+		} elseif (get_image_type($pchup)) {
+			thumbnail_gd::thumb(TEMP_DIR, $pchup, $time, $pmax_w, $pmax_h, ['toolarge' => true]);
+			[$picw, $pich] = getimagesize($pchup);
 			$imgfile = $pchup;
-		}else{
+		} else {
 			safe_unlink($pchup);
-			error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
+			error($en ? 'This file is an unsupported format.' : '対応していないファイル形式です。');
 		}
-		return [$app,$picw, $pich, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks];
+		return [$app, $picw, $pich, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks];
 	}
 	return [];
 }
@@ -996,21 +995,21 @@ function continue_paint(): array{
 /**
  * お絵かき画面
  */
-function paint(): void {
+function paint(): void{
 
-	global $boardname,$skindir,$pmax_w,$pmax_h,$pmin_w,$pmin_h,$max_px,$en;
-	global $usercode,$petit_lot,$httpsonly;
+	global $boardname, $skindir, $pmax_w, $pmax_h, $pmin_w, $pmin_h, $max_px, $en;
+	global $usercode, $petit_lot, $httpsonly;
 
 	//禁止ホストをチェック
 	check_badhost();
 	check_same_origin();
-	
-	$app = (string)filter_input_data('POST','app');
-	$picw = (int)filter_input_data('POST','picw',FILTER_VALIDATE_INT);
-	$pich = (int)filter_input_data('POST','pich',FILTER_VALIDATE_INT);
-	$resto = t(filter_input_data('POST', 'resto',FILTER_VALIDATE_INT));
-	if(strlen($resto)>1000){
-		error($en?'Unknown error':'問題が発生しました。');
+
+	$app = (string)filter_input_data('POST', 'app');
+	$picw = (int)filter_input_data('POST', 'picw', FILTER_VALIDATE_INT);
+	$pich = (int)filter_input_data('POST', 'pich', FILTER_VALIDATE_INT);
+	$resto = t(filter_input_data('POST', 'resto', FILTER_VALIDATE_INT));
+	if (strlen($resto) > 1000) {
+		error($en ? 'Unknown error' : '問題が発生しました。');
 	}
 
 	$picw = max($picw, $pmin_w); // 最低の幅チェック
@@ -1018,119 +1017,119 @@ function paint(): void {
 	$picw = min($picw, $pmax_w); // 最大の幅チェック
 	$pich = min($pich, $pmax_h); // 最大の高さチェック
 
-	setcookie("appc", $app , time()+(60*60*24*30),"","",$httpsonly,true);//アプレット選択
-	setcookie("picwc", $picw , time()+(60*60*24*30),"","",$httpsonly,true);//幅
-	setcookie("pichc", $pich , time()+(60*60*24*30),"","",$httpsonly,true);//高さ
+	setcookie("appc", $app, time() + (60 * 60 * 24 * 30), "", "", $httpsonly, true); //アプレット選択
+	setcookie("picwc", $picw, time() + (60 * 60 * 24 * 30), "", "", $httpsonly, true); //幅
+	setcookie("pichc", $pich, time() + (60 * 60 * 24 * 30), "", "", $httpsonly, true); //高さ
 
-	$pwd=$repcode=$imgfile=$pchfile=$img_chi=$img_aco=$img_klecks="";
+	$pwd = $repcode = $imgfile = $pchfile = $img_chi = $img_aco = $img_klecks = "";
 
-	$rep=false;
-	$paintmode='paintcom';
+	$rep = false;
+	$paintmode = 'paintcom';
 
 	/** PCHファイルアップロードペイント */
 	$pch_file_upload_paint = pch_file_upload_paint();
-	if(!empty($pch_file_upload_paint)){
-	
-	[$pchup_app, $pchup_picw, $pchup_pich, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks] = $pch_file_upload_paint;
+	if (!empty($pch_file_upload_paint)) {
+
+		[$pchup_app, $pchup_picw, $pchup_pich, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks] = $pch_file_upload_paint;
 		$picw = $pchup_picw ?: $picw;
 		$pich = $pchup_pich ?: $pich;
 		$app = $pchup_app ?: $app;
 	}
 
-	$hide_animation=false;
+	$hide_animation = false;
 
 	/** 続きを描く*/
 	$mode = (string)filter_input_data('POST', 'mode');
-	if($mode==="contpaint"){
+	if ($mode === "contpaint") {
 		$continue_paint = continue_paint();
-		if(!empty($continue_paint)){
+		if (!empty($continue_paint)) {
 			[$resto, $id, $no, $pwd, $picw, $pich, $rep, $repcode, $hide_animation, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks] = $continue_paint;
 		}
 	}
 
-	check_AsyncRequest();//Asyncリクエストの時は処理を中断
+	check_AsyncRequest(); //Asyncリクエストの時は処理を中断
 
 	//AXNOS Paint用
 	//画像の幅と高さが最大値を超えている時は、画像の幅と高さを優先する
 	$pmax_w = max($picw, $pmax_w); // 最大幅を元画像にあわせる
 	$pmax_h = max($pich, $pmax_h); // 最大高を元画像にあわせる
-	$pmax_w = min($pmax_w,2000); // 2000px以上にはならない
-	$pmax_h = min($pmax_h,2000); // 2000px以上にはならない
+	$pmax_w = min($pmax_w, 2000); // 2000px以上にはならない
+	$pmax_h = min($pmax_h, 2000); // 2000px以上にはならない
 
 	$pmin_w = min($picw, $pmin_w); // 最小幅を元画像にあわせる
 	$pmin_h = min($pich, $pmin_h); // 最小高を元画像にあわせる
 	$pmin_w = max($pmin_w, 8); // 8px以下にはならない
 	$pmin_h = max($pmin_h, 8); // 8px以下にはならない
 
-	$parameter_day = date("Ymd");//JavaScriptのキャッシュ制御
+	$parameter_day = date("Ymd"); //JavaScriptのキャッシュ制御
 
-	$admin_pass= null;
+	$admin_pass = null;
 	//投稿可能な最大値
 	$max_pch = get_upload_max_filesize();
 
-	switch($app){
-		case 'chi'://litaChix
-		
-			$tool='chi';
+	switch ($app) {
+		case 'chi': //litaChix
+
+			$tool = 'chi';
 			// HTML出力
-			$templete='paint_chi.html';
-			include __DIR__.'/'.$skindir.$templete;
+			$templete = 'paint_chi.html';
+			include __DIR__ . '/' . $skindir . $templete;
 			exit();
 
 		case 'tegaki':
 
-			$tool ='tegaki';
-			$templete='paint_tegaki.html';
-			include __DIR__.'/'.$skindir.$templete;
+			$tool = 'tegaki';
+			$templete = 'paint_tegaki.html';
+			include __DIR__ . '/' . $skindir . $templete;
 			exit();
 		case 'axnos':
 
-			$tool ='axnos';
-			$templete='paint_axnos.html';
-			include __DIR__.'/'.$skindir.$templete;
+			$tool = 'axnos';
+			$templete = 'paint_axnos.html';
+			include __DIR__ . '/' . $skindir . $templete;
 			exit();
 
 		case 'klecks':
 
-			$tool ='klecks';
-			$templete='paint_klecks.html';
-			include __DIR__.'/'.$skindir.$templete;
+			$tool = 'klecks';
+			$templete = 'paint_klecks.html';
+			include __DIR__ . '/' . $skindir . $templete;
 			exit();
 
-		case 'neo'://PaintBBS NEO
+		case 'neo': //PaintBBS NEO
 
-			$tool='neo';
-			$anime= true;//常にtrue
-			$appw = $picw + 150;//NEOの幅
-			$apph = $pich + 172;//NEOの高さ
-			$appw = max($appw,450);//最低幅
-			$apph = max($apph,560);//最低高
+			$tool = 'neo';
+			$anime = true; //常にtrue
+			$appw = $picw + 150; //NEOの幅
+			$apph = $pich + 172; //NEOの高さ
+			$appw = max($appw, 450); //最低幅
+			$apph = max($apph, 560); //最低高
 			//動的パレット
-			$palettetxt = $en? 'palette_en.txt' : 'palette.txt';
-			check_file(__DIR__.'/'.$palettetxt);  
-			$lines =file($palettetxt);
-			$pal=[];
-			$arr_dynp=[];
-			$arr_pal=[];
+			$palettetxt = $en ? 'palette_en.txt' : 'palette.txt';
+			check_file(__DIR__ . '/' . $palettetxt);
+			$lines = file($palettetxt);
+			$pal = [];
+			$arr_dynp = [];
+			$arr_pal = [];
 			$initial_palette = 'Palettes[0] = "#000000\n#FFFFFF\n#B47575\n#888888\n#FA9696\n#C096C0\n#FFB6FF\n#8080FF\n#25C7C9\n#E7E58D\n#E7962D\n#99CB7B\n#FCECE2\n#F9DDCF";';
-			foreach ( $lines as $i => $line ) {
-				$line=str_replace(["\r","\n","\t"],"",$line);
-				[$pid,$pname,$pal[0],$pal[2],$pal[4],$pal[6],$pal[8],$pal[10],$pal[1],$pal[3],$pal[5],$pal[7],$pal[9],$pal[11],$pal[12],$pal[13]] = explode(",", $line);
-				$arr_dynp[]=h($pname);
-				$p_cnt=$i+1;
+			foreach ($lines as $i => $line) {
+				$line = str_replace(["\r", "\n", "\t"], "", $line);
+				[$pid, $pname, $pal[0], $pal[2], $pal[4], $pal[6], $pal[8], $pal[10], $pal[1], $pal[3], $pal[5], $pal[7], $pal[9], $pal[11], $pal[12], $pal[13]] = explode(",", $line);
+				$arr_dynp[] = h($pname);
+				$p_cnt = $i + 1;
 				ksort($pal);
-				$arr_pal[$i] = 'Palettes['.h($p_cnt).'] = "#'.h(implode('\n#',$pal)).'";';
+				$arr_pal[$i] = 'Palettes[' . h($p_cnt) . '] = "#' . h(implode('\n#', $pal)) . '";';
 			}
-			$palettes=$initial_palette.implode('',$arr_pal);
+			$palettes = $initial_palette . implode('', $arr_pal);
 			$palsize = count($arr_dynp) + 1;
-			$admin_pass= null;
+			$admin_pass = null;
 			// HTML出力
-			$templete='paint_neo.html';
-			include __DIR__.'/'.$skindir.$templete;
+			$templete = 'paint_neo.html';
+			include __DIR__ . '/' . $skindir . $templete;
 			exit();
 
 		default:
-			error($en?'This operation has failed.':'失敗しました。');
+			error($en ? 'This operation has failed.' : '失敗しました。');
 	}
 }
 
