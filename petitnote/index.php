@@ -985,7 +985,6 @@ function continue_paint(): array{
 			$pwd = bin2hex($pwd); //16進数に
 		}
 		$userip = get_uip();
-		$paintmode = 'picrep';
 		$id = $time;	//テンプレートでも使用。
 		$repcode = $no . '-' . $id . '-' . hash('sha256', $userip . random_bytes(16));
 	}
@@ -1023,8 +1022,7 @@ function paint(): void{
 
 	$pwd = $repcode = $imgfile = $pchfile = $img_chi = $img_aco = $img_klecks = "";
 
-	$rep = false;
-	$paintmode = 'paintcom';
+	$paintmode = 'paintcom';//テンプレート互換
 
 	/** PCHファイルアップロードペイント */
 	$pch_file_upload_paint = pch_file_upload_paint();
@@ -1038,6 +1036,7 @@ function paint(): void{
 
 	$hide_animation = false;
 
+	$rep = false;
 	/** 続きを描く*/
 	$mode = (string)filter_input_data('POST', 'mode');
 	if ($mode === "contpaint") {
