@@ -61,7 +61,7 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 変換して新しくできたログファイルで上書きすると既存の投稿は消えてしまいますのでご注意ください。
 
 ## 履歴
-最新バージョンに関する情報は[リリースノート](https://github.com/satopian/Petit_Note/releases/latest)をご覧ください。  
+最新情報は[リリースノート](https://github.com/satopian/Petit_Note/releases/latest)に記載しています。  
   
 - [2026/01/04 ~ ](./chengelog/2026.md)
 - [2025/1/1 ~ 2025/12/31](./chengelog/2025.md)
