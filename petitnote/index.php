@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.6.3';
-$petit_lot='lot.20260815';
+$petit_ver='v3.7.0';
+$petit_lot='lot.20260816';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -830,6 +830,169 @@ function post(): void {
 	redirect("./?resno={$resno}&resid={$time}");
 
 }
+
+/**
+ *  PCHファイルアップロードペイント
+ * @return array
+*/
+function pch_file_upload_paint(): array {
+	global $en,$pmax_w,$pmax_h;	
+
+	$adminpost=adminpost_valid();
+
+	if(!$adminpost){
+		return [];
+	}
+	$picw=0;
+	$pich=0;
+
+	$app = $imgfile = $pchfile = $img_chi = $img_aco= $img_klecks = "";
+
+	$pchfilename = $_FILES['pchup']['name'] ?? '';
+	$pchfilename = basename($pchfilename);
+	
+	$pchtmp= $_FILES['pchup']['tmp_name'] ?? '';
+
+	if(isset($_FILES['pchup']['error']) && in_array($_FILES['pchup']['error'],[1,2])){//容量オーバー
+		error($en? 'The file size is too large.':'ファイルサイズが大きすぎます。');
+	} 
+
+	if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK){
+
+		$time = (string)(time().substr(microtime(),2,6));
+		$pchext=pathinfo($pchfilename, PATHINFO_EXTENSION);
+		$pchext=strtolower($pchext);//すべて小文字に
+		//拡張子チェック
+		if (!in_array($pchext, ['pch','chi','psd','gif','jpg','jpeg','png','webp'])) {
+			safe_unlink($pchtmp);
+			error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
+		}
+		$pchup = TEMP_DIR.'pchup-'.$time.'-tmp.'.$pchext;//アップロードされるファイル名
+
+		$move_uploaded = move_uploaded_file($pchtmp, $pchup);
+		if(!$move_uploaded){//アップロードは成功した?
+			safe_unlink($pchtmp);
+			error($en?'This operation has failed.':'失敗しました。');
+		
+		}
+		$mime_type = mime_content_type($pchup);
+		if(($pchext==="pch") && ($mime_type === "application/octet-stream") && is_neo($pchup)){
+		$app='neo';
+			if($get_pch_size = get_pch_size($pchup)){
+				[$picw,$pich]=$get_pch_size;//pchの幅と高さを取得
+			}
+		$pchfile = $pchup;
+		} elseif(($pchext==="chi") && ($mime_type === "application/octet-stream")){
+				$app='chi';
+			$img_chi = $pchup;
+		} elseif(($pchext==="psd") && ($mime_type === "image/vnd.adobe.photoshop")){
+				$app='klecks';
+			$img_klecks = $pchup;
+		} elseif(get_image_type($pchup)){
+			thumbnail_gd::thumb(TEMP_DIR,$pchup,$time,$pmax_w,$pmax_h,['toolarge'=>true]);
+			[$picw,$pich] = getimagesize($pchup);
+			$imgfile = $pchup;
+		}else{
+			safe_unlink($pchup);
+			error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
+		}
+		return [$app,$picw, $pich, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks];
+	}
+	return [];
+}
+
+/** 続きを描く
+ * @return array
+ */
+function continue_paint(): array{
+	global $en;
+
+	$mode = (string)filter_input_data('POST', 'mode');
+
+	if ($mode !== "contpaint") {
+		return [];
+	}
+
+	$imgfile = basename((string)filter_input_data('POST', 'imgfile'));
+	$ctype = (string)filter_input_data('POST', 'ctype');
+	$type = (string)filter_input_data('POST', 'type');
+	$no = (string)filter_input_data('POST', 'no', FILTER_VALIDATE_INT);
+	$time = basename((string)filter_input_data('POST', 'time'));
+	$cont_paint_same_thread = (bool)filter_input_data('POST', 'cont_paint_same_thread', FILTER_VALIDATE_BOOLEAN);
+
+	$id = $pwd = $resto = $rep = $repcode = $pchfile = $img_chi = $img_aco = $img_klecks = "";
+
+	session_sta();
+	unset($_SESSION['enableappselect']);
+
+	if (is_file(LOG_DIR . "{$no}.log")) {
+		if ($type !== 'rep') {
+			$resto = $cont_paint_same_thread ? $no : '';
+		}
+	}
+	if (!is_file(IMG_DIR . $imgfile)) {
+		error($en ? 'The article does not exist.' : '記事がありません。');
+	}
+	$find = false;
+	$rp = fopen(LOG_DIR . "{$no}.log", "r");
+	while ($_line = fgets($rp)) {
+		if (strpos($_line, "\t" . $imgfile . "\t") !== false) {
+			[$_no,,,,,, $_imgfile,,,,,, $_tool,, $_time, $_first_posted_time,] = explode("\t", trim($_line));
+			if ($no === $_no && $time === $_time && $imgfile === $_imgfile && $_tool !== 'upload') {
+				$find = true;
+				break;
+			}
+		}
+	}
+	closeFile($rp);
+	if (!$find) {
+		error($en ? 'This operation has failed.' : '失敗しました。');
+	}
+
+	[$picw, $pich] = getimagesize(IMG_DIR . $imgfile); //キャンバスサイズ
+
+	$_pch_ext = check_pch_ext(IMG_DIR . $time, ['upload' => true]);
+	$_pch_ext = basename($_pch_ext);
+	$time = basename($time);
+
+	if ($ctype == 'pch' && $_pch_ext) { //動画から続き
+		$pchfile = IMG_DIR . $time . $_pch_ext;
+	}
+
+	$imgfile = IMG_DIR . $imgfile;
+
+	if ($ctype == 'img') { //画像から続き
+		if ($_pch_ext === '.chi') {
+			$img_chi = IMG_DIR . $time . '.chi';
+		}
+		if (is_file(IMG_DIR . $time . '.aco')) {
+			$img_aco = IMG_DIR . $time . '.aco';
+		}
+		if ($_pch_ext === '.psd') {
+			$img_klecks = IMG_DIR . $time . '.psd';
+		}
+	}
+
+	$hide_animation = (bool)filter_input_data('POST', 'hide_animation', FILTER_VALIDATE_BOOLEAN);
+	$hide_animation = $hide_animation ? 'true' : 'false';
+	if ($type === 'rep') { //画像差し換え
+		$rep = true;
+		$pwd = t(filter_input_data('POST', 'pwd'));
+		$pwd = $pwd ?: t(filter_input_data('COOKIE', 'pwdc')); //未入力ならCookieのパスワード
+		if (strlen($pwd) > 100) error($en ? 'Password is too long.' : 'パスワードが長すぎます。');
+		if ($pwd) {
+			$pwd = basename($pwd);
+			$pwd = openssl_encrypt($pwd, CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV); //暗号化
+			$pwd = bin2hex($pwd); //16進数に
+		}
+		$userip = get_uip();
+		$paintmode = 'picrep';
+		$id = $time;	//テンプレートでも使用。
+		$repcode = $no . '-' . $id . '-' . hash('sha256', $userip . random_bytes(16));
+	}
+	return [$resto, $id, $no, $pwd, $picw, $pich, $rep, $repcode, $hide_animation, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks];
+}
+
 /**
  * お絵かき画面
  */
@@ -859,151 +1022,29 @@ function paint(): void {
 	setcookie("picwc", $picw , time()+(60*60*24*30),"","",$httpsonly,true);//幅
 	setcookie("pichc", $pich , time()+(60*60*24*30),"","",$httpsonly,true);//高さ
 
-	$mode = (string)filter_input_data('POST', 'mode');
+	$pwd=$repcode=$imgfile=$pchfile=$img_chi=$img_aco=$img_klecks="";
 
-	$imgfile='';
-	$oekaki_id='';
-	$pchfile='';
-	$img_chi='';
-	$img_aco='';
-	$img_klecks='';
 	$rep=false;
 	$paintmode='paintcom';
 
-	$adminpost=adminpost_valid();
-
-	//pchファイルアップロードペイント
-	if($adminpost){
-
-		$pchfilename = $_FILES['pchup']['name'] ?? '';
-		$pchfilename = basename($pchfilename);
-		
-		$pchtmp= $_FILES['pchup']['tmp_name'] ?? '';
-
-		if(isset($_FILES['pchup']['error']) && in_array($_FILES['pchup']['error'],[1,2])){//容量オーバー
-			error($en? 'The file size is too large.':'ファイルサイズが大きすぎます。');
-		} 
-
-		if ($pchtmp && $_FILES['pchup']['error'] === UPLOAD_ERR_OK){
+	/** PCHファイルアップロードペイント */
+	$pch_file_upload_paint = pch_file_upload_paint();
+	if(!empty($pch_file_upload_paint)){
 	
-			$time = (string)(time().substr(microtime(),2,6));
-			$pchext=pathinfo($pchfilename, PATHINFO_EXTENSION);
-			$pchext=strtolower($pchext);//すべて小文字に
-			//拡張子チェック
-			if (!in_array($pchext, ['pch','chi','psd','gif','jpg','jpeg','png','webp'])) {
-				safe_unlink($pchtmp);
-				error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
-			}
-			$pchup = TEMP_DIR.'pchup-'.$time.'-tmp.'.$pchext;//アップロードされるファイル名
-
-			$move_uploaded = move_uploaded_file($pchtmp, $pchup);
-			if(!$move_uploaded){//アップロードは成功した?
-				safe_unlink($pchtmp);
-				error($en?'This operation has failed.':'失敗しました。');
-			
-			}
-			$mime_type = mime_content_type($pchup);
-			if(($pchext==="pch") && ($mime_type === "application/octet-stream") && is_neo($pchup)){
-			$app='neo';
-				if($get_pch_size = get_pch_size($pchup)){
-					[$picw,$pich]=$get_pch_size;//pchの幅と高さを取得
-				}
-			$pchfile = $pchup;
-			} elseif(($pchext==="chi") && ($mime_type === "application/octet-stream")){
-					$app='chi';
-				$img_chi = $pchup;
-			} elseif(($pchext==="psd") && ($mime_type === "image/vnd.adobe.photoshop")){
-					$app='klecks';
-				$img_klecks = $pchup;
-			} elseif(in_array($pchext, ['gif','jpg','jpeg','png','webp']) && in_array($mime_type, ['image/gif', 'image/jpeg', 'image/png','image/webp'])){
-				$file_name=pathinfo($pchup,PATHINFO_FILENAME);
-				thumbnail_gd::thumb(TEMP_DIR,$pchup,$time,$pmax_w,$pmax_h,['toolarge'=>true]);
-				[$picw,$pich] = getimagesize($pchup);
-				$imgfile = $pchup;
-			}else{
-				safe_unlink($pchup);
-				error($en? 'This file is an unsupported format.':'対応していないファイル形式です。');
-			}
-		}
+	[$pchup_app, $pchup_picw, $pchup_pich, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks] = $pch_file_upload_paint;
+		$picw = $pchup_picw ?: $picw;
+		$pich = $pchup_pich ?: $pich;
+		$app = $pchup_app ?: $app;
 	}
-	$repcode='';
+
 	$hide_animation=false;
+
+	/** 続きを描く*/
+	$mode = (string)filter_input_data('POST', 'mode');
 	if($mode==="contpaint"){
-
-		$imgfile = basename((string)filter_input_data('POST','imgfile'));
-		$ctype = (string)filter_input_data('POST', 'ctype');
-		$type = (string)filter_input_data('POST', 'type');
-		$no = (string)filter_input_data('POST', 'no',FILTER_VALIDATE_INT);
-		$time = basename((string)filter_input_data('POST', 'time'));
-		$cont_paint_same_thread=(bool)filter_input_data('POST', 'cont_paint_same_thread',FILTER_VALIDATE_BOOLEAN);
-
-		session_sta();
-		unset ($_SESSION['enableappselect']);
-
-		if(is_file(LOG_DIR."{$no}.log")){
-			if($type!=='rep'){
-				$resto = $cont_paint_same_thread ? $no : '';
-			}
-		}
-		if(!is_file(IMG_DIR.$imgfile)){
-			error($en? 'The article does not exist.':'記事がありません。');
-		}
-		$find=false;
-		$rp=fopen(LOG_DIR."{$no}.log","r");
-		while($_line=fgets($rp)){
-			if(strpos($_line,"\t".$imgfile."\t")!==false){
-				[$_no,,,,,,$_imgfile,,,,,,$_tool,,$_time,$_first_posted_time,]=explode("\t",trim($_line));
-				if($no===$_no && $time===$_time && $imgfile === $_imgfile && $_tool !== 'upload'){
-					$find=true;
-					break;
-				}
-			}
-		}
-		closeFile($rp);
-		if(!$find){
-			error($en?'This operation has failed.':'失敗しました。');
-		}
-
-		[$picw,$pich]=getimagesize(IMG_DIR.$imgfile);//キャンバスサイズ
-
-		$_pch_ext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
-		$_pch_ext=basename($_pch_ext);
-		$time=basename($time);
-
-		if($ctype=='pch'&& $_pch_ext){//動画から続き
-			$pchfile = IMG_DIR.$time.$_pch_ext;
-		}
-
-		$imgfile = IMG_DIR.$imgfile;
-
-		if($ctype=='img'){//画像から続き
-			if($_pch_ext==='.chi'){
-				$img_chi =IMG_DIR.$time.'.chi';
-			}
-			if(is_file(IMG_DIR.$time.'.aco')){
-				$img_aco =IMG_DIR.$time.'.aco';
-			}
-			if($_pch_ext==='.psd'){
-				$img_klecks =IMG_DIR.$time.'.psd';
-			}
-		}
-
-		$hide_animation = (bool)filter_input_data('POST','hide_animation',FILTER_VALIDATE_BOOLEAN);
-		$hide_animation = $hide_animation ? 'true' : 'false';
-		if($type==='rep'){//画像差し換え
-			$rep=true;
-			$pwd = t(filter_input_data('POST', 'pwd'));
-			$pwd=$pwd ?: t(filter_input_data('COOKIE','pwdc'));//未入力ならCookieのパスワード
-			if(strlen($pwd) > 100) error($en? 'Password is too long.':'パスワードが長すぎます。');
-			if($pwd){
-				$pwd=basename($pwd);
-				$pwd=openssl_encrypt ($pwd,CRYPT_METHOD, CRYPT_PASS, true, CRYPT_IV);//暗号化
-				$pwd=bin2hex($pwd);//16進数に
-			}
-			$userip = get_uip();
-			$paintmode='picrep';
-			$id=$time;	//テンプレートでも使用。
-			$repcode = $no.'-'.$id.'-'.hash('sha256', $userip.random_bytes(16));
+		$continue_paint = continue_paint();
+		if(!empty($continue_paint)){
+			[$resto, $id, $no, $pwd, $picw, $pich, $rep, $repcode, $hide_animation, $imgfile, $pchfile, $img_chi, $img_aco, $img_klecks] = $continue_paint;
 		}
 	}
 
@@ -1091,8 +1132,8 @@ function paint(): void {
 		default:
 			error($en?'This operation has failed.':'失敗しました。');
 	}
-
 }
+
 /**
  *  お絵かきコメント
  */ 
