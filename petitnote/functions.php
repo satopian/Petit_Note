@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260803;
+$functions_ver=20260814;
 
 /**
  * 編集モードログアウト
@@ -204,7 +204,7 @@ function adminpost(): void {
 		check_csrf_token();
 	}
 	//禁止ホストをチェック
-	check_badhost();
+	check_badhost(['admin_in'=>true]);
 	//投稿間隔をチェック
 	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
@@ -243,7 +243,7 @@ function admin_del(): void {
 	}
 
 	//禁止ホストをチェック
-	check_badhost();
+	check_badhost(['admin_in'=>true]);
 	//投稿間隔をチェック
 	check_submission_interval();
 	//Fetch API以外からのPOSTを拒否
@@ -2050,6 +2050,7 @@ function validateQueryParameters($allowed_keys=[]): void {
 	}
 
 	$resno=filter_input_data('GET','resno',FILTER_VALIDATE_INT);
+	$no=filter_input_data('GET','no',FILTER_VALIDATE_INT);
 	$page=filter_input_data('GET','page',FILTER_VALIDATE_INT);
 	$id=filter_input_data('GET','id',FILTER_VALIDATE_INT);
 	$resid=filter_input_data('GET','resid',FILTER_VALIDATE_INT);
@@ -2059,6 +2060,7 @@ function validateQueryParameters($allowed_keys=[]): void {
 	if(
 		!empty($invalid_keys)||
 		$resno===false||
+		$no===false||
 		$page===false||
 		$id===false||
 		$resid===false||

@@ -66,7 +66,9 @@
 									<?php if ($res['userid']): ?><span>ID:<?= h($res['userid']) ?></span><?php endif; ?>
 									<span><?= h($res['date']) ?></span>
 									<?php if ($res['img']): ?>
-										<br>
+										<?php if ($res['tool'] || $res['painttime']): ?>
+											<br>
+										<?php endif; ?>
 										<?php if ($res['tool']): ?><span>Tool:<?= h($res['tool']) ?></span><?php endif; ?>
 										<?php if ($res['painttime']): ?>
 											<span>
@@ -149,13 +151,13 @@
 						<?php endif; ?>
 
 						<?php if ($res['img'] && $aikotoba) : ?>
-							<div class="clear"></div>
+							<!-- <div class="clear"></div> -->
 							<div class="res_button_wrap clap_wrap">
-								<?php if (isset($use_clap) && $use_clap && ($ress[0]['check_elapsed_days'] || $res['clap_count'] > 0)): ?>
-									<span <?php if ($ress[0]['check_elapsed_days']): ?>class="ref-target-do-submission" <?php endif; ?> data-mode="clap" data-id="<?= h($res['first_posted_time']) ?>" data-no="<?= h($res['no']) ?>" data-clap-count-id="clapCountId_<?= h($res['no']) ?>_<?= h($res['first_posted_time']) ?>" data-fetch="true"><span class="icon-heart-favorite"></span>
+								<?php if (isset($use_clap) && $use_clap && ($res['check_elapsed_days'] || $res['clap_count'] > 0)): ?>
+									<span <?php if ($res['check_elapsed_days']): ?>class="ref-target-do-submission" <?php endif; ?> data-mode="clap" data-id="<?= h($res['first_posted_time']) ?>" data-no="<?= h($res['no']) ?>" data-clap-count-id="clapCountId_<?= h($res['no']) ?>_<?= h($res['first_posted_time']) ?>" data-fetch="true"><span class="icon-heart-favorite"></span>
 										<?php if ($en): ?>Like <?php else: ?>いいね <?php endif; ?><span id="clapCountId_<?= h($res['no']) ?>_<?= h($res['first_posted_time']) ?>"><?php if (isset($res['clap_count']) && $res['clap_count'] > 0): ?>x <?= h($res['clap_count']) ?><?php endif; ?></span></span>
 								<?php endif; ?>
-								<?php if ($use_misskey_note && $ress[0]['check_elapsed_days']): ?>
+								<?php if ($use_misskey_note && $res['check_elapsed_days']): ?>
 									<span class="ref-target-do-submission" data-mode="before_misskey_note" data-no="<?= h($res['no']) ?>" data-id="<?= h($res['time']) ?>" data-target="_blank"><span class="icon-Simpleicons-Team-Simple-Misskey"></span>
 										<?php if ($en): ?>Note<?php else: ?>ノート<?php endif; ?></span>
 								<?php endif; ?>
@@ -168,7 +170,7 @@
 						<?php endif; ?>
 
 						<!-- 最後のループの時にhr -->
-						<?php if ($i === $last_key && $resmode): ?>
+						<?php if ($i === $last_key && ($resmode || $res['img'])): ?>
 							<!-- 投稿可能件数日数の罫線との重複回避 -->
 							<?php $maxres_current = (int)$max_res - (int)$i; ?>
 							<?php if ((($maxres_current > 20) && empty($ress[0]['time_left_to_close_the_thread'])) || $adminpost || !$resform || $res_max_over): ?>

@@ -222,7 +222,7 @@ class processsearch
 		}
 		$i = 0;
 		$j = 0;
-		$fp = fopen("log/alllog.log", "r");
+		$fp = fopen(LOG_DIR . "alllog.log", "r");
 		while ($log = fgets($fp)) {
 			if (!trim($log)) {
 				continue;
@@ -233,7 +233,7 @@ class processsearch
 			if (!is_file(LOG_DIR . "{$resno}.log")) {
 				continue;
 			}
-			$rp = fopen("log/{$resno}.log", "r");
+			$rp = fopen(LOG_DIR . "{$resno}.log", "r");
 			while ($line = fgets($rp)) {
 
 				$lines = explode("\t", $line);

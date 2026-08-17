@@ -76,21 +76,21 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   /* いいね */
   --clap-text-color: var(--sns-share-text-color);
   /* 背景色 */
-  --background-color: hsl(216 22% 14% / 1);
+  --background-color: hsl(212 24% 15% / 1);
   /* 掲示板タイトルの文字色 */
   --title-a-color: var(--a-color);
   /* 記事タイトルの文字色 */
   --article-title-color: var(--a-color);
   /* 記事タイトルの背景色 */
-  --accent-background-color: hsl(211 24% 24% / 1);
+  --accent-background-color: hsl(211 24% 26% / 1);
   /* 記事タイトル背景色のアクセント */
-  --strong-accent-background-color: hsl(211 30% 38% / 1);
+  --strong-accent-background-color: hsl(214 28% 33% / 1);
   /* チェック済みのフォームのラベルの色 */
   --checked-color: var(--title-a-color);
   /* チェック済みのフォームの背景色 */
   --checked-background-color: var(--accent-background-color);
   /* ボーダー */
-  --border-color: var(--strong-accent-background-color);
+  --border-color: hsl(215 19% 40% / 1);
   /* 点線 */
   --border-dashed-color: var(--border-color);
   /* ラベルのボーダー */
@@ -353,7 +353,7 @@ span.info_name:hover a {
 span.info_name a,
 span.info_name > span {
   display: block;
-  padding: 5px;
+  padding: 4.2px 6px;
   text-decoration: none;
   font-weight: 600;
   color: var(--name-a-color);
@@ -362,7 +362,7 @@ span.info_name > span {
 /* 記事 */
 
 .imginfo_wrap {
-  margin: 3px 0 5px;
+  margin: 3px 0 6px;
   font-size: 1rem;
   font-weight: normal;
   line-height: 1.8;
@@ -426,7 +426,7 @@ span.info_name > span {
 }
 .comment {
   display: table;
-  min-width: 350px;
+  min-width: 365px;
 }
 .clear {
   clear: both;
