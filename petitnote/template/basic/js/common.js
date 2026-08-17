@@ -302,9 +302,16 @@ if (set_nsfw_show_hide instanceof HTMLFormElement) {
  */
 const set_darkmode = document.getElementById("set_darkmode");
 if (set_darkmode instanceof HTMLFormElement) {
-  set_darkmode.addEventListener("change", () => {
+  set_darkmode.addEventListener("change", async () => {
     const formData = new FormData(set_darkmode);
-    postFormAndReload(formData);
+    const responseText = await postFormAndGetResponse(formData);
+    if (responseText === "darkmode") {
+      // レスポンスが "darkmode" のとき
+      document.documentElement.classList.add("darkmode");
+    } else {
+      // レスポンスが "darkmode" 以外のとき
+      document.documentElement.classList.remove("darkmode");
+    }
   });
 }
 /**

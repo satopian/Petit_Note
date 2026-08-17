@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.7.2';
-$petit_lot='lot.20260816';
+$petit_ver='v3.8.0';
+$petit_lot='lot.20260817';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260814){
+if(!isset($functions_ver)||$functions_ver<20260817){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -1043,8 +1043,8 @@ function paint(): void{
 	}
 
 	$hide_animation = false;
-
 	$rep = false;
+
 	/** 続きを描く*/
 	$mode = (string)filter_input_data('POST', 'mode');
 	if ($mode === "contpaint") {

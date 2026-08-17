@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260814;
+$functions_ver=20260817;
 
 /**
  * 編集モードログアウト
@@ -353,8 +353,12 @@ function set_darkmode(): void {
 	$darkmode=(bool)filter_input_data('POST','darkmode');
 	if($darkmode){
 		setcookie("p_n_set_darkmode","1",time()+(60*60*24*365),"","",false,true);
+		header('Content-type: text/plain');
+		echo "darkmode";
 	}else{
 		setcookie("p_n_set_darkmode","0",time()+(60*60*24*365),"","",false,true);
+		header('Content-type: text/plain');
+		echo "";
 	}
 }
 
