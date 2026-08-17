@@ -6,6 +6,7 @@
 
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/functions.php');
+require_once(__DIR__.'/misskey_note.inc.php');
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
 ? explode( ',', $http_langs )[0] : '';
@@ -20,10 +21,11 @@ if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))
 	redirect("./") ;
 };
 
-$baseUrl = $_SESSION['misskey_server_radio'] ?? "";
-if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
+$baseUrl = MisskeyServerSecurity::normalizeBaseUrl((string)($_SESSION['misskey_server_radio'] ?? ""));
+if($baseUrl===false){
 	error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 }
+$_SESSION['misskey_server_radio']=$baseUrl;
 
 $skip_auth_check = (bool)filter_input_data('GET','skip_auth_check',FILTER_VALIDATE_BOOLEAN);
 if($skip_auth_check){
@@ -38,6 +40,13 @@ connect_misskey_api::miauth_check();
 
 // 認証チェック
 class connect_misskey_api{
+	private static function applySecurity($curl,string $base_url,int $timeout=15): bool {
+		if($curl===false){
+			return false;
+		}
+		$options=MisskeyServerSecurity::curlOptions($base_url,$timeout);
+		return is_array($options) && curl_setopt_array($curl,$options);
+	}
 
 	public static function miauth_check(): void {
 		global $en,$baseUrl;
@@ -45,6 +54,9 @@ class connect_misskey_api{
 		$checkUrl = $baseUrl . "/api/miauth/{$sns_api_session_id}/check";
 
 		$checkCurl = curl_init();
+		if(!self::applySecurity($checkCurl,$baseUrl)){
+			error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
+		}
 		curl_setopt($checkCurl, CURLOPT_URL, $checkUrl);
 		curl_setopt($checkCurl, CURLOPT_POST, true);
 		curl_setopt($checkCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
@@ -103,6 +115,9 @@ class connect_misskey_api{
 		);
 		// var_dump($uploadFields);
 		$uploadCurl = curl_init();
+		if(!self::applySecurity($uploadCurl,$baseUrl,30)){
+			error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
+		}
 		curl_setopt($uploadCurl, CURLOPT_URL, $uploadUrl);
 		curl_setopt($uploadCurl, CURLOPT_POST, true);
 		curl_setopt($uploadCurl, CURLOPT_HTTPHEADER, $uploadHeaders);
@@ -143,6 +158,9 @@ class connect_misskey_api{
 		);
 
 		$updateCurl = curl_init();
+		if(!self::applySecurity($updateCurl,$baseUrl)){
+			error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
+		}
 		curl_setopt($updateCurl, CURLOPT_URL, $updateUrl);
 		curl_setopt($updateCurl, CURLOPT_POST, true);
 		curl_setopt($updateCurl, CURLOPT_HTTPHEADER, $updateHeaders);
@@ -193,6 +211,9 @@ class connect_misskey_api{
 		);
 
 		$postCurl = curl_init();
+		if(!self::applySecurity($postCurl,$baseUrl)){
+			error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
+		}
 		curl_setopt($postCurl, CURLOPT_URL, $postUrl);
 		curl_setopt($postCurl, CURLOPT_POST, true);
 		curl_setopt($postCurl, CURLOPT_HTTPHEADER, $postHeaders);

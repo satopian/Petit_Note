@@ -3,7 +3,133 @@
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver=20260714;
+$misskey_note_ver=20260817;
+
+final class MisskeyServerSecurity{
+	/** @return string|false */
+	public static function normalizeBaseUrl(string $url){
+		$url=trim($url);
+		if(!$url || filter_var($url,FILTER_VALIDATE_URL)===false){
+			return false;
+		}
+
+		$parts=parse_url($url);
+		if(!is_array($parts)
+			|| strtolower((string)($parts['scheme'] ?? ''))!=='https'
+			|| empty($parts['host'])
+			|| isset($parts['user']) || isset($parts['pass'])
+			|| isset($parts['query']) || isset($parts['fragment'])
+			|| (isset($parts['port']) && (int)$parts['port']!==443)
+			|| !in_array((string)($parts['path'] ?? ''),['','/'],true)){
+			return false;
+		}
+
+		$host=strtolower(rtrim((string)$parts['host'],'.'));
+		if(!$host
+			|| filter_var($host,FILTER_VALIDATE_IP)!==false
+			|| filter_var($host,FILTER_VALIDATE_DOMAIN,FILTER_FLAG_HOSTNAME)===false
+			|| self::resolvePublicIp($host)===false){
+			return false;
+		}
+		return 'https://'.$host;
+	}
+
+	/** @return string|false */
+	private static function resolvePublicIp(string $host){
+		$addresses=@gethostbynamel($host) ?: [];
+		if(function_exists('dns_get_record') && defined('DNS_AAAA')){
+			$records=@dns_get_record($host,DNS_AAAA);
+			if(is_array($records)){
+				foreach($records as $record){
+					if(!empty($record['ipv6'])){
+						$addresses[]=$record['ipv6'];
+					}
+				}
+			}
+		}
+
+		$addresses=array_values(array_unique($addresses));
+		if(!$addresses){
+			return false;
+		}
+		foreach($addresses as $address){
+			if(!self::isPublicIp($address)){
+				return false;
+			}
+		}
+		return $addresses[0];
+	}
+
+	private static function isPublicIp(string $ip): bool {
+		$public_flag=defined('FILTER_FLAG_GLOBAL_RANGE')
+			? constant('FILTER_FLAG_GLOBAL_RANGE')
+			: FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE;
+		if(!filter_var($ip,FILTER_VALIDATE_IP,$public_flag)){
+			return false;
+		}
+
+		// PHP 8.1以前のフィルタで公開IP扱いになる特殊用途範囲と、
+		// FILTER_FLAG_GLOBAL_RANGEでも通るマルチキャストを拒否する。
+		$blocked_ranges=strpos($ip,':')===false
+			? ['100.64.0.0/10','192.0.0.0/24','192.0.2.0/24','192.88.99.0/24',
+				'198.18.0.0/15','198.51.100.0/24','203.0.113.0/24','224.0.0.0/4']
+			: ['64:ff9b::/96','64:ff9b:1::/48','100::/64','2001::/23',
+				'2001:db8::/32','2002::/16','ff00::/8'];
+		foreach($blocked_ranges as $range){
+			if(self::ipInCidr($ip,$range)){
+				return false;
+			}
+		}
+		return true;
+	}
+
+	private static function ipInCidr(string $ip,string $cidr): bool {
+		[$network,$prefix]=explode('/',$cidr,2);
+		$ip_binary=inet_pton($ip);
+		$network_binary=inet_pton($network);
+		if($ip_binary===false || $network_binary===false || strlen($ip_binary)!==strlen($network_binary)){
+			return false;
+		}
+
+		$prefix=(int)$prefix;
+		$full_bytes=intdiv($prefix,8);
+		$remaining_bits=$prefix % 8;
+		if(substr($ip_binary,0,$full_bytes)!==substr($network_binary,0,$full_bytes)){
+			return false;
+		}
+		if(!$remaining_bits){
+			return true;
+		}
+		$mask=(0xff << (8-$remaining_bits)) & 0xff;
+		return (ord($ip_binary[$full_bytes]) & $mask)===(ord($network_binary[$full_bytes]) & $mask);
+	}
+
+	/** @return array<int,mixed>|false */
+	public static function curlOptions(string $base_url,int $timeout=15){
+		$normalized=self::normalizeBaseUrl($base_url);
+		if($normalized===false){
+			return false;
+		}
+		$host=(string)parse_url($normalized,PHP_URL_HOST);
+		$ip=self::resolvePublicIp($host);
+		if($ip===false){
+			return false;
+		}
+		$resolve_ip=strpos($ip,':')!==false ? '['.$ip.']' : $ip;
+		return [
+			CURLOPT_FOLLOWLOCATION=>false,
+			CURLOPT_CONNECTTIMEOUT=>5,
+			CURLOPT_TIMEOUT=>max(5,min(60,$timeout)),
+			CURLOPT_SSL_VERIFYPEER=>true,
+			CURLOPT_SSL_VERIFYHOST=>2,
+			CURLOPT_PROTOCOLS=>CURLPROTO_HTTPS,
+			CURLOPT_REDIR_PROTOCOLS=>CURLPROTO_HTTPS,
+			CURLOPT_PROXY=>'',
+			CURLOPT_RESOLVE=>[$host.':443:'.$resolve_ip],
+		];
+	}
+}
+
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
@@ -259,19 +385,19 @@ class misskey_note{
 
 		check_same_origin();
 
-		$misskey_server_radio=(string)filter_input_data('POST',"misskey_server_radio",FILTER_VALIDATE_URL);
-		$misskey_server_radio_for_cookie=(string)filter_input_data('POST',"misskey_server_radio");//directを判定するためurlでバリデーションしていない
-		$misskey_server_radio_for_cookie=($misskey_server_radio_for_cookie === 'direct') ? 'direct' : $misskey_server_radio;
-		$misskey_server_direct_input=(string)filter_input_data('POST',"misskey_server_direct_input",FILTER_VALIDATE_URL);
+		$misskey_server_radio_value=(string)filter_input_data('POST',"misskey_server_radio");
+		$misskey_server_direct_input_value=(string)filter_input_data('POST',"misskey_server_direct_input");
+		$misskey_server_value=($misskey_server_radio_value==='direct')
+			? $misskey_server_direct_input_value : $misskey_server_radio_value;
+		$misskey_server_radio=MisskeyServerSecurity::normalizeBaseUrl($misskey_server_value);
+		$misskey_server_radio_for_cookie=($misskey_server_radio_value === 'direct') ? 'direct' : $misskey_server_radio;
+		$misskey_server_direct_input=($misskey_server_radio_value === 'direct' && $misskey_server_radio)
+			? $misskey_server_radio : '';
 		setcookie("misskey_server_radio_cookie",$misskey_server_radio_for_cookie, time()+(86400*30),"","",false,true);
 		setcookie("misskey_server_direct_input_cookie",$misskey_server_direct_input, time()+(86400*30),"","",false,true);
 
-		if(!$misskey_server_radio && !$misskey_server_direct_input){
-			error($en ? "Please select an misskey server.":"Misskeyサーバを選択してください。");
-		}
-
-		if(!$misskey_server_radio && $misskey_server_direct_input){
-			$misskey_server_radio = $misskey_server_direct_input;
+		if(!$misskey_server_radio){
+			error($en ? "Please select a public HTTPS Misskey server.":"公開HTTPSのMisskeyサーバを選択してください。");
 		}
 
 		session_sta();
@@ -306,20 +432,25 @@ class misskey_note{
 			);
 	
 			$postCurl = curl_init();
-			curl_setopt($postCurl, CURLOPT_URL, $postUrl);
-			curl_setopt($postCurl, CURLOPT_POST, true);
-			curl_setopt($postCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-			curl_setopt($postCurl, CURLOPT_POSTFIELDS, json_encode($postData));
-			curl_setopt($postCurl, CURLOPT_RETURNTRANSFER, true);
-			$postResponse = curl_exec($postCurl);
-			$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE); // HTTPステータスコードを取得
+			$security_options=MisskeyServerSecurity::curlOptions($misskey_server_radio);
+			$safe_curl=$postCurl!==false && is_array($security_options)
+				&& curl_setopt_array($postCurl,$security_options);
+			if($safe_curl){
+				curl_setopt($postCurl, CURLOPT_URL, $postUrl);
+				curl_setopt($postCurl, CURLOPT_POST, true);
+				curl_setopt($postCurl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+				curl_setopt($postCurl, CURLOPT_POSTFIELDS, json_encode($postData));
+				curl_setopt($postCurl, CURLOPT_RETURNTRANSFER, true);
+			}
+			$postResponse = $safe_curl ? curl_exec($postCurl) : false;
+			$postStatusCode = $safe_curl ? curl_getinfo($postCurl, CURLINFO_HTTP_CODE) : 0; // HTTPステータスコードを取得
 
-			if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+			if(PHP_VERSION_ID < 80000 && $postCurl!==false) {//PHP8.0未満の時は
 				curl_close($postCurl);
 			}
 
 			// HTTPステータスコードが403の時は、トークン不一致と判断しアプリを認証
-			if ($postStatusCode === 403) {
+			if ($postStatusCode === 403 || $postResponse === false) {
 				unset($_SESSION['accessToken']);//トークンをクリア
 			} else {
 				//アプリの認証をスキップするURL
@@ -348,4 +479,3 @@ class misskey_note{
 		exit();
 	}
 }
-
