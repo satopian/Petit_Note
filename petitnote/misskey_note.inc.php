@@ -3,7 +3,27 @@
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver=20260714;
+$misskey_note_ver=20260817;
+
+$misskey_servers = $misskey_servers ?? 
+[
+
+	["misskey.io","https://misskey.io"],
+	["xissmie.xfolio.jp","https://xissmie.xfolio.jp"],
+	["misskey.design","https://misskey.design"],
+	["nijimiss.moe","https://nijimiss.moe"],
+	["misskey.art","https://misskey.art"],
+	["oekakiskey.com","https://oekakiskey.com"],
+	["misskey.gamelore.fun","https://misskey.gamelore.fun"],
+	["novelskey.tarbin.net","https://novelskey.tarbin.net"],
+	["tyazzkey.work","https://tyazzkey.work"],
+	["sushi.ski","https://sushi.ski"],
+	["misskey.delmulin.com","https://misskey.delmulin.com"],
+	["side.misskey.productions","https://side.misskey.productions"],
+	["mk.shrimpia.network","https://mk.shrimpia.network"],
+
+];
+
 class misskey_note{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
@@ -129,8 +149,8 @@ class misskey_note{
 
 		$flag=false;
 		$resid="";
-		$line=[];
 		$first_posted_time="";
+		$line=[];
 		foreach($r_arr as $val){
 
 			$line=explode("\t",trim($val));
@@ -222,29 +242,7 @@ class misskey_note{
 		//SESSIONに投稿内容を格納
 		$_SESSION['sns_api_val']=[$com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw];
 
-		$misskey_servers= $misskey_servers ?? 
-		[
-		
-			["misskey.io","https://misskey.io"],
-			["xissmie.xfolio.jp","https://xissmie.xfolio.jp"],
-			["misskey.design","https://misskey.design"],
-			["nijimiss.moe","https://nijimiss.moe"],
-			["misskey.art","https://misskey.art"],
-			["oekakiskey.com","https://oekakiskey.com"],
-			["misskey.gamelore.fun","https://misskey.gamelore.fun"],
-			["novelskey.tarbin.net","https://novelskey.tarbin.net"],
-			["tyazzkey.work","https://tyazzkey.work"],
-			["sushi.ski","https://sushi.ski"],
-			["misskey.delmulin.com","https://misskey.delmulin.com"],
-			["side.misskey.productions","https://side.misskey.productions"],
-			["mk.shrimpia.network","https://mk.shrimpia.network"],
-
-		];
-
-		$misskey_servers[]=[($en?"Direct input":"直接入力"),"direct"];//直接入力の箇所はそのまま。
-
 		$misskey_server_radio_cookie=(string)filter_input_data('COOKIE',"misskey_server_radio_cookie");
-		$misskey_server_direct_input_cookie=(string)filter_input_data('COOKIE',"misskey_server_direct_input_cookie");
 
 		$admin_pass= null;
 		// HTML出力
@@ -260,18 +258,14 @@ class misskey_note{
 		check_same_origin();
 
 		$misskey_server_radio=(string)filter_input_data('POST',"misskey_server_radio",FILTER_VALIDATE_URL);
-		$misskey_server_radio_for_cookie=(string)filter_input_data('POST',"misskey_server_radio");//directを判定するためurlでバリデーションしていない
-		$misskey_server_radio_for_cookie=($misskey_server_radio_for_cookie === 'direct') ? 'direct' : $misskey_server_radio;
-		$misskey_server_direct_input=(string)filter_input_data('POST',"misskey_server_direct_input",FILTER_VALIDATE_URL);
-		setcookie("misskey_server_radio_cookie",$misskey_server_radio_for_cookie, time()+(86400*30),"","",false,true);
-		setcookie("misskey_server_direct_input_cookie",$misskey_server_direct_input, time()+(86400*30),"","",false,true);
+		setcookie("misskey_server_radio_cookie",$misskey_server_radio, time()+(86400*30),"","",false,true);
 
-		if(!$misskey_server_radio && !$misskey_server_direct_input){
+		if(!$misskey_server_radio){
 			error($en ? "Please select an misskey server.":"Misskeyサーバを選択してください。");
 		}
-
-		if(!$misskey_server_radio && $misskey_server_direct_input){
-			$misskey_server_radio = $misskey_server_direct_input;
+		$arrowd = self::is_arrowd_url($misskey_server_radio);
+		if(!$arrowd){
+		error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 		}
 
 		session_sta();
@@ -347,5 +341,37 @@ class misskey_note{
 		include __DIR__.'/'.$skindir.$templete;
 		exit();
 	}
+	/** 
+	 * リストに登録ずみのmisskeyサーバならtrueを返す
+	 * $misskey_serversが未定義の時にもtrueが返る
+	 * 	@param $baseUrl
+	 *  @return bool
+	 */
+	public static function is_arrowd_url(string $baseUrl): bool {
+		global $misskey_servers;
+		$misskey_servers;
+			if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
+					return false;
+			}
+			if(parse_url($baseUrl,PHP_URL_SCHEME)!=='https'){
+					return false;
+			}
+			$host=parse_url($baseUrl,PHP_URL_HOST);
+			$ip=$host ? gethostbyname($host) : false;
+			if(!$ip || !filter_var($ip,FILTER_VALIDATE_IP,FILTER_FLAG_NO_PRIV_RANGE|FILTER_FLAG_NO_RES_RANGE)){
+				return false;
+			}
+			if(isset($misskey_servers) && is_array($misskey_servers)){
+				$arrowdServerURLs=[];
+				foreach ($misskey_servers as $misskey_server){
+					[,$arrowdServerURL]=$misskey_server;
+					$arrowdServerURLs[]=$arrowdServerURL;
+				}
+				if(in_array($baseUrl,$arrowdServerURLs)){
+					return true;
+				}
+				return false;
+			}
+			return true;
+	} 
 }
-

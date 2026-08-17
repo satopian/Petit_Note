@@ -6,6 +6,7 @@
 
 require_once(__DIR__.'/config.php');
 require_once(__DIR__.'/functions.php');
+require_once(__DIR__.'/misskey_note.inc.php');
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
 ? explode( ',', $http_langs )[0] : '';
@@ -21,7 +22,8 @@ if((!isset($_SESSION['sns_api_session_id']))||(!isset($_SESSION['sns_api_val']))
 };
 
 $baseUrl = $_SESSION['misskey_server_radio'] ?? "";
-if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
+$arrowd = misskey_note::is_arrowd_url($baseUrl);
+if(!$arrowd){
 	error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
 }
 
@@ -213,7 +215,7 @@ class connect_misskey_api{
 				unset($_SESSION['userdel']);
 
 				// var_dump($uploadResponse,$postResponse,$uploadResult,$postResult);
-				redirect($root_url.'?mode=misskey_success&no='.$no);
+				redirect($root_url.'?mode=misskey_success&no='.$no.'&resid='.$resid);
 			} 
 			else {
 				error($en ? "Failed to post the content." : "投稿に失敗しました。" ,false);
