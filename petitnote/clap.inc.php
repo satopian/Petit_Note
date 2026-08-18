@@ -97,7 +97,7 @@ class clap
 
 				[$alreadyClapped, $newBits] = self::checkAndSetChecksum($bits, $userip);
 
-				if ($alreadyClapped && $_clap > 1000) {
+				if ($alreadyClapped || $_clap > 1000) {
 					closeFile($cp);
 					header('Content-type: text/plain');
 					echo "";
