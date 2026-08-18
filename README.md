@@ -63,9 +63,9 @@ BBSNoteとPOTI-boardのログファイルをPetit Note形式に変換できま�
 ## 履歴
 最新情報は[リリースノート](https://github.com/satopian/Petit_Note/releases/latest)に記載しています。  
   
-- [2026/01/04 ~ ](./chengelog/2026.md)
-- [2025/1/1 ~ 2025/12/31](./chengelog/2025.md)
-- [2024/01/07 ~ 2024/12/24](./chengelog/2024.md)
-- [2023/01/02 ~ 2023/12/30](./chengelog/2023.md)
-- [2022/01/06 ~ 2022/12/27](./chengelog/2022.md)
-- [2021/09/03 ~ 2021/12/05](./chengelog/2021.md)
+- [2026/01/04 - ](./chengelog/2026.md)
+- [2025/1/1 - 2025/12/31](./chengelog/2025.md)
+- [2024/01/07 - 2024/12/24](./chengelog/2024.md)
+- [2023/01/02 - 2023/12/30](./chengelog/2023.md)
+- [2022/01/06 - 2022/12/27](./chengelog/2022.md)
+- [2021/09/03 - 2021/12/05](./chengelog/2021.md)
