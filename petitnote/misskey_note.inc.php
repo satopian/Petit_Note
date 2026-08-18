@@ -361,17 +361,14 @@ class misskey_note{
 			if(!$ip || !filter_var($ip,FILTER_VALIDATE_IP,FILTER_FLAG_NO_PRIV_RANGE|FILTER_FLAG_NO_RES_RANGE)){
 				return false;
 			}
-			if(isset($misskey_servers) && is_array($misskey_servers)){
-				$arrowdServerURLs=[];
-				foreach ($misskey_servers as $misskey_server){
-					[,$arrowdServerURL]=$misskey_server;
-					$arrowdServerURLs[]=$arrowdServerURL;
-				}
-				if(in_array($baseUrl,$arrowdServerURLs)){
-					return true;
-				}
-				return false;
+			$arrowdServerURLs=[];
+			foreach ($misskey_servers as $misskey_server){
+				[,$arrowdServerURL]=$misskey_server;
+				$arrowdServerURLs[]=$arrowdServerURL;
 			}
-			return true;
+			if(in_array($baseUrl,$arrowdServerURLs)){
+				return true;
+			}
+			return false;
 	} 
 }
