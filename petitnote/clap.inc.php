@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$clap_inc_ver = 20260806;
+$clap_inc_ver = 20260818;
 class clap
 {
 	/**
@@ -92,16 +92,18 @@ class clap
 			if (strpos($line, $id . "\t") !== false) {
 				$flag = true;
 				[$_id, $_clap, $_bitsB64] = explode("\t", trim($line));
+
 				$bits = base64_decode($_bitsB64);
 
 				[$alreadyClapped, $newBits] = self::checkAndSetChecksum($bits, $userip);
-				if ($alreadyClapped) {
+
+				if ($alreadyClapped && $_clap > 1000) {
 					closeFile($cp);
 					header('Content-type: text/plain');
 					echo "";
 					exit(); // このIPは拍手済み
 				}
-				$_clap = min($_clap + 1, 100000);
+				$_clap = min($_clap + 1, 1000);
 				$lines[$i] = "$_id\t$_clap\t" . base64_encode($newBits) . "\n";
 				break;
 			}

@@ -591,24 +591,24 @@ $use_misskey_note = true;
 // $use_misskey_note = false;
 
 //Misskeyへの投稿時に一覧で表示するMisskeyサーバ
-$misskey_servers=
-[
+	[
 
-	["misskey.io","https://misskey.io"],
-	["xissmie.xfolio.jp","https://xissmie.xfolio.jp"],
-	["misskey.design","https://misskey.design"],
-	["nijimiss.moe","https://nijimiss.moe"],
-	["misskey.art","https://misskey.art"],
-	["oekakiskey.com","https://oekakiskey.com"],
-	["misskey.gamelore.fun","https://misskey.gamelore.fun"],
-	["novelskey.tarbin.net","https://novelskey.tarbin.net"],
-	["tyazzkey.work","https://tyazzkey.work"],
-	["sushi.ski","https://sushi.ski"],
-	["misskey.delmulin.com","https://misskey.delmulin.com"],
-	["side.misskey.productions","https://side.misskey.productions"],
-	["mk.shrimpia.network","https://mk.shrimpia.network"],
-	
-];
+		["misskey.io", "https://misskey.io"],
+		["xissmie.xfolio.jp", "https://xissmie.xfolio.jp"],
+		["misskey.design", "https://misskey.design"],
+		["nijimiss.moe", "https://nijimiss.moe"],
+		["misskey.art", "https://misskey.art"],
+		["oekakiskey.com", "https://oekakiskey.com"],
+		["misskey.gamelore.fun", "https://misskey.gamelore.fun"],
+		["novelskey.tarbin.net", "https://novelskey.tarbin.net"],
+		["tyazzkey.work", "https://tyazzkey.work"],
+		["sushi.ski", "https://sushi.ski"],
+		["misskey.delmulin.com", "https://misskey.delmulin.com"],
+		["side.misskey.productions", "https://side.misskey.productions"],
+		["mk.shrimpia.network", "https://mk.shrimpia.network"],
+		["misskey.id", "https://misskey.id"],
+
+	];
 
 // いいね機能を有効にする
 // する: true しない: false
