@@ -3,233 +3,235 @@
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver=20260817;
+$misskey_note_ver = 20260817;
 
-$misskey_servers = $misskey_servers ?? 
-[
+$misskey_servers = $misskey_servers ??
+	[
 
-	["misskey.io","https://misskey.io"],
-	["xissmie.xfolio.jp","https://xissmie.xfolio.jp"],
-	["misskey.design","https://misskey.design"],
-	["nijimiss.moe","https://nijimiss.moe"],
-	["misskey.art","https://misskey.art"],
-	["oekakiskey.com","https://oekakiskey.com"],
-	["misskey.gamelore.fun","https://misskey.gamelore.fun"],
-	["novelskey.tarbin.net","https://novelskey.tarbin.net"],
-	["tyazzkey.work","https://tyazzkey.work"],
-	["sushi.ski","https://sushi.ski"],
-	["misskey.delmulin.com","https://misskey.delmulin.com"],
-	["side.misskey.productions","https://side.misskey.productions"],
-	["mk.shrimpia.network","https://mk.shrimpia.network"],
+		["misskey.io", "https://misskey.io"],
+		["xissmie.xfolio.jp", "https://xissmie.xfolio.jp"],
+		["misskey.design", "https://misskey.design"],
+		["nijimiss.moe", "https://nijimiss.moe"],
+		["misskey.art", "https://misskey.art"],
+		["oekakiskey.com", "https://oekakiskey.com"],
+		["misskey.gamelore.fun", "https://misskey.gamelore.fun"],
+		["novelskey.tarbin.net", "https://novelskey.tarbin.net"],
+		["tyazzkey.work", "https://tyazzkey.work"],
+		["sushi.ski", "https://sushi.ski"],
+		["misskey.delmulin.com", "https://misskey.delmulin.com"],
+		["side.misskey.productions", "https://side.misskey.productions"],
+		["mk.shrimpia.network", "https://mk.shrimpia.network"],
 
-];
+	];
 
-class misskey_note{
+class misskey_note
+{
 
 	//投稿済みの記事をMisskeyにノートするための前処理
-	public static function before_misskey_note (): void {
+	public static function before_misskey_note(): void
+	{
 
-		global $boardname,$home,$petit_ver,$petit_lot,$skindir,$set_nsfw,$en,$deny_all_posts,$enable_v1_legacy_template_unsafe_get_login;
+		global $boardname, $home, $petit_ver, $petit_lot, $skindir, $set_nsfw, $en, $deny_all_posts, $enable_v1_legacy_template_unsafe_get_login;
 		//管理者判定処理
 		session_sta();
 
-		if(!$enable_v1_legacy_template_unsafe_get_login){
+		if (!$enable_v1_legacy_template_unsafe_get_login) {
 			check_same_origin();
 		}
 
 		aikotoba_required_to_view(true);
-		$aikotoba= true;//テンプレート互換性
-		$adminpost=adminpost_valid();
-		$admindel=admindel_valid();
+		$aikotoba = true; //テンプレート互換性
+		$adminpost = adminpost_valid();
+		$admindel = admindel_valid();
 
-		$pwdc=(string)filter_input_data('COOKIE','pwdc');
-		$id = t(filter_input_data('POST','id'));//intの範囲外
-		$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
-			//互換設定時はgetでもログインできるようにする
-		if($enable_v1_legacy_template_unsafe_get_login){
-			$id = $id ?: t(filter_input_data('GET','id'));//intの範囲外
-			$no = $no ?: t(filter_input_data('GET','no',FILTER_VALIDATE_INT));
+		$pwdc = (string)filter_input_data('COOKIE', 'pwdc');
+		$id = t(filter_input_data('POST', 'id')); //intの範囲外
+		$no = t(filter_input_data('POST', 'no', FILTER_VALIDATE_INT));
+		//互換設定時はgetでもログインできるようにする
+		if ($enable_v1_legacy_template_unsafe_get_login) {
+			$id = $id ?: t(filter_input_data('GET', 'id')); //intの範囲外
+			$no = $no ?: t(filter_input_data('GET', 'no', FILTER_VALIDATE_INT));
 		}
-		$userdel=isset($_SESSION['userdel'])&&($_SESSION['userdel']==='userdel_mode');
-		$resmode = false;//使っていない
-		$page= $_SESSION['current_page_context']["page"] ?? 0;
-		$resno= $_SESSION['current_page_context']["resno"] ?? null;//下の行でnull判定
+		$userdel = isset($_SESSION['userdel']) && ($_SESSION['userdel'] === 'userdel_mode');
+		$resmode = false; //使っていない
+		$page = $_SESSION['current_page_context']["page"] ?? 0;
+		$resno = $_SESSION['current_page_context']["resno"] ?? null; //下の行でnull判定
 		$resno ?? $no;
-		$postpage = $page;//古いテンプレート互換
-		$postresno = $resno;//古いテンプレート互換
+		$postpage = $page; //古いテンプレート互換
+		$postresno = $resno; //古いテンプレート互換
 
 		check_open_no($no);
-		if(!is_file(LOG_DIR."{$no}.log")){
-			error($en? 'The article does not exist.':'記事がありません。');
+		if (!is_file(LOG_DIR . "{$no}.log")) {
+			error($en ? 'The article does not exist.' : '記事がありません。');
 		}
-		$rp=fopen(LOG_DIR."{$no}.log","r");
+		$rp = fopen(LOG_DIR . "{$no}.log", "r");
 		file_lock($rp, LOCK_EX);
 
 		$r_arr = create_array_from_fp($rp);
 
-		if(empty($r_arr)){
+		if (empty($r_arr)) {
 			closeFile($rp);
-			error($en?'This operation has failed.':'失敗しました。');
+			error($en ? 'This operation has failed.' : '失敗しました。');
 		}
-		$find=false;
-		$resid="";
-		$first_posted_time ="";
-		foreach($r_arr as $i =>$val){
-			$_line=explode("\t",trim($val));
-			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_hash_img,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=$_line;
-			if($id===$time && $no===$_no){
-				$out[0][]=create_res($_line);
-				$resid=$first_posted_time;
-				$find=true;
+		$find = false;
+		$resid = "";
+		$first_posted_time = "";
+		foreach ($r_arr as $i => $val) {
+			$_line = explode("\t", trim($val));
+			[$_no, $sub, $name, $verified, $com, $url, $imgfile, $w, $h, $thumbnail, $painttime, $log_hash_img, $tool, $pchext, $time, $first_posted_time, $host, $userid, $hash, $oya] = $_line;
+			if ($id === $time && $no === $_no) {
+				$out[0][] = create_res($_line);
+				$resid = $first_posted_time;
+				$find = true;
 				break;
-				
 			}
-
 		}
-		if(!$find){
-			closeFile ($rp);
-			error($en?'The article was not found.':'記事が見つかりません。');
+		if (!$find) {
+			closeFile($rp);
+			error($en ? 'The article was not found.' : '記事が見つかりません。');
 		}
 
-		closeFile ($rp);
+		closeFile($rp);
 
-		$token=get_csrf_token();
+		$token = get_csrf_token();
 
 		// nsfw
-		$nsfwc=(bool)filter_input_data('COOKIE','nsfwc',FILTER_VALIDATE_BOOLEAN);
-		$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+		$nsfwc = (bool)filter_input_data('COOKIE', 'nsfwc', FILTER_VALIDATE_BOOLEAN);
+		$set_nsfw_show_hide = (bool)filter_input_data('COOKIE', 'p_n_set_nsfw_show_hide', FILTER_VALIDATE_BOOLEAN);
 
-		$count_r_arr=count($r_arr);
+		$count_r_arr = count($r_arr);
 		$edit_mode = 'editmode';
 
 		$_SESSION['current_resid'] = $first_posted_time;
 
 		set_form_display_time();
-		$admin_pass= null;
+		$admin_pass = null;
 
-		$templete='before_misskey_note.html';
-		include __DIR__.'/'.$skindir.$templete;
+		$templete = 'before_misskey_note.html';
+		include __DIR__ . '/' . $skindir . $templete;
 		exit();
 	}
 	//投稿済みの画像をMisskeyにNoteするための投稿フォーム
-	public static function misskey_note_edit_form(): void {
+	public static function misskey_note_edit_form(): void
+	{
 
-		global  $petit_ver,$petit_lot,$home,$boardname,$skindir,$set_nsfw,$en,$max_kb,$use_upload;
+		global  $petit_ver, $petit_lot, $home, $boardname, $skindir, $set_nsfw, $en, $max_kb, $use_upload;
 
 		check_submission_interval();
 		check_same_origin();
 
-		$token=get_csrf_token();
+		$token = get_csrf_token();
 
-		$admindel=admindel_valid();
-		$adminpost=adminpost_valid();
-		$admin = ($admindel||$adminpost);
+		$admindel = admindel_valid();
+		$adminpost = adminpost_valid();
+		$admin = ($admindel || $adminpost);
 
-		$pwd=(string)filter_input_data('POST','pwd');
-		$pwdc=(string)filter_input_data('COOKIE','pwdc');
+		$pwd = (string)filter_input_data('POST', 'pwd');
+		$pwdc = (string)filter_input_data('COOKIE', 'pwdc');
 		$pwd = $pwd ?: $pwdc;
-		
-		$id_and_no=(string)filter_input_data('POST','id_and_no');
 
-		[$id,$no]=explode(",",trim($id_and_no));
+		$id_and_no = (string)filter_input_data('POST', 'id_and_no');
+
+		[$id, $no] = explode(",", trim($id_and_no));
 
 		check_open_no($no);
-		if(!is_file(LOG_DIR."{$no}.log")){
-			error($en? 'The article does not exist.':'記事がありません。');
+		if (!is_file(LOG_DIR . "{$no}.log")) {
+			error($en ? 'The article does not exist.' : '記事がありません。');
 		}
-		$rp=fopen(LOG_DIR."{$no}.log","r");
+		$rp = fopen(LOG_DIR . "{$no}.log", "r");
 		file_lock($rp, LOCK_EX);
 
 		$r_arr = create_array_from_fp($rp);
 
-		if(empty($r_arr)){
+		if (empty($r_arr)) {
 			closeFile($rp);
-			error($en?'This operation has failed.':'失敗しました。');
+			error($en ? 'This operation has failed.' : '失敗しました。');
 		}
 
-		$flag=false;
-		$resid="";
-		$first_posted_time="";
-		$line=[];
-		foreach($r_arr as $val){
+		$flag = false;
+		$resid = "";
+		$first_posted_time = "";
+		$line = [];
+		foreach ($r_arr as $val) {
 
-			$line=explode("\t",trim($val));
+			$line = explode("\t", trim($val));
 
-			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_hash_img,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=$line;
-			if($id===$time && $no===$_no){
-			
-				if((!$admin || $verified!=='adminpost')&&(!$pwd||!password_verify($pwd,$hash))){
-					error($en?'Password is incorrect.':'パスワードが違います。');
+			[$_no, $sub, $name, $verified, $com, $url, $imgfile, $w, $h, $thumbnail, $painttime, $log_hash_img, $tool, $pchext, $time, $first_posted_time, $host, $userid, $hash, $oya] = $line;
+			if ($id === $time && $no === $_no) {
+
+				if ((!$admin || $verified !== 'adminpost') && (!$pwd || !password_verify($pwd, $hash))) {
+					error($en ? 'Password is incorrect.' : 'パスワードが違います。');
 				}
-				if($admin||check_elapsed_days($time)){
-					$flag=true;
-					$resid=$first_posted_time;
+				if ($admin || check_elapsed_days($time)) {
+					$flag = true;
+					$resid = $first_posted_time;
 					break;
 				}
 			}
 		}
 
-		if(!$flag){
+		if (!$flag) {
 			closeFile($rp);
-			error($en?'This operation has failed.':'失敗しました。');
+			error($en ? 'This operation has failed.' : '失敗しました。');
 		}
 		closeFile($rp);
 
-		check_AsyncRequest();//Asyncリクエストの時は処理を中断
+		check_AsyncRequest(); //Asyncリクエストの時は処理を中断
 
-		$out[0][]=create_res($line);//$lineから、情報を取り出す;
+		$out[0][] = create_res($line); //$lineから、情報を取り出す;
 
 
-		$nsfwc=(bool)filter_input_data('COOKIE','nsfwc',FILTER_VALIDATE_BOOLEAN);
-		$set_nsfw_show_hide=(bool)filter_input_data('COOKIE','p_n_set_nsfw_show_hide',FILTER_VALIDATE_BOOLEAN);
+		$nsfwc = (bool)filter_input_data('COOKIE', 'nsfwc', FILTER_VALIDATE_BOOLEAN);
+		$set_nsfw_show_hide = (bool)filter_input_data('COOKIE', 'p_n_set_nsfw_show_hide', FILTER_VALIDATE_BOOLEAN);
 
-		$page= $_SESSION['current_page_context']["page"] ?? 0;
-		$resno= $_SESSION['current_page_context']["resno"] ?? null;//下の行でnull判定
+		$page = $_SESSION['current_page_context']["page"] ?? 0;
+		$resno = $_SESSION['current_page_context']["resno"] ?? null; //下の行でnull判定
 		$resno ?? $no;
-		$postpage = $page;//古いテンプレート互換
-		$postresno = $resno;//古いテンプレート互換
+		$postpage = $page; //古いテンプレート互換
+		$postresno = $resno; //古いテンプレート互換
 
 		$userdel = false;
-		$admindel = false;	
+		$admindel = false;
 
-		$image_rep=false;
+		$image_rep = false;
 
 		$_SESSION['current_resid'] = $first_posted_time;
 
-		$admin_pass= null;
+		$admin_pass = null;
 		// HTML出力
-		$templete='misskey_note_edit_form.html';
-		include __DIR__.'/'.$skindir.$templete;
+		$templete = 'misskey_note_edit_form.html';
+		include __DIR__ . '/' . $skindir . $templete;
 		exit();
 	}
 
 	//Misskeyに投稿するSESSIONデータを作成
-	public static function create_misskey_note_sessiondata(): void {
-		global $en,$usercode,$root_url,$skindir,$petit_lot,$misskey_servers,$boardname;
-		
+	public static function create_misskey_note_sessiondata(): void
+	{
+		global $en, $usercode, $root_url, $skindir, $petit_lot, $misskey_servers, $boardname;
+
 		check_csrf_token();
 
-		$userip =t(get_uip());
+		$userip = t(get_uip());
 
-		$no = t(filter_input_data('POST','no',FILTER_VALIDATE_INT));
-		$src_image = t(filter_input_data('POST','src_image'));
-		$com = t(filter_input_data('POST','com'));
-		$abbr_toolname = t(filter_input_data('POST','abbr_toolname'));
-		$paintsec = (int)filter_input_data('POST','paintsec',FILTER_VALIDATE_INT);
-		$hide_thumbnail = (bool)filter_input_data('POST','hide_thumbnail',FILTER_VALIDATE_BOOLEAN);
-		$show_painttime = (bool)filter_input_data('POST','show_painttime',FILTER_VALIDATE_BOOLEAN);
-		$article_url_link = (bool)filter_input_data('POST','article_url_link',FILTER_VALIDATE_BOOLEAN);
-		$hide_content = (bool)filter_input_data('POST','hide_content',FILTER_VALIDATE_BOOLEAN);
-		$cw = t(filter_input_data('POST','cw'));
-		if($hide_content && !$cw){
-			error($en?"Content warning field is empty.":"注釈がありません。");
+		$no = t(filter_input_data('POST', 'no', FILTER_VALIDATE_INT));
+		$src_image = t(filter_input_data('POST', 'src_image'));
+		$com = t(filter_input_data('POST', 'com'));
+		$abbr_toolname = t(filter_input_data('POST', 'abbr_toolname'));
+		$paintsec = (int)filter_input_data('POST', 'paintsec', FILTER_VALIDATE_INT);
+		$hide_thumbnail = (bool)filter_input_data('POST', 'hide_thumbnail', FILTER_VALIDATE_BOOLEAN);
+		$show_painttime = (bool)filter_input_data('POST', 'show_painttime', FILTER_VALIDATE_BOOLEAN);
+		$article_url_link = (bool)filter_input_data('POST', 'article_url_link', FILTER_VALIDATE_BOOLEAN);
+		$hide_content = (bool)filter_input_data('POST', 'hide_content', FILTER_VALIDATE_BOOLEAN);
+		$cw = t(filter_input_data('POST', 'cw'));
+		if ($hide_content && !$cw) {
+			error($en ? "Content warning field is empty." : "注釈がありません。");
 		}
-		check_AsyncRequest();//Asyncリクエストの時は処理を中断
+		check_AsyncRequest(); //Asyncリクエストの時は処理を中断
 
 		$cw = $hide_content ? $cw : null;
 
-		$tool=switch_tool($abbr_toolname);
-		
+		$tool = switch_tool($abbr_toolname);
+
 		$painttime = calcPtime($paintsec);
 		$painttime_en = $painttime ? $painttime['en'] : '';
 		$painttime_ja = $painttime ? $painttime['ja'] : '';
@@ -238,34 +240,35 @@ class misskey_note{
 
 		session_sta();
 
-		$src_image=basename($src_image);
+		$src_image = basename($src_image);
 		//SESSIONに投稿内容を格納
-		$_SESSION['sns_api_val']=[$com,$src_image,$tool,$painttime,$hide_thumbnail,$no,$article_url_link,$cw];
+		$_SESSION['sns_api_val'] = [$com, $src_image, $tool, $painttime, $hide_thumbnail, $no, $article_url_link, $cw];
 
-		$misskey_server_radio_cookie=(string)filter_input_data('COOKIE',"misskey_server_radio_cookie");
-
-		$admin_pass= null;
+		$misskey_server_radio_cookie = (string)filter_input_data('COOKIE', "misskey_server_radio_cookie");
+		$misskey_server_direct_input_cookie = ""; //テンプレート互換
+		$admin_pass = null;
 		// HTML出力
-		$templete='misskey_server_selection.html';
-		include __DIR__.'/'.$skindir.$templete;
+		$templete = 'misskey_server_selection.html';
+		include __DIR__ . '/' . $skindir . $templete;
 		exit();
 	}
 
-	public static function create_misskey_authrequesturl(): void {
+	public static function create_misskey_authrequesturl(): void
+	{
 		global $root_url;
 		global $en;
 
 		check_same_origin();
 
-		$misskey_server_radio=(string)filter_input_data('POST',"misskey_server_radio",FILTER_VALIDATE_URL);
-		setcookie("misskey_server_radio_cookie",$misskey_server_radio, time()+(86400*30),"","",false,true);
+		$misskey_server_radio = (string)filter_input_data('POST', "misskey_server_radio", FILTER_VALIDATE_URL);
+		setcookie("misskey_server_radio_cookie", $misskey_server_radio, time() + (86400 * 30), "", "", false, true);
 
-		if(!$misskey_server_radio){
-			error($en ? "Please select an misskey server.":"Misskeyサーバを選択してください。");
+		if (!$misskey_server_radio) {
+			error($en ? "Please select an misskey server." : "Misskeyサーバを選択してください。");
 		}
 		$arrowd = self::is_arrowd_url($misskey_server_radio);
-		if(!$arrowd){
-		error($en ? "This is not a valid server URL.":"サーバのURLが無効です。" ,false);
+		if (!$arrowd) {
+			error($en ? "This is not a valid server URL." : "サーバのURLが無効です。", false);
 		}
 
 		session_sta();
@@ -273,24 +276,26 @@ class misskey_note{
 		$sns_api_session_id = session_id() . random_bytes(16);
 
 		// SHA256ハッシュ化
-		$sns_api_session_id=hash('sha256', $sns_api_session_id);
+		$sns_api_session_id = hash('sha256', $sns_api_session_id);
 
-		$_SESSION['sns_api_session_id']=$sns_api_session_id;
+		$_SESSION['sns_api_session_id'] = $sns_api_session_id;
 
 		$encoded_root_url = urlencode($root_url);
 
 		//別のサーバを選択した時はトークンをクリア
-		if(!isset($_SESSION['misskey_server_radio']) ||
-		$_SESSION['misskey_server_radio']!==$misskey_server_radio){
-			unset($_SESSION['accessToken']);//トークンをクリア
+		if (
+			!isset($_SESSION['misskey_server_radio']) ||
+			$_SESSION['misskey_server_radio'] !== $misskey_server_radio
+		) {
+			unset($_SESSION['accessToken']); //トークンをクリア
 		}
 		//投稿完了画面に表示するサーバのURl
-		$_SESSION['misskey_server_radio']=$misskey_server_radio;
+		$_SESSION['misskey_server_radio'] = $misskey_server_radio;
 
 		//アプリを認証するためのURL
 		$Location = "{$misskey_server_radio}/miauth/{$sns_api_session_id}?name=Petit%20Note&callback={$encoded_root_url}connect_misskey_api.php&permission=write:notes,write:drive";
 
-		if(isset($_SESSION['accessToken'])){//SESSIONのトークンが有効か確認
+		if (isset($_SESSION['accessToken'])) { //SESSIONのトークンが有効か確認
 
 			// ダミーの投稿を試みる（textフィールドを空にする）
 			$postUrl = "{$misskey_server_radio}/api/notes/create";
@@ -298,7 +303,7 @@ class misskey_note{
 				'i' => $_SESSION['accessToken'],
 				'text' => '', // 投稿を成功させないようにするためtextフィールドを空にする
 			);
-	
+
 			$postCurl = curl_init();
 			curl_setopt($postCurl, CURLOPT_URL, $postUrl);
 			curl_setopt($postCurl, CURLOPT_POST, true);
@@ -308,13 +313,13 @@ class misskey_note{
 			$postResponse = curl_exec($postCurl);
 			$postStatusCode = curl_getinfo($postCurl, CURLINFO_HTTP_CODE); // HTTPステータスコードを取得
 
-			if(PHP_VERSION_ID < 80000) {//PHP8.0未満の時は
+			if (PHP_VERSION_ID < 80000) { //PHP8.0未満の時は
 				curl_close($postCurl);
 			}
 
 			// HTTPステータスコードが403の時は、トークン不一致と判断しアプリを認証
 			if ($postStatusCode === 403) {
-				unset($_SESSION['accessToken']);//トークンをクリア
+				unset($_SESSION['accessToken']); //トークンをクリア
 			} else {
 				//アプリの認証をスキップするURL
 				$Location = "{$root_url}connect_misskey_api.php?skip_auth_check=on&s_id={$sns_api_session_id}";
@@ -322,53 +327,58 @@ class misskey_note{
 		}
 
 		redirect($Location);
-
 	}
 	// Misskeyへの投稿が成功した事を知らせる画面
-	public static function misskey_success(): void {
-		global $en,$skindir,$boardname,$petit_lot;
-		$no = (string)filter_input_data('GET', 'no',FILTER_VALIDATE_INT);
+	public static function misskey_success(): void
+	{
+		global $en, $skindir, $boardname, $petit_lot;
+		$no = (string)filter_input_data('GET', 'no', FILTER_VALIDATE_INT);
 		$resid = $_SESSION['current_resid'] ?? '';
 
 		session_sta();
-		
+
 		$misskey_server_url = $_SESSION['misskey_server_radio'] ?? "";
-		if(!$misskey_server_url || !filter_var($misskey_server_url,FILTER_VALIDATE_URL) || !$no){
+		$arrowd = self::is_arrowd_url($misskey_server_url);
+
+		if (!$arrowd || !$no) {
 			redirect('./');
 		}
-		$admin_pass= null;
-		$templete='misskey_success.html';
-		include __DIR__.'/'.$skindir.$templete;
+		$admin_pass = null;
+		$templete = 'misskey_success.html';
+		include __DIR__ . '/' . $skindir . $templete;
 		exit();
 	}
 	/** 
 	 * リストに登録ずみのmisskeyサーバならtrueを返す
-	 * $misskey_serversが未定義の時にもtrueが返る
 	 * 	@param $baseUrl
 	 *  @return bool
 	 */
-	public static function is_arrowd_url(string $baseUrl): bool {
+	public static function is_arrowd_url(string $baseUrl): bool
+	{
 		global $misskey_servers;
 		$misskey_servers;
-			if(!filter_var($baseUrl,FILTER_VALIDATE_URL)){
-					return false;
-			}
-			if(parse_url($baseUrl,PHP_URL_SCHEME)!=='https'){
-					return false;
-			}
-			$host=parse_url($baseUrl,PHP_URL_HOST);
-			$ip=$host ? gethostbyname($host) : false;
-			if(!$ip || !filter_var($ip,FILTER_VALIDATE_IP,FILTER_FLAG_NO_PRIV_RANGE|FILTER_FLAG_NO_RES_RANGE)){
-				return false;
-			}
-			$arrowdServerURLs=[];
-			foreach ($misskey_servers as $misskey_server){
-				[,$arrowdServerURL]=$misskey_server;
-				$arrowdServerURLs[]=$arrowdServerURL;
-			}
-			if(in_array($baseUrl,$arrowdServerURLs)){
-				return true;
-			}
+		if (!filter_var($baseUrl, FILTER_VALIDATE_URL)) {
 			return false;
-	} 
+		}
+		if (parse_url($baseUrl, PHP_URL_SCHEME) !== 'https') {
+			return false;
+		}
+		$host = parse_url($baseUrl, PHP_URL_HOST);
+		$ip = $host ? gethostbyname($host) : false;
+		if (!$ip || !filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
+			return false;
+		}
+		if (!isset($misskey_servers) || !is_array($misskey_servers)) {
+			return false;
+		}
+		$arrowdServerURLs = [];
+		foreach ($misskey_servers as $misskey_server) {
+			[, $arrowdServerURL] = $misskey_server;
+			$arrowdServerURLs[] = $arrowdServerURL;
+		}
+		if (in_array($baseUrl, $arrowdServerURLs, true)) {
+			return true;
+		}
+		return false;
+	}
 }
