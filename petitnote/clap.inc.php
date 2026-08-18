@@ -97,13 +97,13 @@ class clap
 
 				[$alreadyClapped, $newBits] = self::checkAndSetChecksum($bits, $userip);
 
-				if ($alreadyClapped || $_clap > 1000) {
+				if ($alreadyClapped || $_clap > 10000) {
 					closeFile($cp);
 					header('Content-type: text/plain');
 					echo "";
 					exit(); // このIPは拍手済み
 				}
-				$_clap = min($_clap + 1, 1000);
+				$_clap = min($_clap + 1, 10000);
 				$lines[$i] = "$_id\t$_clap\t" . base64_encode($newBits) . "\n";
 				break;
 			}
