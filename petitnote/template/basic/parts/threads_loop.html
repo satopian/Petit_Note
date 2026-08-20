@@ -182,7 +182,6 @@
 				<?php endforeach; ?>
 	</article>
 	<!-- 返信ボタン -->
-	<div class="clear"></div>
 	<?php if ($resmode && $aikotoba && (!$userdel && !$admindel)): ?>
 		<!-- 返信可能な数の表示 -->
 		<div class="res_notice_wrap">
@@ -206,6 +205,7 @@
 			<?php endif; ?>
 		</div>
 	<?php endif; ?>
+	<div class="clear"></div>
 	<div class="res_button_wrap">
 		<?php if ($resmode && $resform && $resname && !$res_max_over): ?>
 			<script>
