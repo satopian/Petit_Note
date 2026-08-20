@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$clap_inc_ver = 20260818;
+$clap_inc_ver = 20260820;
 class clap
 {
 	/**
@@ -23,11 +23,12 @@ class clap
 				if (!trim($cline)) {
 					continue;
 				}
-				[$c_id, $c_cont] = explode("\t", trim($cline));
+				[$c_id, $c_cont] = explode("\t", rtrim($cline, "\r\n"));
 				$claps[$c_id] = $c_cont;
 			}
 			fclose($fp);
 		}
+
 		return $claps;
 	}
 	/**
@@ -42,6 +43,8 @@ class clap
 			echo "";
 			exit();
 		}
+
+		check_same_origin();
 
 		$no = t(filter_input_data('POST', 'no', FILTER_VALIDATE_INT));
 		$id = t(filter_input_data('POST', 'id'));
@@ -65,7 +68,7 @@ class clap
 				continue;
 			}
 			if (strpos($resline, "\t" . $id . "\t") !== false) {
-				$res = create_res(explode("\t", trim($resline)));
+				$res = create_res(explode("\t", rtrim($resline, "\r\n")));
 				//IDが一一致、画像あり、投稿から一定日数以内であれば拍手可能
 				if ($res['first_posted_time'] === $id && $res['img'] && $res['check_elapsed_days']) {
 					$flag = true;
@@ -91,7 +94,7 @@ class clap
 		foreach ($lines as $i => $line) {
 			if (strpos($line, $id . "\t") !== false) {
 				$flag = true;
-				[$_id, $_clap, $_bitsB64] = explode("\t", trim($line));
+				[$_id, $_clap, $_bitsB64] = explode("\t", rtrim($line, "\r\n"));
 
 				$bits = base64_decode($_bitsB64);
 
@@ -168,5 +171,59 @@ class clap
 		}
 		$bits[$slot] = chr($cs);
 		return [false, $bits]; // 新規許可(上書き)
+	}
+
+	/**
+	 * 拍手済みIPをクリアして再度拍手できるようにする
+	 * @return void 
+	 */
+	public static function deleteChecksum(int $no, string $id): void
+	{
+		global $use_clap;
+		if (!$use_clap) {
+			return;
+		}
+
+		check_same_origin();
+
+		check_open_no($no);
+		$calplog = "claplog/{$no}.log";
+
+		clearstatcache();
+		if (!is_file($calplog)) {
+			return;
+		}
+
+		$cp = fopen($calplog, "r+");
+		chmod($calplog, 0600);
+		file_lock($cp, LOCK_EX);
+
+		$lines = create_array_from_fp($cp);
+		if (empty($lines)) {
+			closeFile($cp);
+			return;
+		}
+		$find = false;
+		foreach ($lines as $i => $line) {
+			if (strpos($line, $id . "\t") !== false) {
+				[$_id, $_clap, $_bitsB64] = explode("\t", rtrim($line, "\r\n"));
+				$lines[$i] = "$_id\t$_clap\t\n";
+				$find = true;
+				break;
+			}
+		}
+		if (!$find) {
+			closeFile($cp);
+			return;
+		}
+		//いいね済みのセッションをクリア
+		$newline = implode("", $lines);
+		writeFile($cp, $newline);
+		closeFile($cp);
+		session_sta();
+		if (!isset($_SESSION['clapped'])) {
+			$_SESSION['clapped'] = [];
+		}
+		$_SESSION['clapped']["{$no}_{$id}"] = false;
 	}
 }

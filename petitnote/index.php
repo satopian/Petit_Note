@@ -1793,6 +1793,9 @@ function img_replace(): void {
 		edit_form($time,$no);//編集画面にもどる
 		exit();
 	}
+	//いいねボタンの押下ずみ履歴をリセットして再度押せるようにする
+	clap::deleteChecksum($no,$_first_posted_time);
+
 	redirect("./?resno={$no}&resid={$_first_posted_time}");
 
 }
