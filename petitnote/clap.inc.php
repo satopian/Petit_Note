@@ -135,7 +135,6 @@ class clap
 		$newline .= implode("", $lines);
 		writeFile($cp, $newline);
 		closeFile($cp);
-		delete_res_cache();
 		$_SESSION['clapped']["{$no}_{$id}"] = true;
 		header('Content-type: text/plain');
 		echo h($_clap);
