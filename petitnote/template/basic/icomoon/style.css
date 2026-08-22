@@ -1,9 +1,9 @@
 @font-face {
   font-family: 'icomoon';
   src:
-    url('fonts/icomoon.ttf?vb6z6j') format('truetype'),
-    url('fonts/icomoon.woff?vb6z6j') format('woff'),
-    url('fonts/icomoon.svg?vb6z6j#icomoon') format('svg');
+    url('fonts/icomoon.ttf?e93za') format('truetype'),
+    url('fonts/icomoon.woff?e93za') format('woff'),
+    url('fonts/icomoon.svg?e93za#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,10 +25,10 @@
 }
 
 .icon-heart-favorite:before {
-  content: "\e900";
+  content: "\e901";
 }
 .icon-Simpleicons-Team-Simple-Misskey:before {
-  content: "\e901";
+  content: "\e902";
 }
 .icon-angles-up-solid:before {
   content: "\e903";
@@ -44,4 +44,7 @@
 }
 .icon-twitter:before {
   content: "\ea96";
+}
+.icon-heart-favorite-line:before {
+  content: "\e900";
 }
