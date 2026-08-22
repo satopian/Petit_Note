@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$clap_inc_ver = 20260820;
+$clap_inc_ver = 20260822;
 class clap
 {
 	/**
@@ -12,19 +12,33 @@ class clap
 	public static function create_claplog_array(int $no): array
 	{
 		global $use_clap;
+
 		if (!$use_clap) {
 			return [];
 		}
+		session_sta();
+		if (!isset($_SESSION['clapped'])) {
+			$_SESSION['clapped'] = [];
+		}
+
 		$claps = [];
 		check_open_no($no);
+		$userip = get_uip();
 		if (is_file("claplog/{$no}.log")) {
 			$fp = fopen("claplog/{$no}.log", "r");
 			while ($cline = fgets($fp)) {
 				if (!trim($cline)) {
 					continue;
 				}
-				[$c_id, $c_cont] = explode("\t", rtrim($cline, "\r\n"));
-				$claps[$c_id] = $c_cont;
+
+				[$c_id, $c_cont, $_bitsB64] = explode("\t", rtrim($cline, "\r\n"));
+				$bits = base64_decode($_bitsB64);
+				[$alreadyClapped,] = self::checkAndSetChecksum($bits, $userip);
+				if ($_SESSION['clapped']["{$no}_{$c_id}"] ?? false) {
+					$alreadyClapped = true;
+				}
+				$claps[$c_id]['clapCount'] = $c_cont;
+				$claps[$c_id]['alreadyClapped'] = $alreadyClapped;
 			}
 			fclose($fp);
 		}

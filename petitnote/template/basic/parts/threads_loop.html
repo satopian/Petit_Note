@@ -154,10 +154,11 @@
 							<!-- <div class="clear"></div> -->
 							<div class="res_button_wrap clap_wrap">
 								<?php if (isset($use_clap) && $use_clap && ($res['check_elapsed_days'] || isset($res['clap_count']) && $res['clap_count'] > 0)): ?>
-									<span <?php if ($res['check_elapsed_days']): ?>class="ref-target-do-submission" <?php endif; ?> data-mode="clap" data-id="<?= h($res['first_posted_time']) ?>" data-no="<?= h($res['no']) ?>" data-clap-count-id="clapCountId_<?= h($res['no']) ?>_<?= h($res['first_posted_time']) ?>" data-fetch="true"><span class="icon-heart-favorite"></span>
+									<span <?php if ($res['check_elapsed_days'] && !($res['alreadyClapped'] ?? false)): ?>class="ref-target-do-submission" <?php endif; ?> data-mode="clap" data-id="<?= h($res['first_posted_time']) ?>" data-no="<?= h($res['no']) ?>" data-fetch="true">
+										<span id="clapdId_<?= h($res['no']) ?>_<?= h($res['first_posted_time']) ?>" class=<?php if ($res['check_elapsed_days'] && !($res['alreadyClapped'] ?? false)): ?> "icon-heart-favorite-line" <?php else: ?> "icon-heart-favorite" <?php endif; ?>></span>
 										<?php if ($en): ?>Like <?php else: ?>いいね <?php endif; ?><span id="clapCountId_<?= h($res['no']) ?>_<?= h($res['first_posted_time']) ?>"><?php if (isset($res['clap_count']) && $res['clap_count'] > 0): ?>x <?= h($res['clap_count']) ?><?php endif; ?></span></span>
 								<?php endif; ?>
-								<?php if ($use_misskey_note && ($res['check_elapsed_days']||($adminpost || $admindel))): ?>
+								<?php if ($use_misskey_note && ($res['check_elapsed_days'] || ($adminpost || $admindel))): ?>
 									<span class="ref-target-do-submission" data-mode="before_misskey_note" data-no="<?= h($res['no']) ?>" data-id="<?= h($res['time']) ?>" data-target="_blank"><span class="icon-Simpleicons-Team-Simple-Misskey"></span>
 										<?php if ($en): ?>Note<?php else: ?>ノート<?php endif; ?></span>
 								<?php endif; ?>

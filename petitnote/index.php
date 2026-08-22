@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.9.0';
-$petit_lot='lot.20260820';
+$petit_ver='v3.10.3';
+$petit_lot='lot.20260822.1';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -61,7 +61,7 @@ if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20260714){
 }
 check_file(__DIR__.'/clap.inc.php');
 require_once(__DIR__.'/clap.inc.php');
-if(!isset($clap_inc_ver)||$clap_inc_ver<20260820){
+if(!isset($clap_inc_ver)||$clap_inc_ver<20260822){
 	die($en?'Please update clap.inc.php to the latest version.':'clap.inc.phpを最新版に更新してください。');
 }
 
@@ -2629,10 +2629,12 @@ function view(): void {
 			foreach($lines as $i => $line){
 
 				$_res=[];
-
+				$_res['clap_count'] = 0;
+				$_res['alreadyClapped'] = false;
 				if($fetch_articles_to_skip ||($i===0 || $i>$com_skipres)){//省略するレスは処理しない
 					$_res = create_res(explode("\t",trim($line)),['is_badhost'=>$is_badhost]);//$lineから、情報を取り出す
-					$_res['clap_count'] = $claps[$_res['first_posted_time']] ?? 0;
+					$_res['clap_count'] = $claps[$_res['first_posted_time']]['clapCount'] ?? 0;
+					$_res['alreadyClapped'] = $claps[$_res['first_posted_time']]['alreadyClapped'] ?? false;
 				}
 				if(isset($_res['img']) && $_res['img']){
 					if($_res['hide_thumbnail']){
@@ -2890,7 +2892,8 @@ function res (): void {
 			$og_resid = $_res['oya'] === 'res' ? $resid : ""; //oyaの時はresidを出さない
 		}
 
-		$_res['clap_count'] = $claps[$_res['first_posted_time']] ?? 0;
+		$_res['clap_count'] = $claps[$_res['first_posted_time']]['clapCount'] ?? 0;
+		$_res['alreadyClapped'] = $claps[$_res['first_posted_time']]['alreadyClapped'] ?? false;
 
 		$out[0][]=$_res;
 		$out[0][0]['find_hide_thumbnail']=$find_hide_thumbnail;

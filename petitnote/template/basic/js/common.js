@@ -344,6 +344,10 @@ var snsWindow = null; // グローバル変数としてウィンドウオブジ�
 const open_sns_server_window = (event, width = 600, height = 600) => {
   event.preventDefault(); // デフォルトのリンクの挙動を中断
 
+  if (isAutomaticBrowser()) {
+    return;
+  }
+
   // 幅と高さが数値であることを確認
   // 幅と高さが正の値であることを確認
   if (isNaN(width) || width < 300 || isNaN(height) || height < 300) {
@@ -427,14 +431,18 @@ document.addEventListener("click", async (e) => {
       : null;
   if (!trigger) return;
 
+  const no = trigger.dataset.no ?? "";
+  const id = trigger.dataset.id ?? "";
+
   const form = document.createElement("form");
   form.method = "POST";
   form.action = "./";
   form.target = trigger.dataset.target ? "_blank" : "_self";
-  //いいねボタンのカウントの表示を更新するための要素を取得
-  const clapCountId = trigger.dataset.clapCountId
-    ? document.getElementById(trigger.dataset.clapCountId)
-    : null;
+
+  //いいねボタンのカウントを更新するための要素を取得
+  const clapCountId = document.getElementById(`clapCountId_${no}_${id}`);
+  //いいね済みアイコンを差し換えるための要素を取得
+  const clapdId = document.getElementById(`clapdId_${no}_${id}`);
 
   /**
    * @param  {string} name
@@ -449,8 +457,8 @@ document.addEventListener("click", async (e) => {
   };
 
   append("mode", trigger.dataset.mode ?? "");
-  append("no", trigger.dataset.no ?? "");
-  append("id", trigger.dataset.id ?? "");
+  append("no", no);
+  append("id", id);
 
   document.body.appendChild(form);
   if (trigger.dataset.fetch === "true") {
@@ -460,6 +468,11 @@ document.addEventListener("click", async (e) => {
         const trimmed = responseText.trim();
         if (/^\d+$/.test(trimmed)) {
           clapCountId.textContent = `x ${trimmed}`;
+          trigger.classList.remove("ref-target-do-submission");
+          if (clapdId) {
+            clapdId.classList.remove("icon-heart-favorite-line");
+            clapdId.classList.add("icon-heart-favorite");
+          }
         } else {
           console.error("Unexpected response (not a number):", responseText);
         }
