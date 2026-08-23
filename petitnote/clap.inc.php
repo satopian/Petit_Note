@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$clap_inc_ver = 20260822;
+$clap_inc_ver = 20260823;
 class clap
 {
 	/**
@@ -238,5 +238,14 @@ class clap
 			$_SESSION['clapped'] = [];
 		}
 		$_SESSION['clapped']["{$no}_{$id}"] = false;
+	}
+	/**
+	 * 拍手のログファイルを削除
+	 * @param int $no
+	 * @return void 
+	 */
+	public static function deleteClaplog(int $no): void
+	{
+		safe_unlink("claplog/{$no}.log");
 	}
 }

@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.10.7';
-$petit_lot='lot.20260823';
+$petit_ver='v3.10.8';
+$petit_lot='lot.20260823.1';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -61,7 +61,7 @@ if(!isset($noticemail_inc_ver)||$noticemail_inc_ver<20260714){
 }
 check_file(__DIR__.'/clap.inc.php');
 require_once(__DIR__.'/clap.inc.php');
-if(!isset($clap_inc_ver)||$clap_inc_ver<20260822){
+if(!isset($clap_inc_ver)||$clap_inc_ver<20260823){
 	die($en?'Please update clap.inc.php to the latest version.':'clap.inc.phpを最新版に更新してください。');
 }
 
@@ -768,6 +768,7 @@ function post(): void {
 			}
 			closeFile($dp);
 			safe_unlink(LOG_DIR.$d_no.'.log');//スレッド個別ログファイル削除
+			clap::deleteClaplog($d_no);
 		}	
 		unset($alllog_arr[$i]);//全体ログ記事削除
 		}
@@ -2421,6 +2422,7 @@ function del(): void {
 				}
 				closeFile ($rp);
 				safe_unlink(LOG_DIR.$no.'.log');
+				clap::deleteClaplog($no);
 
 		}else{
 				delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
