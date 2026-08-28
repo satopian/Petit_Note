@@ -959,8 +959,7 @@ class petitNoteImagePreview {
 
     if (this.removeAttachmentBtn) {
       /**
-       * 画像添付のある投稿フォームで、ファイルサイズチェックと画像プレビュー表示を行う
-       * 閲覧注意に設定されている時は枠線を付ける
+       * 添付取り消し
        * @returns {void}
        */
       this.removeAttachmentBtn.addEventListener("click", (e) => {
@@ -975,6 +974,7 @@ class petitNoteImagePreview {
         this.clear_css_form_submit();
       });
     }
+
     /**
      * ページが表示されたときに画像プレビューをクリアする
      * @returns {void}
@@ -984,6 +984,37 @@ class petitNoteImagePreview {
       if (this.paint_form_fileInput instanceof HTMLInputElement) {
         this.paint_form_fileInput.value = "";
       }
+    });
+
+    //クリップボードから画像をペースト
+    this.post_com?.addEventListener("paste", (e) => {
+      if (this.paintcom) {
+        //お絵かきコメントの時
+        return;
+      }
+      const fileInput = this.elem_attach_image;
+      if (!(fileInput instanceof HTMLInputElement)) {
+        return;
+      }
+      /** @type {ClipboardEvent} */
+      if (!(e instanceof ClipboardEvent)) {
+        return;
+      }
+      const items = e.clipboardData?.items;
+      if (!items || items.length === 0) return;
+
+      const item = items[0];
+      if (item.kind !== "file" || item.type.indexOf("image") === -1) return;
+
+      const file = item.getAsFile();
+      if (!file) return;
+
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      fileInput.files = dt.files;
+
+      fileInput.dispatchEvent(new Event("change", { bubbles: true }));
+      e.preventDefault();
     });
   }
 }
