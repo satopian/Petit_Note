@@ -992,6 +992,7 @@ class petitNoteImagePreview {
         //お絵かきコメントの時
         return;
       }
+
       const fileInput = this.elem_attach_image;
       if (!(fileInput instanceof HTMLInputElement)) {
         return;
@@ -1003,8 +1004,10 @@ class petitNoteImagePreview {
       const items = e.clipboardData?.items;
       if (!items || items.length === 0) return;
 
-      const item = items[0];
-      if (item.kind !== "file" || item.type.indexOf("image") === -1) return;
+      const item = Array.from(items).find(
+        (i) => i.kind === "file" && i.type.indexOf("image") !== -1,
+      );
+      if (!item) return;
 
       const file = item.getAsFile();
       if (!file) return;
