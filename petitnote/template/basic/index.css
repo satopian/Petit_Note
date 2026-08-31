@@ -7,37 +7,37 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   /* ライトモードの配色 */
 
   /* 文字色 */
-  --text-color: hsl(0 0% 31% / 1);
+  --text-color: hsl(8 1% 23% / 1);
   /* リンクの色 */
   --a-color: var(--text-color);
   /* リンクホバー */
   --a-hover-color: var(--text-color);
   /* SNS共有 */
-  --sns-share-text-color: hsl(0 0% 36% / 1);
+  --sns-share-text-color: hsl(8 1% 36% / 1);
   /* いいね */
   --clap-text-color: var(--sns-share-text-color);
   /* 背景色 */
   --background-color: #fff;
   /* 掲示板タイトルの文字色 */
-  --title-a-color: #555;
+  --title-a-color: hsl(8 1% 33% / 1);
   /* 記事タイトルの文字色 */
   --article-title-color: var(--title-a-color);
   /* 記事タイトルの背景色 */
-  --accent-background-color: #ffe6e6;
+  --accent-background-color: hsl(8 100% 96.5% / 1);
   /* 記事タイトル背景色のアクセント */
-  --strong-accent-background-color: #ffcfcf;
+  --strong-accent-background-color: hsl(8 100% 94% / 1);
   /* チェック済みのフォームのラベルの色 */
   --checked-color: var(--title-a-color);
   /* チェック済みのフォームのラベルの背景色 */
-  --checked-background-color: var(--accent-background-color);
+  --checked-background-color: hsl(8 100% 95.5% / 1);
   /* ボーダー */
-  --border-color: var(--strong-accent-background-color);
+  --border-color: hsl(8 92% 85%);
   /* 点線 */
   --border-dashed-color: #888;
   /* ラベルのボーダー */
   --border-label-color: var(--checked-background-color);
   /* ダイナミックパレットのボーダー */
-  --border-dynamic-palette-color: #555;
+  --border-dynamic-palette-color: hsl(8 1% 35% / 1);
   /* 名前のリンクの色 */
   --name-a-color: var(--title-a-color);
   /* 名前のリンクのホバー */
@@ -49,7 +49,7 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   /* 上に戻るボタンの矢印の色 */
   --page-top-color: #fff;
   /* 上に戻るボタンの背景色 */
-  --page-top-background-color: var(--strong-accent-background-color);
+  --page-top-background-color: hsl(0 100% 91% / 1);
   /* エラーメッセージの背景色 */
   --error-message-background-color: hsl(60 100% 88% / 1);
   /* 注意が必要な項目の背景色 */
@@ -427,6 +427,7 @@ span.info_name > span {
 .comment {
   display: table;
   min-width: 365px;
+  margin: 0 0 3px;
 }
 .clear {
   clear: both;
