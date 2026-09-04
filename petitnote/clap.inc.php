@@ -83,7 +83,7 @@ class clap
 			}
 			if (strpos($resline, "\t" . $id . "\t") !== false) {
 				$res = create_res(explode("\t", rtrim($resline, "\r\n")));
-				//IDが一一致、画像あり、投稿から一定日数以内であれば拍手可能
+				//IDが一致、画像あり、投稿から一定日数以内であれば拍手可能
 				if ($res['first_posted_time'] === $id && $res['img'] && $res['check_elapsed_days']) {
 					$flag = true;
 				}

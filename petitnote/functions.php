@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260817;
+$functions_ver=20260904;
 
 /**
  * 編集モードログアウト
@@ -62,6 +62,7 @@ function aikotoba(): void {
 /**
  * 記事の表示に合言葉を必須にする
  * @param bool $required_flag 合言葉の入力が必要なページかどうか。
+ * @return void
  */
 function aikotoba_required_to_view(bool $required_flag=false): void {
 
@@ -343,6 +344,7 @@ function set_nsfw_show_hide(): void {
 		setcookie("p_n_set_nsfw_show_hide","0",time()+(60*60*24*365),"","",false,true);
 	}
 }
+
 /**
  * ダークモード
  */
@@ -1513,7 +1515,7 @@ function is_badhost(array $options=[]): bool {
  * 初期化 
  */
 function init(): void {
-	
+
 	check_dir(__DIR__."/src");
 	check_dir(__DIR__."/temp");
 	check_dir(__DIR__."/thumbnail");
@@ -1603,10 +1605,11 @@ return $msg;
 /**
  * 一括書き込み（上書き）
  * @param resource|false $fp
+ * @param string|null $data
  */
 function writeFile ($fp,?string $data): void {
 	global $en;
-	if($data === ''){
+	if(!$data){
 		closeFile($fp);
 		error($en ? 'Log write failed.' : 'ログの書き込みに失敗しました。');
 	}
@@ -1619,7 +1622,8 @@ function writeFile ($fp,?string $data): void {
 /**
  * fpクローズ
  * @param resource|false $fp
-*/
+ * @return void
+ */
 function closeFile ($fp): void {
 	if($fp){
 		fflush($fp);
@@ -1634,6 +1638,7 @@ function closeFile ($fp): void {
  * @param int|string|null $h
  * @param int|string|null $max_w
  * @param int|string|null $max_h
+ * @return array
  */
 function image_reduction_display($w,$h,$max_w,$max_h): array {
 	if(!ctype_digit((string)$w)||!ctype_digit((string)$h)){
@@ -1739,6 +1744,7 @@ function check_pch_ext (?string $filepath,array $options = []): string {
 /**
  * 古いスレッドへの投稿を許可するかどうか
  * @param string|null|int $postedtime
+ * @return bool
  */
 function check_elapsed_days (?string $postedtime): bool {
 	global $elapsed_days;
@@ -1754,6 +1760,7 @@ function check_elapsed_days (?string $postedtime): bool {
 /**
  * スレッドを閉じるまでの残り時間
  * @param string|null|int $postedtime
+ * @return string
  */
 function time_left_to_close_the_thread (?string $postedtime): string {
 	global $elapsed_days;
@@ -1768,7 +1775,8 @@ function time_left_to_close_the_thread (?string $postedtime): string {
 }	
 /**
  * マイクロ秒を秒に戻す
- * @param string|null|int $microtime  
+ * @param string|null|int $microtime
+ * @return int
  */
 function microtime2time($microtime): int {
 	$microtime=(string)$microtime;
@@ -2007,6 +2015,9 @@ function getTranslatedLayerName(): string {
 /**
  *flockのラッパー関数 
  * @param resource|false $fp
+ * @param int $lock
+ * @param array $options
+ * @return void
  */
 function file_lock($fp, int $lock, array $options=[]): void {
 	global $en;
