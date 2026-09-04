@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.15.5';
-$petit_lot='lot.20260904';
+$petit_ver='v3.16.1';
+$petit_lot='lot.20260905';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20260817){
+if(!isset($functions_ver)||$functions_ver<20260905){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -582,7 +582,7 @@ function post(): void {
 	if($is_file_upfile){
 
 		//添付したアップロード画像の元のmime_type
-		$upload_img_mime_type = $is_upload_img ? mime_content_type($upfile) : "";
+		$upload_img_mime_type = (string)($is_upload_img ? mime_content_type($upfile) : "");
 
 		if($is_upload_img){
 			//Exifをチェックして画像が回転している時は上書き保存
@@ -640,22 +640,7 @@ function post(): void {
 	$pchext = '';
 	//PCHファイルアップロード
 	if ($is_painted_img && $imgfile) {
-		// .pch, .tgkr, .chi, .psd, ブランク どれかが返ってくる
-		if($pchext = check_pch_ext($temp_basepath,['upload'=>true])){
-			$pch_src = $temp_basepath.$pchext;
-			$pch_dst = IMG_DIR.$time.$pchext;
-			if(copy($pch_src, $pch_dst)){
-				chmod($pch_dst,0606);
-			}
-		}
-		//litaChixのカラーセット
-		$aco_src = $temp_basepath.".aco";
-		$aco_dst = IMG_DIR.$time.".aco";
-		if(is_file($aco_src)){
-			if(copy($aco_src, $aco_dst)){
-				chmod($aco_dst,0606);
-			}
-		}
+		[$pchext,$pch_src,$aco_src] = copy_pch_file($temp_basepath, $time);
 	}
 	$pchext= ($pchext==='.pch' && $hide_animation) ? 'hide_animation' : $pchext; 
 	$pchext= ($pchext==='.tgkr' && $hide_animation) ? 'hide_tgkr' : $pchext; 
@@ -1691,23 +1676,7 @@ function img_replace(): void {
 	$pchext='';
 	//PCHファイルアップロード
 	if (!$is_upload_img && $repfind) {
-		// .pch, .spch,.chi,.psd ブランク どれかが返ってくる
-		if($pchext = check_pch_ext($temp_basepath,['upload'=>true])){
-			$pchext=basename($pchext);
-			$pch_src = $temp_basepath.$pchext;
-			$pch_dst = IMG_DIR.$time.$pchext;
-			if(copy($pch_src, $pch_dst)){
-				chmod($pch_dst,0606);
-			}
-		}
-		//litaChixのカラーセット
-		$aco_src = $temp_basepath.".aco";
-		$aco_dst = IMG_DIR.$time.".aco";
-		if(is_file($aco_src)){
-			if(copy($aco_src, $aco_dst)){
-				chmod($aco_dst,0606);
-			}
-		}
+		[$pchext,$pch_src,$aco_src] = copy_pch_file($temp_basepath, $time);
 	}
 
 	if($pchext === '.pch'){

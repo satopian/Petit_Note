@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260904;
+$functions_ver=20260905;
 
 /**
  * 編集モードログアウト
@@ -970,7 +970,6 @@ function convert2(bool $is_upload_img,?string $upload_img_mime_type,?string $fna
 	if(!$is_upload_img && $filesize < ($max_file_size_in_png_format_paint * 1024)){
 			return;
 	}
-	$upload_img_mime_type = ($upload_img_mime_type === true) ? "image/png" : $upload_img_mime_type;
 
 	switch($upload_img_mime_type){
 		case "image/png":
@@ -1878,6 +1877,33 @@ function get_pch_size(?string $src): ?array {
 		return null;
 	}
 	return[(int)$width,(int)$height];
+}
+
+/**
+ * pchファイルをコピー
+ * @param string $temp_basepath 一時ファイルのベースパス。
+ * @param string $time タイムスタンプ。
+ * @return array 
+ */
+function copy_pch_file(string $temp_basepath,string $time): array {
+	$pch_src='';
+		// .pch, .tgkr, .chi, .psd, ブランク どれかが返ってくる
+		if($pchext = check_pch_ext($temp_basepath,['upload'=>true])){
+			$pch_src = $temp_basepath.$pchext;
+			$pch_dst = IMG_DIR.$time.$pchext;
+			if(copy($pch_src, $pch_dst)){
+				chmod($pch_dst,0606);
+			}
+		}
+		//litaChixのカラーセット
+		$aco_src = $temp_basepath.".aco";
+		$aco_dst = IMG_DIR.$time.".aco";
+		if(is_file($aco_src)){
+			if(copy($aco_src, $aco_dst)){
+				chmod($aco_dst,0606);
+			}
+		}
+		return [$pchext,$pch_src,$aco_src];
 }
 
 /**
