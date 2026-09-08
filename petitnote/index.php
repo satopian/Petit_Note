@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.16.1';
-$petit_lot='lot.20260905';
+$petit_ver='v3.17.6';
+$petit_lot='lot.20260908';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -51,7 +51,7 @@ if(!isset($sns_share_inc_ver)||$sns_share_inc_ver<20260805){
 check_file(__DIR__.'/thumbnail_gd.inc.php');
 require_once(__DIR__.'/thumbnail_gd.inc.php');
 if(!isset($thumbnail_gd_ver)||$thumbnail_gd_ver<20260714){
-	die($en?'Please update thumbmail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
+	die($en?'Please update thumbnail_gd.inc.php to the latest version.':'thumbnail_gd.inc.phpを最新版に更新してください。');
 }
 
 check_file(__DIR__.'/noticemail.inc.php');
@@ -1784,11 +1784,14 @@ function pchview(): void {
 	aikotoba_required_to_view();
 
 	$id = basename((string)filter_input_data('GET', 'id'));//最初に投稿した時刻をidに
+	$id = $id ?: basename((string)filter_input_data('POST', 'id'));//最初に投稿した時刻をidに
 
 	$imagefile = basename((string)filter_input_data('GET', 'imagefile'));
 	$id = $id ?: pathinfo($imagefile, PATHINFO_FILENAME);//旧テンプレート互換
 
 	$no = (string)filter_input_data('GET', 'no',FILTER_VALIDATE_INT);
+	$no = $no ?: (string)filter_input_data('POST', 'no',FILTER_VALIDATE_INT);
+
 	if(!is_file(LOG_DIR."{$no}.log")){
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
