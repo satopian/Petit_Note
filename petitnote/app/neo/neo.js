@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 var Neo = {};
 
-Neo.version = "1.7.18";
+Neo.version = "1.7.22";
 // @ts-ignore
 /** @type {Neo.Painter} */
 Neo.painter;
@@ -3631,8 +3631,11 @@ Neo.Painter = class {
     var miny = (this.destCanvas.height / this.zoom) * 0.5;
     var maxy = this.canvasHeight - miny;
 
-    x = Math.round(Math.max(Math.min(maxx, x), minx));
-    y = Math.round(Math.max(Math.min(maxy, y), miny));
+    // Math.roundでで丸めない。
+    // 拡大時にキャンバスの端で円カーソルのグリッチが発生するため
+    // 浮動小数点数で計算。
+    x = Math.max(Math.min(maxx, x), minx);
+    y = Math.max(Math.min(maxy, y), miny);
 
     this.zoomX = x;
     this.zoomY = y;
@@ -7667,6 +7670,11 @@ Neo.EffectToolBase = class extends Neo.ToolBase {
     this.endX = Math.floor(this.endX);
     this.endY = Math.floor(this.endY);
 
+    if (this.startX >= oe.canvasWidth) this.startX = oe.canvasWidth - 1;
+    if (this.endX >= oe.canvasWidth) this.endX = oe.canvasWidth - 1;
+    if (this.startY >= oe.canvasHeight) this.startY = oe.canvasHeight - 1;
+    if (this.endY >= oe.canvasHeight) this.endY = oe.canvasHeight - 1;
+
     var x = this.startX < this.endX ? this.startX : this.endX;
     var y = this.startY < this.endY ? this.startY : this.endY;
     var width = Math.abs(this.startX - this.endX) + 1;
@@ -7897,6 +7905,11 @@ Neo.TurnTool = class extends Neo.EffectToolBase {
     this.startY = Math.floor(this.startY);
     this.endX = Math.floor(this.endX);
     this.endY = Math.floor(this.endY);
+
+    if (this.startX >= oe.canvasWidth) this.startX = oe.canvasWidth - 1;
+    if (this.endX >= oe.canvasWidth) this.endX = oe.canvasWidth - 1;
+    if (this.startY >= oe.canvasHeight) this.startY = oe.canvasHeight - 1;
+    if (this.endY >= oe.canvasHeight) this.endY = oe.canvasHeight - 1;
 
     var x = this.startX < this.endX ? this.startX : this.endX;
     var y = this.startY < this.endY ? this.startY : this.endY;
