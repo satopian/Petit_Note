@@ -26,25 +26,7 @@
 		<span>[<a href="<?=h($home)?>"><?php if($en):?>Home<?php else:?>ホーム<?php endif;?></a>]</span>
 		<?php endif;?>
 	<?php endif;?>
-		<span>[<a href="./?mode=catalog"><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
-	<?php if($display_search_nav):?>
-		<span> [<a href="./?mode=search&radio=3"><?php if($en):?>Search<?php else:?>検索<?php endif;?></a>]</span>
-	<?php endif;?>
-<?php if($aikotoba):?>
-	<?php if($use_paint):?>
-		<span> [<a href="./?mode=paintcom" rel="nofollow"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></a>]</span>
-	<?php endif;?>
-	<span>
-	<?php if($userdel || $admindel):?>
-			[<a href="./?mode=logout" rel="nofollow"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></a>]
-	<?php elseif(!$is_badhost):?>
-		[<a href="./?mode=userdel" rel="nofollow"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></a>]
-	<?php endif;?>
-<?php endif;?>
-	<a href="#bottom">▽</a>
-<?php if($aikotoba):?>
-	</span>
-<?php endif;?>
+	<?php include __DIR__.'/parts/main_nav_menu.html';?>
 </nav>
 <?php if($userdel||$admindel||(isset($mark_sensitive_image) && $mark_sensitive_image||isset($set_all_images_to_nsfw) && $set_all_images_to_nsfw)):?>
 	<!-- 閲覧注意画像を隠す/隠さない -->
@@ -126,7 +108,7 @@ Size:
 <br>
 <?php endif;?>
 <div style="display:flex;" class="attach_preview_wrap">
-<img id="attach_preview" style="max-width:200px;max-height:125px;height:fit-content;display:none;" alt="preview">
+<img id="attach_preview" style="max-width:200px;max-height:125px;height:fit-content;display:none;" alt="preview" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==">
 <textarea name="com" class="post_com"></textarea>
 </div>
 <?php if($en):?>Password:<?php else:?>パスワード:<?php endif;?><input type="password" name="pwd" value="<?=h($pwdc)?>" autocomplete="current-password" minlength="6" class="res_pwd">

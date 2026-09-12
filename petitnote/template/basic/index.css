@@ -7,37 +7,37 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   /* ライトモードの配色 */
 
   /* 文字色 */
-  --text-color: hsl(2 1% 21% / 1);
+  --text-color: hsl(208 1% 23% / 1);
   /* リンクの色 */
   --a-color: var(--text-color);
   /* リンクホバー */
   --a-hover-color: var(--text-color);
   /* SNS共有 */
-  --sns-share-text-color: hsl(2 1% 36% / 1);
+  --sns-share-text-color: hsl(208 1% 36% / 1);
   /* いいね */
   --clap-text-color: var(--sns-share-text-color);
   /* 背景色 */
   --background-color: #fff;
   /* 掲示板タイトルの文字色 */
-  --title-a-color: hsl(2 1% 33% / 1);
+  --title-a-color: hsl(208 1% 33% / 1);
   /* 記事タイトルの文字色 */
   --article-title-color: var(--title-a-color);
   /* 記事タイトルの背景色 */
-  --accent-background-color: hsl(2 100% 96.8% / 1);
+  --accent-background-color: hsl(1 100% 96.3% / 1);
   /* 記事タイトル背景色のアクセント */
-  --strong-accent-background-color: hsl(2 100% 94.8% / 1);
+  --strong-accent-background-color: hsl(1 100% 93.8% / 1);
   /* チェック済みのフォームのラベルの色 */
   --checked-color: var(--title-a-color);
   /* チェック済みのフォームのラベルの背景色 */
-  --checked-background-color: hsl(2 100% 95.5% / 1);
+  --checked-background-color: hsl(1 100% 95.5% / 1);
   /* ボーダー */
-  --border-color: hsl(2 89% 87% / 1);
+  --border-color: hsl(1 89% 87% / 1);
   /* 点線 */
   --border-dashed-color: #888;
   /* ラベルのボーダー */
   --border-label-color: var(--checked-background-color);
   /* ダイナミックパレットのボーダー */
-  --border-dynamic-palette-color: hsl(2 1% 35% / 1);
+  --border-dynamic-palette-color: hsl(208 1% 35% / 1);
   /* 名前のリンクの色 */
   --name-a-color: var(--title-a-color);
   /* 名前のリンクのホバー */
@@ -49,7 +49,7 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   /* 上に戻るボタンの矢印の色 */
   --page-top-color: #fff;
   /* 上に戻るボタンの背景色 */
-  --page-top-background-color: hsl(0 100% 91% / 1);
+  --page-top-background-color: hsl(1 100% 91% / 1);
   /* エラーメッセージの背景色 */
   --error-message-background-color: hsl(60 100% 88% / 1);
   /* 注意が必要な項目の背景色 */
@@ -68,7 +68,7 @@ https://developer.mozilla.org/ja/docs/Web/CSS/Using_CSS_custom_properties
   /* 文字色 */
   --text-color: hsl(211 10% 80% / 1);
   /* リンクの色 */
-  --a-color: hsl(208 10% 80% / 1);
+  --a-color: hsl(211 10% 78% / 1);
   /* リンクホバー */
   --a-hover-color: var(--a-color);
   /* SNS共有 */

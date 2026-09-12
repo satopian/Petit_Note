@@ -1,0 +1,22 @@
+<span>[<?php if($resno):?><a href="./?resno=<?=h($resno)?>&res_catalog=on"><?php else:?>
+<a href="./?mode=catalog"><?php endif;?><?php if($en):?>Catalog<?php else:?>カタログ<?php endif;?></a>]</span>
+	<?php if($display_search_nav):?>
+		<span> [<a href="./?mode=search&radio=3"><?php if($en):?>Search<?php else:?>検索<?php endif;?></a>]</span>
+	<?php endif;?>
+<?php if($aikotoba):?>
+	<?php if($use_paint):?>
+<span> [<span class="ref-target-do-submission" data-mode="paintcom"><?php if($en):?>Recover Images<?php else:?>未投稿画像<?php endif;?></span>]</span>
+	<?php endif;?>
+	<span>
+<?php if($userdel || $admindel):?>
+	[<span class="ref-target-do-submission" data-mode="logout"><?php if($en):?>Exit edit mode<?php else:?>編集モード終了<?php endif;?></span>]
+<?php elseif(!$is_badhost):?>
+	[<span class="ref-target-do-submission" data-mode="userdel"><?php if($en):?>Edit<?php else:?>編集<?php endif;?></span>]
+<?php endif;?>
+<?php endif;?>
+<a href="#bottom">▽</a>
+<?php if($aikotoba):?>
+	</span>
+<?php endif;?>
+
+
