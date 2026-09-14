@@ -1,5 +1,5 @@
 <?php
-$noticemail_inc_ver = 20260714;
+$noticemail_inc_ver = 20260914;
 /*
 ** メール通知クラス(UTF-8) lot.20250314 for PetitNote
 ** https://paintbbs.sakura.ne.jp/
@@ -8,6 +8,7 @@ $noticemail_inc_ver = 20260714;
 ** http://www.punyu.net/php/
 ** 
 **
+** 2026/09/14 件名に半角カナが入っていた時は全角カナに変換。
 ** 2024/07/09 Name、Subjectの個所を変数設定で変更できるようにした。
 ** 2022/12/19 コード整理。
 ** 2022/09/18 URLがURLとして正しい事を確認できるようにした。
@@ -150,6 +151,7 @@ class noticemail
 		$Message = mb_convert_kana($Message);
 		$name = mb_convert_kana($name);
 		$name = str_replace('"', "", $name); //ダブルクオートを除去
+		$subject = mb_convert_kana($subject);
 
 		// メールアドレスの入力欄が無いので代替え
 		$from = 'nomail@' . $_SERVER["HTTP_HOST"];
