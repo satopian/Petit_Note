@@ -3085,7 +3085,9 @@ var Tegaki = {
 
   zoomLevel: 0,
   zoomFactor: 1.0,
-  zoomFactorList: [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 2.0, 3.0, 4.0, 6.0, 8.0, 16.0],
+  zoomFactorList: [
+    0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 6.0, 8.0, 16.0,
+  ],
   zoomBaseLevel: 5, //zoomFactorListのインデックスの1.0倍の位置
 
   hasCustomCanvas: false,
