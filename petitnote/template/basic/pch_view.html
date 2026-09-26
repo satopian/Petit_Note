@@ -24,7 +24,7 @@
 </head>
 <body>
 <div class="container" <?php if($appw>928):?>style="max-width:<?=h($appw) ?>px"<?php endif;?>>
-<div class="appstage" style="width:<?=h($appw) ?>px; height:<?=h($apph) ?>px">
+<div class="appstage" style="width:<?=h($appw) ?>px; max-width:100%; aspect-ratio:<?=h($appw)?> / <?=h($apph)?>;">
 <div class="neo-applet-pch" data-width="<?=h($appw)?>" data-height="<?=h($apph)?>"></div>
 <script>
 Neo.params ={
@@ -35,10 +35,11 @@ Neo.params ={
 	speed:0,
 	neo_enable_zoom_out:true,
 	neo_viewer_buttonswrapper_top:true,
+	neo_viewer_max_width_100:true,
 	}
 }
 </script>	
-	</div>
+</div>
 <div class="pch_download">
 <A href="<?=h($pchfile)?>" target="_blank" rel="nofollow noopener noreferrer">Download</A><br>
 <?php if($no):?>
