@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.22.1';
-$petit_lot='lot.20260925';
+$petit_ver='v3.26.3';
+$petit_lot='lot.20261003';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -1010,10 +1010,15 @@ function paint(): void{
 	$pich = max($pich, $pmin_h); // 最低の高さチェック
 	$picw = min($picw, $pmax_w); // 最大の幅チェック
 	$pich = min($pich, $pmax_h); // 最大の高さチェック
-
+	
 	setcookie("appc", $app, time() + (60 * 60 * 24 * 30), "", "", $httpsonly, true); //アプレット選択
+
+	$mode = (string)filter_input_data('POST', 'mode');
+
+	if ($mode !== "contpaint") {
 	setcookie("picwc", $picw, time() + (60 * 60 * 24 * 30), "", "", $httpsonly, true); //幅
 	setcookie("pichc", $pich, time() + (60 * 60 * 24 * 30), "", "", $httpsonly, true); //高さ
+	}
 
 	$pwd = $repcode = $imgfile = $pchfile = $img_chi = $img_aco = $img_klecks = "";
 
