@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20260905;
+$functions_ver=20261009;
 
 /**
  * 編集モードログアウト
@@ -1098,7 +1098,11 @@ function make_thumbnail(?string $imgfile,?string $time,int $max_w,int $max_h): s
 function delete_file_if_sizeexceeds(string $upfile,$fp,$rp): void {
 	global $max_kb,$en;
 	clearstatcache();
-	if(filesize($upfile) > $max_kb*1024){
+	$server_max_mb = get_upload_max_filesize();
+	$max_b = $server_max_mb > 0
+	? min($max_kb * 1024, $server_max_mb * 1024 * 1024)
+	: $max_kb * 1024;
+	if(filesize($upfile) > $max_b){
 		closeFile($fp);
 		closeFile($rp);
 		safe_unlink($upfile);
@@ -1881,7 +1885,7 @@ function get_pch_size(?string $src): ?array {
 
 /**
  * pchファイルをコピー
- * @param string $temp_basepath 一時ファイルのベースパス。
+ * @param string $temp_basepath 一時ファイルのパス。
  * @param string $time タイムスタンプ。
  * @return array 
  */
@@ -1945,12 +1949,16 @@ function ini_get_size_mb(string $key): float {
 					return ($num / 1024 / 1024); // 単位なし → バイトとして処理
 	}
 }
+
 /**
  * サーバーに投稿可能な最大ファイルサイズを取得 単位MB 
  */
 function get_upload_max_filesize(): float {
 	$upload_max = ini_get_size_mb('upload_max_filesize');
 	$post_max = ini_get_size_mb('post_max_size');
+	//0、-1は無制限
+	if ($upload_max <= 0) return max($post_max, 0.0);
+	if ($post_max <= 0) return $upload_max;
 	return min($upload_max, $post_max);
 }
 
