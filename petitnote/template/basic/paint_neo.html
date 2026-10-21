@@ -427,10 +427,12 @@ const applyFit = () => {
 		// ウィンドウに合わせる
 		view.style.width = `${Math.max(document.documentElement.clientWidth - 195,400)}px`;
 		view.style.height = `${Math.max(document.documentElement.clientHeight - 80,400)}px`;
+		Neo.disableGridTouchMove = screen.width>=600 ? true : false;
 	} else {
 		// 元のサイズに戻す(インラインstyleを初期値にもどす)
 		view.style.width = `${neo_origAppW}px`;
 		view.style.height = `${neo_origAppH}px`;
+		Neo.disableGridTouchMove = false;
 	}
 }
 const appletFit = () => {
