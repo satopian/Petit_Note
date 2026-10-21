@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 <body>
 <header>
 <nav>
-<div style= "width:calc(<?=h($appw)?>px + 176px)" class="app_toolleft"> 
+<div style= "max-width:calc(<?=h($appw)?>px + 176px)" class="app_toolleft"> 
 <span class="nts_radiowrap"><?php if($en):?>Tool<?php else:?>ツールを<?php endif;?>
 		<input type="radio" name="1" id="1" onclick="Neo.setToolSide(true)" class="nts_radio"><label class="ntslabel" for="1"><?php if($en):?>Left<?php else:?>左へ<?php endif;?></label>
 		<input type="radio" name="1" id="2" onclick="Neo.setToolSide(false)" checked="checked" class="nts_radio"><label class="ntslabel" for="2"><?php if($en):?>Right<?php else:?>右へ<?php endif;?></label>
@@ -220,7 +220,7 @@ if(f instanceof HTMLSelectElement&&b instanceof HTMLSelectElement)for(c=0;e>c;c+
 <?php endif;?>
 <noscript><p><?php if($en):?>Please enable JavaScript.<?php else:?>javascriptが有効でないため正常に動作致しません<?php endif;?></p></noscript>
 <div class="appstage">
-<div class="app">
+<div class="app" style="width:<?=h($appw)?>;height:auto;">
 <!-- NEOを使う時はアプレットを読み込まないように -->
 <div class="neo-applet-paintbbs" data-width="<?=h($appw)?>" data-height="<?=h($apph)?>"></div>
 <script>
