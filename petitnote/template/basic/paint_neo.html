@@ -423,6 +423,9 @@ const neo_origAppW = <?=h($appw)?>;
 const neo_origAppH = <?=h($apph)?>;
 const applyFit = () => {
 	const view = document.getElementById("neo-pageView");
+	if(!view){
+		return;
+	} 
 	if (isFit) {
 		// ウィンドウに合わせる
 		view.style.width = `${Math.max(document.documentElement.clientWidth - 195,400)}px`;
