@@ -5,6 +5,11 @@
 ## English version is here
 - [Petit Note EN](https://github.com/satopian/Petit_Note_EN) 
 
+##  動作環境
+- PHP7.4以上の環境が必要です。  
+PHP7.4,PHP8.6で動作確認しています。  
+PHP8.2-PHP8.6での使用を推奨します。 
+
 ## Petit Noteを使った交流サイト
 
 - [お絵かき掲示板交流サイト Petit Note](https://paintbbs.sakura.ne.jp/)  
