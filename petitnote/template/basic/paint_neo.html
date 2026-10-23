@@ -421,10 +421,11 @@ const fitLabel = {
 };
 const neo_origAppW = <?=h($appw)?>;
 const neo_origAppH = <?=h($apph)?>;
+/** @returns {boolean}*/
 const applyFit = () => {
 	const view = document.getElementById("neo-pageView");
 	if(!view){
-		return;
+		return false;
 	} 
 	if (isFit) {
 		// ウィンドウに合わせる
@@ -437,14 +438,21 @@ const applyFit = () => {
 		view.style.height = `${neo_origAppH}px`;
 		Neo.disableGridTouchMove = false;
 	}
+	return true;
 }
 const appletFit = () => {
+	if(!applyFit()){
+		return;
+	};
+	Neo.resizeCanvas();
+		requestAnimationFrame(() => {
+		applyFit();
+		Neo.resizeCanvas();
+	});
 	isFit = !isFit;
 	const btn = document.getElementById("neo-appletfit");
 	btn.textContent = isFit ? fitLabel.on : fitLabel.off;
-	applyFit();
-	Neo.resizeCanvas();
-};
+}
 // 画面サイズが変わったとき(フィット中だけ追従)
 let resizeTicking = false;
 window.addEventListener("resize", () => {
