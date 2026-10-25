@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 <body>
 <header>
 <nav>
-<div style= "max-width:calc(<?=h($appw)?>px + 176px)" class="app_toolleft"> 
+<div style= "max-width:calc(<?=h($appw)?>px + 176px;min-width:max-content)" class="app_toolleft"> 
 <span class="nts_radiowrap"><?php if($en):?>Tool<?php else:?>ツールを<?php endif;?>
 		<input type="radio" name="1" id="1" onclick="Neo.setToolSide(true)" class="nts_radio"><label class="ntslabel" for="1"><?php if($en):?>Left<?php else:?>左へ<?php endif;?></label>
 		<input type="radio" name="1" id="2" onclick="Neo.setToolSide(false)" checked="checked" class="nts_radio"><label class="ntslabel" for="2"><?php if($en):?>Right<?php else:?>右へ<?php endif;?></label>
