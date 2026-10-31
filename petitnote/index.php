@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.29.5';
-$petit_lot='lot.20261025';
+$petit_ver='v3.30.0';
+$petit_lot='lot.20261031';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20261009){
+if(!isset($functions_ver)||$functions_ver<20261031){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -495,12 +495,12 @@ function post(): void {
 		error($en?'Please attach an image.':'画像を添付してください。');
 	}
 
-	$hash = $pwd ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 10]) : '';
-
+	//管理者投稿の時はパスワードハッシュをログファイルに記録しない
+	$hash = ($pwd && !$adminpost) ? password_hash($pwd,PASSWORD_BCRYPT,['cost' => 10]) : '';
+	
 	setcookie("namec",$name,time()+(60*60*24*30),"","",$httpsonly,true);
 	setcookie("urlc",$url,time()+(60*60*24*30),"","",$httpsonly,true);
 	setcookie("pwdc",$pwd,time()+(60*60*24*30),"","",$httpsonly,true);
-
 
 	//ユーザーid
 	$userid = t(getId($userip));//sessionも確認
@@ -1373,7 +1373,7 @@ function download_app_dat(): void {
 		if(strpos($line,"\t".$id."\t")!==false){
 			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$_pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=explode("\t",trim($line));
 			if($id===$time && $no===$_no){
-				if(!adminpost_valid()&&!admindel_valid()&&(!$pwd || !password_verify($pwd,$hash))){
+				if(!adminpost_valid()&&!admindel_valid()&&(!verify_post_pass($pwd,$hash,$verified))){
 					error($en?'Password is incorrect.':'パスワードが違います。');
 				}
 				break;
@@ -1559,7 +1559,7 @@ function img_replace(): void {
 					closeFile($fp);
 					error($en?'This operation has failed.':'失敗しました。');
 				}
-				if(($is_upload_img && $admindel) || (($adminpost||$admindel) && $_verified === 'adminpost') || ($pwd && password_verify($pwd,$_hash))){
+				if(($is_upload_img && $admindel) || (($adminpost||$admindel) && $_verified === 'adminpost') || (verify_post_pass($pwd,$_hash,$_verified))){
 					$flag=true;
 					break;
 				}
@@ -1733,7 +1733,7 @@ function img_replace(): void {
 		if(($id===$time_ && $no===$no_) &&
 		((($is_upload_img && $admindel) ||
 		(($adminpost||$admindel) && $verified_ === 'adminpost') ||
-		($pwd && password_verify($pwd,$hash_))))){
+		(verify_post_pass($pwd,$hash_,$verified_))))){
 			$alllog_arr[$i] = $newline;
 			$flag=true;
 		}
@@ -2001,7 +2001,7 @@ function edit_form(string $id='',string $no=''): void {
 			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=$lines;
 			if($id===$time && $no===$_no){
 			
-				if(!$admindel&&(!$pwd||!password_verify($pwd,$hash))){
+				if(!$admindel&&(!verify_post_pass($pwd,$hash,$verified))){
 					closeFile($rp);
 					error($en?'Password is incorrect.':'パスワードが違います。');
 				}
@@ -2153,7 +2153,7 @@ function edit(): void {
 					error($en?'This operation has failed.':'失敗しました。');
 				}
 
-				if($admindel||(check_elapsed_days($_time)&&$pwd&&password_verify($pwd,$_hash))){
+				if($admindel||(check_elapsed_days($_time)&&verify_post_pass($pwd,$_hash,$_verified))){
 					$flag=true;
 					break;
 				}
@@ -2241,7 +2241,7 @@ function edit(): void {
 		}
 		[$no_,$sub_,$name_,$verified_,$com_,$url_,$imgfile_,$w_,$h_,$thumbnail_,$painttime_,$log_img_hash_,$tool_,$pchext_,$time_,$first_posted_time_,$host_,$userid_,$hash_,$oya_] = explode("\t",trim($val));
 		if(($id===$time_ && $no===$no_) &&
-		($admindel || ($pwd && password_verify($pwd,$hash_)))){
+		($admindel || (verify_post_pass($pwd,$hash_,$verified_)))){
 
 			$alllog_arr[$i] = $newline;
 			$flag=true;
@@ -2331,7 +2331,7 @@ function del(): void {
 			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_img_hash,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=explode("\t",trim($val));
 			if($id===$time && $no===$_no){
 				if(!$admindel){
-					if(!$pwd||!password_verify($pwd,$hash)){
+					if(!verify_post_pass($pwd,$hash,$verified)){
 						closeFile ($rp);
 						closeFile($fp);
 						error($en?'Password is incorrect.':'パスワードが違います。');
@@ -2373,7 +2373,7 @@ function del(): void {
 		$alllog_oya_deleted=($no===$no_ && !$name_ && !$com_ && !$url_ && !$_imgfile_ && !$userid_ && ($oya_==='oya'));
 
 		if(($alllog_oya_deleted && ($no===$no_))||($id===$time_ && $no===$no_)){
-			if(!$alllog_oya_deleted && !$admindel && (!$pwd||!password_verify($pwd,$hash_))){
+			if(!$alllog_oya_deleted && !$admindel && (!verify_post_pass($pwd,$hash_,$verified_))){
 				closeFile ($rp);
 				closeFile($fp);
 				error($en?'Password is incorrect.':'パスワードが違います。');//親削除ずみ、管理者では無い時はパスワードの一致を確認

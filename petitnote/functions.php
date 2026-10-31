@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20261009;
+$functions_ver=20261031;
 
 /**
  * 編集モードログアウト
@@ -466,7 +466,7 @@ function check_cont_pass(): void {
 		}
 		if(strpos($line,"\t".$id."\t")!==false){
 			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=explode("\t",trim($line));
-			if($id===$time && $no===$_no && ($adminmode && $verified ==='adminpost' || $pwd && password_verify($pwd,$hash))){
+			if($id===$time && $no===$_no && ($adminmode && $verified ==='adminpost' || verify_post_pass($pwd,$hash,$verified))){
 				$flag = true;
 				break;
 			}
@@ -568,7 +568,7 @@ function create_res(array $line,array $options=[]): array {
 		'img' => $imgfile,
 		'thumbnail' => $thumbnail_img,//webp or jpegのサムネイルのファイル名
 		'painttime' => ((!$all_hide_painttime || $is_admin) && $painttime) ? $painttime['ja'] : '',
-		'painttime_en' => (!$all_hide_painttime && $painttime) ? $painttime['en'] : '',
+		'painttime_en' => ((!$all_hide_painttime || $is_admin) && $painttime) ? $painttime['en'] : '',
 		'paintsec' => !$all_hide_painttime ? $paintsec : '',
 		'w' => ($w && ctype_digit($w)) ? $w :'',
 		'h' => ($h && ctype_digit($h)) ? $h :'',
@@ -1636,6 +1636,28 @@ function closeFile ($fp): void {
 }
 
 /**
+ * 記事のパスワードをチェック
+ * @param string $pwd
+ * @param string $hash
+ * @param string $admin_verified
+ * @return bool
+ */
+function verify_post_pass(?string $pwd,?string $hash,?string $admin_verified=""):bool{
+	if(!$pwd){
+		return false;
+	}
+	if($admin_verified==="adminpost" && !$hash){
+		if(is_adminpass($pwd)){
+			return true;
+		}
+	}
+	if(!$hash){
+		return false;
+	}
+	return password_verify($pwd,$hash);
+}
+
+/**
  *縮小表示 
  * @param int|string|null $w
  * @param int|string|null $h
@@ -2007,7 +2029,7 @@ function check_password_input_error_count(): void {
 		file_put_contents($file,$errlog,FILE_APPEND);
 		chmod($file,0600);
 	}else{
-			safe_unlink($file);
+		safe_unlink($file);
 	}
 }
 
