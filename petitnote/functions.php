@@ -466,7 +466,7 @@ function check_cont_pass(): void {
 		}
 		if(strpos($line,"\t".$id."\t")!==false){
 			[$_no,$sub,$name,$verified,$com,$url,$imgfile,$w,$h,$thumbnail,$painttime,$log_md5,$tool,$pchext,$time,$first_posted_time,$host,$userid,$hash,$oya]=explode("\t",trim($line));
-			if($id===$time && $no===$_no && ($adminmode && $verified ==='adminpost' || verify_post_pass($pwd,$hash,$verified))){
+			if($id===$time && $no===$_no && ($adminmode && $verified ==='adminpost' || pwd_verify($pwd,$hash))){
 				$flag = true;
 				break;
 			}
@@ -1636,22 +1636,14 @@ function closeFile ($fp): void {
 }
 
 /**
- * 記事のパスワードをチェック
- * @param string $pwd
- * @param string $hash
- * @param string $admin_verified
+ * password_verify()のラッパー関数
+ * パスワードが入力されていない時はfalseを返す
+ * @param string|null $pwd
+ * @param string|null $hash
  * @return bool
  */
-function verify_post_pass(?string $pwd,?string $hash,?string $admin_verified=""):bool{
-	if(!$pwd){
-		return false;
-	}
-	if($admin_verified==="adminpost" && !$hash){
-		if(is_adminpass($pwd)){
-			return true;
-		}
-	}
-	if(!$hash){
+function pwd_verify(?string $pwd,?string $hash):bool{
+	if(!$pwd||!$hash){
 		return false;
 	}
 	return password_verify($pwd,$hash);
