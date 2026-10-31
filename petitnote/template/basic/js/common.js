@@ -912,7 +912,7 @@ class petitNoteImagePreview {
           this.removePchAttachmentBtn.style.display = "inline-block";
         }
         this.file_size_check(
-          "this.paint_forme",
+          "paint_forme",
           "error_message_paintform",
           this.paint_form_fileInput,
           "remove_pch_attachment_btn",
