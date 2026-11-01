@@ -708,6 +708,8 @@ class petitNoteImagePreview {
     element_attach_image,
     removeAttachmentBtnId = "",
   ) {
+    const removeAttachmentBtn = document.getElementById(removeAttachmentBtnId);
+
     const form = document.getElementById(form_id);
     const max_file_size = form?.querySelector('input[name="MAX_FILE_SIZE"]');
     let maxSize = 0;
@@ -728,10 +730,10 @@ class petitNoteImagePreview {
             : "ファイルサイズが大きすぎます。";
           this.clear_css_preview();
           if (
-            this.removeAttachmentBtn &&
-            this.removeAttachmentBtn instanceof HTMLElement
+            removeAttachmentBtn &&
+            removeAttachmentBtn instanceof HTMLElement
           ) {
-            this.removeAttachmentBtn.style.display = "none"; // 添付ファイル削除ボタンを非表示
+            removeAttachmentBtn.style.display = "none"; // 添付ファイル削除ボタンを非表示
           }
           if (element_attach_image instanceof HTMLInputElement) {
             element_attach_image.value = "";
