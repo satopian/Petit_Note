@@ -2,7 +2,10 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20261031;
+$functions_ver=20261103;
+
+//IPアドレス関連処理のインスタンスを作成
+$checkip = new CheckIp();
 
 /**
  * 編集モードログアウト
@@ -153,7 +156,12 @@ function age_check_required_to_view(): void {
  * @return bool パスワードが正しいかどうか
  */
 function is_adminpass(?string $pwd): bool {
-	global $admin_pass,$second_pass;
+	global $admin_pass,$second_pass,$reject_if_no_reverse_dns_admin_login;
+	global $checkip;
+
+	if($reject_if_no_reverse_dns_admin_login && $checkip->has_no_reverse_dns_ipv4()){//ホスト名がipアドレスになる場合は
+		return false; //リバースDNSがない場合はfalse
+	}
 	$pwd=(string)$pwd;
 	return ($pwd && $admin_pass && $second_pass && !hash_equals($admin_pass,$second_pass) && hash_equals($admin_pass,$pwd));
 }
@@ -750,21 +758,20 @@ function get_prev_next_pages(int $page,int $pagedef,int $count_alllog): array {
 
 /**
  * ユーザーip 
- * @return string $ip
+ * @return string
  */
 function get_uip(): string {
-	$ip = $_SERVER["HTTP_CLIENT_IP"] ?? '';
-	$ip = $ip ?: ($_SERVER["HTTP_INCAP_CLIENT_IP"] ?? '');
-	$ip = $ip ?: ($_SERVER["HTTP_X_FORWARDED_FOR"] ?? '');
-	$ip = $ip ?: ($_SERVER["REMOTE_ADDR"] ?? '');
-	if (strstr($ip, ', ')) {
-		$ips = explode(', ', $ip);
-		$ip = $ips[0];
-	}
-	if(filter_var($ip, FILTER_VALIDATE_IP) === false){
-		return '';
-	}
-	return $ip;
+	global $checkip;
+return $checkip->ip;
+}
+
+/**
+ * ユーザーhost 
+ * @return string
+ */
+function get_uhost(): string {
+	global $checkip;
+return $checkip->host;
 }
 
 /**
@@ -1464,6 +1471,7 @@ function is_ngword ($ngwords, $strs): bool {
  */
 function is_badhost(array $options=[]): bool {
 	global $badhost,$reject_if_no_reverse_dns,$reject_if_no_reverse_dns_admin_login,$use_badhost_session_cache;
+	global $checkip;
 
 	//ホスト名が逆引きできないIPアドレスからの投稿を拒絶する
 	$reject_dns = $reject_if_no_reverse_dns ?? false;
@@ -1481,14 +1489,12 @@ function is_badhost(array $options=[]): bool {
 	}
 	//ホスト取得
 	$userip = get_uip();
-	$host = $userip ? gethostbyaddr($userip) :'';
+	$host = get_uhost();
 
 	if($host === $userip){//ホスト名がipアドレスになる場合は
-		if($reject_dns){
-			if(!$host || filter_var($userip, FILTER_VALIDATE_IP,FILTER_FLAG_IPV4)){//IPv4アドレスなら
+		if($reject_dns && $checkip->has_no_reverse_dns_ipv4()){
 				// ホスト名逆引き不可の場合は、拒絶するのみで禁止ホストとしてsessionにキャッシュしない
 				return true; //リバースDNSがない場合は拒絶
-			}
 		}
 		foreach($badhost as $value){
 			if (preg_match("/\A$value/i",$host)) {//前方一致
@@ -1525,6 +1531,7 @@ function init(): void {
 	check_dir(__DIR__."/log",0700);
 	check_dir(__DIR__."/webp");
 	check_dir(__DIR__."/template/cache");
+	check_dir(__DIR__."/template/errorlog",0700);
 	check_dir(__DIR__."/claplog",0700);
 	if(!is_file(LOG_DIR.'alllog.log')){
 	file_put_contents(LOG_DIR.'alllog.log','',FILE_APPEND|LOCK_EX);
@@ -2010,7 +2017,7 @@ function check_password_input_error_count(): void {
 	}
 	$file=__DIR__.'/template/errorlog/error.log';
 	$userip = get_uip();
-	check_dir(__DIR__.'/template/errorlog/');
+	check_dir(__DIR__.'/template/errorlog/',0700);
 	$arr_err=is_file($file) ? file($file):[];
 	if(count($arr_err)>=5){
 		error($en?'Rejected.':'拒絶されました。');
@@ -2165,5 +2172,56 @@ function rejectSqlInjectionAttempt(): void {
 	if($hasSuspiciousValue){
 			header("HTTP/1.1 403 Forbidden");
 			exit();
+	}
+}
+
+/**
+ * IPアドレスとホスト名を取得するクラス
+ */
+class CheckIp
+{
+
+	public string $ip;
+	public string|false $host;
+
+	public function __construct()
+	{
+		$this->ip = $this->get_user_ip();
+		$this->host = $this->ip ? gethostbyaddr($this->ip) : '';
+	}
+	/**
+	 * ユーザーip 
+	 * @return string $ip
+	 */
+	private function get_user_ip(): string
+	{
+		$ip = $_SERVER["HTTP_CLIENT_IP"] ?? '';
+		$ip = $ip ?: ($_SERVER["HTTP_INCAP_CLIENT_IP"] ?? '');
+		$ip = $ip ?: ($_SERVER["HTTP_X_FORWARDED_FOR"] ?? '');
+		$ip = $ip ?: ($_SERVER["REMOTE_ADDR"] ?? '');
+		if (strstr($ip, ', ')) {
+			$ips = explode(', ', $ip);
+			$ip = $ips[0];
+		}
+		if (filter_var($ip, FILTER_VALIDATE_IP) === false) {
+			return '';
+		}
+		return $ip;
+	}
+	/**
+	 * ホスト名が逆引きできないIPアドレスかどうかチェック
+	 * @return bool true:逆引きできないIPアドレス false:逆引きできるIPアドレス
+	 */
+	public function has_no_reverse_dns_ipv4(): bool
+	{
+		//ホスト取得
+		if ($this->host === $this->ip) { //ホスト名がipアドレスになる場合は
+			if (!$this->ip || filter_var($this->ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false
+			) {
+				//IPv4アドレスでホスト名逆引き不可の場合
+				return true;
+			}
+		}
+		return false;
 	}
 }

@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.30.5';
-$petit_lot='lot.20261101';
+$petit_ver='v3.31.3';
+$petit_lot='lot.20261104';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -64,7 +64,6 @@ require_once(__DIR__.'/clap.inc.php');
 if(!isset($clap_inc_ver)||$clap_inc_ver<20260823){
 	die($en?'Please update clap.inc.php to the latest version.':'clap.inc.phpを最新版に更新してください。');
 }
-
 check_file(__DIR__.'/config.php',0600);
 require_once(__DIR__.'/config.php');
 // jQueryバージョン
@@ -298,7 +297,7 @@ function post(): void {
 	//POSTされた内容を取得
 	$userip =t(get_uip());
 	//ホスト取得
-	$host = $userip ? t(gethostbyaddr($userip)) : '';
+	$host = t(get_uhost());
 
 	$sub = t(filter_input_data('POST','sub'));
 	$name = t(filter_input_data('POST','name'));
@@ -1414,7 +1413,7 @@ function img_replace(): void {
 	$repcode = t(filter_input_data('POST', 'repcode'));
 	$userip = t(get_uip());
 	//ホスト取得
-	$host = $userip ? t(gethostbyaddr($userip)) : '';
+	$host = t(get_uhost());
 	//ユーザーid
 	$userid = t(getId($userip));
 	$enc_pwd= $enc_pwd ? basename($enc_pwd): '';
@@ -2073,7 +2072,7 @@ function edit(): void {
 	//POSTされた内容を取得
 	$userip =t(get_uip());
 	//ホスト取得
-	$host = $userip ? t(gethostbyaddr($userip)) : '';
+	$host = t(get_uhost());
 	$userid = t(getId($userip));
 
 	$sub = t(filter_input_data('POST','sub'));
