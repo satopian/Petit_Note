@@ -659,6 +659,7 @@ function switch_tool(?string $tool): string {
  * @param string|null $resno 現在のレス番号。
  */
 function create_chk_lins(array $chk_log_arr,?string $resno): array {
+	global $en;
 
 	$chk_resnos=[];
 	foreach($chk_log_arr as $chk_log){
@@ -672,6 +673,9 @@ function create_chk_lins(array $chk_log_arr,?string $resno): array {
 		if(($chk_resno!==$resno)&&is_file(LOG_DIR."{$chk_resno}.log")){
 			check_open_no($chk_resno);
 			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
+			if(!$cp){
+				error($en?'This operation has failed.':'失敗しました。');
+			}
 			while($line=fgets($cp)){
 				if(!trim($line)){
 					continue;
@@ -1867,6 +1871,9 @@ function is_neo(?string $src): bool {
 		return false;
 	}
 	$fp = fopen("$src", "rb");
+	if (!$fp) {
+		return false;
+	}
 	$is_neo=(fread($fp,3)==="NEO");
 	fclose($fp);
 	return $is_neo;
@@ -1881,6 +1888,9 @@ function get_pch_size(?string $src): ?array {
 		return null;
 	}
 	$fp = fopen("$src", "rb");
+	if (!$fp) {
+		return null;
+	}
 	$is_neo=(fread($fp,3)==="NEO");//ファイルポインタが3byte移動
 	$pch_data=(string)bin2hex(fread($fp,5));
 	fclose($fp);
@@ -2076,6 +2086,11 @@ function getTranslatedLayerName(): string {
  */
 function file_lock($fp, int $lock, array $options=[]): void {
 	global $en;
+
+	if(!$fp){
+		error($en?'This operation has failed.':'失敗しました。');
+	}
+
 	$flock=flock($fp, $lock);
 	if (!$flock) {
 		if($lock !== LOCK_UN){//ロック解除以外の時

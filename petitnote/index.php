@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.33.0';
-$petit_lot='lot.20261112';
+$petit_ver='v3.35.0';
+$petit_lot='lot.20261113';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20261031){
+if(!isset($functions_ver)||$functions_ver<20261113){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -509,10 +509,6 @@ function post(): void {
 	//全体ログを開く
 	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
-	if(!$fp){
-		safe_unlink($upfile);
-		error($en?'This operation has failed.':'失敗しました。');
-	}
 	file_lock($fp, LOCK_EX);
 
 	$alllog_arr = create_array_from_fp($fp);
@@ -927,6 +923,9 @@ function continue_paint(): array{
 	}
 	$find = false;
 	$rp = fopen(LOG_DIR . "{$no}.log", "r");
+	if (!$rp) {
+		error($en ? 'This operation has failed.' : '失敗しました。');
+	}
 	while ($_line = fgets($rp)) {
 		if (strpos($_line, "\t" . $imgfile . "\t") !== false) {
 			[$_no,,,,,, $_imgfile,,,,,, $_tool,, $_time, $_first_posted_time,] = explode("\t", trim($_line));
@@ -1243,6 +1242,9 @@ function to_continue(): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
+	if (!$rp) {
+		error($en? 'This operation has failed.':'失敗しました。');
+	}
 	$i=0;
 	//スレッドが閉じてるかどうか
 	$oya_time=0;
@@ -1363,6 +1365,9 @@ function download_app_dat(): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
+	if (!$rp) {
+		error($en ? 'This operation has failed.' : '失敗しました。');
+	}
 	$time='';
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
@@ -1800,6 +1805,9 @@ function pchview(): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
+	if (!$rp) {
+		error($en? 'This operation has failed.':'失敗しました。');
+	}
 	$flag=false;
 	$resid = '';
 	$pchext ='';
@@ -1893,6 +1901,9 @@ function confirmation_before_deletion (): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
+	if (!$rp) {
+		error($en?'This operation has failed.':'失敗しました。');
+	}
 	$r_arr = create_array_from_fp($rp);
 	closeFile ($rp);
 
@@ -1989,6 +2000,10 @@ function edit_form(string $id='',string $no=''): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
+
+	if (!$rp) {
+		error($en ? 'This operation has failed.' : '失敗しました。');
+	}
 
 	$flag=false;
 	$lines=[];
@@ -2474,6 +2489,9 @@ function catalog(): void {
 	$pagedef=$catalog_pagedef;
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
+	if (!$fp) {
+		error($en?'This operation has failed.':'失敗しました。');
+	}
 	$count_alllog=0;
 	$_res=[];
 	$out=[];
@@ -2560,6 +2578,9 @@ function view(): void {
 	unset ($_SESSION['enableappselect']);
 
 	$fp=fopen(LOG_DIR."alllog.log","r");
+	if (!$fp) {
+		error($en ? 'This operation has failed.' : '失敗しました。');
+	}
 	$article_nos=[];
 	$count_alllog=0;
 	while ($_line = fgets($fp)) {
@@ -2689,6 +2710,9 @@ function res_view_other_works(string $resno): array
 	global $view_other_works;
 
 	$fp = fopen(LOG_DIR . "alllog.log", "r");
+	if (!$fp) {
+		return [[], [], []];
+	}
 	$count_alllog = 0;
 	$i = 0;
 	$j = 0;
@@ -2822,6 +2846,9 @@ function res (): void {
 	check_open_no($resno);
 	$claps=clap::create_claplog_array($resno);
 	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
+	if (!$rp) {
+		error($en?'This operation has failed.':'失敗しました。');
+	}
 
 	$out[0]=[];
 
