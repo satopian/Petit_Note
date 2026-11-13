@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20261103;
+$functions_ver=20261113;
 
 //IPアドレス関連処理のインスタンスを作成
 $checkip = new CheckIp();
@@ -464,10 +464,7 @@ function check_cont_pass(): void {
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
 	check_open_no($no);
-	$rp=fopen(LOG_DIR."$no.log","r");
-	if(!$rp){
-		error($en?'This operation has failed.':'失敗しました。');
-	}
+	$rp=openFile(LOG_DIR."$no.log","r");
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
@@ -672,10 +669,7 @@ function create_chk_lins(array $chk_log_arr,?string $resno): array {
 		//$resnoのログファイルは開かない
 		if(($chk_resno!==$resno)&&is_file(LOG_DIR."{$chk_resno}.log")){
 			check_open_no($chk_resno);
-			$cp=fopen(LOG_DIR."{$chk_resno}.log","r");
-			if(!$cp){
-				error($en?'This operation has failed.':'失敗しました。');
-			}
+			$cp=openFile(LOG_DIR."{$chk_resno}.log","r");
 			while($line=fgets($cp)){
 				if(!trim($line)){
 					continue;
@@ -1633,6 +1627,46 @@ function writeFile ($fp,?string $data): void {
 	fwrite($fp, $data);
 }
 
+/** 
+ * fpオープン
+ * @param string $filename ファイル名
+ * @param string $mode fopen()のモード
+ * @return resource|false
+ */
+function openFile($filename,$mode){
+	$fp = fopen($filename, $mode);
+	if(!$fp){
+		global $en;
+		error($en ? 'Failed to open the file.' : 'ファイルのオープンに失敗しました。');
+	}
+	return $fp;
+}
+
+/**
+ *flockのラッパー関数 
+ * @param resource|false $fp
+ * @param int $lock
+ * @param array $options
+ * @return void
+ */
+function file_lock($fp, int $lock, array $options=[]): void {
+	global $en;
+
+	if(!$fp){
+		error($en?'This operation has failed.':'失敗しました。');
+	}
+
+	$flock=flock($fp, $lock);
+	if (!$flock) {
+		if($lock !== LOCK_UN){//ロック解除以外の時
+			if(isset($options['paintcom'])){
+				location_paintcom();//未投稿画像の投稿フォームへ
+			}
+			error($en ? 'Failed to lock the file.' : 'ファイルのロックに失敗しました。');
+		}
+	}
+}
+
 /**
  * fpクローズ
  * @param resource|false $fp
@@ -1870,10 +1904,7 @@ function is_neo(?string $src): bool {
 	if(!$src){
 		return false;
 	}
-	$fp = fopen("$src", "rb");
-	if (!$fp) {
-		return false;
-	}
+	$fp = openFile("$src", "rb");
 	$is_neo=(fread($fp,3)==="NEO");
 	fclose($fp);
 	return $is_neo;
@@ -1887,10 +1918,7 @@ function get_pch_size(?string $src): ?array {
 	if(!$src){
 		return null;
 	}
-	$fp = fopen("$src", "rb");
-	if (!$fp) {
-		return null;
-	}
+	$fp = openFile("$src", "rb");
 	$is_neo=(fread($fp,3)==="NEO");//ファイルポインタが3byte移動
 	$pch_data=(string)bin2hex(fread($fp,5));
 	fclose($fp);
@@ -2077,30 +2105,6 @@ function getTranslatedLayerName(): string {
 	return "Layer";
 }
 
-/**
- *flockのラッパー関数 
- * @param resource|false $fp
- * @param int $lock
- * @param array $options
- * @return void
- */
-function file_lock($fp, int $lock, array $options=[]): void {
-	global $en;
-
-	if(!$fp){
-		error($en?'This operation has failed.':'失敗しました。');
-	}
-
-	$flock=flock($fp, $lock);
-	if (!$flock) {
-		if($lock !== LOCK_UN){//ロック解除以外の時
-			if(isset($options['paintcom'])){
-				location_paintcom();//未投稿画像の投稿フォームへ
-			}
-			error($en ? 'Failed to lock the file.' : 'ファイルのロックに失敗しました。');
-		}
-	}
-}
 /**
  * filter_input のラッパー関数
  * @param string $input

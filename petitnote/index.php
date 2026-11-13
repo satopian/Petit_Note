@@ -392,7 +392,7 @@ function post(): void {
 	if($resto){//レスの時はファイルロックしてレスファイルを開く
 		check_open_no($resto);
 		chmod(LOG_DIR."{$resto}.log",0600);
-		$rp=fopen(LOG_DIR."{$resto}.log","r+");
+		$rp=openFile(LOG_DIR."{$resto}.log","r+");
 		file_lock($rp, LOCK_EX);
 		$r_arr = create_array_from_fp($rp);
 		if(empty($r_arr)){
@@ -508,7 +508,7 @@ function post(): void {
 
 	//全体ログを開く
 	chmod(LOG_DIR."alllog.log",0600);
-	$fp=fopen(LOG_DIR."alllog.log","r+");
+	$fp=openFile(LOG_DIR."alllog.log","r+");
 	if(!$fp){
 		safe_unlink($upfile);
 		error($en?'This operation has failed.':'失敗しました。');
@@ -737,7 +737,7 @@ function post(): void {
 		[$d_no,]=explode("\t",$alllog_arr[$i],2);
 		if(is_file(LOG_DIR."{$d_no}.log")){
 			check_open_no($d_no);
-			$dp = fopen(LOG_DIR."{$d_no}.log", "r");//個別スレッドのログを開く
+			$dp = openFile(LOG_DIR."{$d_no}.log", "r");//個別スレッドのログを開く
 			file_lock($dp, LOCK_EX);
 
 			while ($line = fgets($dp)) {
@@ -926,10 +926,7 @@ function continue_paint(): array{
 		error($en ? 'The article does not exist.' : '記事がありません。');
 	}
 	$find = false;
-	$rp = fopen(LOG_DIR . "{$no}.log", "r");
-	if (!$rp) {
-		error($en ? 'This operation has failed.' : '失敗しました。');
-	}
+	$rp = openFile(LOG_DIR . "{$no}.log", "r");
 	while ($_line = fgets($rp)) {
 		if (strpos($_line, "\t" . $imgfile . "\t") !== false) {
 			[$_no,,,,,, $_imgfile,,,,,, $_tool,, $_time, $_first_posted_time,] = explode("\t", trim($_line));
@@ -1245,10 +1242,7 @@ function to_continue(): void {
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
 	check_open_no($no);
-	$rp=fopen(LOG_DIR."{$no}.log","r");
-	if (!$rp) {
-		error($en? 'This operation has failed.':'失敗しました。');
-	}
+	$rp=openFile(LOG_DIR."{$no}.log","r");
 	$i=0;
 	//スレッドが閉じてるかどうか
 	$oya_time=0;
@@ -1368,10 +1362,7 @@ function download_app_dat(): void {
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
 	check_open_no($no);
-	$rp=fopen(LOG_DIR."{$no}.log","r");
-	if (!$rp) {
-		error($en ? 'This operation has failed.' : '失敗しました。');
-	}
+	$rp=openFile(LOG_DIR."{$no}.log","r");
 	$time='';
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
@@ -1510,6 +1501,12 @@ function img_replace(): void {
 
 	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
+	if(!$fp){
+		if($is_upload_img){//エラー
+			error($en?'This operation has failed.':'失敗しました。');
+		} 
+		location_paintcom();//新規投稿。
+	}
 	$flock_option = $is_upload_img ? []: ['paintcom'=>true];
 	file_lock($fp, LOCK_EX,$flock_option);
 
@@ -1524,7 +1521,7 @@ function img_replace(): void {
 	}
 	check_open_no($no);
 	chmod(LOG_DIR."{$no}.log",0600);
-	$rp=fopen(LOG_DIR."{$no}.log","r+");
+	$rp=openFile(LOG_DIR."{$no}.log","r+");
 	$flock_option = $is_upload_img ? []: ['paintcom'=>true];
 	file_lock($rp, LOCK_EX,$flock_option);
 
@@ -1808,10 +1805,7 @@ function pchview(): void {
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
 	check_open_no($no);
-	$rp=fopen(LOG_DIR."{$no}.log","r");
-	if (!$rp) {
-		error($en? 'This operation has failed.':'失敗しました。');
-	}
+	$rp=openFile(LOG_DIR."{$no}.log","r");
 	$flag=false;
 	$resid = '';
 	$pchext ='';
@@ -1904,7 +1898,7 @@ function confirmation_before_deletion (): void {
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
 	check_open_no($no);
-	$rp=fopen(LOG_DIR."{$no}.log","r");
+	$rp=openFile(LOG_DIR."{$no}.log","r");
 	$r_arr = create_array_from_fp($rp);
 	closeFile ($rp);
 
@@ -2000,11 +1994,7 @@ function edit_form(string $id='',string $no=''): void {
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
 	check_open_no($no);
-	$rp=fopen(LOG_DIR."{$no}.log","r");
-
-	if (!$rp) {
-		error($en ? 'This operation has failed.' : '失敗しました。');
-	}
+	$rp=openFile(LOG_DIR."{$no}.log","r");
 
 	$flag=false;
 	$lines=[];
@@ -2119,12 +2109,12 @@ function edit(): void {
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
 	chmod(LOG_DIR."alllog.log",0600);
-	$fp=fopen(LOG_DIR."alllog.log","r+");
+	$fp=openFile(LOG_DIR."alllog.log","r+");
 	file_lock($fp, LOCK_EX);
 
 	check_open_no($no);
 	chmod(LOG_DIR."{$no}.log",0600);
-	$rp=fopen(LOG_DIR."{$no}.log","r+");
+	$rp=openFile(LOG_DIR."{$no}.log","r+");
 	file_lock($rp, LOCK_EX);
 
 	$r_arr = create_array_from_fp($rp);
@@ -2316,7 +2306,7 @@ function del(): void {
 	}
 	$delete_thread=(bool)filter_input_data('POST','delete_thread',FILTER_VALIDATE_BOOLEAN);
 	chmod(LOG_DIR."alllog.log",0600);
-	$fp=fopen(LOG_DIR."alllog.log","r+");
+	$fp=openFile(LOG_DIR."alllog.log","r+");
 	file_lock($fp, LOCK_EX);
 
 	if(!is_file(LOG_DIR."{$no}.log")){
@@ -2324,7 +2314,7 @@ function del(): void {
 	}
 	check_open_no($no);
 	chmod(LOG_DIR."{$no}.log",0600);
-	$rp=fopen(LOG_DIR."{$no}.log","r+");
+	$rp=openFile(LOG_DIR."{$no}.log","r+");
 	file_lock($rp, LOCK_EX);
 
 	$r_arr = create_array_from_fp($rp);
@@ -2489,10 +2479,7 @@ function catalog(): void {
 	$page=$page<0 ? 0 : $page;
 	$pagedef=$catalog_pagedef;
 
-	$fp=fopen(LOG_DIR."alllog.log","r");
-	if (!$fp) {
-		error($en?'This operation has failed.':'失敗しました。');
-	}
+	$fp=openFile(LOG_DIR."alllog.log","r");
 	$count_alllog=0;
 	$_res=[];
 	$out=[];
@@ -2578,10 +2565,7 @@ function view(): void {
 	session_sta();
 	unset ($_SESSION['enableappselect']);
 
-	$fp=fopen(LOG_DIR."alllog.log","r");
-	if (!$fp) {
-		error($en ? 'This operation has failed.' : '失敗しました。');
-	}
+	$fp=openFile(LOG_DIR."alllog.log","r");
 	$article_nos=[];
 	$count_alllog=0;
 	while ($_line = fgets($fp)) {
@@ -2609,7 +2593,7 @@ function view(): void {
 		$find_hide_thumbnail=false;
 		check_open_no($no);
 		$claps = clap::create_claplog_array($no);
-		$rp = fopen(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
+		$rp = openFile(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
 		$lines=create_array_from_fp($rp);
 		fclose($rp);
 		$countres=count($lines);
@@ -2710,10 +2694,7 @@ function res_view_other_works(string $resno): array
 {
 	global $view_other_works;
 
-	$fp = fopen(LOG_DIR . "alllog.log", "r");
-	if (!$fp) {
-		return [[], [], []];
-	}
+	$fp = openFile(LOG_DIR . "alllog.log", "r");
 	$count_alllog = 0;
 	$i = 0;
 	$j = 0;
@@ -2846,10 +2827,7 @@ function res (): void {
 	$claps=[];
 	check_open_no($resno);
 	$claps=clap::create_claplog_array($resno);
-	$rp = fopen(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
-	if (!$rp) {
-		error($en?'This operation has failed.':'失敗しました。');
-	}
+	$rp = openFile(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
 
 	$out[0]=[];
 
