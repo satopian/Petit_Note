@@ -509,6 +509,10 @@ function post(): void {
 	//全体ログを開く
 	chmod(LOG_DIR."alllog.log",0600);
 	$fp=fopen(LOG_DIR."alllog.log","r+");
+	if(!$fp){
+		safe_unlink($upfile);
+		error($en?'This operation has failed.':'失敗しました。');
+	}
 	file_lock($fp, LOCK_EX);
 
 	$alllog_arr = create_array_from_fp($fp);
@@ -1901,9 +1905,6 @@ function confirmation_before_deletion (): void {
 	}
 	check_open_no($no);
 	$rp=fopen(LOG_DIR."{$no}.log","r");
-	if (!$rp) {
-		error($en?'This operation has failed.':'失敗しました。');
-	}
 	$r_arr = create_array_from_fp($rp);
 	closeFile ($rp);
 
