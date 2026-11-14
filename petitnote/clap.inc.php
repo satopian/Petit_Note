@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$clap_inc_ver = 20260823;
+$clap_inc_ver = 20261114;
 class clap
 {
 	/**
@@ -26,6 +26,9 @@ class clap
 		$userip = get_uip();
 		if (is_file("claplog/{$no}.log")) {
 			$fp = fopen("claplog/{$no}.log", "r");
+			if (!$fp) {
+				return [];
+			}
 			while ($cline = fgets($fp)) {
 				if (!trim($cline)) {
 					continue;
@@ -76,6 +79,11 @@ class clap
 		}
 		//ログファイルにIDが存在するか確認する
 		$rp = fopen(LOG_DIR . "{$no}.log", "r"); //個別スレッドのログを開く
+		if (!$rp) {
+			header('Content-type: text/plain');
+			echo ""; // このスレッドは存在しない	
+			exit();
+		}
 		$flag = false;
 		while ($resline = fgets($rp)) {
 			if (!trim($resline)) {
@@ -100,8 +108,19 @@ class clap
 		$calplog = "claplog/{$no}.log";
 		$userip = get_uip();
 		$cp = fopen($calplog, "c+");
+		if (!$cp) {
+			header('Content-type: text/plain');
+			echo ""; // 拍手ログが開けない	
+			exit();
+		}
 		chmod($calplog, 0600);
-		file_lock($cp, LOCK_EX);
+		// addclap
+		if (!flock($cp, LOCK_EX)) {
+			closeFile($cp);
+			header('Content-type: text/plain');
+			echo "";
+			exit();
+		}
 
 		$lines = create_array_from_fp($cp);
 		$flag = false;
@@ -133,7 +152,7 @@ class clap
 			$newline = "";
 		}
 		$newline .= implode("", $lines);
-		writeFile($cp, $newline);
+		writeFile($cp, $newline, ['no_error_msg' => true]);
 		closeFile($cp);
 		$_SESSION['clapped']["{$no}_{$id}"] = true;
 		header('Content-type: text/plain');
@@ -208,8 +227,15 @@ class clap
 		}
 
 		$cp = fopen($calplog, "r+");
+		if (!$cp) {
+			return;
+		}
 		chmod($calplog, 0600);
-		file_lock($cp, LOCK_EX);
+		// deleteChecksum
+		if (!flock($cp, LOCK_EX)) {
+			closeFile($cp);
+			return;
+		}
 
 		$lines = create_array_from_fp($cp);
 		if (empty($lines)) {
@@ -231,7 +257,7 @@ class clap
 		}
 		//いいね済みのセッションをクリア
 		$newline = implode("", $lines);
-		writeFile($cp, $newline);
+		writeFile($cp, $newline, ['no_error_msg' => true]);
 		closeFile($cp);
 		session_sta();
 		if (!isset($_SESSION['clapped'])) {

@@ -708,9 +708,6 @@ function create_post_time(): string {
  */
 function create_array_from_fp($fp): array {
 	global $en;
-	if(!$fp){
-		error($en?'This operation has failed.':'失敗しました。');
-	}
 	// ファイルポインタを先頭に移動
 	rewind($fp);
 	$arr=[];
@@ -1614,12 +1611,17 @@ return $msg;
  * 一括書き込み（上書き）
  * @param resource|false $fp
  * @param string|null $data
+ * @param array $options
  */
-function writeFile ($fp,?string $data): void {
+function writeFile ($fp,?string $data,array $options=[]): void {
 	global $en;
-	if(!$data){
+	$no_error_msg = isset($options['no_error_msg']);	
+	if(!$fp || !$data){
 		closeFile($fp);
-		error($en ? 'Log write failed.' : 'ログの書き込みに失敗しました。');
+		if(!$no_error_msg){
+			error($en ? 'Log write failed.' : 'ログの書き込みに失敗しました。');
+		}
+		return;
 	}
 	ftruncate($fp,0);
 	rewind($fp);
@@ -1628,15 +1630,19 @@ function writeFile ($fp,?string $data): void {
 }
 
 /** 
- * fpオープン
+ * ファイルポインタを開く
  * @param string $filename ファイル名
  * @param string $mode fopen()のモード
+ * @param array $options オプション
  * @return resource|false
  */
-function openFile($filename,$mode){
+function openFile($filename,$mode,array $options=[]){
+	global $en;
 	$fp = fopen($filename, $mode);
 	if(!$fp){
-		global $en;
+		if(isset($options['paintcom'])){
+			location_paintcom();//未投稿画像の投稿フォームへ
+		}
 		error($en ? 'Failed to open the file.' : 'ファイルのオープンに失敗しました。');
 	}
 	return $fp;
@@ -1668,7 +1674,7 @@ function file_lock($fp, int $lock, array $options=[]): void {
 }
 
 /**
- * fpクローズ
+ * ファイルポインタを閉じる
  * @param resource|false $fp
  * @return void
  */
@@ -1904,7 +1910,10 @@ function is_neo(?string $src): bool {
 	if(!$src){
 		return false;
 	}
-	$fp = openFile("$src", "rb");
+	$fp = fopen($src, "rb");
+	if(!$fp){
+		return false;
+	}
 	$is_neo=(fread($fp,3)==="NEO");
 	fclose($fp);
 	return $is_neo;
@@ -1918,7 +1927,10 @@ function get_pch_size(?string $src): ?array {
 	if(!$src){
 		return null;
 	}
-	$fp = openFile("$src", "rb");
+	$fp = fopen($src, "rb");
+	if(!$fp){
+		return null;
+	}
 	$is_neo=(fread($fp,3)==="NEO");//ファイルポインタが3byte移動
 	$pch_data=(string)bin2hex(fread($fp,5));
 	fclose($fp);

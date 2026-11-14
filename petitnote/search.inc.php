@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$search_inc_ver = 20260714;
+$search_inc_ver = 20261114;
 class processsearch
 {
 
@@ -222,7 +222,7 @@ class processsearch
 		}
 		$i = 0;
 		$j = 0;
-		$fp = fopen(LOG_DIR . "alllog.log", "r");
+		$fp = openFile(LOG_DIR . "alllog.log", "r");
 		while ($log = fgets($fp)) {
 			if (!trim($log)) {
 				continue;
@@ -233,7 +233,7 @@ class processsearch
 			if (!is_file(LOG_DIR . "{$resno}.log")) {
 				continue;
 			}
-			$rp = fopen(LOG_DIR . "{$resno}.log", "r");
+			$rp = openFile(LOG_DIR . "{$resno}.log", "r");
 			while ($line = fgets($rp)) {
 
 				$lines = explode("\t", $line);
@@ -274,13 +274,13 @@ class processsearch
 					}
 				}
 			}
-			fclose($rp);
+			closeFile($rp);
 			if ($j >= 10000) {
 				break;
 			} //1掲示板あたりの最大行数
 			++$j;
 		}
-		fclose($fp);
+		closeFile($fp);
 
 		$_SESSION['search_result'] = $arr;
 		return $arr;
