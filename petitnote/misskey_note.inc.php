@@ -65,8 +65,8 @@ class misskey_note
 		if (!is_file(LOG_DIR . "{$no}.log")) {
 			error($en ? 'The article does not exist.' : '記事がありません。');
 		}
-		$rp = fopen(LOG_DIR . "{$no}.log", "r");
-		file_lock($rp, LOCK_EX);
+		$rp = openFile(LOG_DIR . "{$no}.log", "r");
+		file_lock($rp,LOCK_SH);
 
 		$r_arr = create_array_from_fp($rp);
 
@@ -139,8 +139,8 @@ class misskey_note
 		if (!is_file(LOG_DIR . "{$no}.log")) {
 			error($en ? 'The article does not exist.' : '記事がありません。');
 		}
-		$rp = fopen(LOG_DIR . "{$no}.log", "r");
-		file_lock($rp, LOCK_EX);
+		$rp = openFile(LOG_DIR . "{$no}.log", "r");
+		file_lock($rp, LOCK_SH);
 
 		$r_arr = create_array_from_fp($rp);
 

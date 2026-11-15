@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.36.2';
-$petit_lot='lot.20261114';
+$petit_ver='v3.36.6';
+$petit_lot='lot.20261115';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -508,7 +508,7 @@ function post(): void {
 
 	//全体ログを開く
 	chmod(LOG_DIR."alllog.log",0600);
-	$fp=openFile(LOG_DIR."alllog.log","r+");
+	$fp=fopen(LOG_DIR."alllog.log","r+");
 	if(!$fp){
 		safe_unlink($upfile);
 		error($en?'This operation has failed.':'失敗しました。');
@@ -927,6 +927,7 @@ function continue_paint(): array{
 	}
 	$find = false;
 	$rp = openFile(LOG_DIR . "{$no}.log", "r");
+	file_lock($rp,LOCK_SH);
 	while ($_line = fgets($rp)) {
 		if (strpos($_line, "\t" . $imgfile . "\t") !== false) {
 			[$_no,,,,,, $_imgfile,,,,,, $_tool,, $_time, $_first_posted_time,] = explode("\t", trim($_line));
@@ -1243,6 +1244,8 @@ function to_continue(): void {
 	}
 	check_open_no($no);
 	$rp=openFile(LOG_DIR."{$no}.log","r");
+	file_lock($rp,LOCK_SH);
+
 	$i=0;
 	//スレッドが閉じてるかどうか
 	$oya_time=0;
@@ -1269,7 +1272,7 @@ function to_continue(): void {
 		++$i;
 	}
 
-	closeFile ($rp);
+	closeFile($rp);
 	//閉じていたら $res_max_over が true になる
 	$res_max_over=(!$adminpost && ($i>$max_res||!check_elapsed_days($oya_time)));
 
@@ -1363,6 +1366,8 @@ function download_app_dat(): void {
 	}
 	check_open_no($no);
 	$rp=openFile(LOG_DIR."{$no}.log","r");
+	file_lock($rp,LOCK_SH);
+
 	$time='';
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
@@ -1378,7 +1383,7 @@ function download_app_dat(): void {
 			} 
 		}
 	}
-	closeFile ($rp);
+	closeFile($rp);
 	$time=basename($time);
 	$pchext = check_pch_ext(IMG_DIR.$time,['upload'=>true]);
 	$pchext=basename($pchext);
@@ -1492,7 +1497,6 @@ function img_replace(): void {
 	}
 	//ログ読み込み
 	if(!is_file(LOG_DIR."{$no}.log")){
-
 		if($is_upload_img){//該当記事が無い時はエラー
 			error($en? 'The article does not exist.':'記事がありません。');
 		} 
@@ -1500,9 +1504,9 @@ function img_replace(): void {
 	}
 
 	chmod(LOG_DIR."alllog.log",0600);
-	$flock_option = $is_upload_img ? []: ['paintcom'=>true];
-	$fp=openFile(LOG_DIR."alllog.log","r+",$flock_option);
-	file_lock($fp, LOCK_EX,$flock_option);
+	$paintcom_option = $is_upload_img ? []: ['paintcom'=>true];
+	$fp=openFile(LOG_DIR."alllog.log","r+",$paintcom_option);
+	file_lock($fp, LOCK_EX,$paintcom_option);
 
 	$alllog_arr = create_array_from_fp($fp);
 
@@ -1516,8 +1520,7 @@ function img_replace(): void {
 	check_open_no($no);
 	chmod(LOG_DIR."{$no}.log",0600);
 	$rp=openFile(LOG_DIR."{$no}.log","r+");
-	$flock_option = $is_upload_img ? []: ['paintcom'=>true];
-	file_lock($rp, LOCK_EX,$flock_option);
+	file_lock($rp, LOCK_EX,$paintcom_option);
 
 	$r_arr = create_array_from_fp($rp);
 
@@ -1745,10 +1748,10 @@ function img_replace(): void {
 			location_paintcom();//該当記事が無い時は新規投稿。
 		}
 
-		writeFile($fp,implode("",$alllog_arr));
+		writeFile($fp,implode("",$alllog_arr),$paintcom_option);
 
 	}
-	writeFile($rp, implode("", $r_arr));
+	writeFile($rp, implode("", $r_arr),$paintcom_option);
 	closeFile($rp);
 	closeFile($fp);
 	
@@ -1800,6 +1803,8 @@ function pchview(): void {
 	}
 	check_open_no($no);
 	$rp=openFile(LOG_DIR."{$no}.log","r");
+	file_lock($rp,LOCK_SH);
+
 	$flag=false;
 	$resid = '';
 	$pchext ='';
@@ -1819,7 +1824,7 @@ function pchview(): void {
 			break;
 		} 
 	}
-	closeFile ($rp);
+	closeFile($rp);
 	if(!$flag){
 		error($en? 'The article does not exist.':'記事がありません。');
 	}
@@ -1893,8 +1898,10 @@ function confirmation_before_deletion (): void {
 	}
 	check_open_no($no);
 	$rp=openFile(LOG_DIR."{$no}.log","r");
+	file_lock($rp,LOCK_SH);
+
 	$r_arr = create_array_from_fp($rp);
-	closeFile ($rp);
+	closeFile($rp);
 
 	if(empty($r_arr)){
 		error($en?'This operation has failed.':'失敗しました。');
@@ -1989,6 +1996,7 @@ function edit_form(string $id='',string $no=''): void {
 	}
 	check_open_no($no);
 	$rp=openFile(LOG_DIR."{$no}.log","r");
+	file_lock($rp,LOCK_SH);
 
 	$flag=false;
 	$lines=[];
@@ -2474,6 +2482,8 @@ function catalog(): void {
 	$pagedef=$catalog_pagedef;
 
 	$fp=openFile(LOG_DIR."alllog.log","r");
+	file_lock($fp,LOCK_SH);
+
 	$count_alllog=0;
 	$_res=[];
 	$out=[];
@@ -2536,6 +2546,7 @@ function view(): void {
 	global $boardname,$max_res,$use_miniform,$use_diary,$petit_ver,$petit_lot,$set_nsfw,$use_sns_button,$deny_all_posts,$en,$mark_sensitive_image,$only_admin_can_reply; 
 	global $use_paintbbs_neo,$use_chickenpaint,$use_klecs,$use_tegaki,$use_axnos,$display_link_back_to_home,$display_search_nav,$switch_sns,$sns_window_width,$sns_window_height,$sort_comments_by_newest,$use_url_input_field;
 	global $disp_image_res,$nsfw_checked,$sitename,$fetch_articles_to_skip,$set_all_images_to_nsfw,$use_clap;
+
 	//不正なクエリパラメータの時は 403 Forbiddenを返す
 	$allowed_keys = array_fill_keys(['page'], true);
 	validateQueryParameters($allowed_keys);
@@ -2560,6 +2571,8 @@ function view(): void {
 	unset ($_SESSION['enableappselect']);
 
 	$fp=openFile(LOG_DIR."alllog.log","r");
+	file_lock($fp,LOCK_SH);
+
 	$article_nos=[];
 	$count_alllog=0;
 	while ($_line = fgets($fp)) {
@@ -2588,6 +2601,8 @@ function view(): void {
 		check_open_no($no);
 		$claps = clap::create_claplog_array($no);
 		$rp = openFile(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
+		file_lock($rp,LOCK_SH);
+
 		$lines=create_array_from_fp($rp);
 		closeFile($rp);
 		$countres=count($lines);
@@ -2689,6 +2704,8 @@ function res_view_other_works(string $resno): array
 	global $view_other_works;
 
 	$fp = openFile(LOG_DIR . "alllog.log", "r");
+	file_lock($fp,LOCK_SH);
+
 	$count_alllog = 0;
 	$i = 0;
 	$j = 0;
@@ -2822,6 +2839,7 @@ function res (): void {
 	check_open_no($resno);
 	$claps=clap::create_claplog_array($resno);
 	$rp = openFile(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
+	file_lock($rp,LOCK_SH);
 
 	$out[0]=[];
 

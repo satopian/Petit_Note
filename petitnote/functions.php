@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20261113;
+$functions_ver=20261115;
 
 //IPアドレス関連処理のインスタンスを作成
 $checkip = new CheckIp();
@@ -465,6 +465,7 @@ function check_cont_pass(): void {
 	}
 	check_open_no($no);
 	$rp=openFile(LOG_DIR."$no.log","r");
+	file_lock($rp,LOCK_SH);
 	while ($line = fgets($rp)) {
 		if(!trim($line)){
 			continue;
@@ -478,7 +479,7 @@ function check_cont_pass(): void {
 			break;
 		}
 	}
-	closeFile ($rp);
+	closeFile($rp);
 	if(!$flag){
 		error($en?'password is wrong.':'パスワードが違います。');
 	}
@@ -668,15 +669,20 @@ function create_chk_lins(array $chk_log_arr,?string $resno): array {
 	foreach($chk_resnos as $chk_resno){
 		//$resnoのログファイルは開かない
 		if(($chk_resno!==$resno)&&is_file(LOG_DIR."{$chk_resno}.log")){
-			check_open_no($chk_resno);
-			$cp=openFile(LOG_DIR."{$chk_resno}.log","r");
-			while($line=fgets($cp)){
-				if(!trim($line)){
+
+		check_open_no($chk_resno);
+		$cp=openFile(LOG_DIR."{$chk_resno}.log","r");
+		//スレッドのログ→alllog.logの順で取るので、待つとデッドロックになる
+		//重複チェックだけに使うので、読み進める
+		file_lock($cp,LOCK_SH | LOCK_NB);
+
+		while($line=fgets($cp)){
+			if(!trim($line)){
 					continue;
-				}
+			}
 				$chk_lines[]=$line;
 			}
-			closefile($cp);
+			closeFile($cp);
 		}
 	}
 	return $chk_lines;
@@ -757,7 +763,7 @@ function get_prev_next_pages(int $page,int $pagedef,int $count_alllog): array {
  */
 function get_uip(): string {
 	global $checkip;
-return $checkip->ip;
+	return $checkip->ip;
 }
 
 /**
@@ -766,7 +772,7 @@ return $checkip->ip;
  */
 function get_uhost(): string {
 	global $checkip;
-return $checkip->host;
+	return $checkip->host;
 }
 
 /**
@@ -1612,12 +1618,17 @@ return $msg;
  * @param resource|false $fp
  * @param string|null $data
  * @param array $options
+ * @return void
  */
 function writeFile ($fp,?string $data,array $options=[]): void {
 	global $en;
-	$no_error_msg = isset($options['no_error_msg']);	
+	$no_error_msg = isset($options['no_error_msg']);
+	$paintcom = isset($options['paintcom']);
 	if(!$fp || !$data){
 		closeFile($fp);
+		if($paintcom){
+			location_paintcom();//未投稿画像の投稿フォームへ
+		}
 		if(!$no_error_msg){
 			error($en ? 'Log write failed.' : 'ログの書き込みに失敗しました。');
 		}
@@ -1634,7 +1645,7 @@ function writeFile ($fp,?string $data,array $options=[]): void {
  * @param string $filename ファイル名
  * @param string $mode fopen()のモード
  * @param array $options オプション
- * @return resource|false
+ * @return resource
  */
 function openFile($filename,$mode,array $options=[]){
 	global $en;
@@ -1649,7 +1660,8 @@ function openFile($filename,$mode,array $options=[]){
 }
 
 /**
- *flockのラッパー関数 
+ *flockのラッパー関数
+ *LOCK_EXの時にのみエラー処理を行う 
  * @param resource|false $fp
  * @param int $lock
  * @param array $options
@@ -1658,15 +1670,23 @@ function openFile($filename,$mode,array $options=[]){
 function file_lock($fp, int $lock, array $options=[]): void {
 	global $en;
 
+	$paintcom = isset($options['paintcom']);
 	if(!$fp){
-		error($en?'This operation has failed.':'失敗しました。');
+		if($paintcom){
+			location_paintcom();//未投稿画像の投稿フォームへ
+		}
+		if($lock === LOCK_EX){
+			error($en?'This operation has failed.':'失敗しました。');
+		}
+		exit();
 	}
 
 	$flock=flock($fp, $lock);
 	if (!$flock) {
-		if($lock !== LOCK_UN){//ロック解除以外の時
-			if(isset($options['paintcom'])){
-				location_paintcom();//未投稿画像の投稿フォームへ
+		if($lock === LOCK_EX){//解除と共有ロックの時にはエラーメッセージを出さない
+			closeFile($fp);	
+			if($paintcom){
+			location_paintcom();//未投稿画像の投稿フォームへ
 			}
 			error($en ? 'Failed to lock the file.' : 'ファイルのロックに失敗しました。');
 		}
@@ -1914,8 +1934,9 @@ function is_neo(?string $src): bool {
 	if(!$fp){
 		return false;
 	}
+	file_lock($fp,LOCK_SH);
 	$is_neo=(fread($fp,3)==="NEO");
-	fclose($fp);
+	closeFile($fp);
 	return $is_neo;
 }
 /**
@@ -1927,13 +1948,16 @@ function get_pch_size(?string $src): ?array {
 	if(!$src){
 		return null;
 	}
+
 	$fp = fopen($src, "rb");
 	if(!$fp){
 		return null;
 	}
+	file_lock($fp,LOCK_SH);
+
 	$is_neo=(fread($fp,3)==="NEO");//ファイルポインタが3byte移動
 	$pch_data=(string)bin2hex(fread($fp,5));
-	fclose($fp);
+	closeFile($fp);
 	if(!$is_neo || !$pch_data){
 		return null;
 	}
