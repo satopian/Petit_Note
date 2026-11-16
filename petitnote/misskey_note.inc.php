@@ -63,7 +63,6 @@ class misskey_note
 
 		check_open_no($no);
 		if (!is_file(LOG_DIR . "{$no}.log")) {
-			closeFile($rp);
 			error($en ? 'The article does not exist.' : '記事がありません。');
 		}
 		$rp = openFile(LOG_DIR . "{$no}.log", "r");
@@ -162,6 +161,7 @@ class misskey_note
 			if ($id === $time && $no === $_no) {
 
 				if ((!$admin || $verified !== 'adminpost') && (!$pwd || !password_verify($pwd, $hash))) {
+					closeFile($rp);
 					error($en ? 'Password is incorrect.' : 'パスワードが違います。');
 				}
 				if ($admin || check_elapsed_days($time)) {
