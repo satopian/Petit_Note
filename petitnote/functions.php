@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20261116;
+$functions_ver=20261117;
 
 //IPアドレス関連処理のインスタンスを作成
 $checkip = new CheckIp();
@@ -1621,7 +1621,8 @@ function writeFile ($fp,?string $data,array $options=[]): void {
 	global $en;
 	$no_error_msg = isset($options['no_error_msg']);
 	$paintcom = isset($options['paintcom']);
-	if(!$fp || !$data){
+	$allow_empty_write = isset($options["allow_empty"]);
+	if(!$fp || !$data && !$allow_empty_write ){
 		if($paintcom){
 			closeFile($fp);	
 			location_paintcom();//未投稿画像の投稿フォームへ

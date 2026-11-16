@@ -3,8 +3,8 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.36.8';
-$petit_lot='lot.20261116';
+$petit_ver='v3.37.5';
+$petit_lot='lot.20261117';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
   ? explode( ',', $http_langs )[0] : '';
@@ -20,7 +20,7 @@ if(!is_file(__DIR__.'/functions.php')){
 	die(__DIR__.'/functions.php'.($en ? ' does not exist.':'がありません。'));
 }
 require_once(__DIR__.'/functions.php');
-if(!isset($functions_ver)||$functions_ver<20261116){
+if(!isset($functions_ver)||$functions_ver<20261117){
 	die($en?'Please update functions.php to the latest version.':'functions.phpを最新版に更新してください。');
 }
 
@@ -2395,28 +2395,30 @@ function del(): void {
 
 		if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){//スレッドを削除する?
 
-				unset($alllog_arr[$j]);
-				foreach($r_arr as $r_line) {//スレッドの一連のファイルを削除
-					[$_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya]=explode("\t",trim($r_line));
+			unset($alllog_arr[$j]);
+
+			foreach($r_arr as $r_line) {//スレッドの一連のファイルを削除
+				[$_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya]=explode("\t",trim($r_line));
 					
 					delete_files ($_imgfile, $_time);//一連のファイルを削除
 					
-				}
-				closeFile ($rp);
-				safe_unlink(LOG_DIR.$no.'.log');
-				clap::deleteClaplog($no);
+			}
+			closeFile ($rp);
+			safe_unlink(LOG_DIR.$no.'.log');
+			clap::deleteClaplog($no);
 
 		}else{
-				delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
-				$deleted_sub = $en? 'No subject':'無題';
-				$newline="$no\t$deleted_sub\t\t\t\t\t\t\t\t\t\t\t\t\t$time_\t$first_posted_time_\t$host_\t\t$hash_\toya\n";
-				$alllog_arr[$j]=$newline;
-				$r_arr[0]=$newline;
-				writeFile ($rp,implode("",$r_arr));
-				closeFile ($rp);
+			delete_files ($imgfile, $time);//該当記事の一連のファイルを削除
+			$deleted_sub = $en? 'No subject':'無題';
+			$newline="$no\t$deleted_sub\t\t\t\t\t\t\t\t\t\t\t\t\t$time_\t$first_posted_time_\t$host_\t\t$hash_\toya\n";
+			$alllog_arr[$j]=$newline;
+			$r_arr[0]=$newline;
+			writeFile ($rp,implode("",$r_arr));
+			closeFile ($rp);
 		}
-
-		writeFile($fp,implode("",$alllog_arr));
+		$alllog_data = implode("", $alllog_arr);
+		$write_option = ($alllog_data === '') ? ["allow_empty" => true] : [];
+		writeFile($fp, $alllog_data, $write_option);	
 
 	}else{//レスの削除のみ
 
