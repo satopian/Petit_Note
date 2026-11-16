@@ -1626,7 +1626,7 @@ function writeFile ($fp,?string $data,array $options=[]): void {
 			location_paintcom();//未投稿画像の投稿フォームへ
 		}
 		if(!$no_error_msg){
-			error($en ? 'Log write failed.' : 'ログの書き込みに失敗しました。');
+			error($en?'This operation has failed.':'失敗しました。');
 		}
 		return;
 	}
@@ -1650,7 +1650,7 @@ function openFile($filename,$mode,array $options=[]){
 		if(isset($options['paintcom'])){
 			location_paintcom();//未投稿画像の投稿フォームへ
 		}
-		error($en ? 'Failed to open the file.' : 'ファイルのオープンに失敗しました。');
+		error($en?'This operation has failed.':'失敗しました。');
 	}
 	return $fp;
 }
@@ -1684,7 +1684,7 @@ function file_lock($fp, int $lock, array $options=[]): void {
 			if($paintcom){
 			location_paintcom();//未投稿画像の投稿フォームへ
 			}
-			error($en ? 'Failed to lock the file.' : 'ファイルのロックに失敗しました。');
+			error($en?'This operation has failed.':'失敗しました。');
 		}
 	}
 }
@@ -1951,7 +1951,7 @@ function get_pch_size(?string $src): ?array {
 
 	$is_neo=(fread($fp,3)==="NEO");//ファイルポインタが3byte移動
 	$pch_data=(string)bin2hex(fread($fp,5));
-			closeFile($fp);	
+	closeFile($fp);
 	if(!$is_neo || !$pch_data){
 		return null;
 	}
