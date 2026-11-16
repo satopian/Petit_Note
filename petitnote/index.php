@@ -1803,7 +1803,6 @@ function pchview(): void {
 	}
 	check_open_no($no);
 	$rp=openFile(LOG_DIR."{$no}.log","r");
-	file_lock($rp,LOCK_SH);
 
 	$flag=false;
 	$resid = '';
@@ -2482,7 +2481,6 @@ function catalog(): void {
 	$pagedef=$catalog_pagedef;
 
 	$fp=openFile(LOG_DIR."alllog.log","r");
-	file_lock($fp,LOCK_SH);
 
 	$count_alllog=0;
 	$_res=[];
@@ -2571,7 +2569,6 @@ function view(): void {
 	unset ($_SESSION['enableappselect']);
 
 	$fp=openFile(LOG_DIR."alllog.log","r");
-	file_lock($fp,LOCK_SH);
 
 	$article_nos=[];
 	$count_alllog=0;
@@ -2601,7 +2598,6 @@ function view(): void {
 		check_open_no($no);
 		$claps = clap::create_claplog_array($no);
 		$rp = openFile(LOG_DIR."{$no}.log", "r");//個別スレッドのログを開く
-		file_lock($rp,LOCK_SH);
 
 		$lines=create_array_from_fp($rp);
 		closeFile($rp);
@@ -2704,7 +2700,6 @@ function res_view_other_works(string $resno): array
 	global $view_other_works;
 
 	$fp = openFile(LOG_DIR . "alllog.log", "r");
-	file_lock($fp,LOCK_SH);
 
 	$count_alllog = 0;
 	$i = 0;
@@ -2839,7 +2834,6 @@ function res (): void {
 	check_open_no($resno);
 	$claps=clap::create_claplog_array($resno);
 	$rp = openFile(LOG_DIR."{$resno}.log", "r");//個別スレッドのログを開く
-	file_lock($rp,LOCK_SH);
 
 	$out[0]=[];
 

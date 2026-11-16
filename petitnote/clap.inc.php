@@ -29,7 +29,6 @@ class clap
 			if (!$fp) {
 				return [];
 			}
-			file_lock($fp,LOCK_SH);
 			while ($cline = fgets($fp)) {
 				if (!trim($cline)) {
 					continue;
@@ -85,8 +84,6 @@ class clap
 			echo ""; // このスレッドは存在しない	
 			exit();
 		}
-
-		file_lock($rp,LOCK_SH);
 
 		$flag = false;
 		while ($resline = fgets($rp)) {

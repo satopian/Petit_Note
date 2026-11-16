@@ -672,9 +672,6 @@ function create_chk_lins(array $chk_log_arr,?string $resno): array {
 
 		check_open_no($chk_resno);
 		$cp=openFile(LOG_DIR."{$chk_resno}.log","r");
-		//スレッドのログ→alllog.logの順で取るので、待つとデッドロックになる
-		//重複チェックだけに使うので、読み進める
-		file_lock($cp,LOCK_SH | LOCK_NB);
 
 		while($line=fgets($cp)){
 			if(!trim($line)){
@@ -1625,7 +1622,6 @@ function writeFile ($fp,?string $data,array $options=[]): void {
 	$no_error_msg = isset($options['no_error_msg']);
 	$paintcom = isset($options['paintcom']);
 	if(!$fp || !$data){
-		closeFile($fp);
 		if($paintcom){
 			location_paintcom();//未投稿画像の投稿フォームへ
 		}
@@ -1934,7 +1930,6 @@ function is_neo(?string $src): bool {
 	if(!$fp){
 		return false;
 	}
-	file_lock($fp,LOCK_SH);
 	$is_neo=(fread($fp,3)==="NEO");
 	closeFile($fp);
 	return $is_neo;
@@ -1953,7 +1948,6 @@ function get_pch_size(?string $src): ?array {
 	if(!$fp){
 		return null;
 	}
-	file_lock($fp,LOCK_SH);
 
 	$is_neo=(fread($fp,3)==="NEO");//ファイルポインタが3byte移動
 	$pch_data=(string)bin2hex(fread($fp,5));
