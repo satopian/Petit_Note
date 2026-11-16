@@ -1622,7 +1622,7 @@ function writeFile ($fp,?string $data,array $options=[]): void {
 	$no_error_msg = isset($options['no_error_msg']);
 	$paintcom = isset($options['paintcom']);
 	$allow_empty_write = isset($options["allow_empty"]);
-	if(!$fp || !$data && !$allow_empty_write ){
+	if(!$fp || (!$data && !$allow_empty_write)){
 		if($paintcom){
 			closeFile($fp);	
 			location_paintcom();//未投稿画像の投稿フォームへ

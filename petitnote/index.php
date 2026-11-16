@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.37.5';
+$petit_ver='v3.37.6';
 $petit_lot='lot.20261117';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -2393,10 +2393,13 @@ function del(): void {
 
 		check_AsyncRequest();//Asyncリクエストの時は処理を中断
 
+		$deleteThreadFlag=false;
+
 		if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){//スレッドを削除する?
 
-			unset($alllog_arr[$j]);
+			$deleteThreadFlag=true;
 
+			unset($alllog_arr[$j]);
 			foreach($r_arr as $r_line) {//スレッドの一連のファイルを削除
 				[$_no,$_sub,$_name,$_verified,$_com,$_url,$_imgfile,$_w,$_h,$_thumbnail,$_painttime,$_log_img_hash,$_tool,$_pchext,$_time,$_first_posted_time,$_host,$_userid,$_hash,$_oya]=explode("\t",trim($r_line));
 					
@@ -2417,7 +2420,7 @@ function del(): void {
 			closeFile ($rp);
 		}
 		$alllog_data = implode("", $alllog_arr);
-		$write_option = ($alllog_data === '') ? ["allow_empty" => true] : [];
+		$write_option = ($deleteThreadFlag && $alllog_data === '') ? ["allow_empty" => true] : [];
 		writeFile($fp, $alllog_data, $write_option);	
 
 	}else{//レスの削除のみ
