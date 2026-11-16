@@ -1623,10 +1623,12 @@ function writeFile ($fp,?string $data,array $options=[]): void {
 	$paintcom = isset($options['paintcom']);
 	if(!$fp || !$data){
 		if($paintcom){
+			closeFile($fp);	
 			location_paintcom();//未投稿画像の投稿フォームへ
 		}
 		if(!$no_error_msg){
-			error($en?'This operation has failed.':'失敗しました。');
+		closeFile($fp);	
+		error($en?'This operation has failed.':'失敗しました。');
 		}
 		return;
 	}
