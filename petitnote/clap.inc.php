@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$clap_inc_ver = 20261114;
+$clap_inc_ver = 20261116;
 class clap
 {
 	/**
@@ -231,7 +231,6 @@ class clap
 		if (!$cp) {
 			return;
 		}
-		// deleteChecksum
 		if (!flock($cp, LOCK_EX)) {
 			closeFile($cp);
 			return;

@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //APIを使ってお絵かき掲示板からMisskeyにノート
 
-$misskey_note_ver = 20260818;
+$misskey_note_ver = 20261116;
 
 $misskey_servers = $misskey_servers ??
 	[
@@ -21,7 +21,7 @@ $misskey_servers = $misskey_servers ??
 		["misskey.delmulin.com", "https://misskey.delmulin.com"],
 		["side.misskey.productions", "https://side.misskey.productions"],
 		["mk.shrimpia.network", "https://mk.shrimpia.network"],
-		["misskey.id", "https://misskey.id/"],
+		["misskey.id", "https://misskey.id"],
 
 	];
 

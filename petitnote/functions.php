@@ -2,7 +2,7 @@
 //Petit Note (c)さとぴあ @satopian 2021-2026 MIT License
 //https://paintbbs.sakura.ne.jp/
 
-$functions_ver=20261115;
+$functions_ver=20261116;
 
 //IPアドレス関連処理のインスタンスを作成
 $checkip = new CheckIp();
@@ -1951,7 +1951,7 @@ function get_pch_size(?string $src): ?array {
 
 	$is_neo=(fread($fp,3)==="NEO");//ファイルポインタが3byte移動
 	$pch_data=(string)bin2hex(fread($fp,5));
-	closeFile($fp);
+			closeFile($fp);	
 	if(!$is_neo || !$pch_data){
 		return null;
 	}
