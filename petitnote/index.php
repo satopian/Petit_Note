@@ -3,7 +3,7 @@
 //https://paintbbs.sakura.ne.jp/
 //1スレッド1ログファイル形式のスレッド式画像掲示板
 
-$petit_ver='v3.37.6';
+$petit_ver='v3.37.8';
 $petit_lot='lot.20261117';
 
 $lang = ($http_langs = $_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? '')
@@ -2393,11 +2393,11 @@ function del(): void {
 
 		check_AsyncRequest();//Asyncリクエストの時は処理を中断
 
-		$deleteThreadFlag=false;
+		$alllog_was_last_one = false;
 
 		if($count_r_arr===1 || (($count_r_arr===2) && $res_oya_deleted) || $delete_thread){//スレッドを削除する?
 
-			$deleteThreadFlag=true;
+			$alllog_was_last_one = (count($alllog_arr) === 1);//削除前の件数で「最後の1個」を確認
 
 			unset($alllog_arr[$j]);
 			foreach($r_arr as $r_line) {//スレッドの一連のファイルを削除
@@ -2420,7 +2420,7 @@ function del(): void {
 			closeFile ($rp);
 		}
 		$alllog_data = implode("", $alllog_arr);
-		$write_option = ($deleteThreadFlag && $alllog_data === '') ? ["allow_empty" => true] : [];
+		$write_option = ($alllog_was_last_one && $alllog_data === '') ? ["allow_empty" => true] : [];
 		writeFile($fp, $alllog_data, $write_option);	
 
 	}else{//レスの削除のみ
