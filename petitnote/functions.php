@@ -1628,8 +1628,8 @@ function writeFile ($fp,?string $data,array $options=[]): void {
 			location_paintcom();//未投稿画像の投稿フォームへ
 		}
 		if(!$no_error_msg){
-		closeFile($fp);	
-		error($en?'This operation has failed.':'失敗しました。');
+			closeFile($fp);	
+			error($en?'This operation has failed.':'失敗しました。');
 		}
 		return;
 	}
@@ -1685,7 +1685,7 @@ function file_lock($fp, int $lock, array $options=[]): void {
 		if($lock === LOCK_EX){//解除と共有ロックの時にはエラーメッセージを出さない
 			closeFile($fp);	
 			if($paintcom){
-			location_paintcom();//未投稿画像の投稿フォームへ
+				location_paintcom();//未投稿画像の投稿フォームへ
 			}
 			error($en?'This operation has failed.':'失敗しました。');
 		}
